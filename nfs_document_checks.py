@@ -23,51 +23,64 @@ def load_spreadsheet_data(processing_folder):
     except OSError as e:
         print("Error in data loading: " + e)
 
-def filename_pattern_check(filename):
-    '''
+def filename_pattern_check(filename, row_num):
+    ''' Checks whether the filename matches the expected format and extracts the components needed for further processing. If the filename does not match the expected pattern then ValueError exception is thrown.
+    
+    Keyword arguments:
+        filename - string with the filename to be checked
+        row_num - string with number of row in spreadsheet
+        
+    Outputs:
+        Tuple containing the central part of the filename and the final count at the end of the filename   
     '''
     
-    if m := re.match("MAF32-(\d*-\d*)_(\d*).tif", filename):
+    if m := re.match(r"MAF32-(\d*-\d*)_(\d*).tif", filename):
         ref_component = m.group(1)
         iteration_num = m.group(2)
-        return ((ref_component, iteration_num), "")
+        return (ref_component, iteration_num)
     else:
-        return (("", ""), filename + " does not match expected pattern") 
+        raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
          
 
-def filename_checks(filename1, filename2):
-    '''
+def filename_checks(filename1, filename2, row_num):
+    ''' Carries out the required checks on the filenames for each row
+    
+        Keyword arguments:
+            filename1 - string with name of first file
+            filename2 - string with name of second file
+            row_num - string with number of row in spreadsheet 
+            
+        Outputs:
+            Tuple containing the central part of the filename for use in the reference and a list of warnings
     '''
     warnings = []
     
     # check one - match MAF32-\d*-\d*_\d*.tif
     
-    components, warning = filename_pattern_check(filename1)
-    
-    if len(warning) > 0:
-        warnings.append(warning)
+    try:
+        ref_part1, iteration_num1 = filename_pattern_check(filename1, row_num)
+    except ValueError as e:
+        warnings.append(str(e))
+        ref_part1 = ""
+        iteration_num1 = -1
         
-    ref_part, iteration_num1 = components
-    ref_component = {ref_part}
-    
-    components, warning = filename_pattern_check(filename2)
-    
-    if len(warning) > 0:
-        warnings.append(warning)
-        
-    ref_part, iteration_num2 = components
-    ref_component.add(ref_part)
+    try:
+        ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
 
-    # check two - centre sections match
+        # check two - centre sections match
+        if ref_part1 != ref_part2 and ref_part1 != "":
+            warnings.append("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
+
+        
+        # check three - sequence
+        if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and iteration_num1 > 0:
+            warnings.append("Row " + row_num + ": File names are not consecutive")
+            
+        return (ref_part1, warnings)
     
-    if len(ref_component) != 1:
-        warnings.append("Mismatch in the file names")
-    
-    # check three - sequence
-    if (iteration_num1 != iteration_num2 + 1) and (iteration_num1 != iteration_num2 - 1):
-        warnings.append("File names are not consecutive")
-    
-    return (ref_component, warnings)
+    except ValueError as e:
+        warnings.append(str(e))
+        return ("0-0", warnings)
     
     
 
@@ -75,10 +88,26 @@ def extract_farms(full_csv):
     '''
     '''
     
-    for row in full_csv:
-        ref_component, warnings = filename_checks(row['filename1'], row['filename2'])
-        print(ref_component)
-        print(warnings)
+    farms = {}
+    
+    for row_num, row in enumerate(full_csv, 2):
+        ref_component, warnings = filename_checks(row['filename_1'], row['filename_2'], str(row_num))
+        
+        warning_dict = {"Filenames": warnings}
+        
+        primary_farm_number = row['primary_farm_number']
+        additional_farm_number = row['additional_farms']
+
+        farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number, additional_farm_number, str(row_num), farms.keys())
+        
+        farms.update(farm_refs)
+
+        warning_dict["References"] = ref_warnings
+        
+        print(farm_refs)
+        
+        
+        print(warning_dict)
     
 
     
@@ -90,14 +119,76 @@ def extract_farms(full_csv):
 # Input columns: A/B (filenames), F (primary_farm_number), G (additional_farms)
 # return "MAF 32 " + box number (string after first hyphen and before underscore, replace hyphens with slashed in columns A and B in source which should match) + "/" + farm number (F or G in source) [Output column: U (Reference)] 
 # Warnings: if generated using column G [Output column: V (Reference Warnings)] 
-def generate_references():
+def generate_references(box_string, primary_farm_string, additional_farm_string, row_num, existing_refs):
+    ''' Create a reference string for each farm
+    
+        Keyword arguments:
+            box_string - string with the box component of the reference
+            primary_farm_string - string with number for primary farm
+            additional_farm_string - semi-colon separated list of additional farm numbers
+            row_num - string with number of row in spreadsheet
+            existing_ref - list of existing references 
+            
+        Outputs:
+            Tuple containing a list of generated references and a list of warnings
     '''
+    ref_list = {}
+    warnings = []
+    
+    if primary_farm_string != "" and additional_farm_string == "":
+        ref, warning = generate_ref("MAF 32 " + box_string + "/" + primary_farm_string, existing_refs)           
+        ref_list[ref] = "Primary"
+        if len(warning) > 0:
+            warnings.append("Row " + row_num + ": " + warning)
+       
+    elif primary_farm_string == "" and additional_farm_string != "":
+        for additional_farm in additional_farm_string.split(";"):
+            ref, warning = generate_ref("MAF 32 " + box_string + "/" + additional_farm, existing_refs)           
+            ref_list[ref] = "Additional"
+            if len(warning) > 0:
+                warnings.append("Row " + row_num + ": " + warning)
+        warnings.append("Row " + row_num + ": Error - Additional farm but no primary farm given")
+        
+    elif primary_farm_string != "" and additional_farm_string != "":
+        ref, warning = generate_ref("MAF 32 " + box_string + "/" + primary_farm_string, existing_refs)           
+        ref_list[ref] = "Primary"
+        if len(warning) > 0:
+            warnings.append("Row " + row_num + ": " + warning)
+        
+        
+        for additional_farm in additional_farm_string.split(";"):
+            ref, warning = generate_ref("MAF 32 " + box_string + "/" + additional_farm, existing_refs)           
+            ref_list[ref] = "Additional"
+            if len(warning) > 0:
+                warnings.append("Row " + row_num + ": " + warning)             
+               
+        warnings.append("Row " + row_num + ": Additional farms present")
+    else:
+        warnings.append("Row " + row_num + ": Error - No farm number specified")
+        
+    return (ref_list, warnings)  
+
+def generate_ref(base_ref, existing_refs):
+    ''' Check whether the reference already exists and return it or an alternate reference so that the reference is unique
+    
+        keyword arguments: 
+            base_ref - string with the proposed reference 
+            existing_refs - list of already used references
+        
+        outputs:
+            Tuple with reference string and warnings string if a duplicate reference was found       
     '''
-    references = {}
     
-    return references
-    
-    
+    if base_ref in existing_refs:
+        counter = 1
+        temp_ref = base_ref
+        while temp_ref in existing_refs:
+            temp_ref = temp_ref.split("-")[0] + "-" + str(counter)
+            counter += 1   
+         
+        return (temp_ref, "Error - Duplicate reference found. Reference extended.")
+    else:
+        return (base_ref, "")
 
 # Group 1: Filenames 
 # Input columns: A (filename_1) and B (filename_2). 
@@ -153,7 +244,6 @@ def generate_references():
 # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
 # Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
 # Check 1: column I and column Q are similar (individual name titles)
-# Check 1: column I and column Q (titles)
 # Check 2: column J and column R are similar (individual name)
 # Check 3: column K and column S are similar  (group names)
 # Check 4: column T and column L are similar  (addresses)
@@ -188,3 +278,9 @@ def generate_references():
 # Warnings: if not valid date
 # Warnings: if date is not later or equal to Field Date [Output column: T (Primary Date Warnings)] 
 # Warnings: if unexpected number of rows matched
+
+
+
+
+processing_folder = "processing"
+load_spreadsheet_data(processing_folder)
