@@ -9,19 +9,68 @@
 
 import csv, re
 from pathlib import Path
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
+from openpyxl.utils import get_column_letter
 
 def load_spreadsheet_data(processing_folder):
-    ''' Process any files in the processing folder
+    ''' Process any csv files in the processing folder
+
+        Keyword arguments:
+            processing_folder - string with path to folder
+        
+        Returns:
+
     '''
     try: 
-        for file in Path(processing_folder).glob("*.csv"):        
+        for file in Path(processing_folder).glob("*.csv"):     
+            
+            base_filename = Path(file).stem
+               
             with open(file, newline='') as f:
                 values = csv.DictReader(f) 
-                farms = extract_farms(values)  
-                print(farms)
+                farm_values = extract_farms(values)  
+                #print(farm_values)                
+                
+                output_excel(Path(processing_folder, "output", base_filename + ".xlsx"), farm_values)
                 
     except OSError as e:
         print("Error in data loading: " + e)
+        
+
+def output_excel(output_file, values):
+    wb = Workbook()
+    sheet = wb.active
+    
+    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings"]
+    default_widths = [20, 20, 30, 20, 15, 20]
+    
+    for i in range(0, len(headings)):
+        column = headings[i]
+        col_num = i+1
+        
+        sheet.cell(1, col_num, column).font = Font(bold=True)
+        sheet.column_dimensions[get_column_letter(col_num)].width = default_widths[i]  
+        
+        row = 2
+        for ref in values:
+            sheet.cell(row, 1, ref)
+            
+            farm_values = values[ref]
+
+            if column != "Reference" and column in farm_values.keys():
+                sheet.cell(row, headings.index(column)+1, ",\n".join(farm_values[column])).alignment = Alignment(wrap_text=True, vertical='top')
+            
+            sheet.row_dimensions[row].height = None
+            row+=1
+        
+        
+    
+    wb.save(output_file)
+    
+    
+    
 
 def filename_pattern_check(filename, row_num):
     ''' Checks whether the filename matches the expected format and extracts the components needed for further processing. If the filename does not match the expected pattern then ValueError exception is thrown.
@@ -34,14 +83,22 @@ def filename_pattern_check(filename, row_num):
         Tuple containing the central part of the filename and the final count at the end of the filename   
     '''
     
-    if m := re.match(r"MAF32-(\d*-\d*)_(\d*).tif", filename):
+    if m := re.match(r"MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif", filename):
         ref_component = m.group(1)
-        iteration_num = m.group(2)
+        iteration_num = m.group(3)
         return (ref_component, iteration_num)
     else:
         raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
          
-
+# Group 1: Filenames 
+# Input columns: A (filename_1) and B (filename_2). 
+# Expecting two to five rows of data (depending on number of forms for that farm)
+# Check 1: the format should be quite consistent: MAF32-\d*-\d*__\d*.tif
+# Check 2: the filenames should all match up to the underscore
+# Check 3: filename_1, filename_2 should consist of consecutive numbers in each row
+# Return comma separated list of file names [Output column: A (Filenames)]
+# Warnings if checks don't pass [Output column: B (File Warnings)]
+# Warnings if unexpected number of rows matched
 def filename_checks(filename1, filename2, row_num):
     ''' Carries out the required checks on the filenames for each row
     
@@ -63,6 +120,8 @@ def filename_checks(filename1, filename2, row_num):
         warnings.append(str(e))
         ref_part1 = ""
         iteration_num1 = -1
+        print(iteration_num1 + ": " + iteration_num2)
+        print(warnings) 
         
     try:
         ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
@@ -75,11 +134,15 @@ def filename_checks(filename1, filename2, row_num):
         # check three - sequence
         if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and iteration_num1 > 0:
             warnings.append("Row " + row_num + ": File names are not consecutive")
-            
+        
+        print(iteration_num1 + ": " + iteration_num2)
+        print(warnings)    
         return (ref_part1, warnings)
     
     except ValueError as e:
         warnings.append(str(e))
+        print(iteration_num1 + ": " + iteration_num2)
+        print(warnings)   
         return ("0-0", warnings)
     
     
@@ -91,26 +154,57 @@ def extract_farms(full_csv):
     farms = {}
     
     for row_num, row in enumerate(full_csv, 2):
-        ref_component, warnings = filename_checks(row['filename_1'], row['filename_2'], str(row_num))
-        
-        warning_dict = {"Filenames": warnings}
-        
+        file1 = row['filename_1']
+        file2 = row['filename_2']
+        ref_component, warnings = filename_checks(file1, file2, str(row_num))
+                
         primary_farm_number = row['primary_farm_number']
         additional_farm_number = row['additional_farms']
+        form = row['document_type']
+        
+        type_warning = []
+        doc_check = doc_type_check(form)
+        if len(doc_check) > 0:
+            type_warning = ["Row " + str(row_num) + ": " + doc_check]
+        
+        form_values = {"Type": [form]}
 
         farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number, additional_farm_number, str(row_num), farms.keys())
         
-        farms.update(farm_refs)
+        for temp_ref in farm_refs.keys():
+            core_ref = temp_ref.split("-")[0]
+            if core_ref in farms.keys() and form not in farms[core_ref]["Type"]: 
+                ref = core_ref           
+                farms[ref]["Type"] += [form]          
+            elif core_ref in farms.keys() and form in farms[core_ref]["Type"]:
+                ref = temp_ref
+                farms[ref] = {"Type": [form]}               
+                ref_warnings.append("Row " + str(row_num) + ": Error - Duplicate reference/form")
+            else:
+                ref = core_ref 
+                farms[ref] = form_values 
+        
+        if "Filenames" in farms[ref].keys():
+            farms[ref]["Filenames"] += [file1, file2]  
+        else:
+            farms[ref]["Filenames"] = [file1, file2]
+            
+        if "Filename Warnings" in farms[ref].keys():
+            farms[ref]["Filename Warnings"] += warnings
+        else:
+            farms[ref]["Filename Warnings"] = warnings
+        
+        if "Reference Warnings" in farms[ref].keys():
+            farms[ref]["Reference Warnings"] += ref_warnings
+        else:
+            farms[ref]["Reference Warnings"] = ref_warnings
 
-        warning_dict["References"] = ref_warnings
-        
-        print(farm_refs)
-        
-        
-        print(warning_dict)
-    
-
-    
+        if "Type Warnings" in farms[ref].keys():
+            farms[ref]["Type Warnings"] += type_warning
+        else:
+            farms[ref]["Type Warnings"] = type_warning
+                
+    return (farms)  
 
     
 
@@ -136,31 +230,22 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
     warnings = []
     
     if primary_farm_string != "" and additional_farm_string == "":
-        ref, warning = generate_ref("MAF 32 " + box_string + "/" + primary_farm_string, existing_refs)           
+        ref = generate_ref("MAF 32/" + box_string + "/" + primary_farm_string, existing_refs)           
         ref_list[ref] = "Primary"
-        if len(warning) > 0:
-            warnings.append("Row " + row_num + ": " + warning)
        
     elif primary_farm_string == "" and additional_farm_string != "":
         for additional_farm in additional_farm_string.split(";"):
-            ref, warning = generate_ref("MAF 32 " + box_string + "/" + additional_farm, existing_refs)           
+            ref = generate_ref("MAF 32/" + box_string + "/" + additional_farm, existing_refs)           
             ref_list[ref] = "Additional"
-            if len(warning) > 0:
-                warnings.append("Row " + row_num + ": " + warning)
         warnings.append("Row " + row_num + ": Error - Additional farm but no primary farm given")
         
     elif primary_farm_string != "" and additional_farm_string != "":
-        ref, warning = generate_ref("MAF 32 " + box_string + "/" + primary_farm_string, existing_refs)           
+        ref = generate_ref("MAF 32/" + box_string + "/" + primary_farm_string, existing_refs)           
         ref_list[ref] = "Primary"
-        if len(warning) > 0:
-            warnings.append("Row " + row_num + ": " + warning)
-        
         
         for additional_farm in additional_farm_string.split(";"):
-            ref, warning = generate_ref("MAF 32 " + box_string + "/" + additional_farm, existing_refs)           
-            ref_list[ref] = "Additional"
-            if len(warning) > 0:
-                warnings.append("Row " + row_num + ": " + warning)             
+            ref = generate_ref("MAF 32/" + box_string + "/" + additional_farm, existing_refs)           
+            ref_list[ref] = "Additional"          
                
         warnings.append("Row " + row_num + ": Additional farms present")
     else:
@@ -176,7 +261,7 @@ def generate_ref(base_ref, existing_refs):
             existing_refs - list of already used references
         
         outputs:
-            Tuple with reference string and warnings string if a duplicate reference was found       
+            Reference string      
     '''
     
     if base_ref in existing_refs:
@@ -186,19 +271,11 @@ def generate_ref(base_ref, existing_refs):
             temp_ref = temp_ref.split("-")[0] + "-" + str(counter)
             counter += 1   
          
-        return (temp_ref, "Error - Duplicate reference found. Reference extended.")
+        return temp_ref
     else:
-        return (base_ref, "")
+        return base_ref
 
-# Group 1: Filenames 
-# Input columns: A (filename_1) and B (filename_2). 
-# Expecting two to five rows of data (depending on number of forms for that farm)
-# Check 1: the format should be quite consistent: MAF32-\d*-\d*__\d*.tif
-# Check 2: the filenames should all match up to the underscore
-# Check 3: filename_1, filename_2 should consist of consecutive numbers in each row
-# Return comma separated list of file names [Output column: A (Filenames)]
-# Warnings if checks don't pass [Output column: B (File Warnings)]
-# Warnings if unexpected number of rows matched
+
 
 # Group 2: Type of documents
 # Input column: C (document_type)
@@ -207,6 +284,13 @@ def generate_ref(base_ref, existing_refs):
 # Return comma separated list of forms [Output column: C (Type)]
 # Warnings if content doesn't match allowed values [Output column: D (Type Warnings)]
 # Warnings if unexpected number of rows matched
+
+def doc_type_check(type):
+    allowed_types = ["C 51/SSY form", "B 496/EI form", "C 47/SSY form", "C 49/SSY form", "SF form C 69/SSY", "other"]
+    if type in allowed_types:
+        return ""
+    else:
+        return "Unknown document type."
 
 # Group 3: Farm number
 # Input column: D (county), E (parish), F (primary_farm_number) and G (additional_farms - semi-colon separated list) in source spreadsheet
