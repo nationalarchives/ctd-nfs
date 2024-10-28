@@ -132,7 +132,7 @@ def filename_checks(filename1, filename2, row_num):
 
         
         # check three - sequence
-        if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and iteration_num1 > 0:
+        if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
             warnings.append("Row " + row_num + ": File names are not consecutive")
         
         print(iteration_num1 + ": " + iteration_num2)
@@ -141,8 +141,6 @@ def filename_checks(filename1, filename2, row_num):
     
     except ValueError as e:
         warnings.append(str(e))
-        print(iteration_num1 + ": " + iteration_num2)
-        print(warnings)   
         return ("0-0", warnings)
     
     
@@ -166,43 +164,51 @@ def extract_farms(full_csv):
         doc_check = doc_type_check(form)
         if len(doc_check) > 0:
             type_warning = ["Row " + str(row_num) + ": " + doc_check]
-        
-        form_values = {"Type": [form]}
 
         farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number, additional_farm_number, str(row_num), farms.keys())
         
         for temp_ref in farm_refs.keys():
             core_ref = temp_ref.split("-")[0]
+            print("Checking: " + core_ref + ": " + form)
             if core_ref in farms.keys() and form not in farms[core_ref]["Type"]: 
-                ref = core_ref           
-                farms[ref]["Type"] += [form]          
+                ref = core_ref            
+                farms[ref]["Type"] += [form]
+                print("Row " + str(row_num) +  ": Core ref in dict, form not in dict. Adding " + form + " to " + ref)       
             elif core_ref in farms.keys() and form in farms[core_ref]["Type"]:
                 ref = temp_ref
-                farms[ref] = {"Type": [form]}               
+                print("Row " + str(row_num) + ": Core ref (" + core_ref + ") in dict and form in dict")
+                if ref in farms.keys():
+                    farms[ref]["Type"] += [form]
+                else:
+                    farms[ref] = {"Type": [form]}  
+                                 
                 ref_warnings.append("Row " + str(row_num) + ": Error - Duplicate reference/form")
             else:
                 ref = core_ref 
-                farms[ref] = form_values 
+                farms[ref] = {"Type": [form]}
+                print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
         
-        if "Filenames" in farms[ref].keys():
-            farms[ref]["Filenames"] += [file1, file2]  
-        else:
-            farms[ref]["Filenames"] = [file1, file2]
+            if "Filenames" in farms[ref].keys():
+                farms[ref]["Filenames"] += [file1, file2]  
+            else:
+                farms[ref]["Filenames"] = [file1, file2]
+                
+            if "Filename Warnings" in farms[ref].keys():
+                farms[ref]["Filename Warnings"] += warnings
+            else:
+                farms[ref]["Filename Warnings"] = warnings
             
-        if "Filename Warnings" in farms[ref].keys():
-            farms[ref]["Filename Warnings"] += warnings
-        else:
-            farms[ref]["Filename Warnings"] = warnings
-        
-        if "Reference Warnings" in farms[ref].keys():
-            farms[ref]["Reference Warnings"] += ref_warnings
-        else:
-            farms[ref]["Reference Warnings"] = ref_warnings
+            if "Reference Warnings" in farms[ref].keys():
+                farms[ref]["Reference Warnings"] += ref_warnings
+            else:
+                farms[ref]["Reference Warnings"] = ref_warnings
 
-        if "Type Warnings" in farms[ref].keys():
-            farms[ref]["Type Warnings"] += type_warning
-        else:
-            farms[ref]["Type Warnings"] = type_warning
+            if "Type Warnings" in farms[ref].keys():
+                farms[ref]["Type Warnings"] += type_warning
+            else:
+                farms[ref]["Type Warnings"] = type_warning
+            
+    print(farms)
                 
     return (farms)  
 
