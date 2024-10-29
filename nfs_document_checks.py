@@ -40,6 +40,15 @@ def load_spreadsheet_data(processing_folder):
         
 
 def output_excel(output_file, values):
+    ''' Save a spreadsheet containing the values for checking
+    
+        keyword arguments:
+            output_file - path to output file
+            values - nested dictionary of values to be output. The top keys are the unique reference for each farm and nested below that are the values for that farm with the column name as the keys
+            
+        Returns:
+            No return but a file is saved to the specified place
+    '''
     wb = Workbook()
     sheet = wb.active
     
@@ -108,39 +117,39 @@ def filename_checks(filename1, filename2, row_num):
             row_num - string with number of row in spreadsheet 
             
         Outputs:
-            Tuple containing the central part of the filename for use in the reference and a list of warnings
+            Tuple containing the central part of the filename for use in the reference and a set of warnings
     '''
-    warnings = []
+    warnings = set()
     
     # check one - match MAF32-\d*-\d*_\d*.tif
     
     try:
         ref_part1, iteration_num1 = filename_pattern_check(filename1, row_num)
     except ValueError as e:
-        warnings.append(str(e))
+        warnings.add(str(e))
         ref_part1 = ""
         iteration_num1 = -1
-        print(iteration_num1 + ": " + iteration_num2)
-        print(warnings) 
+        #print(iteration_num1 + ": " + iteration_num2)
+        #print(warnings) 
         
     try:
         ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
 
         # check two - centre sections match
         if ref_part1 != ref_part2 and ref_part1 != "":
-            warnings.append("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
+            warnings.add("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
 
         
         # check three - sequence
         if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
-            warnings.append("Row " + row_num + ": File names are not consecutive")
+            warnings.add("Row " + row_num + ": File names are not consecutive")
         
         print(iteration_num1 + ": " + iteration_num2)
         print(warnings)    
         return (ref_part1, warnings)
     
     except ValueError as e:
-        warnings.append(str(e))
+        warnings.add(str(e))
         return ("0-0", warnings)
     
     
@@ -154,18 +163,20 @@ def extract_farms(full_csv):
     for row_num, row in enumerate(full_csv, 2):
         file1 = row['filename_1']
         file2 = row['filename_2']
-        ref_component, warnings = filename_checks(file1, file2, str(row_num))
+        ref_component, filename_warnings = filename_checks(file1, file2, str(row_num))
                 
         primary_farm_number = row['primary_farm_number']
         additional_farm_number = row['additional_farms']
         form = row['document_type']
         
-        type_warning = []
+        type_warnings = set()
         doc_check = doc_type_check(form)
         if len(doc_check) > 0:
-            type_warning = ["Row " + str(row_num) + ": " + doc_check]
+            type_warnings = ["Row " + str(row_num) + ": " + doc_check]
 
         farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number, additional_farm_number, str(row_num), farms.keys())
+        
+        #print(ref_warnings)
         
         for temp_ref in farm_refs.keys():
             core_ref = temp_ref.split("-")[0]
@@ -173,40 +184,41 @@ def extract_farms(full_csv):
             if core_ref in farms.keys() and form not in farms[core_ref]["Type"]: 
                 ref = core_ref            
                 farms[ref]["Type"] += [form]
-                print("Row " + str(row_num) +  ": Core ref in dict, form not in dict. Adding " + form + " to " + ref)       
+                #print("Row " + str(row_num) +  ": Core ref in dict, form not in dict. Adding " + form + " to " + ref)       
             elif core_ref in farms.keys() and form in farms[core_ref]["Type"]:
                 ref = temp_ref
-                print("Row " + str(row_num) + ": Core ref (" + core_ref + ") in dict and form in dict")
+                #print("Row " + str(row_num) + ": Core ref (" + core_ref + ") in dict and form in dict")
                 if ref in farms.keys():
                     farms[ref]["Type"] += [form]
                 else:
                     farms[ref] = {"Type": [form]}  
                                  
-                ref_warnings.append("Row " + str(row_num) + ": Error - Duplicate reference/form")
+                ref_warnings.add("Row " + str(row_num) + ": Error - Duplicate reference/form")
             else:
                 ref = core_ref 
                 farms[ref] = {"Type": [form]}
-                print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
+                #print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
         
+            print(ref)
             if "Filenames" in farms[ref].keys():
-                farms[ref]["Filenames"] += [file1, file2]  
+                farms[ref]["Filenames"].update({file1, file2})  
             else:
-                farms[ref]["Filenames"] = [file1, file2]
+                farms[ref]["Filenames"] = {file1, file2}
                 
             if "Filename Warnings" in farms[ref].keys():
-                farms[ref]["Filename Warnings"] += warnings
+                farms[ref]["Filename Warnings"].update(filename_warnings)
             else:
-                farms[ref]["Filename Warnings"] = warnings
+                farms[ref]["Filename Warnings"] = filename_warnings
             
             if "Reference Warnings" in farms[ref].keys():
-                farms[ref]["Reference Warnings"] += ref_warnings
+                farms[ref]["Reference Warnings"].update(ref_warnings)
             else:
                 farms[ref]["Reference Warnings"] = ref_warnings
 
             if "Type Warnings" in farms[ref].keys():
-                farms[ref]["Type Warnings"] += type_warning
+                farms[ref]["Type Warnings"].update(type_warnings)
             else:
-                farms[ref]["Type Warnings"] = type_warning
+                farms[ref]["Type Warnings"] = type_warnings
             
     print(farms)
                 
@@ -233,7 +245,7 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
             Tuple containing a list of generated references and a list of warnings
     '''
     ref_list = {}
-    warnings = []
+    warnings = set()
     
     if primary_farm_string != "" and additional_farm_string == "":
         ref = generate_ref("MAF 32/" + box_string + "/" + primary_farm_string, existing_refs)           
@@ -243,7 +255,7 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
         for additional_farm in additional_farm_string.split(";"):
             ref = generate_ref("MAF 32/" + box_string + "/" + additional_farm, existing_refs)           
             ref_list[ref] = "Additional"
-        warnings.append("Row " + row_num + ": Error - Additional farm but no primary farm given")
+        warnings.add("Row " + row_num + ": Error - Additional farm but no primary farm given")
         
     elif primary_farm_string != "" and additional_farm_string != "":
         ref = generate_ref("MAF 32/" + box_string + "/" + primary_farm_string, existing_refs)           
@@ -253,9 +265,9 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
             ref = generate_ref("MAF 32/" + box_string + "/" + additional_farm, existing_refs)           
             ref_list[ref] = "Additional"          
                
-        warnings.append("Row " + row_num + ": Additional farms present")
+        warnings.add("Row " + row_num + ": Additional farms present")
     else:
-        warnings.append("Row " + row_num + ": Error - No farm number specified")
+        warnings.add("Row " + row_num + ": Error - No farm number specified")
         
     return (ref_list, warnings)  
 
