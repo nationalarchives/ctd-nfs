@@ -52,8 +52,8 @@ def output_excel(output_file, values):
     wb = Workbook()
     sheet = wb.active
     
-    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings"]
-    default_widths = [20, 20, 30, 20, 15, 20]
+    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Acreage", "OS sheet number"]
+    default_widths = [20, 20, 30, 20, 15, 20, 15, 15]
     
     for i in range(0, len(headings)):
         column = headings[i]
@@ -91,13 +91,15 @@ def filename_pattern_check(filename, row_num):
     Outputs:
         Tuple containing the central part of the filename and the final count at the end of the filename   
     '''
-    
-    if m := re.match(r"MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif", filename):
-        ref_component = m.group(1)
-        iteration_num = m.group(3)
-        return (ref_component, iteration_num)
+    if filename != "":
+        if m := re.match(r"MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif", filename):
+            ref_component = m.group(1)
+            iteration_num = m.group(3)
+            return (ref_component, iteration_num)
+        else:
+            raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
     else:
-        raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
+        raise ValueError("Row " + row_num + ": Error - Blank filename found. Further checks on the filename could not be carried out and an accurate reference could not be generated.")        
          
 # Group 1: Filenames 
 # Input columns: A (filename_1) and B (filename_2). 
@@ -123,34 +125,39 @@ def filename_checks(filename1, filename2, row_num):
     
     # check one - match MAF32-\d*-\d*_\d*.tif
     
-    try:
-        ref_part1, iteration_num1 = filename_pattern_check(filename1, row_num)
-    except ValueError as e:
-        warnings.add(str(e))
-        ref_part1 = ""
-        iteration_num1 = -1
-        #print(iteration_num1 + ": " + iteration_num2)
-        #print(warnings) 
+    if not(filename1 == "" and filename2 == ""):   
+        try:
+            ref_part1, iteration_num1 = filename_pattern_check(filename1, row_num)
+        except ValueError as e:
+            warnings.add(str(e))
+            ref_part1 = ""
+            iteration_num1 = -1
+            #print(iteration_num1 + ": " + iteration_num2)
+            #print(warnings) 
         
-    try:
-        ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
+        try:
+            ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
 
-        # check two - centre sections match
-        if ref_part1 != ref_part2 and ref_part1 != "":
-            warnings.add("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
+            # check two - centre sections match
+            if ref_part1 != ref_part2 and ref_part1 != "":
+                warnings.add("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
 
+            
+            # check three - sequence
+            if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
+                warnings.add("Row " + row_num + ": File names are not consecutive")
+            
+            print(iteration_num1 + ": " + iteration_num2)
+            print(warnings)    
+            return (ref_part1, warnings)
         
-        # check three - sequence
-        if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
-            warnings.add("Row " + row_num + ": File names are not consecutive")
-        
-        print(iteration_num1 + ": " + iteration_num2)
-        print(warnings)    
-        return (ref_part1, warnings)
-    
-    except ValueError as e:
-        warnings.add(str(e))
+        except ValueError as e:
+            warnings.add(str(e))
+            return ("0-0", warnings)
+    else:
+        warnings.add("Row " + row_num + ": Error - File names missing")
         return ("0-0", warnings)
+        
     
     
 
@@ -159,6 +166,7 @@ def extract_farms(full_csv):
     '''
     
     farms = {}
+    row_counts = {}
     
     for row_num, row in enumerate(full_csv, 2):
         file1 = row['filename_1']
@@ -176,8 +184,9 @@ def extract_farms(full_csv):
 
         farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number, additional_farm_number, str(row_num), farms.keys())
         
+        #print(farm_refs)
         #print(ref_warnings)
-        
+
         for temp_ref in farm_refs.keys():
             core_ref = temp_ref.split("-")[0]
             print("Checking: " + core_ref + ": " + form)
@@ -198,18 +207,77 @@ def extract_farms(full_csv):
                 ref = core_ref 
                 farms[ref] = {"Type": [form]}
                 #print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
+          
+            # count rows
+            if ref in row_counts.keys():
+                row_counts[ref]["Total"] += 1
+            else:
+                row_counts[ref] = {"Total":1, "Row": row_num}
         
-            print(ref)
+            # generate farm number    
+            county = row['county']
+            parish = row['parish']
+                           
+            if farm_refs[temp_ref] == "Primary":
+                farm_numbers = row['primary_farm_number']     
+            else:
+                farm_numbers = row['additional_farms']
+            
+            farm_nums = generate_farm_number_for_record(county, parish, farm_numbers, ref)
+
+            if "Farm number" in farms[ref].keys():
+                farms[ref]["Farm number"].update(farm_nums)
+                if len(farm_nums) == 1:
+                    row_counts[ref]["Farm number"] += 1
+            else:
+                farms[ref]["Farm number"] = farm_nums
+                if len(farm_nums) == 1:
+                    row_counts[ref].update({"Farm number":1})
+            
+            # Type counts            
+            if "Type" in row_counts[ref].keys() and form != "":
+                row_counts[ref]["Type"] += 1
+            elif form != "":
+                row_counts[ref].update({"Type":1})                       
+        
+            # Filenames
             if "Filenames" in farms[ref].keys():
                 farms[ref]["Filenames"].update({file1, file2})  
+                if file1 != "" and file2 != "":
+                    row_counts[ref]["Filenames"] += 1
             else:
                 farms[ref]["Filenames"] = {file1, file2}
+                if file1 != "" and file2 != "":
+                    row_counts[ref].update({"Filenames":1})
                 
             if "Filename Warnings" in farms[ref].keys():
                 farms[ref]["Filename Warnings"].update(filename_warnings)
             else:
                 farms[ref]["Filename Warnings"] = filename_warnings
             
+            # Acreage
+            acreage = row['acreage']
+            print("Acreage: " + acreage)
+            if acreage != "":
+                if "Acreage" in farms[ref].keys():
+                    farms[ref]["Acreage"].update(acreage)
+                    row_counts[ref]["Acreage"] += 1
+                else:
+                    farms[ref].update({"Acreage": {acreage}})
+                    row_counts[ref].update({"Acreage":1})  
+                        
+            
+            # OS sheet number
+            OS_map = row['OS_map_sheet']
+            if OS_map != "":
+                if "OS_sheet_number" in farms[ref].keys():
+                    farms[ref]["OS_sheet_number"].update(OS_map)
+                    row_counts[ref]["OS_sheet_number"] += 1
+                else:
+                    farms[ref].update({"OS_sheet_number": {OS_map}})
+                    row_counts[ref].update({"OS_sheet_number":1}) 
+                                
+            # Warnings
             if "Reference Warnings" in farms[ref].keys():
                 farms[ref]["Reference Warnings"].update(ref_warnings)
             else:
@@ -219,8 +287,10 @@ def extract_farms(full_csv):
                 farms[ref]["Type Warnings"].update(type_warnings)
             else:
                 farms[ref]["Type Warnings"] = type_warnings
+                
             
-    print(farms)
+    print(farms)   
+    print(row_counts)
                 
     return (farms)  
 
@@ -293,8 +363,6 @@ def generate_ref(base_ref, existing_refs):
     else:
         return base_ref
 
-
-
 # Group 2: Type of documents
 # Input column: C (document_type)
 # Expecting two to five rows of data (depending on number of forms for that farm)
@@ -320,6 +388,53 @@ def doc_type_check(type):
 # Warning: flag any case in which column G is filled [Output column: F (Farm Warnings)]
 # Warnings if unexpected number of rows matched
 
+def generate_farm_number_for_record(county, parish, farm_nums, ref):
+    ''' Generates a unique farm number from the county code, parish code and farm number for a given reference
+    
+        keyword arguments:
+            county - string with the county information
+            parish - string with the parish information
+            farm_nums - string with semi-colon separated list of farm numbers
+            ref - string with unique record string
+            
+        returns:
+            set with generated farm number (only one number is expected)
+    
+    '''
+    generated_farm_numbers = generate_farm_numbers(county, parish, farm_nums)
+    
+    farm_generated_number = set()
+    
+    for generated_number in generated_farm_numbers:
+        if ref[-1] == generated_number[-1]:
+            farm_generated_number.add(generated_number)       
+        
+    return farm_generated_number
+
+
+def generate_farm_numbers(county, parish, farm_nums):
+    ''' Generates a unique farm numbers from the county code, parish code and farm number
+    
+        keyword arguments:
+            county - string with the county information
+            parish - string with the parish information
+            farm_nums - string with semi-colon separated list of farm numbers
+            
+        returns:
+            set with generated farm numbers
+    
+    '''
+    county_code = county.split(" ")[0]
+    parish_num = parish.split(" ")[0]
+    
+    farm_numbers = set()
+    
+    for farm_num in farm_nums.split(";"):
+        farm_numbers.add(county_code + "/" + parish_num + "/" + farm_num)
+    
+    return farm_numbers
+    
+
 # Group 4: Farm
 # Input column: H (farm_name)
 # Expecting 2 rows of data
@@ -327,6 +442,9 @@ def doc_type_check(type):
 # Return combined value [Output column: G (Farm Name)]  
 # Warning: if not similar [Output column: H (Farm Name Warnings)]
 # Warnings if unexpected number of rows matched   
+
+def get_farm_name():
+    pass
 
 # Group 5: Landowner
 # Input columns: M (owner_title), N (owner_individual_name), O (owner_group_names - semi-colon separated list), P (owner_address - semi-colon separated list)
@@ -342,6 +460,9 @@ def doc_type_check(type):
 # Warning: if mismatch with number of owner group names and owner addresses
 # Warnings if unexpected number of rows matched
 
+def get_landowner():
+    pass
+
 # Group 6: Farmer
 # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
 # Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
@@ -352,6 +473,9 @@ def doc_type_check(type):
 # Return combined values (name, address) of either I/Q/J/R or K/S and L/T [Output column: I (Farmer)]  
 # Warnings: if I/Q/J/R and K/S both given [Output column: I (Farmer Warnings)]  
 # Warnings: if not similar [Output column: I (Farmer Warnings)] 
+
+def get_farmer_name():
+    pass
 
 # Group 7: Acreage
 # Input column: U (acreage)
