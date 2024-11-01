@@ -7,11 +7,12 @@
 
 # Need to match rows on filenames (before underscore) + farm number
 
-import csv, re
+import csv, re, datetime
+import data_normalisation as dn
 from pathlib import Path
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Alignment
-from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
+#from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.utils import get_column_letter
 
 def load_spreadsheet_data(processing_folder):
@@ -52,8 +53,8 @@ def output_excel(output_file, values):
     wb = Workbook()
     sheet = wb.active
     
-    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Acreage", "OS sheet number"]
-    default_widths = [20, 20, 30, 20, 15, 20, 15, 15]
+    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Acreage", "Acreage Warnings", "OS sheet number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
+    default_widths = [20, 20, 30, 20, 15, 20, 15, 20, 15, 20, 15, 15, 20, 15, 20]
     
     for i in range(0, len(headings)):
         column = headings[i]
@@ -167,6 +168,7 @@ def extract_farms(full_csv):
     
     farms = {}
     row_counts = {}
+    raw_farm_info = {}    
     
     for row_num, row in enumerate(full_csv, 2):
         file1 = row['filename_1']
@@ -206,6 +208,7 @@ def extract_farms(full_csv):
             else:
                 ref = core_ref 
                 farms[ref] = {"Type": [form]}
+                raw_farm_info[ref] = dict()
                 #print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
           
             # count rows
@@ -226,13 +229,14 @@ def extract_farms(full_csv):
             farm_nums = generate_farm_number_for_record(county, parish, farm_numbers, ref)
 
             if "Farm number" in farms[ref].keys():
-                farms[ref]["Farm number"].update(farm_nums)
+                farms[ref]["Farm Number"].update(farm_nums)
                 if len(farm_nums) == 1:
-                    row_counts[ref]["Farm number"] += 1
+                    row_counts[ref]["Farm Number"] += 1
             else:
-                farms[ref]["Farm number"] = farm_nums
+                farms[ref]["Farm Number"] = farm_nums
                 if len(farm_nums) == 1:
-                    row_counts[ref].update({"Farm number":1})
+                    row_counts[ref].update({"Farm Number":1})
+
             
             # Type counts            
             if "Type" in row_counts[ref].keys() and form != "":
@@ -254,20 +258,82 @@ def extract_farms(full_csv):
                 farms[ref]["Filename Warnings"].update(filename_warnings)
             else:
                 farms[ref]["Filename Warnings"] = filename_warnings
+                
+            # H (farm_name)
+            farm_name = row['farm_name']
             
-            # Acreage
+            if farm_name != "" and farm_name != "*":
+                if "Farm Name" in raw_farm_info[ref].keys():
+                    raw_farm_info[ref]["Farm Name"].add(farm_name)
+                else:
+                    raw_farm_info[ref] = {"Farm Name": {farm_name}}
+            
+            # M (owner_title), N (owner_individual_name), O (owner_group_names - semi-colon separated list), P (owner_address - semi-colon separated list)
+            owner_title = row['owner_title']
+            owner_individual_name = row['owner_individual_name']
+            owner_group_names = row['owner_group_names']
+            owner_address = row['owner_address']
+            
+            combined = owner_title + owner_individual_name + owner_group_names + owner_address
+            combined = combined.replace("*", "")
+            
+            # If N contains asterisk, data from O should be taken
+            
+            if len(combined) > 0:
+                if "Landowner" in raw_farm_info[ref].keys():
+                    raw_farm_info[ref]["Landowner"]["Title"].add(owner_title)
+                    raw_farm_info[ref]["Landowner"]["Individual Name"].add(owner_individual_name)
+                    raw_farm_info[ref]["Landowner"]["Group Name"].add(owner_group_names)
+                    raw_farm_info[ref]["Landowner"]["Address"].add(owner_address)
+                    
+                else:
+                    if owner_title != "" and owner_title != "*":
+                        raw_farm_info[ref] = {"Landowner": {"Title": {owner_title}}}
+                    else:
+                        raw_farm_info[ref] = {"Landowner": {"Title": {}}}
+                    
+                    if owner_individual_name != "" and owner_individual_name != "*":
+                        raw_farm_info[ref]["Landowner"].update({"Individual Name": {owner_individual_name}})
+                    else:
+                        raw_farm_info[ref]["Landowner"].update({"Individual Name": {}})
+                    
+                    if owner_group_names != "" and owner_group_names != "*":
+                        raw_farm_info[ref]["Landowner"].update({"Group Name": {owner_group_names}})
+                    else:
+                        raw_farm_info[ref]["Landowner"].update({"Group Name": {}})                        
+
+                    if owner_address != "" and owner_address != "*":
+                        raw_farm_info[ref]["Landowner"].update({"Address": {owner_address}})
+                    else:
+                        raw_farm_info[ref]["Landowner"].update({"Address": {}})                     
+                    
+            
+            if "Farmer" in raw_farm_info[ref].keys():
+                pass
+            
+            # Group 7: Acreage
+            # Input column: U (acreage - semi-colon separated list)
+            # Expecting 1 row of data
+            # Return value [Output column: M (Acreage)]
+            # Warning if multiple values     
             acreage = row['acreage']
-            print("Acreage: " + acreage)
+            #print("Acreage: " + acreage)
             if acreage != "":
                 if "Acreage" in farms[ref].keys():
                     farms[ref]["Acreage"].update(acreage)
-                    row_counts[ref]["Acreage"] += 1
                 else:
                     farms[ref].update({"Acreage": {acreage}})
-                    row_counts[ref].update({"Acreage":1})  
+                
+                if "Acreage" in row_counts[ref].keys():
+                    row_counts[ref]["Acreage"] += 1
+                else:
+                    row_counts[ref].update({"Acreage":1}) 
+
                         
-            
-            # OS sheet number
+            # Group 8: OS
+            # Input column: V (OS_map_sheet)
+            # Excepting 1 row of data
+            # Return value [Output column: O (OS Sheet)]             
             OS_map = row['OS_map_sheet']
             if OS_map != "":
                 if "OS_sheet_number" in farms[ref].keys():
@@ -276,6 +342,33 @@ def extract_farms(full_csv):
                 else:
                     farms[ref].update({"OS_sheet_number": {OS_map}})
                     row_counts[ref].update({"OS_sheet_number":1}) 
+
+            # Dates
+            field_date = row["field_info_date"]
+            primary_date = row["primary_record_date"]
+            
+            field_date_values, primary_date_values = date_processing(field_date, primary_date, str(row_num))
+            checked_field_date, field_date_warnings = field_date_values
+            checked_primary_date, primary_date_warnings = primary_date_values
+            
+            print("Checked Field Date: " + checked_field_date)
+            print("Checked Primary Date: " + checked_primary_date)
+            
+            if checked_field_date != "":
+                if "Field Date" in farms[ref].keys():               
+                    farms[ref]["Field Date"].add(checked_field_date)
+                    row_counts[ref]["Field Date"] += 1
+                else:
+                    farms[ref].update({"Field Date": {checked_field_date}})
+                    row_counts[ref].update({"Field Date":1})
+            
+            if checked_primary_date != "":            
+                if "Primary Date" in farms[ref].keys():                
+                    farms[ref]["Primary Date"].add(checked_primary_date)
+                    row_counts[ref]["Primary Date"] += 1
+                else:
+                    farms[ref].update({"Primary Date": {checked_primary_date}})
+                    row_counts[ref].update({"Primary Date":1})            
                                 
             # Warnings
             if "Reference Warnings" in farms[ref].keys():
@@ -287,10 +380,37 @@ def extract_farms(full_csv):
                 farms[ref]["Type Warnings"].update(type_warnings)
             else:
                 farms[ref]["Type Warnings"] = type_warnings
-                
             
-    print(farms)   
-    print(row_counts)
+            farm_num_warning = {"Row " + str(row_num) + ": Error in generated farm number - lettercode/parish number/farm number mismatch"}    
+            if "Farm Number Warnings" in farms[ref].keys() and len(farm_nums) > 1:
+                farms[ref]["Reference Warnings"].update(farm_num_warning)
+            elif len(farm_nums) > 1:
+                farms[ref]["Reference Warnings"] = farm_num_warning
+            else:
+                farms[ref]["Reference Warnings"] = set()
+
+            acreage_warning = {"Row " + str(row_num) + ": multiple acreage given"}    
+            if "Acreage" in farms[ref].keys() and ";" in acreage:
+                farms[ref]["Acreage"].update(acreage_warning)
+            elif ";" in acreage:
+                farms[ref]["Acreage"] = acreage_warning
+            else:
+                farms[ref]["Acreage"] = set()
+
+            if "Field Date Warnings" in farms[ref].keys():
+                farms[ref]["Field Date Warnings"].update(field_date_warnings)
+            else:
+                farms[ref]["Field Date Warnings"] = field_date_warnings
+
+            if "Primary Date Warnings" in farms[ref].keys():
+                farms[ref]["Primary Date Warnings"].update(primary_date_warnings)
+            else:
+                farms[ref]["Primary Date Warnings"] = primary_date_warnings
+
+            
+    #print(farms)   
+    #print(row_counts)
+    print(raw_farm_info)
                 
     return (farms)  
 
@@ -443,7 +563,7 @@ def generate_farm_numbers(county, parish, farm_nums):
 # Warning: if not similar [Output column: H (Farm Name Warnings)]
 # Warnings if unexpected number of rows matched   
 
-def get_farm_name():
+def get_farm_name(farm_names):
     pass
 
 # Group 5: Landowner
@@ -474,18 +594,12 @@ def get_landowner():
 # Warnings: if I/Q/J/R and K/S both given [Output column: I (Farmer Warnings)]  
 # Warnings: if not similar [Output column: I (Farmer Warnings)] 
 
+def check_farmer_data(addressee_title, addressee_individual_name, addressee_group_names, address, farmer_title, farmer_individual_name, farmer_group_names, farmer_address):
+    pass
+
 def get_farmer_name():
     pass
 
-# Group 7: Acreage
-# Input column: U (acreage)
-# Expecting 1 row of data
-# Return value [Output column: M (Acreage)] 
-
-# Group 8: OS
-# Input column: V (OS_map_sheet)
-# Excepting 1 row of data
-# Return value [Output column: O (OS Sheet)] 
 
 # Group 9: Field Date
 # Input column: W (field_info_date)
@@ -505,7 +619,91 @@ def get_farmer_name():
 # Warnings: if date is not later or equal to Field Date [Output column: T (Primary Date Warnings)] 
 # Warnings: if unexpected number of rows matched
 
+def date_processing(field_date, primary_dates, row_num):
+    ''' Checks if dates are valid and that field date occurred before primary date(s)
+    
+        keyword arguments: 
+            field_date - string with the date of the field information
+            primary_dates - semi-colon separated string with the date or dates of the primary records
+            row_num - string with the number of the row in the source spreadsheet
+            
+        Returns:
+            Tuple of tuples. The first tuple contains a string with the field date value and a set of warnings related to the field dates, the second tuple contains the same but for the primary dates.
+    '''
+    
+    if not(field_date == "" or field_date == "*"):
+        checked_field_date, field_date_warnings = date_check(field_date, row_num)
+    else:
+        checked_field_date = ""
+        field_date_warnings = set()
+    
+    primary_date_warnings = set()
+    primary_date_list = []
+    
+    if type(checked_field_date) is datetime.datetime:
+        checked_field_date_str = checked_field_date.strftime('%d/%m/%Y')
+        #print("Checked field date is datetime. String version is " + checked_field_date_str)
+    else:
+        checked_field_date_str = checked_field_date
+        #print("Checked field date is not datetime. String version is " + checked_field_date_str)
+    
+    if len(primary_dates.split(";")) > 1:
+        primary_date_warnings.add("Row " + row_num + ": Multiple dates listed.")
+    
+    for primary_date in primary_dates.split(";"):
+        if not(primary_date == "" or primary_date == "*"):
+            checked_primary_date, pdate_warning = date_check(primary_date, row_num)
+            checked_primary_date_str = checked_primary_date.strftime('%d/%m/%Y')
+            primary_date_warnings.update(pdate_warning)
+            primary_date_list += [checked_primary_date_str]
+            
+            if type(checked_primary_date) is datetime.datetime and type(checked_field_date) is datetime.datetime and checked_primary_date < checked_field_date:
+                date_warning = "Row " + row_num + ": Error - Primary Date (" + checked_primary_date_str + ") earlier than Field date (" + checked_field_date_str + ")"
+                field_date_warnings.add(date_warning)
+                primary_date_warnings.add(date_warning)
+    
+    return ((checked_field_date_str, field_date_warnings), (", ".join(primary_date_list), primary_date_warnings))        
+    
 
+def date_check(potential_date, row_num):    
+    ''' Checks if the date, given as a string, is a valid date
+    
+        Keyword arguments:
+            potential_date - string containing the date value for checking
+            row_num - string with the number of the row in the source spreadsheet
+            
+        Returns:
+            Tuple with either the date as a date object or the original string if it isn't a valid date and a set with any warnings
+    '''
+
+    try: 
+        #print(row_num + ": " + potential_date)
+        day = int(potential_date.split("-")[0])
+        month = potential_date.split("-")[1]
+        year = potential_date.split("-")[2]
+
+        warnings = set()
+        
+        if len(year) == 2:
+            year = int(year)
+            year += 1900
+        elif len(year) != 4:
+            warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as within the expected range.")
+            
+        year = int(year)
+       
+        if month.isdigit():
+            month_number = int(month)
+        else:
+            month_number = datetime.datetime.strptime(month, '%b').month
+                        
+        date = datetime.datetime(year=year,month=month_number,day=int(day))   
+    except ValueError as ve:
+        warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as a valid date (" + str(ve) + "). Further date checks cannot be carried out.")
+        date = potential_date
+        
+    return (date, warnings)
+            
 
 
 processing_folder = "processing"
