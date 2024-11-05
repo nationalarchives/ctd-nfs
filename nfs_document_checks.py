@@ -53,8 +53,8 @@ def output_excel(output_file, values):
     wb = Workbook()
     sheet = wb.active
     
-    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Acreage", "Acreage Warnings", "OS sheet number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
-    default_widths = [20, 20, 30, 20, 15, 20, 15, 20, 15, 20, 15, 15, 20, 15, 20]
+    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Farm Name", "Farm Name Warnings", "Landowner", "Landowner Warnings", "Farmer", "Farmer Warnings", "Acreage", "Acreage Warnings", "OS sheet number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
+    default_widths = [20, 20, 30, 20, 15, 20, 15, 20, 30, 20, 30, 20, 30, 20,15, 20, 15, 15, 20, 15, 20]
     
     for i in range(0, len(headings)):
         column = headings[i]
@@ -148,8 +148,8 @@ def filename_checks(filename1, filename2, row_num):
             if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
                 warnings.add("Row " + row_num + ": File names are not consecutive")
             
-            print(iteration_num1 + ": " + iteration_num2)
-            print(warnings)    
+            #print(iteration_num1 + ": " + iteration_num2)
+            #print(warnings)    
             return (ref_part1, warnings)
         
         except ValueError as e:
@@ -191,7 +191,7 @@ def extract_farms(full_csv):
 
         for temp_ref in farm_refs.keys():
             core_ref = temp_ref.split("-")[0]
-            print("Checking: " + core_ref + ": " + form)
+            #print("Checking: " + core_ref + ": " + form)
             if core_ref in farms.keys() and form not in farms[core_ref]["Type"]: 
                 ref = core_ref            
                 farms[ref]["Type"] += [form]
@@ -261,55 +261,71 @@ def extract_farms(full_csv):
                 
             # H (farm_name)
             farm_name = row['farm_name']
-            
             if farm_name != "" and farm_name != "*":
                 if "Farm Name" in raw_farm_info[ref].keys():
-                    raw_farm_info[ref]["Farm Name"].add(farm_name)
+                    raw_farm_info[ref]["Farm Name"] += [farm_name]
+
                 else:
-                    raw_farm_info[ref] = {"Farm Name": {farm_name}}
+                    raw_farm_info[ref] = {"Farm Name": [farm_name]}
+
             
             # M (owner_title), N (owner_individual_name), O (owner_group_names - semi-colon separated list), P (owner_address - semi-colon separated list)
             owner_title = row['owner_title']
             owner_individual_name = row['owner_individual_name']
             owner_group_names = row['owner_group_names']
-            owner_address = row['owner_address']
+            owner_addresses = row['owner_address']
             
-            combined = owner_title + owner_individual_name + owner_group_names + owner_address
+            combined = owner_title + owner_individual_name + owner_group_names + owner_addresses
             combined = combined.replace("*", "")
             
-            # If N contains asterisk, data from O should be taken
+            # If N/'individual name' contains asterisk, data from O/'group names) should be taken
             
             if len(combined) > 0:
                 if "Landowner" in raw_farm_info[ref].keys():
-                    raw_farm_info[ref]["Landowner"]["Title"].add(owner_title)
-                    raw_farm_info[ref]["Landowner"]["Individual Name"].add(owner_individual_name)
-                    raw_farm_info[ref]["Landowner"]["Group Name"].add(owner_group_names)
-                    raw_farm_info[ref]["Landowner"]["Address"].add(owner_address)
+                    raw_farm_info[ref]["Landowner"]["Title"] += [owner_title]
+                    raw_farm_info[ref]["Landowner"]["Individual Name"] += [owner_individual_name]
+                    raw_farm_info[ref]["Landowner"]["Group Names"] += [owner_group_names]
+                    raw_farm_info[ref]["Landowner"]["Addresses"] += [owner_addresses]
                     
                 else:
-                    if owner_title != "" and owner_title != "*":
-                        raw_farm_info[ref] = {"Landowner": {"Title": {owner_title}}}
-                    else:
-                        raw_farm_info[ref] = {"Landowner": {"Title": {}}}
-                    
-                    if owner_individual_name != "" and owner_individual_name != "*":
-                        raw_farm_info[ref]["Landowner"].update({"Individual Name": {owner_individual_name}})
-                    else:
-                        raw_farm_info[ref]["Landowner"].update({"Individual Name": {}})
-                    
-                    if owner_group_names != "" and owner_group_names != "*":
-                        raw_farm_info[ref]["Landowner"].update({"Group Name": {owner_group_names}})
-                    else:
-                        raw_farm_info[ref]["Landowner"].update({"Group Name": {}})                        
+                    raw_farm_info[ref].update({"Landowner": {"Title": [owner_title]}})
+                    raw_farm_info[ref]["Landowner"].update({"Individual Name": [owner_individual_name]})
+                    raw_farm_info[ref]["Landowner"].update({"Group Names": [owner_group_names]})
+                    raw_farm_info[ref]["Landowner"].update({"Addresses": [owner_addresses]})                                    
 
-                    if owner_address != "" and owner_address != "*":
-                        raw_farm_info[ref]["Landowner"].update({"Address": {owner_address}})
-                    else:
-                        raw_farm_info[ref]["Landowner"].update({"Address": {}})                     
-                    
+            # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
+            # Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
+            addressee_title = row['addressee_title']
+            addressee_individual_name = row['addressee_individual_name']
+            addressee_group_names = row['addressee_group_names']
+            addresses = row['address']
+            farmer_title = row['farmer_title']
+            farmer_individual_name = row['farmer_individual_name']
+            farmer_group_names = row['farmer_group_names']
+            farmer_addresses = row['farmer_address']
             
-            if "Farmer" in raw_farm_info[ref].keys():
-                pass
+            combined = addressee_title + addressee_individual_name + addressee_group_names + addresses + farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
+            combined = combined.replace("*", "")
+            
+            if len(combined) > 0:            
+                if "Farmer" in raw_farm_info[ref].keys():
+                    raw_farm_info[ref]["Farmer"]["Title"] += [farmer_title]
+                    raw_farm_info[ref]["Farmer"]["Individual Name"] += [farmer_individual_name]
+                    raw_farm_info[ref]["Farmer"]["Group Names"] += [farmer_group_names]
+                    raw_farm_info[ref]["Farmer"]["Addresses"] += [farmer_addresses] 
+                    raw_farm_info[ref]["Addressee"]["Title"] += [addressee_title]
+                    raw_farm_info[ref]["Addressee"]["Individual Name"] += [addressee_individual_name]
+                    raw_farm_info[ref]["Addressee"]["Group Names"] += [addressee_group_names]
+                    raw_farm_info[ref]["Addressee"]["Addresses"] += [addresses]                                       
+                else:
+                    raw_farm_info[ref].update({"Farmer": {"Title": [farmer_title]}})
+                    raw_farm_info[ref]["Farmer"].update({"Individual Name": [farmer_individual_name]})
+                    raw_farm_info[ref]["Farmer"].update({"Group Names": [farmer_group_names]})
+                    raw_farm_info[ref]["Farmer"].update({"Addresses": [farmer_addresses]}) 
+                    raw_farm_info[ref].update({"Addressee": {"Title": [addressee_title]}})
+                    raw_farm_info[ref]["Addressee"].update({"Individual Name": [addressee_individual_name]})
+                    raw_farm_info[ref]["Addressee"].update({"Group Names": [addressee_group_names]})
+                    raw_farm_info[ref]["Addressee"].update({"Addresses": [addresses]})                  
             
             # Group 7: Acreage
             # Input column: U (acreage - semi-colon separated list)
@@ -351,8 +367,8 @@ def extract_farms(full_csv):
             checked_field_date, field_date_warnings = field_date_values
             checked_primary_date, primary_date_warnings = primary_date_values
             
-            print("Checked Field Date: " + checked_field_date)
-            print("Checked Primary Date: " + checked_primary_date)
+            #print("Checked Field Date: " + checked_field_date)
+            #print("Checked Primary Date: " + checked_primary_date)
             
             if checked_field_date != "":
                 if "Field Date" in farms[ref].keys():               
@@ -407,10 +423,36 @@ def extract_farms(full_csv):
             else:
                 farms[ref]["Primary Date Warnings"] = primary_date_warnings
 
-            
+    #print(raw_farm_info) 
+    # Farm names
+    farm_names = {}
+    for farm_ref, farm_data in raw_farm_info.items():
+        if "Farm Name" in farm_data.keys():
+            farm_names[farm_ref] = farm_data["Farm Name"]
+          
+    combined_farm_names, combined_farm_name_warnings = get_combined_farm_names_by_ref(farm_names)
+    #print(combined_farm_names)
+    
+    for ref, combined_farm_name in combined_farm_names.items():
+        farms[ref].update({"Farm Name": [combined_farm_name]})
+        farms[ref].update({"Farm Name Warnings": combined_farm_name_warnings[ref]})
+    
+    # Owner names
+    owner_details = {}
+    for owner_ref, owner_data in raw_farm_info.items():
+        if "Landowner" in owner_data.keys():
+            owner_details[owner_ref] = owner_data["Landowner"]    
+    
+    print(owner_details)
+    combined_owner_info, combined_owner_info_warnings = get_combined_owner_details_by_ref(owner_details) 
+
+    for ref, combined_owner_info in combined_owner_info.items():
+        farms[ref].update({"Owner Details": [combined_owner_info]})
+        farms[ref].update({"Owner Details Warnings": combined_owner_info_warnings[ref]})    
+    
+           
     #print(farms)   
     #print(row_counts)
-    print(raw_farm_info)
                 
     return (farms)  
 
@@ -563,8 +605,16 @@ def generate_farm_numbers(county, parish, farm_nums):
 # Warning: if not similar [Output column: H (Farm Name Warnings)]
 # Warnings if unexpected number of rows matched   
 
-def get_farm_name(farm_names):
-    pass
+def get_combined_farm_names_by_ref(farm_names):
+    
+    combined_names, warnings = dn.component_compare(farm_names)
+    
+    for ref in farm_names.keys(): 
+        count = len(farm_names[ref])
+        if count != 2:
+            warnings[ref].add("Expected 2 rows of data, Got " + str(count) + ".")
+    
+    return (combined_names, warnings)
 
 # Group 5: Landowner
 # Input columns: M (owner_title), N (owner_individual_name), O (owner_group_names - semi-colon separated list), P (owner_address - semi-colon separated list)
@@ -580,8 +630,31 @@ def get_farm_name(farm_names):
 # Warning: if mismatch with number of owner group names and owner addresses
 # Warnings if unexpected number of rows matched
 
-def get_landowner():
-    pass
+def get_combined_owner_details_by_ref(owner_details):
+    
+    warnings = set()
+    combined_details = {}
+    components = ["Title", "Individual Name", "Group Names", "Addresses"]
+    
+    for ref, details in owner_details.items(): 
+        count = set()
+        for component in components:
+            count.add(len(details[component]))
+            
+        if len(count) != 1:
+            warnings[ref].add("Mismatch in number of expected answers.")    
+        
+        count_list = list(count)    
+        if count_list[0] != 1:
+            if len(count_list) > 1:
+                warnings[ref].add("Expected 1 row of data, Got " + count_list.sort()[0] + "-" + count_list.sort()[-1] + ".")
+            else:
+                warnings[ref].add("Expected 1 row of data, Got " + count_list[0] + ".")
+        
+    return(combined_details, warnings)
+            
+    
+    
 
 # Group 6: Farmer
 # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
