@@ -208,7 +208,8 @@ def extract_farms(full_csv):
             else:
                 ref = core_ref 
                 farms[ref] = {"Type": [form]}
-                raw_farm_info[ref] = dict()
+                if ref not in raw_farm_info.keys():
+                    raw_farm_info[ref] = dict()
                 #print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
           
             # count rows
@@ -266,7 +267,7 @@ def extract_farms(full_csv):
                     raw_farm_info[ref]["Farm Name"] += [farm_name]
 
                 else:
-                    raw_farm_info[ref] = {"Farm Name": [farm_name]}
+                    raw_farm_info[ref].update({"Farm Name": [farm_name]})
 
             
             # M (owner_title), N (owner_individual_name), O (owner_group_names - semi-colon separated list), P (owner_address - semi-colon separated list)
@@ -284,14 +285,16 @@ def extract_farms(full_csv):
                 if "Landowner" in raw_farm_info[ref].keys():
                     raw_farm_info[ref]["Landowner"]["Title"] += [owner_title]
                     raw_farm_info[ref]["Landowner"]["Individual Name"] += [owner_individual_name]
-                    raw_farm_info[ref]["Landowner"]["Group Names"] += [owner_group_names]
-                    raw_farm_info[ref]["Landowner"]["Addresses"] += [owner_addresses]
+                    raw_farm_info[ref]["Landowner"]["Group Names"] += [owner_group_names.split(";")]
+                    raw_farm_info[ref]["Landowner"]["Addresses"] += [owner_addresses.split(";")]
                     
                 else:
                     raw_farm_info[ref].update({"Landowner": {"Title": [owner_title]}})
                     raw_farm_info[ref]["Landowner"].update({"Individual Name": [owner_individual_name]})
-                    raw_farm_info[ref]["Landowner"].update({"Group Names": [owner_group_names]})
-                    raw_farm_info[ref]["Landowner"].update({"Addresses": [owner_addresses]})                                    
+                    raw_farm_info[ref]["Landowner"].update({"Group Names": [owner_group_names.split(";")]})
+                    raw_farm_info[ref]["Landowner"].update({"Addresses": [owner_addresses.split(";")]}) 
+                    
+                #print(raw_farm_info[ref]["Landowner"])                                
 
             # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
             # Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
@@ -632,28 +635,98 @@ def get_combined_farm_names_by_ref(farm_names):
 
 def get_combined_owner_details_by_ref(owner_details):
     
-    warnings = set()
+    warnings = {}
     combined_details = {}
     components = ["Title", "Individual Name", "Group Names", "Addresses"]
     
+    titles = {}
+    names = {}
+    groups = {}
+    addresses = {}
+
+    
     for ref, details in owner_details.items(): 
+        warnings[ref] = set()
+        titles[ref] = "/".join(details["Title"])
+        names[ref] = "/".join(details["Individual Name"])
+        for gname in details["Group Names"]:
+            if ref in groups.keys():
+                groups[ref] += "/".join(gname)
+            else:
+                groups[ref] = "/".join(gname)
+        for addy in details["Addresses"]:
+            if ref in addresses.keys():
+                addresses[ref] += "/".join(addy)
+            else:
+                addresses[ref] = "/".join(addy)
+
         count = set()
         for component in components:
-            count.add(len(details[component]))
+            component_length = len(details[component])
+            count.add(component_length)
+            values_to_merge_dict = {}
+            
+            if component_length > 1:
+                
+                if component == "Group Names" or component == "Addresses":
+                    longest = 0   
+
+                    for part in details[component]:
+                        if len(part) > longest:
+                            longest = len(part)
+                 
+                    for i in range(0, len(details[component])):
+                        while len(details[component][i]) < longest:
+                            details[component][i].append("") 
+                            
+                    values_to_merge = list(zip(*details[component]))
+                    
+                    for i, values in enumerate(values_to_merge):
+                        values_to_merge_dict[i] = list(values)
+                    
+                else:
+                    for i, values in enumerate(details[component]):
+                        values_to_merge_dict[i] = list(values)
+                        
+                new_value, merge_warnings = dn.component_compare(values_to_merge_dict)
+                warnings[ref].update(merge_warnings)
+
+                if component == "Title":
+                    titles[ref] = list(new_value.values())
+                elif component == "Individual Name":
+                    names[ref] = list(new_value.values())
+                elif component == "Group Names":
+                    groups[ref] = list(new_value.values())
+                elif component == "Addresses":
+                    addresses[ref] = list(new_value.values())
+                else:
+                    print("Error in get_combined_owner_details_by_ref: unknown component type")
+                
             
         if len(count) != 1:
             warnings[ref].add("Mismatch in number of expected answers.")    
         
-        count_list = list(count)    
+        count_list = list(count)   
         if count_list[0] != 1:
             if len(count_list) > 1:
-                warnings[ref].add("Expected 1 row of data, Got " + count_list.sort()[0] + "-" + count_list.sort()[-1] + ".")
+                warnings[ref].add("Expected 1 row of data, Got " + str(count_list.sort()[0]) + "-" + str(count_list.sort()[-1] + "."))             
             else:
-                warnings[ref].add("Expected 1 row of data, Got " + count_list[0] + ".")
+                warnings[ref].add("Expected 1 row of data, Got " + str(count_list[0]) + ".")
+                
+    for ref in owner_details.keys():
         
-    return(combined_details, warnings)
-            
-    
+        name = ""
+        
+        if names[ref] != "*":
+            if titles[ref] != "*" and titles[ref] != "":
+               name = titles[ref] + names[ref]           
+        else:       
+            pass
+                
+                
+                
+        
+    return(combined_details, warnings)      
     
 
 # Group 6: Farmer
