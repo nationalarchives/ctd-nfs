@@ -33,8 +33,9 @@ def load_spreadsheet_data(processing_folder):
                 values = csv.DictReader(f) 
                 farm_values = extract_farms(values)  
                 #print(farm_values)                
-                
-                output_excel(Path(processing_folder, "output", base_filename + ".xlsx"), farm_values)
+            
+            #print(file)    
+            output_excel(Path(processing_folder, "output", base_filename + ".xlsx"), farm_values)
                 
     except OSError as e:
         print("Error in data loading: " + e)
@@ -53,9 +54,9 @@ def output_excel(output_file, values):
     wb = Workbook()
     sheet = wb.active
     
-    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Farm Name", "Farm Name Warnings", "Landowner", "Landowner Warnings", "Farmer", "Farmer Warnings", "Acreage", "Acreage Warnings", "OS sheet number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
+    headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Farm Name", "Farm Name Warnings", "Landowner", "Landowner Warnings", "Farmer", "Farmer Warnings", "Acreage", "Acreage Warnings", "OS Sheet Number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
     default_widths = [20, 20, 30, 20, 15, 20, 15, 20, 30, 20, 30, 20, 30, 20,15, 20, 15, 15, 20, 15, 20]
-    
+ 
     for i in range(0, len(headings)):
         column = headings[i]
         col_num = i+1
@@ -68,6 +69,7 @@ def output_excel(output_file, values):
             sheet.cell(row, 1, ref)
             
             farm_values = values[ref]
+            #print(ref + ": " + ", ".join(farm_values))
 
             if column != "Reference" and column in farm_values.keys():
                 sheet.cell(row, headings.index(column)+1, ",\n".join(farm_values[column])).alignment = Alignment(wrap_text=True, vertical='top')
@@ -336,12 +338,12 @@ def extract_farms(full_csv):
             # Return value [Output column: M (Acreage)]
             # Warning if multiple values     
             acreage = row['acreage']
-            #print("Acreage: " + acreage)
             if acreage != "":
                 if "Acreage" in farms[ref].keys():
-                    farms[ref]["Acreage"].update(acreage)
+                    farms[ref]["Acreage"].update({acreage})
                 else:
                     farms[ref].update({"Acreage": {acreage}})
+                    
                 
                 if "Acreage" in row_counts[ref].keys():
                     row_counts[ref]["Acreage"] += 1
@@ -355,11 +357,11 @@ def extract_farms(full_csv):
             # Return value [Output column: O (OS Sheet)]             
             OS_map = row['OS_map_sheet']
             if OS_map != "":
-                if "OS_sheet_number" in farms[ref].keys():
-                    farms[ref]["OS_sheet_number"].update(OS_map)
+                if "OS Sheet Number" in farms[ref].keys():
+                    farms[ref]["OS Sheet Number"].update(OS_map)
                     row_counts[ref]["OS_sheet_number"] += 1
                 else:
-                    farms[ref].update({"OS_sheet_number": {OS_map}})
+                    farms[ref].update({"OS Sheet Number": {OS_map}})
                     row_counts[ref].update({"OS_sheet_number":1}) 
 
             # Dates
@@ -409,12 +411,12 @@ def extract_farms(full_csv):
                 farms[ref]["Reference Warnings"] = set()
 
             acreage_warning = {"Row " + str(row_num) + ": multiple acreage given"}    
-            if "Acreage" in farms[ref].keys() and ";" in acreage:
-                farms[ref]["Acreage"].update(acreage_warning)
+            if "Acreage Warnings" in farms[ref].keys() and ";" in acreage:
+                farms[ref]["Acreage Warnings"].update(acreage_warning)
             elif ";" in acreage:
-                farms[ref]["Acreage"] = acreage_warning
+                farms[ref]["Acreage Warnings"] = acreage_warning
             else:
-                farms[ref]["Acreage"] = set()
+                farms[ref]["Acreage Warnings"] = set()
 
             if "Field Date Warnings" in farms[ref].keys():
                 farms[ref]["Field Date Warnings"].update(field_date_warnings)
@@ -446,12 +448,12 @@ def extract_farms(full_csv):
         if "Landowner" in owner_data.keys():
             owner_details[owner_ref] = owner_data["Landowner"]    
     
-    print(owner_details)
+    #print(owner_details)
     combined_owner_info, combined_owner_info_warnings = get_combined_owner_details_by_ref(owner_details) 
 
     for ref, combined_owner_info in combined_owner_info.items():
-        farms[ref].update({"Owner Details": [combined_owner_info]})
-        farms[ref].update({"Owner Details Warnings": combined_owner_info_warnings[ref]})    
+        farms[ref].update({"Landowner": [combined_owner_info]})
+        farms[ref].update({"Landowner Warnings": combined_owner_info_warnings[ref]})    
     
            
     #print(farms)   
@@ -669,39 +671,32 @@ def get_combined_owner_details_by_ref(owner_details):
             if component_length > 1:
                 
                 if component == "Group Names" or component == "Addresses":
-                    longest = 0   
-
-                    for part in details[component]:
-                        if len(part) > longest:
-                            longest = len(part)
-                 
-                    for i in range(0, len(details[component])):
-                        while len(details[component][i]) < longest:
-                            details[component][i].append("") 
-                            
-                    values_to_merge = list(zip(*details[component]))
-                    
-                    for i, values in enumerate(values_to_merge):
-                        values_to_merge_dict[i] = list(values)
-                    
+                    values_to_merge_dict = array_zip(details[component])
                 else:
                     for i, values in enumerate(details[component]):
                         values_to_merge_dict[i] = list(values)
                         
-                new_value, merge_warnings = dn.component_compare(values_to_merge_dict)
-                warnings[ref].update(merge_warnings)
-
-                if component == "Title":
-                    titles[ref] = list(new_value.values())
-                elif component == "Individual Name":
-                    names[ref] = list(new_value.values())
-                elif component == "Group Names":
-                    groups[ref] = list(new_value.values())
-                elif component == "Addresses":
-                    addresses[ref] = list(new_value.values())
-                else:
-                    print("Error in get_combined_owner_details_by_ref: unknown component type")
+                merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
                 
+                for warning in merge_warnings.values():
+                    if len(warning) > 0:
+                        warnings[ref].update(warning)
+                
+                if component == "Title":
+                    titles[ref] = list(merged_values.values())
+                elif component == "Individual Name":
+                    names[ref] = list(merged_values.values())
+                elif component == "Group Names":
+                    groups[ref] = list(merged_values.values())
+                elif component == "Addresses":
+                    addresses[ref] = list(merged_values.values())
+                else:
+                    print("Error in get_combined_owner_details_by_ref: unknown component type")  
+            elif component == "Group Names" or component == "Addresses": 
+                if component == "Group Names":
+                    groups[ref] = details[component][0]
+                elif component == "Addresses":
+                    addresses[ref] = details[component][0]       
             
         if len(count) != 1:
             warnings[ref].add("Mismatch in number of expected answers.")    
@@ -713,20 +708,104 @@ def get_combined_owner_details_by_ref(owner_details):
             else:
                 warnings[ref].add("Expected 1 row of data, Got " + str(count_list[0]) + ".")
                 
-    for ref in owner_details.keys():
+    for ref in owner_details.keys():  
+        name = ""  
         
-        name = ""
+        name_value = names[ref]
+        title_value = titles[ref]
+        group_value = groups[ref]
+        addy_value = addresses[ref] 
         
-        if names[ref] != "*":
-            if titles[ref] != "*" and titles[ref] != "":
-               name = titles[ref] + names[ref]           
-        else:       
-            pass
+        if isinstance(name_value, list):
+            temp = set(name_value)
+            if len(temp) == 1 and (list(temp)[0] == ""):
+                name_value = ""
+            else:
+                warnings[ref].add("Error: multiple names found when one expected")
+                name_value = "/".join(name_value) 
+
+        if isinstance(title_value, list):
+            temp = set(title_value)
+            if len(temp) == 1 and (list(temp)[0] == ""):
+                title_value = ""
+            else:
+                warnings[ref].add("Error: multiple names found when one expected")
+                title_value = "/".join(title_value) 
+
+        if isinstance(group_value, list):
+            temp = set(group_value)
+            if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
+                group_value = group_value[0]
+        
+        if name_value != "*" and name_value != "":
+            #name
+            if title_value != "*":
+                name = title_value + " " + name_value
+
+            name = name.strip() 
+            
+            if isinstance(group_value, list):  
+                warnings[ref].add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
+
+            # Address            
+            address = ""
+            if isinstance(addy_value, list) and len(addy_value) > 1:
+                warnings[ref].add("Error: multiple addresses found when one expected") 
+                address = "/".join(addy_value)  
+            elif isinstance(addy_value, list):
+                address = addy_value[0]
+            else:
+                address = addy_value
                 
+            combined_details[ref] = name + ", " + address  
+            
+        else:  
+            group_names = []                 
+            if isinstance(group_value, list) and isinstance(addy_value, list): 
+                for i, group in enumerate(group_value):
+                    group = group.strip()
+                    if i < len(addy_value) and addy_value[i].strip() != "":
+                        group_names.append(group + ", " + addy_value[i])
+                    else:
+                        group_names.append(group)
+                        
+            else:
+                print("get_combined_owner_details_by_ref: Expecting lists for group and address values")
                 
-                
+            combined_details[ref] = ", ".join(group_names)
+               
+    print(combined_details) 
+    print(warnings)           
         
     return(combined_details, warnings)      
+
+def array_zip(details_array):
+    ''' Takes a dictionary with an array of arrays and zips the arrays together
+    
+        Key arguments:
+            details_array - dictionary containing and array of arrays in the values
+            
+        Returns:
+            Dictionary with the same keys as the input but with each component in the original lists zipped together
+    '''
+    
+    values_to_merge_dict = {}
+    longest = 0  
+    
+    for part in details_array:
+        if len(part) > longest:
+            longest = len(part)
+    
+    for i in range(0, len(details_array)):
+        while len(details_array[i]) < longest:
+            details_array[i].append("") 
+            
+    values_to_merge = list(zip(*details_array))
+    
+    for i, values in enumerate(values_to_merge):       
+        values_to_merge_dict[i] = list(values)
+        
+    return values_to_merge_dict
     
 
 # Group 6: Farmer
