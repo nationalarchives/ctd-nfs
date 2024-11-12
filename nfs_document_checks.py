@@ -636,6 +636,14 @@ def get_combined_farm_names_by_ref(farm_names):
 # Warnings if unexpected number of rows matched
 
 def get_combined_owner_details_by_ref(owner_details):
+    ''' Combines owner values and flags warnings if unexpected values found
+    
+        Key arguments:  
+            owner_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
+            
+        Returns:
+            Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
+    '''
     
     warnings = {}
     combined_details = {}
@@ -649,8 +657,13 @@ def get_combined_owner_details_by_ref(owner_details):
     
     for ref, details in owner_details.items(): 
         warnings[ref] = set()
+        #print(owner_details)
+        
+        '''
+        # lists of strings as single value expected
         titles[ref] = "/".join(details["Title"])
         names[ref] = "/".join(details["Individual Name"])
+        # lists of lists because multiple values allowed
         for gname in details["Group Names"]:
             if ref in groups.keys():
                 groups[ref] += "/".join(gname)
@@ -661,14 +674,16 @@ def get_combined_owner_details_by_ref(owner_details):
                 addresses[ref] += "/".join(addy)
             else:
                 addresses[ref] = "/".join(addy)
+        '''
 
         count = set()
+        #for each type of field e.g. Title, Individual Name etc converts values to single string for each
         for component in components:
-            component_length = len(details[component])
+            component_length = len(details[component]) 
             count.add(component_length)
             values_to_merge_dict = {}
             
-            if component_length > 1:
+            if component_length > 1: # Check if there is more that one variation and if so merge
                 
                 if component == "Group Names" or component == "Addresses":
                     values_to_merge_dict = array_zip(details[component])
@@ -692,11 +707,16 @@ def get_combined_owner_details_by_ref(owner_details):
                     addresses[ref] = list(merged_values.values())
                 else:
                     print("Error in get_combined_owner_details_by_ref: unknown component type")  
-            elif component == "Group Names" or component == "Addresses": 
-                if component == "Group Names":
+            else: # If there are not multiple variations then get first value
+                if component == "Title":
+                    titles[ref] = details[component][0]
+                elif component == "Individual Name":
+                    names[ref] = details[component][0]
+                elif component == "Group Names":
                     groups[ref] = details[component][0]
                 elif component == "Addresses":
-                    addresses[ref] = details[component][0]       
+                    addresses[ref] = details[component][0]  
+     
             
         if len(count) != 1:
             warnings[ref].add("Mismatch in number of expected answers.")    
@@ -757,25 +777,46 @@ def get_combined_owner_details_by_ref(owner_details):
             else:
                 address = addy_value
                 
+            if address == "*":
+                address = "[..?]"
+                
             combined_details[ref] = name + ", " + address  
             
         else:  
             group_names = []                 
             if isinstance(group_value, list) and isinstance(addy_value, list): 
+                if len(group_value) != len(addy_value):
+                    warnings[ref].add("Error: Length of group names (" + str(len(group_value))+ ") and addresses (" + len(addy_value) + ") different") 
+                
                 for i, group in enumerate(group_value):
                     group = group.strip()
-                    if i < len(addy_value) and addy_value[i].strip() != "":
-                        group_names.append(group + ", " + addy_value[i])
-                    else:
-                        group_names.append(group)
+                    if group == "*":
+                        group = "[..?]"
                         
+                    if i < len(addy_value) and addy_value[i].strip() != "":
+                        addy = addy_value[i]
+                        if addy.strip() == "*":
+                            addy = "[..?]"
+                        group_names.append(group + ", " + addy)
+                    else:
+                        group_names.append(group)  
+                        warnings[ref].add("Warning: No address with " + group)   
+                        
+                if len(addy_value) > len(group_value):
+                    for i in range(len(group_value) - 1, len(addy_value)):
+                        addy = addy_value[i]
+                        if addy.strip() == "*":
+                            addy = "[..?]"
+                        group_names.append("[..?], " + addy)
+                        warnings[ref].add("Warning: No group name with " + addy)                
+                 
             else:
                 print("get_combined_owner_details_by_ref: Expecting lists for group and address values")
                 
-            combined_details[ref] = ", ".join(group_names)
+            combined_details[ref] = "; ".join(group_names)
                
-    print(combined_details) 
-    print(warnings)           
+    #print(combined_details) 
+    #print(warnings)           
         
     return(combined_details, warnings)      
 
@@ -818,6 +859,18 @@ def array_zip(details_array):
 # Return combined values (name, address) of either I/Q/J/R or K/S and L/T [Output column: I (Farmer)]  
 # Warnings: if I/Q/J/R and K/S both given [Output column: I (Farmer Warnings)]  
 # Warnings: if not similar [Output column: I (Farmer Warnings)] 
+
+def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
+    ''' Combines owner values and flags warnings if unexpected values found
+    
+        Key arguments:  
+            farmer_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
+            addressee_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
+                        
+        Returns:
+            Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
+    '''    
+    pass
 
 def check_farmer_data(addressee_title, addressee_individual_name, addressee_group_names, address, farmer_title, farmer_individual_name, farmer_group_names, farmer_address):
     pass
@@ -866,7 +919,7 @@ def date_processing(field_date, primary_dates, row_num):
     primary_date_list = []
     
     if type(checked_field_date) is datetime.datetime:
-        checked_field_date_str = checked_field_date.strftime('%d/%m/%Y')
+        checked_field_date_str = checked_field_date.strftime('%d %B %Y')
         #print("Checked field date is datetime. String version is " + checked_field_date_str)
     else:
         checked_field_date_str = checked_field_date
@@ -878,14 +931,21 @@ def date_processing(field_date, primary_dates, row_num):
     for primary_date in primary_dates.split(";"):
         if not(primary_date == "" or primary_date == "*"):
             checked_primary_date, pdate_warning = date_check(primary_date, row_num)
-            checked_primary_date_str = checked_primary_date.strftime('%d/%m/%Y')
+            
+            if type(checked_primary_date) is datetime.datetime:
+                checked_primary_date_str = checked_primary_date.strftime('%d %B %Y')
+            else:
+                checked_primary_date_str = checked_primary_date
+            
             primary_date_warnings.update(pdate_warning)
-            primary_date_list += [checked_primary_date_str]
+            primary_date_list += [checked_primary_date_str]            
             
             if type(checked_primary_date) is datetime.datetime and type(checked_field_date) is datetime.datetime and checked_primary_date < checked_field_date:
                 date_warning = "Row " + row_num + ": Error - Primary Date (" + checked_primary_date_str + ") earlier than Field date (" + checked_field_date_str + ")"
                 field_date_warnings.add(date_warning)
                 primary_date_warnings.add(date_warning)
+                
+    
     
     return ((checked_field_date_str, field_date_warnings), (", ".join(primary_date_list), primary_date_warnings))        
     
@@ -900,15 +960,24 @@ def date_check(potential_date, row_num):
         Returns:
             Tuple with either the date as a date object or the original string if it isn't a valid date and a set with any warnings
     '''
-
+    warnings = set()
     try: 
         #print(row_num + ": " + potential_date)
-        day = int(potential_date.split("-")[0])
-        month = potential_date.split("-")[1]
-        year = potential_date.split("-")[2]
-
-        warnings = set()
-        
+        if "-" in potential_date:
+            day = int(potential_date.split("-")[0])
+            month = potential_date.split("-")[1]
+            year = potential_date.split("-")[2]
+        elif " " in potential_date:
+            day = int(potential_date.split(" ")[0])
+            month = potential_date.split(" ")[1]
+            year = potential_date.split(" ")[2]
+        elif "/" in potential_date:
+            day = int(potential_date.split("/")[0])
+            month = potential_date.split("/")[1]
+            year = potential_date.split("/")[2]   
+            
+       
+       
         if len(year) == 2:
             year = int(year)
             year += 1900
@@ -920,11 +989,12 @@ def date_check(potential_date, row_num):
         if month.isdigit():
             month_number = int(month)
         else:
-            month_number = datetime.datetime.strptime(month, '%b').month
+            month_number = datetime.datetime.strptime(month, '%B').month 
                         
-        date = datetime.datetime(year=year,month=month_number,day=int(day))   
+        date = datetime.datetime(year=year,month=month_number,day=int(day))  
+         
     except ValueError as ve:
-        warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as a valid date (" + str(ve) + "). Further date checks cannot be carried out.")
+        warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as a valid date in the expected format (" + str(ve) + "). Further date checks cannot be carried out.")
         date = potential_date
         
     return (date, warnings)
