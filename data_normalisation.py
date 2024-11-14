@@ -27,9 +27,9 @@ def component_compare (values_to_check, debug = False):
     warnings = {}
     
     for key, component_list in values_to_check.items():
+        
         component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])
         
-        #print(component_set)
         #distribution = split_distribution(component_list)
         distribution = split_part_distribution(component_list)
         warnings[key] = set()
@@ -81,32 +81,40 @@ def component_compare (values_to_check, debug = False):
                     
                 combined_values[key] = combined_phrases + " (" + "? ".join(distinct) + "?)"           
             elif len(similar) == 3:
-                if debug:
+                if debug: 
                     print(key + ": Option F")  
+                # temp output
+                combined_values[key] = "/".join(list(component_set))  
+                '''
                 combined = {}
                 for component1 in similar:
                     for component2 in similar:
                         if component1 != component2:
                             ratio = fuzz.ratio(component1, component2)
-                            print(component1 + "-" + component2 + ": " + str(ratio))
+                            if debug: 
+                                print(component1 + "-" + component2 + ": " + str(ratio))
                             if ratio > 85:
                                 combined_string, sub_set_warnings = combine_two_phrases(key, {component1, component2}, subset_distribution, debug)
                                 warnings[key].update(sub_set_warnings)
                                 combined[combined_string] = re.sub("[()]", "", combined_string)
+                                if debug: 
+                                    print(combined_string)
                                 
                 #print(combined)
                 if len(combined) > 1:    
-                    print(split_part_distribution(set(combined.values())))
-                    combined_values[key] = split_part_distribution(set(combined.values()))    
-           
+                    if debug: 
+                        print(split_part_distribution(set(combined.values())))
+                    #combined_values[key] = split_part_distribution(set(combined.values()))
+                    combined_values[key] = "/".join(component_list)      
+                '''
             elif len(similar) == 4:
                 if debug:
                     print(key + ": Option G")  
-                combined_values[key] = "/".join(component_list)             
+                combined_values[key] = "/".join(list(component_set))            
             else:
                 if debug:
                     print(key + ": Option H")
-                combined_values[key] = "/".join(component_list) 
+                combined_values[key] = "/".join(list(component_set)) 
                 
     return (combined_values, warnings)
                 

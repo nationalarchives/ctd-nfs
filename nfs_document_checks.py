@@ -316,21 +316,21 @@ def extract_farms(full_csv):
                 if "Farmer" in raw_farm_info[ref].keys():
                     raw_farm_info[ref]["Farmer"]["Title"] += [farmer_title]
                     raw_farm_info[ref]["Farmer"]["Individual Name"] += [farmer_individual_name]
-                    raw_farm_info[ref]["Farmer"]["Group Names"] += [farmer_group_names]
-                    raw_farm_info[ref]["Farmer"]["Addresses"] += [farmer_addresses] 
+                    raw_farm_info[ref]["Farmer"]["Group Names"] += [farmer_group_names.split(";")]
+                    raw_farm_info[ref]["Farmer"]["Addresses"] += [farmer_addresses.split(";")] 
                     raw_farm_info[ref]["Addressee"]["Title"] += [addressee_title]
                     raw_farm_info[ref]["Addressee"]["Individual Name"] += [addressee_individual_name]
-                    raw_farm_info[ref]["Addressee"]["Group Names"] += [addressee_group_names]
-                    raw_farm_info[ref]["Addressee"]["Addresses"] += [addresses]                                       
+                    raw_farm_info[ref]["Addressee"]["Group Names"] += [addressee_group_names.split(";")]
+                    raw_farm_info[ref]["Addressee"]["Addresses"] += [addresses.split(";")]                                     
                 else:
                     raw_farm_info[ref].update({"Farmer": {"Title": [farmer_title]}})
                     raw_farm_info[ref]["Farmer"].update({"Individual Name": [farmer_individual_name]})
-                    raw_farm_info[ref]["Farmer"].update({"Group Names": [farmer_group_names]})
-                    raw_farm_info[ref]["Farmer"].update({"Addresses": [farmer_addresses]}) 
+                    raw_farm_info[ref]["Farmer"].update({"Group Names": [farmer_group_names.split(";")]})
+                    raw_farm_info[ref]["Farmer"].update({"Addresses": [farmer_addresses.split(";")]}) 
                     raw_farm_info[ref].update({"Addressee": {"Title": [addressee_title]}})
                     raw_farm_info[ref]["Addressee"].update({"Individual Name": [addressee_individual_name]})
-                    raw_farm_info[ref]["Addressee"].update({"Group Names": [addressee_group_names]})
-                    raw_farm_info[ref]["Addressee"].update({"Addresses": [addresses]})                  
+                    raw_farm_info[ref]["Addressee"].update({"Group Names": [addressee_group_names.split(";")]})
+                    raw_farm_info[ref]["Addressee"].update({"Addresses": [addresses.split(";")]})                  
             
             # Group 7: Acreage
             # Input column: U (acreage - semi-colon separated list)
@@ -454,7 +454,21 @@ def extract_farms(full_csv):
     for ref, combined_owner_info in combined_owner_info.items():
         farms[ref].update({"Landowner": [combined_owner_info]})
         farms[ref].update({"Landowner Warnings": combined_owner_info_warnings[ref]})    
-    
+ 
+    # Farmer names
+    farmer_details = {}
+    for farmer_ref, farmer_data in raw_farm_info.items():
+        if "Farmer" in farmer_data.keys():
+            farmer_details[farmer_ref] = farmer_data["Farmer"]   
+
+    # Addressee names
+    addressee_details = {}
+    for addressee_ref, addressee_data in raw_farm_info.items():
+        if "Addressee" in addressee_data.keys():
+            addressee_details[addressee_ref] = addressee_data["Addressee"] 
+    #print(farmer_details)
+    #print(addressee_details)
+    get_combined_farmer_details_by_ref(farmer_details, addressee_details)
            
     #print(farms)   
     #print(row_counts)
@@ -644,7 +658,92 @@ def get_combined_owner_details_by_ref(owner_details):
         Returns:
             Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
     '''
+    return get_combined_details_by_ref(owner_details, 1)
+
+
+# Group 6: Farmer
+# Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
+# Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
+# Check 1: column I and column Q are similar (individual name titles)
+# Check 2: column J and column R are similar (individual name)
+# Check 3: column K and column S are similar  (group names)
+# Check 4: column T and column L are similar  (addresses)
+# Return combined values (name, address) of either I/Q/J/R or K/S and L/T [Output column: I (Farmer)]  
+# Warnings: if I/Q/J/R and K/S both given [Output column: I (Farmer Warnings)]  
+# Warnings: if not similar [Output column: I (Farmer Warnings)] 
+
+def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
+    ''' Combines owner values and flags warnings if unexpected values found
     
+        Key arguments:  
+            farmer_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
+            addressee_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
+                        
+        Returns:
+            Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
+    ''' 
+
+    warnings = {}
+    combined_details = {}
+    components = ["Title", "Individual Name", "Group Names", "Addresses"]
+    
+    # Create combined values by getting similar values for each field
+    # call get_combined_details_by_ref with combined values  
+    
+    shared = set()
+    farmer_only = set()
+    addressee_only = set()
+    
+    if farmer_details.keys() != addressee_details.keys():
+        shared = set(farmer_details.keys()).intersection(set(addressee_details.keys()))
+        farmer_only = set(farmer_details.keys()) - set(addressee_details.keys())
+        addressee_only = set(addressee_details.keys()) - set(farmer_details.keys())
+    
+     
+    for ref in list(shared):
+        pass
+    
+    for ref in list(farmer_only):
+        pass
+    
+    for ref in list(addressee_only):
+        pass
+    
+    print(farmer_details)
+    print(addressee_details)
+    
+    temp1, temp2 = get_combined_details_by_ref(farmer_details)
+    temp3, temp4 = get_combined_details_by_ref(addressee_details)
+    
+    print(temp1)
+    #print(temp2)
+    print(temp3)
+    #print(temp4)
+
+'''
+def check_farmer_data(addressee_title, addressee_individual_name, addressee_group_names, address, farmer_title, farmer_individual_name, farmer_group_names, farmer_address):
+    pass
+
+def get_farmer_name():
+    pass
+'''
+    
+    
+def get_combined_details_by_ref(details, expected_count = -1):
+    ''' Combines title, individual name, group name and addressee values as either "title individual name, address" or "group name, address", where there may be multiple group names and addresses, and flags warnings if unexpected values found.
+    
+        Key arguments:  
+            details - dictionary with each reference key containing a dictionary with the following: 
+                    reference:  'Title' - list of string values, 
+                                'Individual Name' - list of string values, 
+                                'Group Names' - list of lists with string values, and 
+                                'Addresses' - list of lists with string values
+            expected_count - optional integer. If positive integer in given then a check is carried out on the number of rows with with data
+                        
+        Returns:
+            Tuple with a dictionary with the combined values for each field by reference, and a dictionary with a set of warnings for each reference
+    '''
+          
     warnings = {}
     combined_details = {}
     components = ["Title", "Individual Name", "Group Names", "Addresses"]
@@ -653,11 +752,10 @@ def get_combined_owner_details_by_ref(owner_details):
     names = {}
     groups = {}
     addresses = {}
-
     
-    for ref, details in owner_details.items(): 
+    for ref, detail in details.items(): 
         warnings[ref] = set()
-        #print(owner_details)
+        #print(details)
         
         '''
         # lists of strings as single value expected
@@ -679,18 +777,19 @@ def get_combined_owner_details_by_ref(owner_details):
         count = set()
         #for each type of field e.g. Title, Individual Name etc converts values to single string for each
         for component in components:
-            component_length = len(details[component]) 
+            component_length = len(detail[component]) 
             count.add(component_length)
             values_to_merge_dict = {}
             
             if component_length > 1: # Check if there is more that one variation and if so merge
                 
                 if component == "Group Names" or component == "Addresses":
-                    values_to_merge_dict = array_zip(details[component])
+                    values_to_merge_dict = array_zip(detail[component], component)
                 else:
-                    for i, values in enumerate(details[component]):
-                        values_to_merge_dict[i] = list(values)
-                        
+                    values_to_merge_dict[component] = detail[component]
+                    #for i, values in enumerate(detail[component]):
+                    #        values_to_merge_dict[component+str(i)] = [values]
+                     
                 merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
                 
                 for warning in merge_warnings.values():
@@ -706,29 +805,30 @@ def get_combined_owner_details_by_ref(owner_details):
                 elif component == "Addresses":
                     addresses[ref] = list(merged_values.values())
                 else:
-                    print("Error in get_combined_owner_details_by_ref: unknown component type")  
+                    print("Error in get_combined_details_by_ref: unknown component type: " + component)  
             else: # If there are not multiple variations then get first value
                 if component == "Title":
-                    titles[ref] = details[component][0]
+                    titles[ref] = detail[component][0]
                 elif component == "Individual Name":
-                    names[ref] = details[component][0]
+                    names[ref] = detail[component][0]
                 elif component == "Group Names":
-                    groups[ref] = details[component][0]
+                    groups[ref] = detail[component][0]
                 elif component == "Addresses":
-                    addresses[ref] = details[component][0]  
+                    addresses[ref] = detail[component][0]  
      
             
-        if len(count) != 1:
+        if len(count) != 1: #Check how many distinct counts are in the set - should only be one as should be the same number of values for each component
             warnings[ref].add("Mismatch in number of expected answers.")    
         
-        count_list = list(count)   
-        if count_list[0] != 1:
-            if len(count_list) > 1:
-                warnings[ref].add("Expected 1 row of data, Got " + str(count_list.sort()[0]) + "-" + str(count_list.sort()[-1] + "."))             
+        count_list = list(count)  
+        # if a positive value is give for expected_count then check the if there is more than one value in the list or if the first (should be only) value does not match the expected_count 
+        if expected_count > 0 and (count_list[0] != expected_count or len(count_list) != 1):
+            if len(count_list) != 1:
+                warnings[ref].add("Expected " + expected_count + " row of data, Got " + str(count_list.sort()[0]) + "-" + str(count_list.sort()[-1] + "."))             
             else:
-                warnings[ref].add("Expected 1 row of data, Got " + str(count_list[0]) + ".")
+                warnings[ref].add("Expected " + expected_count + " row of data, Got " + str(count_list[0]) + ".")
                 
-    for ref in owner_details.keys():  
+    for ref in details.keys():  
         name = ""  
         
         name_value = names[ref]
@@ -740,6 +840,8 @@ def get_combined_owner_details_by_ref(owner_details):
             temp = set(name_value)
             if len(temp) == 1 and (list(temp)[0] == ""):
                 name_value = ""
+            elif len(temp) == 1:
+                name_value = list(temp)[0]
             else:
                 warnings[ref].add("Error: multiple names found when one expected")
                 name_value = "/".join(name_value) 
@@ -748,6 +850,8 @@ def get_combined_owner_details_by_ref(owner_details):
             temp = set(title_value)
             if len(temp) == 1 and (list(temp)[0] == ""):
                 title_value = ""
+            elif len(temp) == 1:
+                title_value = list(temp)[0]                
             else:
                 warnings[ref].add("Error: multiple names found when one expected")
                 title_value = "/".join(title_value) 
@@ -811,7 +915,7 @@ def get_combined_owner_details_by_ref(owner_details):
                         warnings[ref].add("Warning: No group name with " + addy)                
                  
             else:
-                print("get_combined_owner_details_by_ref: Expecting lists for group and address values")
+                print("get_combined_details_by_ref: Expecting lists for group and address values")
                 
             combined_details[ref] = "; ".join(group_names)
                
@@ -820,11 +924,12 @@ def get_combined_owner_details_by_ref(owner_details):
         
     return(combined_details, warnings)      
 
-def array_zip(details_array):
+def array_zip(details_array, key = ""):
     ''' Takes a dictionary with an array of arrays and zips the arrays together
     
         Key arguments:
             details_array - dictionary containing and array of arrays in the values
+            key - optional string to be added to the key in the returned dictionary
             
         Returns:
             Dictionary with the same keys as the input but with each component in the original lists zipped together
@@ -844,39 +949,9 @@ def array_zip(details_array):
     values_to_merge = list(zip(*details_array))
     
     for i, values in enumerate(values_to_merge):       
-        values_to_merge_dict[i] = list(values)
+        values_to_merge_dict[key + str(i)] = list(values)
         
     return values_to_merge_dict
-    
-
-# Group 6: Farmer
-# Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
-# Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
-# Check 1: column I and column Q are similar (individual name titles)
-# Check 2: column J and column R are similar (individual name)
-# Check 3: column K and column S are similar  (group names)
-# Check 4: column T and column L are similar  (addresses)
-# Return combined values (name, address) of either I/Q/J/R or K/S and L/T [Output column: I (Farmer)]  
-# Warnings: if I/Q/J/R and K/S both given [Output column: I (Farmer Warnings)]  
-# Warnings: if not similar [Output column: I (Farmer Warnings)] 
-
-def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
-    ''' Combines owner values and flags warnings if unexpected values found
-    
-        Key arguments:  
-            farmer_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
-            addressee_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
-                        
-        Returns:
-            Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
-    '''    
-    pass
-
-def check_farmer_data(addressee_title, addressee_individual_name, addressee_group_names, address, farmer_title, farmer_individual_name, farmer_group_names, farmer_address):
-    pass
-
-def get_farmer_name():
-    pass
 
 
 # Group 9: Field Date
