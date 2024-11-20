@@ -29,8 +29,10 @@
 
 
 #####################
-#   To Do
+#   To Do:
 #
+#   Improve name merging
+#   Create test spreadsheets
 
 
 import csv, re, datetime

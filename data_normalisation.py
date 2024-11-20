@@ -8,6 +8,12 @@
 #   
 #
 
+#####################
+#   To Do:
+#
+#   Deal with spaces in the wrong places e.g. Hill Stone vs Hillstone
+#   Deal with addresses
+
 from rapidfuzz import fuzz
 import difflib, re
 
