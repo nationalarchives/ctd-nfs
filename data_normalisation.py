@@ -387,6 +387,43 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
     return ' '.join(combined) 
         
     #print(match_matrix)
+
+def get_similarity_range(values, get_min = True, get_max = True):
+    
+    flattened_values = []
+    for value in values:
+        if isinstance(value, str) and (value.strip() and value.strip() != "*"):
+            flattened_values.append(value)
+        elif isinstance(value, list):
+            value = [x for x in value if x.strip() and x.strip() != "*"]
+            flattened_values += value
+    
+    values_set = set(flattened_values)
+    
+    if len(values_set) == 1:
+        min = 100
+        max = 100
+    else:
+        max = 0
+        min = 100
+        for i, value1 in enumerate(list(values_set)):
+            for j, value2 in enumerate(list(values_set)):
+                if i != j:
+                    ratio = fuzz.ratio(value1, value2)
+                    if ratio > max:
+                        max = ratio
+                    if ratio < min:
+                        min = ratio
+                        
+    if get_min and get_max:
+        return (min, max)
+    elif get_min:
+        return min
+    else:
+        return max
+        
+    
+    
     
     
 def split_address(address):
