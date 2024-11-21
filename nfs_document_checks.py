@@ -122,7 +122,7 @@ def filename_pattern_check(filename, row_num):
     '''
     
     if filename != "":
-        if m := re.match(r"MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif", filename):
+        if m := re.match(r"^MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif$", filename):
             ref_component = m.group(1)
             iteration_num = m.group(3)
             return (ref_component, iteration_num)
@@ -295,7 +295,7 @@ def extract_farms(full_csv):
                 else:
                     farms[ref] = {"Type": [form]}  
                                  
-                ref_warnings.add("Row " + str(row_num) + ": Warning - Multiple '" + form + "' forms for " + ref)
+                type_warnings.add("Row " + str(row_num) + ": Warning - Multiple '" + form + "' forms for " + ref)
             else:
                 #ref = core_ref 
                 farms[ref] = {"Type": [form]}
@@ -497,6 +497,8 @@ def extract_farms(full_csv):
                 reference_pattern_check(ref, str(row_num))
             except ValueError as ve:
                 if "Reference Warnings" in farms[ref].keys():
+                    farms[ref]["Reference Warnings"].update([str(ve)])
+                else:
                     farms[ref]["Reference Warnings"] = {str(ve)}   
  
                                 
