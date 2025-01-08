@@ -11,10 +11,10 @@
 #   output_excel(output_file, values)
 #   filename_pattern_check(filename, row_num)
 #   reference_pattern_check(ref, row_num)
-#   filename_checks(filename1, filename2, row_num)
+#   filename_checks(filename1, filename2, type, row_num)
 #   doc_type_check(type, row_num)
 #   extract_farms(full_csv)
-#   generate_references(box_string, primary_farm_string, additional_farm_string, row_num, existing_refs)
+#   generate_references(box_string, primary_farm_string, additional_farm_string, farm_type, row_num, existing_refs)
 #   generate_ref(base_ref, existing_refs)
 #   generate_farm_number_for_record(county, parish, farm_nums, ref)
 #   generate_farm_numbers(county, parish, farm_nums)
@@ -118,15 +118,19 @@ def filename_pattern_check(filename, row_num):
         row_num - string with number of row in spreadsheet
         
     Outputs:
-        Tuple containing the central part of the filename and the final count at the end of the filename or raises an ValueError  
+        Tuple containing the central part of the filename and the final count at the end of the filename, a warning or raises an ValueError  
     '''
     
     if filename != "":
         if m := re.match(r"^MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif$", filename):
             ref_component = m.group(1)
             iteration_num = m.group(3)
-            return (ref_component, iteration_num)
-        else:
+            return (ref_component, iteration_num, "")
+        elif m := re.match(r"^MAF32-(\d*-\d*).*(\d*)?.tif$", filename):
+            ref_component = m.group(1)
+            iteration_num = m.group(2)
+            return (ref_component, iteration_num, "Row " + row_num + ": " + filename + " does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
+        else:   
             raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
     else:
         raise ValueError("Row " + row_num + ": Error - Blank filename found. Further checks on the filename could not be carried out and an accurate reference could not be generated.")        
@@ -144,7 +148,7 @@ def reference_pattern_check(ref, row_num):
     '''
     
     if ref != "":
-        if re.match(r"^MAF 32/\d*/\d*/\d*$", ref):
+        if re.match(r"^MAF 32/\d*/\d*/(Cover|Other)?\d*$", ref):
             #print(ref + " matches pattern.")
             return (ref)
         else:
@@ -163,12 +167,13 @@ def reference_pattern_check(ref, row_num):
 # Return comma separated list of file names [Output column: A (Filenames)]
 # Warnings if checks don't pass [Output column: B (File Warnings)]
 # Warnings if unexpected number of rows matched
-def filename_checks(filename1, filename2, row_num):
+def filename_checks(filename1, filename2, type, row_num):
     ''' Carries out the required checks on the filenames for each row
     
         Keyword Arguments:
             filename1 - string with name of first file
             filename2 - string with name of second file
+            type - the name of the form
             row_num - string with number of row in spreadsheet 
             
         Outputs:
@@ -180,7 +185,10 @@ def filename_checks(filename1, filename2, row_num):
     
     if not(filename1 == "" and filename2 == ""):   
         try:
-            ref_part1, iteration_num1 = filename_pattern_check(filename1, row_num)
+            ref_part1, iteration_num1, warning = filename_pattern_check(filename1, row_num)
+            #print(row_num + ": " + ref_part1 + ", warning: " + warning)
+            if warning != "":
+                warnings.add(warning)
         except ValueError as e:
             warnings.add(str(e))
             ref_part1 = ""
@@ -189,18 +197,29 @@ def filename_checks(filename1, filename2, row_num):
             #print(warnings) 
         
         try:
-            ref_part2, iteration_num2 = filename_pattern_check(filename2, row_num)
+            if filename2 != "":
+                ref_part2, iteration_num2, warning = filename_pattern_check(filename2, row_num)
+                if warning != "":
+                    warnings.add(warning)
+            else:
+                ref_part2 = ""
+                iteration_num2 = ""
 
-            # check two - centre sections match
-            if ref_part1 != ref_part2 and ref_part1 != "":
-                warnings.add("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
+            if type != "Cover" and (type == "Other" and ref_part2 != ""):
+                # check two - centre sections match
+                if ref_part1 != ref_part2 and ref_part1 != "":
+                    warnings.add("Row " + row_num + ": Mismatch in the file names: " + filename1 + ", " + filename2)
+                
+                # check three - sequence
+                if (iteration_num1 != "" and iteration_num2 != "") and (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
+                    warnings.add("Row " + row_num + ": File names (" + iteration_num1 + " and " + iteration_num2 + ") are not consecutive")
             
-            # check three - sequence
-            if (int(iteration_num1) != int(iteration_num2) + 1) and (int(iteration_num1) != int(iteration_num2) - 1) and int(iteration_num1) > 0:
-                warnings.add("Row " + row_num + ": File names (" + iteration_num1 + " and " + iteration_num2 + ") are not consecutive")
-            
-            if ref_part1 == "" or ref_part2 == "":
-                warnings.add("Row " + row_num + ": Only on File name given (" + iteration_num1 + iteration_num2 + ")")
+            # check four - number of filenames
+            if (ref_part1 == "" or ref_part2 == "") and type != "Cover" and type != "Other":
+                warnings.add("Row " + row_num + ": Only one file name given (" + iteration_num1 + iteration_num2 + ")")                    
+            elif type == "Cover" and ref_part2 != "":
+                warnings.add("Row " + row_num + ": Type is cover but two file names given (" + iteration_num1 + iteration_num2 + ")")
+ 
 
             #print(iteration_num1 + ": " + iteration_num2)
             #print(warnings)  
@@ -237,7 +256,7 @@ def doc_type_check(type, row_num):
             Type value as string or raises a ValueError
     '''
     
-    allowed_types = ["C 51/SSY form", "B 496/EI form", "C 47/SSY form", "C 49/SSY form", "SF form C 69/SSY", "Other"]
+    allowed_types = ["C 51/SSY form", "B 496/EI form", "C 47/SSY form", "C 49/SSY form", "SF form C 69/SSY", "Other", "Cover"]
         
     if type in allowed_types:
         return type
@@ -261,11 +280,12 @@ def extract_farms(full_csv):
     for row_num, row in enumerate(full_csv, 2):
         file1 = row['filename_1']
         file2 = row['filename_2']
-        ref_component, filename_warnings = filename_checks(file1.strip(), file2.strip(), str(row_num))
+        form = row['document_type']
+        ref_component, filename_warnings = filename_checks(file1.strip(), file2.strip(), form, str(row_num))
                 
         primary_farm_number = row['primary_farm_number']
         additional_farm_number = row['additional_farms']
-        form = row['document_type']
+
         form = form.strip()
         
         type_warnings = set()
@@ -274,9 +294,11 @@ def extract_farms(full_csv):
         except ValueError as ve:
             type_warnings.update([str(ve)])
 
-        farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number.strip(), additional_farm_number.strip(), str(row_num), farms.keys())
+        farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number.strip(), additional_farm_number.strip(), form, str(row_num), farms.keys())
         
+        #print("Row: " + str(row_num) + ", Farm refs (" + ref_component.replace("-","/") + ", farm_num: " + primary_farm_number.strip() + ") :")
         #print(farm_refs)
+        #print()
         #print(ref_warnings)
 
         for temp_ref in farm_refs.keys():
@@ -459,12 +481,14 @@ def extract_farms(full_csv):
             OS_map = row['OS_map_sheet']
             if OS_map != "":
                 if "OS Sheet Number" in farms[ref].keys():
-                    farms[ref]["OS Sheet Number"].update(OS_map)
+                    farms[ref]["OS Sheet Number"].update([OS_map])
                     row_counts[ref]["OS_sheet_number"] += 1
                 else:
                     farms[ref].update({"OS Sheet Number": {OS_map}})
                     row_counts[ref].update({"OS_sheet_number":1}) 
 
+                #print(farms[ref]["OS Sheet Number"])
+            
             # Dates
             field_date = row["field_info_date"]
             primary_date = row["primary_record_date"]
@@ -597,13 +621,14 @@ def extract_farms(full_csv):
 # Input columns: A/B (filenames), F (primary_farm_number), G (additional_farms)
 # return "MAF 32 " + box number (string after first hyphen and before underscore, replace hyphens with slashed in columns A and B in source which should match) + "/" + farm number (F or G in source) [Output column: U (Reference)] 
 # Warnings: if generated using column G [Output column: V (Reference Warnings)] 
-def generate_references(box_string, primary_farm_string, additional_farm_string, row_num, existing_refs):
+def generate_references(box_string, primary_farm_string, additional_farm_string, farm_type, row_num, existing_refs):
     ''' Creates a reference string for each farm in the required format: "MAF 32 " + box number (with slashes) + "/" + farm number
     
         Keyword Arguments:
             box_string - string with the box component of the reference
             primary_farm_string - string with number for primary farm
             additional_farm_string - semi-colon separated list of additional farm numbers
+            farm_type - the name of the form
             row_num - string with number of row in spreadsheet
             existing_ref - list of existing references 
             
@@ -614,7 +639,11 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
     ref_list = {}
     warnings = set()
     
-    if primary_farm_string != "" and additional_farm_string == "":
+    if primary_farm_string == "*":
+        ref = generate_ref("MAF 32/" + box_string + "/" + farm_type, existing_refs)
+        ref_list[ref] = farm_type
+        
+    elif primary_farm_string != "" and additional_farm_string == "":
         ref = generate_ref("MAF 32/" + box_string + "/" + primary_farm_string, existing_refs)           
         ref_list[ref] = "Primary"
        
@@ -633,8 +662,13 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
             ref_list[ref] = "Additional"          
                
         warnings.add("Row " + row_num + ": Warning - Additional farms present")
-    else:
+    elif farm_type != "Other" or farm_type != "Cover":        
         warnings.add("Row " + row_num + ": Error - No farm number specified")
+        
+    #print(row_num + ": box - " + box_string + ", primary farm num - " + primary_farm_string + ", type: " + farm_type + ", ref: " + ref)
+   
+    if type == "Cover" and primary_farm_string != "*":
+        warnings.add("Row " + row_num + ": Error - Type is cover and farm number is specified")
                
     return (ref_list, warnings)  
 
