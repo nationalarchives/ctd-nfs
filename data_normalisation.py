@@ -34,8 +34,10 @@ def component_compare (values_to_check, debug = False):
     
     for key, component_list in values_to_check.items():
         
-        component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])        
-        alt_component_set = set([("".join(component.split())).lower() for component in component_list if (component.strip() != "" and component.strip() != "*")])
+        warnings[key] = set()
+        component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])   
+        component_list_caseless = [component.lower() for component in component_list if (component.strip() != "" and component.strip() != "*")]   
+        alt_component_set = set([("".join(component.split())).lower() for component in component_list if (component.strip() != "" and component.strip() != "*")] )
 
 
         # does the default set have the same number of values as the set with all the spaces and cases removed
@@ -87,10 +89,6 @@ def component_compare (values_to_check, debug = False):
                 #for component in component_set_caseless:
                 #    if len(component.split(' ')) > max_length:
                 #        max_length = len(component.split(' '))
-                        
-                        
-                distribution = split_part_distribution(component_set_caseless)
-                #print(distribution)
                 
                 
                 #if len(component_set_caseless) in distribution.values:
@@ -133,13 +131,17 @@ def component_compare (values_to_check, debug = False):
                     
                     #print(longest)   
                     #print(shortest) 
-                    matched_value = get_match_matrix(longest, shortest, distribution)
+                    
+                    #distribution = split_part_distribution(component_list_caseless)
+                    matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, False)
+                    matched_value = re.sub(r"(\?)?\) \(", " ", matched_value)
                     component_set = set([matched_value])
+                    warnings[key].update(matched_warnings)
+                    
                     #print(component_set)
        
         #distribution = split_distribution(component_list)
-        distribution = split_part_distribution(component_list)
-        warnings[key] = set()
+        #distribution = split_part_distribution(component_list)
 
         if len(component_set) < 2:  # One version
             basic_join = "".join([component for component in component_set])
@@ -147,7 +149,8 @@ def component_compare (values_to_check, debug = False):
                 print("Basic join - " + key + ": " + basic_join)
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
-            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(key, component_set, distribution, debug)
+            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(key, component_set, component_list, debug)
+            two_phrase_join = re.sub(r"(\?)?\) \(", " ", two_phrase_join)
             warnings[key].update(two_phrase_join_warnings)
             if debug:
                 print("Two part join - " + str(key) + ": " + two_phrase_join)
@@ -175,20 +178,22 @@ def component_compare (values_to_check, debug = False):
             similar_list =[component for component in component_list if component in similar]
             #print("Similar list")
             #print(similar_list)
-            subset_distribution = split_part_distribution(similar_list)
+            #subset_distribution = split_part_distribution(similar_list)
             
             if len(similar) == 2:
                 if debug:
                     print(key + ": Option E")
                     print(similar)
                     print(distinct) 
-                combined_phrases, sub_set_warnings = combine_two_phrases(key, similar, subset_distribution, False)
+                  
+                combined_phrases, sub_set_warnings = combine_two_phrases(key, similar, similar_list, debug)
+                combined_phrases = re.sub(r"(\?)?\) \(", " ", combined_phrases)
                 
                 warnings[key].update(sub_set_warnings)
                 if debug: 
                     print("Complex join - " + key + ": " + combined_phrases + " (" + "? ".join(distinct) + "?)")  
                     
-                combined_values[key] = combined_phrases + " (" + "? ".join(distinct) + "?)"           
+                combined_values[key] = combined_phrases + "/ (" + "?/ ".join(distinct) + "?)"           
             elif len(similar) == 3:
                 if debug: 
                     print(key + ": Option F")  
@@ -275,6 +280,28 @@ def split_part_distribution (component_list):
     return component_distribution
 
 
+def token_distribution (component_list, tokens):
+    ''' Calculates the distribution of variation tokens
+        
+        Keyword arguments:
+        component_list - list of components
+        tokens - list of component tokens
+        
+        return a dictionary with the counts for each token in the components
+    '''
+    component_distribution = {}
+    
+    for component in component_list:
+        for token in tokens:
+            if token in component and token in component_distribution.keys():
+                component_distribution[token] = component_distribution[token] + 1
+            elif token in component:
+                component_distribution[token] = 1
+            
+    return component_distribution    
+    
+    
+
 def get_tokens (component_set):
     ''' split the components into words
     
@@ -292,16 +319,18 @@ def get_tokens (component_set):
               
     return (tokens, list(count_set))   
 
-def combine_two_phrases(key, component_set, distribution, debug = True):
+def combine_two_phrases(key, component_set, component_list, debug = False):
     #print(key + ": " + ", ".join([component for component in component_set]))
     #print(key + ": ")
 
     split_components, count_of_component_lengths = get_tokens(component_set)
     warnings = set()
+    distribution = split_part_distribution(component_list)
     if debug:
         print(split_components)
         print(count_of_component_lengths)
         print(len(count_of_component_lengths))
+        print(distribution)
     
     if len(count_of_component_lengths) < 2: # all variants are the same number of parts
         #print("Combine two phrases")
@@ -333,6 +362,7 @@ def combine_two_phrases(key, component_set, distribution, debug = True):
             elif len(parts.keys()) < 2: # component tokens are the same
                 generated_component += " " + list(parts.keys())[0]
             elif len(parts.keys()) == 2: # if there are two variations
+                #print("Option B")
                 generated_component += " " + combine_two_words(list(parts.keys())[0], list(parts.keys())[1], distribution, debug)
                 warnings.add("Note: Combining variations.")
             else: # if there are more than two versions
@@ -343,15 +373,18 @@ def combine_two_phrases(key, component_set, distribution, debug = True):
         return (generated_component.strip(), warnings)
     
     else:
+        
+        aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list)
         if debug:
-            print("Option D")
+            print("Option D - Align two phrases")
             print(split_components[0])
             print(split_components[1])
-            print(key + ": " + align_two_phrases(split_components[0], split_components[1], distribution, debug)) 
-            print("Align two phrases")
+            print(key + ": " + list(align_two_phrases(split_components[0], split_components[1], component_list, debug))[0])
             
-        warnings.add("Note: Combining multi-length variations.")
-        return (align_two_phrases(split_components[0], split_components[1], distribution), warnings)  
+        warnings.update(phrase_warnings)
+            
+        #warnings.add("Note: Combining multi-length variations.")
+        return (aligned_phrases, warnings)  
 
 
 def combine_two_words (component1, component2, word_ratio, debug = False):
@@ -361,6 +394,7 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
         component1 - single word string
         component2 - single word string
         word_ratio - dictionary of variation ratio
+        debug - boolean, False by default, if True print out debug
         
         returns string with combined values
     '''
@@ -376,7 +410,7 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
         
     if ratio_caseless == 100:
         return component1.title() 
-    elif ratio > 85: # if the variations are similar
+    elif ratio > 80: # if the variations are similar
         #generated_component += " " + list(parts.keys())[0] + "/" + list(parts.keys())[1]
         
         diff = difflib.Differ().compare(component1, component2)   
@@ -388,10 +422,10 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
         component2_count = 0
         
         for key in word_ratio:
-            if component1 == key:
+            if component1.lower() == key.lower():
                 component1_count = word_ratio[key]
                 
-            if component2 == key:
+            if component2.lower() == key.lower():
                 component2_count = word_ratio[key]
         
         #print(component1 + ": " + str(component1_count))
@@ -415,15 +449,16 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
     return generated_string
 
 
-def align_two_phrases(string1, string2, word_ratio, debug = False):
+def align_two_phrases(string1, string2, component_list, debug = False):
     ''' Check if two strings align and return a combined version
 
         keyword arguments:
         string 1 - the first phrase
         string 2 - the second phrase
-        word_ratio - dictionary of variation ratio
+        component_list - list of components
+        debug - boolean, False by default, if True print out debug
         
-        returns string with combined values
+        returns tuple with string with combined values and warnings
     '''
     #diff = difflib.Differ().compare(string1, string2)
     #print("\n".join(diff))
@@ -432,6 +467,8 @@ def align_two_phrases(string1, string2, word_ratio, debug = False):
     #components2 = string2.split(" ")
     
     combined = ""
+    
+    warnings = set("Note: Combining multi-length variations.")
     
     if len(string1) > len(string2):
         longest = string1
@@ -444,25 +481,30 @@ def align_two_phrases(string1, string2, word_ratio, debug = False):
         print(longest)
         print(shortest)
         
-    aligned_phrase = get_match_matrix(longest, shortest, word_ratio, debug)
+    aligned_phrase, phrase_warnings = get_match_matrix(longest, shortest, component_list, debug)
+    
+    warnings.update(phrase_warnings)
     
     if debug:
         print(aligned_phrase)
         
-    return aligned_phrase
+    return (aligned_phrase, warnings)
     
 
 
-def get_match_matrix(longest, shortest, word_ratio, debug = False):
+def get_match_matrix(longest, shortest, component_list, debug = False):
     ''' get the comparison matrix
     
         keyword arguments:
         longest - the longest list 
         shortest - the shortest list
         word_ratio - dictionary of variation ratio
+        debug - boolean, False by default, if True print out debug
         
-        return 
+        return tuple with string containing combined values and warnings
     '''
+    match_warnings = set()
+    
     match_matrix = {}
     match_matrix2 = {}
     #print(longest)
@@ -486,9 +528,9 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
                 combined_string_no_punc = re.sub(r'[^\w\s]', '', combined_string)
                 shortest_no_punc = re.sub(r'[^\w\s]', '', shortest[i])
                 
-                if debug:
-                    print(combined_string_no_punc)
-                    print(shortest_no_punc)
+                #if debug:
+                #    print(combined_string_no_punc)
+                #    print(shortest_no_punc)
                 
                 ratio = fuzz.ratio(shortest_no_punc.lower(), combined_string_no_punc.lower())
                 
@@ -517,14 +559,14 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
         long_start = int(long_position.split(":")[0])
         long_end = int(long_position.split(":")[1])   
         
+        # make list of anchor points (points with highest match ratio)
         if best_ratio == anchor_ratio:
             if short_position >= last_position_shortest and long_end >= last_position_longest:
                 last_position_shortest = short_position
                 last_position_longest = long_end
                 
                 best_anchor_points.append((short_position, long_position))
-            else:
-                print("Anchor error!")
+                
     if debug:
         print(str(anchor_ratio))
         print(best_anchor_points)
@@ -543,31 +585,38 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
             longest_token = ""
             last_longest_anchored_point = long_end
             
+            # while short pointer is pointing at or before the short start and the long pointer has not reached the end of the long values
             while short_pointer <= short_start and long_pointer <= long_end:
                 if debug:
                     print("Before - Short pointer: " + str(short_pointer) + ", short start: " + str(short_start)) 
                     print("Before - Long pointer: " + str(long_pointer) + ", long start: " + str(long_start)) 
                 
-                if short_start == short_pointer and long_start > long_pointer:
+                # if short is at start but long is before the first start point
+                if short_pointer == short_start and long_pointer < long_start:
                     longest_token = ' '.join(longest[long_pointer:long_start])
-                    anchored_list.append("(" + longest_token + ")")
+                    anchored_list.append("(" + longest_token + "?)")
                     long_pointer = long_start
                     
                     if debug:
                         print("Adding (longest): " + longest_token)
+                        print("Long pointer: " + str(long_pointer))
                         
-                elif short_start > short_pointer and long_start == long_pointer:
+                # if pointer is before short start but long is at start point        
+                elif short_pointer < short_start and long_start == long_pointer:
                     shortest_token = shortest[short_pointer]
                     short_pointer += 1
-                    anchored_list.append("(" + shortest_token + ")")
+                    anchored_list.append("(" + shortest_token + "?)")
                     
                     if debug:
                         print("Adding (shortest): " + shortest_token)
-                        
+                        print("Short pointer: " + str(short_pointer))
+                
+                # if pointers for both long and short are at their respective start points        
                 elif short_start == short_pointer and long_start == long_pointer:
                     shortest_token = shortest[short_start] 
                     longest_token = ' '.join(longest[int(long_start):int(long_end)])
-                    combined_token = combine_two_words(longest_token, shortest_token, word_ratio)
+                    token_ratio = token_distribution(component_list, [shortest_token, longest_token])
+                    combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                     anchored_list.append(combined_token)
                     long_pointer = long_end
                     short_pointer += 1
@@ -575,23 +624,23 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
                     if debug:
                         print("Shortest token: " + shortest_token)
                         print("Longest token: " + longest_token)
+                        print("Token ratio: " + str(token_ratio))
                         print("Adding (combined): " + combined_token)
                 
                 if debug:
                     print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
-                    print("After - Long: " + longest_token + ", pointer: " + str(long_pointer)) 
-                    
-                break
+                    print("After - Long: " + longest_token + ", pointer: " + str(long_pointer))                    
         
         if len(longest) > last_longest_anchored_point:
             longest_end_token = ' '.join(longest[int(long_end):])
-            anchored_list.append("(" + longest_end_token + ")")
+            anchored_list.append("(" + longest_end_token + "?)")
         
         if debug:
             print(anchored_list)        
         
     else:
-        print("Couldn't anchor phrases")
+        match_warnings.add("Could not find any strong anchor points.")
+        anchored_list = shortest + ["/"] + longest 
         
     '''
     combined = []
@@ -650,7 +699,7 @@ def get_match_matrix(longest, shortest, word_ratio, debug = False):
         print(combined)  
      '''       
         
-    return ' '.join(anchored_list) 
+    return (' '.join(anchored_list), match_warnings)
         
     #print(match_matrix)
 
@@ -776,15 +825,17 @@ farm_name = {"1":["*", "Holt Farm", "", ""],
          }
 
 test = {"1":["Hill Top Farm", "Hilltop farm", "Hill top farm"],
-        "2": ["Hill Top Farm", "Hill top farm", "Hill Top farm"],
-        "3": ["Hill Top Farm", "Hilltop farm"],
-        "4": ["HillTop Farm", "Hilltop farm"]}
+        "2": ["Hill Top Farm", "Hilltop farm", "Hilltop farm"],
+        "3": ["Hill Top Farm", "Hill top farm", "Hill Top farm"],
+        "4": ["Hill Top Farm", "Hilltop farm"],
+        "5": ["HillTop Farm", "Hilltop farm"]}
 
 test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]}
 
 test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"]}
+         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"]}
 
-#component_compare(test)
+component_compare(test)
 component_compare(test2)
 component_compare(test3)
