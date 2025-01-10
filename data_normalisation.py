@@ -136,7 +136,7 @@ def component_compare (values_to_check, debug = False):
                     
                     #distribution = split_part_distribution(component_list_caseless)
                     matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, debug)
-                    matched_value = re.sub(r"(\?)?\) \(", " ", matched_value)
+                    matched_value = re.sub(r'(\?)?\) \(', ' ', matched_value)
                     component_set = set([matched_value])
                     warnings[key].update(matched_warnings)
                     
@@ -152,7 +152,8 @@ def component_compare (values_to_check, debug = False):
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
             two_phrase_join, two_phrase_join_warnings = combine_two_phrases(key, component_set, component_list, debug)
-            two_phrase_join = re.sub(r"(\?)?\) \(", " ", two_phrase_join)
+            two_phrase_join = re.sub(r'(\?)?\) \(', ' ', two_phrase_join)
+            #print("Two phase warnings:" + str(two_phrase_join_warnings))
             warnings[key].update(two_phrase_join_warnings)
             if debug:
                 print("Two part join - " + str(key) + ": " + two_phrase_join)
@@ -160,7 +161,7 @@ def component_compare (values_to_check, debug = False):
         else:   # More than two variations
             
             #print(component_set)
-            warnings[key].add("Complex variations.")
+            warnings[key].add("Warning: Attempting to combine multiple (>2) variations.")
             distinct = []
             
             for component1 in component_set:
@@ -177,11 +178,52 @@ def component_compare (values_to_check, debug = False):
                     
             similar = component_set - set(distinct)
             
-            similar_list =[component for component in component_list if component in similar]
+            #similar_list =[component for component in component_list if component in similar]
             #print("Similar list")
             #print(similar_list)
             #subset_distribution = split_part_distribution(similar_list)
+            modified_best_similar_list = []
+
+            while len(similar) > 1:
+                if debug:
+                    print(key + ": Option E")
+                    print(similar)              
+
+                best_match = 0
+                best_similar = {}
+                for component1 in similar:
+                    for component2 in similar:
+                        if component1 != component2:
+                            ratio = fuzz.ratio(component1, component2)   
+                            if ratio > best_match:
+                                best_match = ratio
+                                best_similar = {component1, component2}
+                                
+                best_similar_list = modified_best_similar_list + [component for component in component_list if component in best_similar]
+                if debug:
+                    print("Best similar: " + str(best_similar))
+                    print("Best similar list: " + str(best_similar_list))
+                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(key, best_similar, best_similar_list, debug)   
+                #print(part_sub_set_warnings)                              
+                warnings[key].update(part_sub_set_warnings)
+                part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
+                part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
+                
+                for i in range (0, len(best_similar_list)):
+                    modified_best_similar_list.append(part_combined_phrases)
+                
+                similar = similar.difference(best_similar)
+                similar.add(part_combined_phrases)
+ 
+            combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
             
+            if len(distinct) > 0:
+                combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)" 
+            else:
+                combined_values[key] = combined_phrases
+            
+                
+            '''
             if len(similar) == 2:
                 if debug:
                     print(key + ": Option E")
@@ -197,11 +239,34 @@ def component_compare (values_to_check, debug = False):
                     
                 combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)"           
             elif len(similar) == 3:
-                if True: 
+                if debug: 
                     print(key + ": Option F")  
-                # temp output
+                    print("Similar:" + str(similar_list))
+                    print("Distinct:" + str(distinct))
+                
+                best_match = 0
+                best_similar = {}
+                for component1 in similar:
+                    for component2 in similar:
+                        if component1 != component2:
+                            ratio = fuzz.ratio(component1, component2)   
+                            if ratio > best_match:
+                                best_match = ratio
+                                best_similar = {component1, component2}
+                                
+                best_similar_list =[component for component in component_list if component in best_similar]
+                print("Best similar: " + str(best_similar))
+                print("Best similar list: " + str(best_similar_list))
+                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(key, best_similar, best_similar_list, debug)                                 
+                warnings[key].update(part_sub_set_warnings)
+                print(part_combined_phrases)
+                
+                temp output
                 combined_values[key] = "/".join(list(component_set))  
-                '''
+                
+            '''    
+            
+            '''
                 combined = {}
                 for component1 in similar:
                     for component2 in similar:
@@ -222,17 +287,18 @@ def component_compare (values_to_check, debug = False):
                         print(split_part_distribution(set(combined.values())))
                     #combined_values[key] = split_part_distribution(set(combined.values()))
                     combined_values[key] = "/".join(component_list)      
-                '''
+                
             elif len(similar) == 4:
                 if debug:
                     print(key + ": Option G")  
-                combined_values[key] = "/".join(list(component_set))            
+                combined_values[key] = "/".join(list(component_set))           
             else:
                 if debug:
                     print(key + ": Option H")
-                combined_values[key] = "/".join(list(component_set)) 
+                combined_values[key] = "/".join(list(component_set))  '''
     
-    print(combined_values)
+    #print(combined_values)
+    #print(warnings)
                 
     return (combined_values, warnings)
                    
@@ -298,7 +364,6 @@ def split_part_distribution (component_list):
             
     return component_distribution
 
-
 def token_distribution (component_list, tokens, debug = False):
     ''' Calculates the distribution of variation tokens
         
@@ -320,9 +385,7 @@ def token_distribution (component_list, tokens, debug = False):
             elif token.lower() in component.lower():
                 component_distribution[token] = 1
             
-    return component_distribution    
-    
-    
+    return component_distribution        
 
 def get_tokens (component_set):
     ''' split the components into words
@@ -340,6 +403,7 @@ def get_tokens (component_set):
         count_set.add(len(tokenized_component))
               
     return (tokens, list(count_set))   
+
 
 def combine_two_phrases(key, component_set, component_list, debug = False):
     #print(key + ": " + ", ".join([component for component in component_set]))
@@ -423,7 +487,8 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
     
     ratio = fuzz.ratio(component1, component2)
     ratio_caseless = fuzz.ratio(component1.lower(), component2.lower())
-    
+    ratio_caseless_no_punc = fuzz.ratio(re.sub(r'[^\w\s]', '', component1.lower()), re.sub(r'[^\w\s]', '', component2.lower()))
+       
     if debug:
         print("component1: " + component1)
         print("component2: " + component2)
@@ -431,8 +496,11 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
         print("ratio: " + str(ratio))
         print("ratio (caseless): " + str(ratio_caseless))
         
-    if ratio_caseless == 100:
-        return component1.title() 
+    if ratio_caseless_no_punc == 100:
+        if len(component1) > len(component2):
+            return component1.title() 
+        else:
+            return component2.title()
     else:
         component1_count = 0
         component2_count = 0
@@ -461,7 +529,7 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
                 generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
             else:            
                 comp_list = [component1, component2]
-                generated_string_list = "/".join(sorted(comp_list, key=str.lower))        
+                generated_string_list = "/".join(sorted(comp_list, key=str.lower)) + "(?)"        
     
     '''
     elif ratio_check(len(component1), ratio): # if the variations are similar
@@ -528,7 +596,7 @@ def align_two_phrases(string1, string2, component_list, debug = False):
     
     combined = ""
     
-    warnings = set("Note: Combining multi-length variations.")
+    warnings = {"Note: Combining multi-length variations."}
     
     if len(string1) > len(string2):
         longest = string1
@@ -563,6 +631,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
         
         return tuple with string containing combined values and warnings
     '''
+    #debug = True
     match_warnings = set()
     
     match_matrix = {}
@@ -691,7 +760,24 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     anchored_list.append(combined_token)
                     long_pointer = long_end
                     short_pointer += 1
-                
+                    
+                # if pointers for both long and short are before their respective start points     
+                else:
+                    shortest_token = ' '.join(shortest[short_pointer:short_start])
+                    longest_token = ' '.join(longest[int(long_pointer):int(long_start)])
+                    long_pointer = long_start
+                    short_pointer = short_start
+                    
+                    token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
+                    combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                    anchored_list.append(combined_token)
+                    
+                    if debug:
+                        print("Shortest token: " + shortest_token)
+                        print("Longest token: " + longest_token)
+                        print("Token ratio: " + str(token_ratio))
+                        print("Adding (combined): " + combined_token)
+                                    
                 if debug:
                     print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
                     print("After - Long: " + longest_token + ", pointer: " + str(long_pointer))                    
@@ -704,7 +790,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
             print(anchored_list)        
         
     else:
-        match_warnings.add("Could not find any strong anchor points.")
+        match_warnings.add("Could not find any strong anchor points. '" + " ".join(shortest) + "' and '" + " ".join(longest) + "' appear to be distinct values.")
         anchored_list = shortest + ["/"] + longest 
         
     '''
@@ -894,8 +980,9 @@ test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South No
 
 test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
          "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
-         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"]}
+         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"]
+        }
 
-component_compare(test)
-component_compare(test2)
-component_compare(test3)
+#component_compare(test)
+#component_compare(test2)
+#component_compare(test3)
