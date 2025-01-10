@@ -18,6 +18,8 @@ from rapidfuzz import fuzz
 import difflib, re, itertools
 
 
+
+
 def component_compare (values_to_check, debug = False):
     ''' Function to compare the components
     
@@ -133,7 +135,7 @@ def component_compare (values_to_check, debug = False):
                     #print(shortest) 
                     
                     #distribution = split_part_distribution(component_list_caseless)
-                    matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, False)
+                    matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, debug)
                     matched_value = re.sub(r"(\?)?\) \(", " ", matched_value)
                     component_set = set([matched_value])
                     warnings[key].update(matched_warnings)
@@ -193,9 +195,9 @@ def component_compare (values_to_check, debug = False):
                 if debug: 
                     print("Complex join - " + key + ": " + combined_phrases + " (" + "? ".join(distinct) + "?)")  
                     
-                combined_values[key] = combined_phrases + "/ (" + "?/ ".join(distinct) + "?)"           
+                combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)"           
             elif len(similar) == 3:
-                if debug: 
+                if True: 
                     print(key + ": Option F")  
                 # temp output
                 combined_values[key] = "/".join(list(component_set))  
@@ -235,7 +237,24 @@ def component_compare (values_to_check, debug = False):
     return (combined_values, warnings)
                    
                 
-                    
+def ratio_check(length, ratio):
+    ''' Checks similarity ratio with a sliding scale based on length of the phrase
+    
+        Keyword arguments:
+            length - length of the phrase being tested. 
+            ratio - similarity ratio
+            
+        Returns boolean - True if similar, False if not
+    '''
+
+    if length < 4 and ratio >= 60:
+        return True
+    elif length < 8 and ratio >= 70:
+        return True
+    elif length >= 8 and ratio >= 80:
+        return True
+    else:
+        return False                  
 
 
 def split_distribution (component_list):
@@ -280,7 +299,7 @@ def split_part_distribution (component_list):
     return component_distribution
 
 
-def token_distribution (component_list, tokens):
+def token_distribution (component_list, tokens, debug = False):
     ''' Calculates the distribution of variation tokens
         
         Keyword arguments:
@@ -290,12 +309,15 @@ def token_distribution (component_list, tokens):
         return a dictionary with the counts for each token in the components
     '''
     component_distribution = {}
+    if debug:
+        print("List: " + str(component_list))
+        print("Tokens: " + str(tokens))
     
     for component in component_list:
         for token in tokens:
-            if token in component and token in component_distribution.keys():
+            if token.lower() in component.lower() and token in component_distribution.keys():
                 component_distribution[token] = component_distribution[token] + 1
-            elif token in component:
+            elif token.lower() in component.lower():
                 component_distribution[token] = 1
             
     return component_distribution    
@@ -330,7 +352,7 @@ def combine_two_phrases(key, component_set, component_list, debug = False):
         print(split_components)
         print(count_of_component_lengths)
         print(len(count_of_component_lengths))
-        print(distribution)
+        print("distribution: " + str(distribution))
     
     if len(count_of_component_lengths) < 2: # all variants are the same number of parts
         #print("Combine two phrases")
@@ -377,8 +399,8 @@ def combine_two_phrases(key, component_set, component_list, debug = False):
         aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list)
         if debug:
             print("Option D - Align two phrases")
-            print(split_components[0])
-            print(split_components[1])
+            #print(split_components[0])
+            #print(split_components[1])
             print(key + ": " + list(align_two_phrases(split_components[0], split_components[1], component_list, debug))[0])
             
         warnings.update(phrase_warnings)
@@ -405,16 +427,51 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
     if debug:
         print("component1: " + component1)
         print("component2: " + component2)
+        print("distribution: " + str(word_ratio))
         print("ratio: " + str(ratio))
         print("ratio (caseless): " + str(ratio_caseless))
         
     if ratio_caseless == 100:
         return component1.title() 
-    elif ratio > 80: # if the variations are similar
-        #generated_component += " " + list(parts.keys())[0] + "/" + list(parts.keys())[1]
+    else:
+        component1_count = 0
+        component2_count = 0
         
-        diff = difflib.Differ().compare(component1, component2)   
-        generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + ')' for s in diff]
+        for key in word_ratio:
+            if component1.lower() == key.lower():
+                component1_count = word_ratio[key]
+                
+            if component2.lower() == key.lower():
+                component2_count = word_ratio[key]
+        
+        #print(component1 + ": " + str(component1_count))
+        #print(component2 + ": " + str(component2_count))
+                    
+        if component1_count > component2_count:
+            generated_string_list =  component1 + " (" + component2 + "?)"
+        elif component2_count > component1_count:
+            generated_string_list =  component2 + " (" + component1 + "?)"
+        else:
+            if ratio_check(len(component1), ratio): # if the variations are similar
+                if ratio_caseless > ratio:
+                    diff = difflib.Differ().compare(component1.lower(), component2.lower())
+                else:
+                    diff = difflib.Differ().compare(component1, component2)   
+                
+                generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
+            else:            
+                comp_list = [component1, component2]
+                generated_string_list = "/".join(sorted(comp_list, key=str.lower))        
+    
+    '''
+    elif ratio_check(len(component1), ratio): # if the variations are similar
+        #generated_component += " " + list(parts.keys())[0] + "/" + list(parts.keys())[1]
+        if ratio_caseless > ratio:
+            diff = difflib.Differ().compare(component1.lower(), component2.lower())
+        else:
+            diff = difflib.Differ().compare(component1, component2)   
+        
+        generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
     else:
         #print("Option B: " + str(ratio))
         
@@ -439,8 +496,11 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
         else:
             comp_list = [component1, component2]
             generated_string_list = "/".join(sorted(comp_list, key=str.lower))
-            
+        '''    
     generated_string = ''.join(generated_string_list)
+    
+    if ratio_caseless > ratio:
+        generated_string = generated_string.title()
         
     if debug:
         print(generated_string_list)
@@ -478,9 +538,9 @@ def align_two_phrases(string1, string2, component_list, debug = False):
         shortest = string1       
 
     if debug:
-        print(longest)
-        print(shortest)
-        
+        print("longest: " + str(longest))
+        print("shortest: " + str(shortest))
+   
     aligned_phrase, phrase_warnings = get_match_matrix(longest, shortest, component_list, debug)
     
     warnings.update(phrase_warnings)
@@ -570,8 +630,9 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
     if debug:
         print(str(anchor_ratio))
         print(best_anchor_points)
+        print("longest: " + str(longest) + ",  length: " + str(len("".join(longest))))
     
-    if anchor_ratio > 90:
+    if ratio_check(len("".join(longest)), anchor_ratio):
         anchored_list = []
         long_pointer = 0
         short_pointer = 0
@@ -615,17 +676,21 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                 elif short_start == short_pointer and long_start == long_pointer:
                     shortest_token = shortest[short_start] 
                     longest_token = ' '.join(longest[int(long_start):int(long_end)])
-                    token_ratio = token_distribution(component_list, [shortest_token, longest_token])
-                    combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                    if shortest_token != longest_token:
+                        token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
+                        combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                        
+                        if debug:
+                            print("Shortest token: " + shortest_token)
+                            print("Longest token: " + longest_token)
+                            print("Token ratio: " + str(token_ratio))
+                            print("Adding (combined): " + combined_token)
+                    else:
+                        combined_token = shortest_token
+                        
                     anchored_list.append(combined_token)
                     long_pointer = long_end
                     short_pointer += 1
-                    
-                    if debug:
-                        print("Shortest token: " + shortest_token)
-                        print("Longest token: " + longest_token)
-                        print("Token ratio: " + str(token_ratio))
-                        print("Adding (combined): " + combined_token)
                 
                 if debug:
                     print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
@@ -738,11 +803,6 @@ def get_similarity_range(values, get_min = True, get_max = True):
         return max
         
     
-    
-    
-    
-def split_address(address):
-    pass
         
 
 '''
