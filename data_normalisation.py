@@ -421,6 +421,9 @@ def combine_two_phrases(key, component_set, component_list, debug = False):
     if len(count_of_component_lengths) < 2: # all variants are the same number of parts
         #print("Combine two phrases")
         
+        aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list, True)
+        print("aligned phrases: " + str(aligned_phrases))
+        
         generated_component = ""
         for part in range (0, count_of_component_lengths[0]):  # looping over each part                                    
             
@@ -619,6 +622,25 @@ def align_two_phrases(string1, string2, component_list, debug = False):
     return (aligned_phrase, warnings)
     
 
+def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug = False):
+    
+    if True in [True for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]:
+        
+        initials = [part for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]
+        if debug:        
+            print("\nInitials: " + str(initials))
+        
+        for initial in initials:
+            initial_no_punc = re.sub(r'[^\w\s]', '', initial)
+            for comparison_part in phrase_for_comparison.split(' '):
+                if debug: 
+                    print("Comparison part: " + comparison_part)
+                if initial_no_punc == comparison_part[0]:
+                    phrase_to_be_processed = re.sub(r'^'+initial+r'(\s|$)', comparison_part, phrase_to_be_processed)
+                    if debug: 
+                        print("Processed phrase: " + phrase_to_be_processed + "\n")   
+                    
+    return phrase_to_be_processed
 
 def get_match_matrix(longest, shortest, component_list, debug = False):
     ''' get the comparison matrix
@@ -744,7 +766,8 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                 # if pointers for both long and short are at their respective start points        
                 elif short_start == short_pointer and long_start == long_pointer:
                     shortest_token = shortest[short_start] 
-                    longest_token = ' '.join(longest[int(long_start):int(long_end)])
+                    longest_token = ' '.join(longest[int(long_start):int(long_end)])                        
+                    
                     if shortest_token != longest_token:
                         token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
                         combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
@@ -753,7 +776,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                             print("Shortest token: " + shortest_token)
                             print("Longest token: " + longest_token)
                             print("Token ratio: " + str(token_ratio))
-                            print("Adding (combined): " + combined_token)
+                            print("Adding (combined match): " + combined_token)
                     else:
                         combined_token = shortest_token
                         
@@ -768,6 +791,9 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     long_pointer = long_start
                     short_pointer = short_start
                     
+                    shortest_token = initials_replace(shortest_token, longest_token, debug) 
+                    longest_token = initials_replace(longest_token, shortest_token, debug)                                     
+                    
                     token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
                     combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                     anchored_list.append(combined_token)
@@ -776,7 +802,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                         print("Shortest token: " + shortest_token)
                         print("Longest token: " + longest_token)
                         print("Token ratio: " + str(token_ratio))
-                        print("Adding (combined): " + combined_token)
+                        print("Adding (combined gap): " + combined_token)
                                     
                 if debug:
                     print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
@@ -891,26 +917,26 @@ def get_similarity_range(values, get_min = True, get_max = True):
     
         
 
-'''
-names = {"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
-         "2":["", "W H Buckle", "W H Buckle", "W H Buckle"], 
-         "3":["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         "6":["A E Cook", "A E Cook", "A E Cook", "A E Cook"],
-         "7":["A G Griffiths", "W L Edmunds", "W L Edmunds", "W L Edmunds"],
+
+names1 = {#"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
+         #"2":["", "W H Buckle", "W H Buckle", "W H Buckle"], 
+         #"3":["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         #"6":["A E Cook", "A E Cook", "A E Cook", "A E Cook"],
+         #"7":["A G Griffiths", "W L Edmunds", "W L Edmunds", "W L Edmunds"],
          "9":["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"],
-         "10":["", "F W Hinton", "", "F W Hinton"],
-         "14":["G P Rymer", "G P Rymer", "G P Rymer", "G P Rymer"],
-         "15":["A Spragg", "A Spragg", "A Spragg", "A Spragg"],
-         "16":["H Bowl", "Harry Bowl", "H Bowl", "Harry Bowl"],
-         "18":["A Tombs", "A Tombs", "A Tombs", "A Tombs"],
-         "19":["C Tombs", "C Toombs", "C Toombs", "C Toombs"],
-         "20":["G O Tombs", "G O Tombs", "G O Tombs", "G O Tombs"],
-         "22":["G Wilkins", "G Wilkins", "Geo Wilkin", "G Wilkins"],
-         "31":["", "F Bendall", "F Bendall", "F Bendall"],
-         "33":["F Thomas", "Frank Thomas", "F Thomas", "Frank Thomas"]
+         #"10":["", "F W Hinton", "", "F W Hinton"],
+         #"14":["G P Rymer", "G P Rymer", "G P Rymer", "G P Rymer"],
+         #"15":["A Spragg", "A Spragg", "A Spragg", "A Spragg"],
+         #"16":["H Bowl", "Harry Bowl", "H Bowl", "Harry Bowl"],
+         #"18":["A Tombs", "A Tombs", "A Tombs", "A Tombs"],
+         #"19":["C Tombs", "C Toombs", "C Toombs", "C Toombs"],
+         #"20":["G O Tombs", "G O Tombs", "G O Tombs", "G O Tombs"],
+         #"22":["G Wilkins", "G Wilkins", "Geo Wilkin", "G Wilkins"],
+         #"31":["", "F Bendall", "F Bendall", "F Bendall"],
+         "33":["F Thomas", "Frank Thomas", "F. Thomas", "Frank Thomas"]
          }
-'''
-names = {#"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+
+names2 = {#"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
          #"2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
          #"3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
          "4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
@@ -978,11 +1004,16 @@ test = {"1":["Hill Top Farm", "Hilltop farm", "Hill top farm"],
 
 test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]}
 
-test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
-         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"]
+test3 = {#"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+         #"2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+         #"3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+         "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
 
+component_compare(names1)
+#component_compare(names2)
+#component_compare(address)
+#component_compare(farm_name)
 #component_compare(test)
 #component_compare(test2)
 #component_compare(test3)
