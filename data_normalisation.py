@@ -20,7 +20,7 @@ import difflib, re, itertools
 
 
 
-def component_compare (values_to_check, debug = False):
+def component_compare (values_to_check, debug=False):
     ''' Function to compare the components
     
         Keyword arguments:
@@ -151,12 +151,14 @@ def component_compare (values_to_check, debug = False):
                 print("Basic join - " + key + ": " + basic_join)
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
-            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(key, component_set, component_list, debug)
+            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list, debug)
             two_phrase_join = re.sub(r'(\?)?\) \(', ' ', two_phrase_join)
             #print("Two phase warnings:" + str(two_phrase_join_warnings))
             warnings[key].update(two_phrase_join_warnings)
             if debug:
                 print("Two part join - " + str(key) + ": " + two_phrase_join)
+                print("Component set: " + str(component_set))
+                print("Component list: " + str(component_list))
             combined_values[key] = two_phrase_join
         else:   # More than two variations
             
@@ -201,9 +203,10 @@ def component_compare (values_to_check, debug = False):
                                 
                 best_similar_list = modified_best_similar_list + [component for component in component_list if component in best_similar]
                 if debug:
+                    print("Print calling combined phrases with:")
                     print("Best similar: " + str(best_similar))
-                    print("Best similar list: " + str(best_similar_list))
-                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(key, best_similar, best_similar_list, debug)   
+                    print("Best similar list: " + str(best_similar_list))                   
+                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
                 #print(part_sub_set_warnings)                              
                 warnings[key].update(part_sub_set_warnings)
                 part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
@@ -221,83 +224,8 @@ def component_compare (values_to_check, debug = False):
                 combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)" 
             else:
                 combined_values[key] = combined_phrases
-            
-                
-            '''
-            if len(similar) == 2:
-                if debug:
-                    print(key + ": Option E")
-                    print(similar)
-                    print(distinct) 
-                  
-                combined_phrases, sub_set_warnings = combine_two_phrases(key, similar, similar_list, debug)
-                combined_phrases = re.sub(r"(\?)?\) \(", " ", combined_phrases)
-                
-                warnings[key].update(sub_set_warnings)
-                if debug: 
-                    print("Complex join - " + key + ": " + combined_phrases + " (" + "? ".join(distinct) + "?)")  
-                    
-                combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)"           
-            elif len(similar) == 3:
-                if debug: 
-                    print(key + ": Option F")  
-                    print("Similar:" + str(similar_list))
-                    print("Distinct:" + str(distinct))
-                
-                best_match = 0
-                best_similar = {}
-                for component1 in similar:
-                    for component2 in similar:
-                        if component1 != component2:
-                            ratio = fuzz.ratio(component1, component2)   
-                            if ratio > best_match:
-                                best_match = ratio
-                                best_similar = {component1, component2}
-                                
-                best_similar_list =[component for component in component_list if component in best_similar]
-                print("Best similar: " + str(best_similar))
-                print("Best similar list: " + str(best_similar_list))
-                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(key, best_similar, best_similar_list, debug)                                 
-                warnings[key].update(part_sub_set_warnings)
-                print(part_combined_phrases)
-                
-                temp output
-                combined_values[key] = "/".join(list(component_set))  
-                
-            '''    
-            
-            '''
-                combined = {}
-                for component1 in similar:
-                    for component2 in similar:
-                        if component1 != component2:
-                            ratio = fuzz.ratio(component1, component2)
-                            if debug: 
-                                print(component1 + "-" + component2 + ": " + str(ratio))
-                            if ratio > 85:
-                                combined_string, sub_set_warnings = combine_two_phrases(key, {component1, component2}, subset_distribution, debug)
-                                warnings[key].update(sub_set_warnings)
-                                combined[combined_string] = re.sub("[()]", "", combined_string)
-                                if debug: 
-                                    print(combined_string)
-                                
-                #print(combined)
-                if len(combined) > 1:    
-                    if debug: 
-                        print(split_part_distribution(set(combined.values())))
-                    #combined_values[key] = split_part_distribution(set(combined.values()))
-                    combined_values[key] = "/".join(component_list)      
-                
-            elif len(similar) == 4:
-                if debug:
-                    print(key + ": Option G")  
-                combined_values[key] = "/".join(list(component_set))           
-            else:
-                if debug:
-                    print(key + ": Option H")
-                combined_values[key] = "/".join(list(component_set))  '''
     
-    #print(combined_values)
+    print(combined_values)
     #print(warnings)
                 
     return (combined_values, warnings)
@@ -364,7 +292,7 @@ def split_part_distribution (component_list):
             
     return component_distribution
 
-def token_distribution (component_list, tokens, debug = False):
+def token_distribution (component_list, tokens, debug=False):
     ''' Calculates the distribution of variation tokens
         
         Keyword arguments:
@@ -405,24 +333,30 @@ def get_tokens (component_set):
     return (tokens, list(count_set))   
 
 
-def combine_two_phrases(key, component_set, component_list, debug = False):
+def combine_two_phrases(component_set, component_list, debug=False):
     #print(key + ": " + ", ".join([component for component in component_set]))
     #print(key + ": ")
 
     split_components, count_of_component_lengths = get_tokens(component_set)
-    warnings = set()
+    #warnings = set()
     distribution = split_part_distribution(component_list)
     if debug:
+        print("Combine_two_phrases called")
         print(split_components)
         print(count_of_component_lengths)
         print(len(count_of_component_lengths))
         print("distribution: " + str(distribution))
+        
+        
+    aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list, debug)
+    #print(key + " aligned phrases: " + str(aligned_phrases))
+    return (aligned_phrases, phrase_warnings) 
     
+    '''
     if len(count_of_component_lengths) < 2: # all variants are the same number of parts
         #print("Combine two phrases")
         
-        aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list, True)
-        print("aligned phrases: " + str(aligned_phrases))
+
         
         generated_component = ""
         for part in range (0, count_of_component_lengths[0]):  # looping over each part                                    
@@ -474,9 +408,9 @@ def combine_two_phrases(key, component_set, component_list, debug = False):
             
         #warnings.add("Note: Combining multi-length variations.")
         return (aligned_phrases, warnings)  
+'''
 
-
-def combine_two_words (component1, component2, word_ratio, debug = False):
+def combine_two_words (component1, component2, word_ratio, debug=False):
     ''' Combine two words
     
         Keyword arguments:
@@ -580,7 +514,7 @@ def combine_two_words (component1, component2, word_ratio, debug = False):
     return generated_string
 
 
-def align_two_phrases(string1, string2, component_list, debug = False):
+def align_two_phrases(string1, string2, component_list, debug=False):
     ''' Check if two strings align and return a combined version
 
         keyword arguments:
@@ -591,6 +525,9 @@ def align_two_phrases(string1, string2, component_list, debug = False):
         
         returns tuple with string with combined values and warnings
     '''
+    if debug:
+        print("align_two_phrases called with '" + str(string1) + "' & '" + str(string2) + "'" )
+    
     #diff = difflib.Differ().compare(string1, string2)
     #print("\n".join(diff))
     
@@ -622,7 +559,7 @@ def align_two_phrases(string1, string2, component_list, debug = False):
     return (aligned_phrase, warnings)
     
 
-def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug = False):
+def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
     
     if True in [True for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]:
         
@@ -642,7 +579,7 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug = Fals
                     
     return phrase_to_be_processed
 
-def get_match_matrix(longest, shortest, component_list, debug = False):
+def get_match_matrix(longest, shortest, component_list, debug=False):
     ''' get the comparison matrix
     
         keyword arguments:
@@ -657,7 +594,6 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
     match_warnings = set()
     
     match_matrix = {}
-    match_matrix2 = {}
     #print(longest)
     #print(shortest)
     
@@ -690,7 +626,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     print(combo)
                     
                 if ratio > max_ratio:
-                    match_matrix2[i] = (key, ratio)
+                    match_matrix[i] = (key, ratio)
                     max_ratio = ratio
                     
                 if ratio >= anchor_ratio:
@@ -698,14 +634,14 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
 
     if debug:
         print("For each in shortest:")        
-        print(match_matrix2)
+        print(match_matrix)
     
     best_anchor_points = []
     
     last_position_shortest = 0
     last_position_longest = 0
     
-    for short_position, long_details in match_matrix2.items():
+    for short_position, long_details in match_matrix.items():
         long_position, best_ratio = long_details
         long_start = int(long_position.split(":")[0])
         long_end = int(long_position.split(":")[1])   
@@ -750,6 +686,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     long_pointer = long_start
                     
                     if debug:
+                        print("Added 'long' string to bring into alignment")
                         print("Adding (longest): " + longest_token)
                         print("Long pointer: " + str(long_pointer))
                         
@@ -760,6 +697,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     anchored_list.append("(" + shortest_token + "?)")
                     
                     if debug:
+                        print("Added 'short' string to bring into alignment")
                         print("Adding (shortest): " + shortest_token)
                         print("Short pointer: " + str(short_pointer))
                 
@@ -773,6 +711,7 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                         combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                         
                         if debug:
+                            print("Added combined section")
                             print("Shortest token: " + shortest_token)
                             print("Longest token: " + longest_token)
                             print("Token ratio: " + str(token_ratio))
@@ -796,9 +735,11 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     
                     token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
                     combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                    
                     anchored_list.append(combined_token)
                     
                     if debug:
+                        print("Adding combined starting string")
                         print("Shortest token: " + shortest_token)
                         print("Longest token: " + longest_token)
                         print("Token ratio: " + str(token_ratio))
@@ -808,9 +749,32 @@ def get_match_matrix(longest, shortest, component_list, debug = False):
                     print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
                     print("After - Long: " + longest_token + ", pointer: " + str(long_pointer))                    
         
-        if len(longest) > last_longest_anchored_point:
-            longest_end_token = ' '.join(longest[int(long_end):])
-            anchored_list.append("(" + longest_end_token + "?)")
+        if len(longest) > last_longest_anchored_point or len(shortest) > short_pointer:
+            shortest_end_token = ' '.join(shortest[short_pointer:])
+            longest_end_token = ' '.join(longest[int(long_end):])  
+            
+            shortest_end_token = initials_replace(shortest_end_token, longest_end_token, debug) 
+            longest_end_token = initials_replace(longest_end_token, shortest_end_token, debug)  
+            
+            component_list = [shortest_end_token, longest_end_token]                              
+                    
+            #end_token_ratio = token_distribution(component_list, [shortest_end_token, longest_end_token], debug)
+            
+            if debug:
+                print("Adding end section")
+                print("Short pointer: " + str(short_pointer) + ", short end: " + str(len(shortest))) 
+                print("Long pointer: " + str(long_pointer) + ", long end: " + str(len(longest))) 
+                print("component list: " + str(component_list))
+            
+            if short_pointer == len(shortest):
+                anchored_list.append("(" + longest_end_token + "?)")
+            elif longest_end_token == len(longest):
+                anchored_list.append("(" + shortest_end_token + "?)")
+            else:
+                #combined_token = combine_two_words(longest_end_token, shortest_end_token, end_token_ratio, debug)
+                end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
+                match_warnings.update(end_phrase_join_warnings)
+                anchored_list.append(end_phrase_join)
         
         if debug:
             print(anchored_list)        
@@ -918,44 +882,44 @@ def get_similarity_range(values, get_min = True, get_max = True):
         
 
 
-names1 = {#"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
-         #"2":["", "W H Buckle", "W H Buckle", "W H Buckle"], 
-         #"3":["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"6":["A E Cook", "A E Cook", "A E Cook", "A E Cook"],
-         #"7":["A G Griffiths", "W L Edmunds", "W L Edmunds", "W L Edmunds"],
+names1 = {"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
+         "2":["", "W H Buckle", "W H Buckle", "W H Buckle"], 
+         "3":["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "6":["A E Cook", "A E Cook", "A E Cook", "A E Cook"],
+         "7":["A G Griffiths", "W L Edmunds", "W L Edmunds", "W L Edmunds"],
          "9":["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"],
-         #"10":["", "F W Hinton", "", "F W Hinton"],
-         #"14":["G P Rymer", "G P Rymer", "G P Rymer", "G P Rymer"],
-         #"15":["A Spragg", "A Spragg", "A Spragg", "A Spragg"],
-         #"16":["H Bowl", "Harry Bowl", "H Bowl", "Harry Bowl"],
-         #"18":["A Tombs", "A Tombs", "A Tombs", "A Tombs"],
-         #"19":["C Tombs", "C Toombs", "C Toombs", "C Toombs"],
-         #"20":["G O Tombs", "G O Tombs", "G O Tombs", "G O Tombs"],
-         #"22":["G Wilkins", "G Wilkins", "Geo Wilkin", "G Wilkins"],
-         #"31":["", "F Bendall", "F Bendall", "F Bendall"],
+         "10":["", "F W Hinton", "", "F W Hinton"],
+         "14":["G P Rymer", "G P Rymer", "G P Rymer", "G P Rymer"],
+         "15":["A Spragg", "A Spragg", "A Spragg", "A Spragg"],
+         "16":["H Bowl", "Harry Bowl", "H Bowl", "Harry Bowl"],
+         "18":["A Tombs", "A Tombs", "A Tombs", "A Tombs"],
+         "19":["C Tombs", "C Toombs", "C Toombs", "C Toombs"],
+         "20":["G O Tombs", "G O Tombs", "G O Tombs", "G O Tombs"],
+         "22":["G Wilkins", "G Wilkins", "Geo Wilkin", "G Wilkins"],
+         "31":["", "F Bendall", "F Bendall", "F Bendall"],
          "33":["F Thomas", "Frank Thomas", "F. Thomas", "Frank Thomas"]
          }
 
-names2 = {#"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+names2 = {"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
          "4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
-         #"5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
-         #"6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         #"7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         #"8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         #"9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
-         #"10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         #"11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
-         #"12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
-         #"13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
-         #"14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
-         #"15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         "5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
+         "6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         "7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         "8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         "9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
+         "10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         "11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
+         "12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
+         "13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         "14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
+         "15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
          "16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
-         #"17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
-         #"18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
-         #"19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
-         #"17": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
+         "17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
+         "18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
+         "19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
+         "17": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
         }
 
 
@@ -1004,14 +968,14 @@ test = {"1":["Hill Top Farm", "Hilltop farm", "Hill top farm"],
 
 test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]}
 
-test3 = {#"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         #"2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
-         #"3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
          "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
 
-component_compare(names1)
-#component_compare(names2)
+#component_compare(names1)
+component_compare(names2)
 #component_compare(address)
 #component_compare(farm_name)
 #component_compare(test)
