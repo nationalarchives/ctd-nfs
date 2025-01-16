@@ -51,7 +51,7 @@ def component_compare (values_to_check, debug=False):
                 #print("Case Issue")
                 
                 #Assumption: Case mismatch - convert to title case.
-                component_set = {item.title() for item in component_set}
+                component_set = {punctuated_title(item) for item in component_set}
                 
                 #print(component_set)
             
@@ -116,7 +116,7 @@ def component_compare (values_to_check, debug=False):
                         if len(grouped_list) == 1:
                             processed_list.append(grouped_list[0])
                         else:
-                            processed_list.append(grouped_list[0].title())                       
+                            processed_list.append(punctuated_title(grouped_list[0]))                       
                     
                     #string1 = list(component_set_caseless)[0]
                     #string2 = list(component_set_caseless)[1]
@@ -152,7 +152,7 @@ def component_compare (values_to_check, debug=False):
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
             two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list, debug)
-            two_phrase_join = re.sub(r'(\?)?\) \(', ' ', two_phrase_join)
+            #two_phrase_join = re.sub(r'(\?)?\) \(', ' ', two_phrase_join)
             #print("Two phase warnings:" + str(two_phrase_join_warnings))
             warnings[key].update(two_phrase_join_warnings)
             if debug:
@@ -209,8 +209,8 @@ def component_compare (values_to_check, debug=False):
                 part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
                 #print(part_sub_set_warnings)                              
                 warnings[key].update(part_sub_set_warnings)
-                part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
-                part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
+                #part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
+                #part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
                 
                 for i in range (0, len(best_similar_list)):
                     modified_best_similar_list.append(part_combined_phrases)
@@ -229,7 +229,20 @@ def component_compare (values_to_check, debug=False):
     #print(warnings)
                 
     return (combined_values, warnings)
-                   
+
+def punctuated_title(to_convert):
+    #print(to_convert)
+    lower_to_upper = re.sub(r'(\s|^)([a-z])', to_upper, to_convert)
+    #print(lower_to_upper)
+    converted = re.sub(r'([^\s])([A-Z])', to_lower, lower_to_upper)
+    #print(upper_to_lower)
+    return converted
+
+def to_upper(match):
+    return match.group(1) + match.group(2).upper()  
+
+def to_lower(match):
+    return match.group(1) + match.group(2).lower()                            
                 
 def ratio_check(length, ratio):
     ''' Checks similarity ratio with a sliding scale based on length of the phrase
@@ -249,7 +262,6 @@ def ratio_check(length, ratio):
         return True
     else:
         return False                  
-
 
 def split_distribution (component_list):
     ''' Calculates the distribution of a pair of variations
@@ -331,6 +343,41 @@ def get_tokens (component_set):
         count_set.add(len(tokenized_component))
               
     return (tokens, list(count_set))   
+
+def combine_connected_letters(list_to_test, string_to_compare):
+    #print("String to test: " + string_to_test + " , string to compare: " + string_to_compare)    
+    string_to_test = ''.join(list_to_test)
+    
+    replacements = re.findall(r'((\(\w+\?\))+)', string_to_test)
+    if replacements:
+        for match in replacements:
+            group = match[0]           
+            group_clean = re.sub(r'[\(\?\)]', '', group)
+            
+            longest_match_group = ""
+            #print("match_group: " + group_clean)
+            for s in range(0, len(group_clean)):
+                for i in range(1, len(group_clean) + 1):
+                    if i > s:
+                        substr = group_clean[s:i]
+                        #print("Checking: " + substr + " in " + string_to_compare)
+                        if substr in string_to_compare and len(substr) > len(longest_match_group):
+                            longest_match_group = substr
+                            
+            if len(longest_match_group) > 1:
+                longest_match_group_split = re.sub(r'(\w)', r'\\(\1\\?\\)', longest_match_group)
+                #print(longest_match_group_split + " in " + string_to_test)
+                result = re.sub(longest_match_group_split, r'(' + longest_match_group + '?)', string_to_test)
+                
+                match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', result)
+                result_list = []
+                for match_result in match_results:
+                    result_list.append(match_result[0])
+                    
+                return result_list
+                    
+    
+    return list_to_test                         
 
 
 def combine_two_phrases(component_set, component_list, debug=False):
@@ -435,9 +482,9 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         
     if ratio_caseless_no_punc == 100:
         if len(component1) > len(component2):
-            return component1.title() 
+            return punctuated_title(component1) 
         else:
-            return component2.title()
+            return punctuated_title(component2)
     else:
         component1_count = 0
         component2_count = 0
@@ -461,9 +508,10 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                 if ratio_caseless > ratio:
                     diff = difflib.Differ().compare(component1.lower(), component2.lower())
                 else:
-                    diff = difflib.Differ().compare(component1, component2)   
-                
+                    diff = difflib.Differ().compare(component1, component2)  
+                                   
                 generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
+                
             else:            
                 comp_list = [component1, component2]
                 generated_string_list = "/".join(sorted(comp_list, key=str.lower)) + "(?)"        
@@ -502,14 +550,21 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
             comp_list = [component1, component2]
             generated_string_list = "/".join(sorted(comp_list, key=str.lower))
         '''    
+    
+    generated_string_list1 = combine_connected_letters(generated_string_list, component1)
+    generated_string_list = combine_connected_letters(generated_string_list1, component2)
+
     generated_string = ''.join(generated_string_list)
+    #print("Generated string: " + generated_string)    
     
     if ratio_caseless > ratio:
-        generated_string = generated_string.title()
+        generated_string = punctuated_title(generated_string)
         
     if debug:
         print(generated_string_list)
-        print("Generated string: " + generated_string)
+        print("Generated string 1 (compared to " + component1 + "): " + str(generated_string_list1))
+        print("Generated string 2 (compared to " + component2 + "): " + str(generated_string_list))
+        #print("Generated string: " + generated_string)
         
     return generated_string
 
@@ -591,6 +646,7 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
         return tuple with string containing combined values and warnings
     '''
     #debug = True
+    print("Match matrix called with " + str(longest) + " and " + str(shortest))
     match_warnings = set()
     
     match_matrix = {}
@@ -708,6 +764,7 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
                     
                     if shortest_token != longest_token:
                         token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
+                        print("Combine two words called from Match_matrix (pointers matched) with " + longest_token + " and " + shortest_token)
                         combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                         
                         if debug:
@@ -734,6 +791,7 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
                     longest_token = initials_replace(longest_token, shortest_token, debug)                                     
                     
                     token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
+                    print("Combine two words called from Match_matrix (both pointers short) with " + longest_token + " and " + shortest_token)
                     combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                     
                     anchored_list.append(combined_token)
@@ -900,26 +958,26 @@ names1 = {"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"],
          "33":["F Thomas", "Frank Thomas", "F. Thomas", "Frank Thomas"]
          }
 
-names2 = {"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         "2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         "3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         "4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
-         "5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
-         "6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         "7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         "8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         "9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
-         "10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         "11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
-         "12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
-         "13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
-         "14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
-         "15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
-         "16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
-         "17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
-         "18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
+names2 = {#"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         #"2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         #"3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         #"4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
+         #"5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
+         #"6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         #"7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         #"8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         #"9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
+         #"10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         #"11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
+         #"12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
+         #"13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         #"14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
+         #"15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         #"16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
+         #"17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
+         #"18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
          "19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
-         "17": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
+         #"20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
         }
 
 
@@ -981,3 +1039,5 @@ component_compare(names2)
 #component_compare(test)
 #component_compare(test2)
 #component_compare(test3)
+
+#punctuated_title("fiNd o(u)t")
