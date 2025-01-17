@@ -369,16 +369,27 @@ def combine_connected_letters(list_to_test, string_to_compare):
                 #print(longest_match_group_split + " in " + string_to_test)
                 result = re.sub(longest_match_group_split, r'(' + longest_match_group + '?)', string_to_test)
                 
-                match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', result)
-                result_list = []
-                for match_result in match_results:
-                    result_list.append(match_result[0])
-                    
-                return result_list
+                #match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', result)
+                #result_list = []
+                #for match_result in match_results:
+                #    result_list.append(match_result[0])    
+                # return results_list            
+
+                return chunk_punctuated_string(result)
                     
     
     return list_to_test                         
 
+def chunk_punctuated_string(string_to_process, all=True):
+    match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', string_to_process)
+    chunked_list = []
+    for match_result in match_results:
+        if all:
+            chunked_list.append(match_result[0]) 
+        elif "?" in match_result[0]: 
+            chunked_list.append(match_result[0])
+        
+    return chunked_list     
 
 def combine_two_phrases(component_set, component_list, debug=False):
     #print(key + ": " + ", ".join([component for component in component_set]))
@@ -479,6 +490,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         print("distribution: " + str(word_ratio))
         print("ratio: " + str(ratio))
         print("ratio (caseless): " + str(ratio_caseless))
+        print("ratio (caseless, no punc): " + str(ratio_caseless_no_punc))
         
     if ratio_caseless_no_punc == 100:
         if len(component1) > len(component2):
@@ -505,12 +517,76 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
             generated_string_list =  component2 + " (" + component1 + "?)"
         else:
             if ratio_check(len(component1), ratio): # if the variations are similar
+                component1_to_test = component1
+                component2_to_test = component2
+                
+                if "?)" in (component1 + component2):
+                    component1_to_test = re.sub(r'[\(\?\)]', '', component1)
+                    component2_to_test = re.sub(r'[\(\?\)]', '', component2)
+
                 if ratio_caseless > ratio:
-                    diff = difflib.Differ().compare(component1.lower(), component2.lower())
-                else:
-                    diff = difflib.Differ().compare(component1, component2)  
+                    component1_to_test = component1_to_test.lower()
+                    component2_to_test = component2_to_test.lower()
+                    
+                    
+                diff = difflib.Differ().compare(component1_to_test, component2_to_test)                 
                                    
                 generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
+                
+                section_split = chunk_punctuated_string(component1 + component2, False)
+                #print("Generated String: " + str(generated_string_list))
+                #print("Components: " + str(section_split))
+                
+                for section in section_split:
+                    if section not in generated_string_list:
+                        #print("Section not found: " + section)
+                        cleaned_section = re.sub(r'[^\w\s]', '', section)
+                        
+                        current_generated_string = ''.join(generated_string_list)
+                        substr_count = current_generated_string.count(cleaned_section)
+                        
+                        #print("Substr count: " + str(substr_count))
+                        # does it appear more than once in generated string?
+                        # if yes then need to get context to position for positioning
+                        # if no then need to insert into list in replace of the individual sections 
+                        
+                        if substr_count < 2:
+                            #current_generated_string = re.sub(cleaned_section, section, current_generated_string)
+                            
+                            contexts = get_context(section, component1 + "|" + component2)
+                            #print(cleaned_section)
+                            #print(contexts)
+                            
+                            for context in contexts:
+                                if section in context:
+                                    context = [context[0]] + list(cleaned_section) + context[2:]
+                                    
+                                replacement = [context[0]] + [section] + context[len(cleaned_section)+1:]
+                                
+                                #print("Replacement: " + str(replacement))
+                                #print("Context: " + str(context))
+                                if "|" in context:
+                                    context = context.remove("|")
+                                
+                                context_string = ''.join(context)
+                                #print("context: " + context_string)
+                                replacement_string = ''.join(replacement)
+                                #print("replacement: " + replacement_string)
+                                #print("current string: " + current_generated_string)
+                                if context_string in current_generated_string:
+                                    current_generated_string = current_generated_string.replace(context_string, replacement_string)
+                                #print("new string: " + current_generated_string)
+                                
+                            generated_string_list = chunk_punctuated_string(current_generated_string)
+                            
+                        else:
+                            contexts = get_context(section, component1 + "|" + component2)
+                            
+                            #print(cleaned_section)
+                            #print(contexts)
+                        
+                        #print("Generated string list: " + str(generated_string_list))        
+                        
                 
             else:            
                 comp_list = [component1, component2]
@@ -561,13 +637,53 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         generated_string = punctuated_title(generated_string)
         
     if debug:
-        print(generated_string_list)
+        print("Generated string list: " + str(generated_string_list))
         print("Generated string 1 (compared to " + component1 + "): " + str(generated_string_list1))
         print("Generated string 2 (compared to " + component2 + "): " + str(generated_string_list))
         #print("Generated string: " + generated_string)
         
     return generated_string
 
+def get_context(letter_group, phrase_string):
+    section_split_long = chunk_punctuated_string(phrase_string)
+    #print("Chunked phrase string: " + str(section_split_long))
+    context = []
+    cleaned_letter_group = re.sub(r'[^\w\s]', '', letter_group)
+    #print("Cleaned letter group: " + cleaned_letter_group)
+    cleaned_letter_list = list(cleaned_letter_group)
+    #print("Cleaned letter list: " + str(cleaned_letter_list))
+    
+    for i, x in enumerate(section_split_long):
+        start = 0
+        end = len(section_split_long)
+
+        length_of_letters = len(cleaned_letter_list)
+        if i + length_of_letters <= len(section_split_long):
+            chunk_to_check = section_split_long[i:i + length_of_letters]
+        else:
+            chunk_to_check = section_split_long[i:]
+        
+        #print("Cleaned letter list: " + str(cleaned_letter_list) + ", current chunk: " + str(chunk_to_check))
+        
+        if x == letter_group:
+            if i - 1 > 0:
+                start = i - 1
+            if i + 2 <= end:
+                end = i + 2
+            #print("Checking: " + x + ", Start:" + str(start) + ", End:" + str(end)) 
+            #print("Section with context" + str(section_split_long[start:end]))      
+            context.append(section_split_long[start:end])    
+            
+        if chunk_to_check == cleaned_letter_list:
+            if i - 1 > 0:
+                start = i - 1
+            if i + 1 + length_of_letters <= end:
+                end = i + 1 + length_of_letters
+            #print("Checking: " + str(chunk_to_check) + ", Start:" + str(start) + ", End:" + str(end)) 
+            #print("Section with context" + str(section_split_long[start:end]))      
+            context.append(section_split_long[start:end])  
+        
+    return context
 
 def align_two_phrases(string1, string2, component_list, debug=False):
     ''' Check if two strings align and return a combined version
@@ -646,7 +762,8 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
         return tuple with string containing combined values and warnings
     '''
     #debug = True
-    print("Match matrix called with " + str(longest) + " and " + str(shortest))
+    if debug:
+        print("Match matrix called with " + str(longest) + " and " + str(shortest))
     match_warnings = set()
     
     match_matrix = {}
@@ -764,8 +881,8 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
                     
                     if shortest_token != longest_token:
                         token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
-                        print("Combine two words called from Match_matrix (pointers matched) with " + longest_token + " and " + shortest_token)
-                        combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                        #print("Combine two words called from Match_matrix (pointers matched) with " + longest_token + " and " + shortest_token)
+                        combined_token = combine_two_words(longest_token, shortest_token, token_ratio, False)
                         
                         if debug:
                             print("Added combined section")
@@ -791,7 +908,7 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
                     longest_token = initials_replace(longest_token, shortest_token, debug)                                     
                     
                     token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
-                    print("Combine two words called from Match_matrix (both pointers short) with " + longest_token + " and " + shortest_token)
+                    #print("Combine two words called from Match_matrix (both pointers short) with " + longest_token + " and " + shortest_token)
                     combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
                     
                     anchored_list.append(combined_token)
@@ -958,26 +1075,26 @@ names1 = {"1":["H Arkell", "H Arkell", "H Arkell", "H Arkell"],
          "33":["F Thomas", "Frank Thomas", "F. Thomas", "Frank Thomas"]
          }
 
-names2 = {#"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
-         #"4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
-         #"5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
-         #"6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         #"7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
-         #"8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         #"9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
-         #"10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
-         #"11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
-         #"12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
-         #"13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
-         #"14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
-         #"15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
-         #"16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
-         #"17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
-         #"18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
+names2 = {"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+         "4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
+         "5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
+         "6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         "7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
+         "8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         "9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
+         "10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
+         "11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
+         "12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
+         "13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         "14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
+         "15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+         "16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
+         "17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
+         "18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
          "19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
-         #"20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
+         "20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
         }
 
 
@@ -1032,12 +1149,12 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
          "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
 
-#component_compare(names1)
+component_compare(names1)
 component_compare(names2)
-#component_compare(address)
-#component_compare(farm_name)
-#component_compare(test)
-#component_compare(test2)
-#component_compare(test3)
+component_compare(address)
+component_compare(farm_name)
+component_compare(test)
+component_compare(test2)
+component_compare(test3)
 
 #punctuated_title("fiNd o(u)t")
