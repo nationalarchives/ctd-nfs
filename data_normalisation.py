@@ -118,14 +118,14 @@ def component_compare (values_to_check, debug=False):
                         else:
                             processed_list.append(punctuated_title(grouped_list[0]))                       
                     
-                    #string1 = list(component_set_caseless)[0]
+                    #phrase1 = list(component_set_caseless)[0]
                     #string2 = list(component_set_caseless)[1]
                     
                     string1 = list(processed_list)[0]
                     string2 = list(processed_list)[1]
                     
                     if len(string1.split(' ')) > len(string2.split(' ')):
-                        longest = string1.split(' ')
+                        string1 = string1.split(' ')
                         shortest = string2.split(' ')
                     else:
                         longest = string2.split(' ')
@@ -225,7 +225,7 @@ def component_compare (values_to_check, debug=False):
             else:
                 combined_values[key] = combined_phrases
     
-    print(combined_values)
+    #print(combined_values)
     #print(warnings)
                 
     return (combined_values, warnings)
@@ -717,8 +717,8 @@ def align_two_phrases(string1, string2, component_list, debug=False):
         shortest = string1       
 
     if debug:
-        print("longest: " + str(longest))
-        print("shortest: " + str(shortest))
+        print("phrase1: " + str(longest))
+        print("phrase2: " + str(shortest))
    
     aligned_phrase, phrase_warnings = get_match_matrix(longest, shortest, component_list, debug)
     
@@ -732,70 +732,57 @@ def align_two_phrases(string1, string2, component_list, debug=False):
 
 def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
     
+    if debug: 
+        print("phrase_to_be_processed: " + phrase_to_be_processed)
+        print("phrase_for_comparison: " + phrase_for_comparison)
+    
     if True in [True for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]:
         
         initials = [part for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]
+        
         if debug:        
             print("\nInitials: " + str(initials))
+            print("Split phrase for comparision: " + str(phrase_for_comparison.split(' ')))
         
         for initial in initials:
             initial_no_punc = re.sub(r'[^\w\s]', '', initial)
             for comparison_part in phrase_for_comparison.split(' '):
                 if debug: 
                     print("Comparison part: " + comparison_part)
-                if initial_no_punc == comparison_part[0]:
+                    
+                if comparison_part != '' and initial_no_punc == comparison_part[0]:
                     phrase_to_be_processed = re.sub(r'^'+initial+r'(\s|$)', comparison_part, phrase_to_be_processed)
                     if debug: 
                         print("Processed phrase: " + phrase_to_be_processed + "\n")   
                     
     return phrase_to_be_processed
 
-def get_match_matrix(longest, shortest, component_list, debug=False):
-    ''' get the comparison matrix
-    
-        keyword arguments:
-        longest - the longest list 
-        shortest - the shortest list
-        word_ratio - dictionary of variation ratio
-        debug - boolean, False by default, if True print out debug
-        
-        return tuple with string containing combined values and warnings
-    '''
-    #debug = True
-    if debug:
-        print("Match matrix called with " + str(longest) + " and " + str(shortest))
-    match_warnings = set()
-    
+
+def get_match_ratios(phrase1, phrase2, debug = False):
     match_matrix = {}
-    #print(longest)
-    #print(shortest)
-    
-    #for i in range(0, len(longest)):
-    #    match_matrix[i] = {j: fuzz.ratio(longest[i], shortest[j]) for j in range(0, len(shortest))}
-    
-    #print("Form each in longest:")
-    #print(match_matrix)
-    
     anchor_ratio = 0
-        
-    for i in range(0, len(shortest)):
+    
+    if debug:
+        print("get_match_ratios called with phrase1: " + str(phrase1) + ", phrase2: " + str(phrase2))
+    
+    for i in range(0, len(phrase1)):
         max_ratio = 0
-        for j1 in range(0, len(longest)):
-            for j2 in range (j1, len(longest)):
-                combined_string = ''.join(longest[j1:j2+1])
+        for j1 in range(0, len(phrase2)):
+            for j2 in range (j1, len(phrase2)):
+                combined_string = ''.join(phrase2[j1:j2+1])
                 key = str(j1) + ":" + str(j2+1)
                 
                 combined_string_no_punc = re.sub(r'[^\w\s]', '', combined_string)
-                shortest_no_punc = re.sub(r'[^\w\s]', '', shortest[i])
+                phrase2_no_punc = re.sub(r'[^\w\s]', '', phrase1[i])
                 
-                #if debug:
-                #    print(combined_string_no_punc)
-                #    print(shortest_no_punc)
+                if debug:
+                    print(combined_string_no_punc)
+                    print(phrase2_no_punc)
                 
-                ratio = fuzz.ratio(shortest_no_punc.lower(), combined_string_no_punc.lower())
+                ratio = fuzz.ratio(phrase2_no_punc.lower(), combined_string_no_punc.lower())
                 
                 if debug: 
-                    combo = "A" + str(i) + "-B" + ": " + str(j1) + "-" + str(j2) + " (" + shortest[i].lower() + "-" + combined_string.lower() +  ") = " + str(ratio)
+                    combo = "A" + str(i) + "-B" + ": " + str(j1) + "-" + str(j2) + " (" + phrase2[i].lower() + "-" + combined_string.lower() +  ") = " + str(ratio)
                     print(combo)
                     
                 if ratio > max_ratio:
@@ -803,150 +790,215 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
                     max_ratio = ratio
                     
                 if ratio >= anchor_ratio:
-                    anchor_ratio = ratio                
+                    anchor_ratio = ratio  
+                    
+    return (anchor_ratio, match_matrix)
+
+
+def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
+    ''' get the comparison matrix
+    
+        keyword arguments:
+        phrase1 - the first list
+        phrase2 - the second list
+        word_ratio - dictionary of variation ratio
+        debug - boolean, False by default, if True print out debug
+        
+        return tuple with string containing combined values and warnings
+    '''
+    #debug = True
+    if debug:
+        print("Match matrix called with " + str(first_phrase) + " and " + str(second_phrase))
+    match_warnings = set()
+    
+    #match_matrix_by_phrase2 = {}
+    match_matrix_by_phrase1 = {}
+    #print(phrase1)
+    #print(phrase2)
+    
+    #for i in range(0, len(phrase1)):
+    #    match_matrix_by_phrase2[i] = {j: fuzz.ratio(phrase1[i], phrase2[j]) for j in range(0, len(phrase2))}
+    
+    #print("Form each in phrase1:")
+    #print(match_matrix_by_phrase2)
+    
+    # by default, phrase1 should be shorter or the same length as phrase2
+    if len(first_phrase) > len(second_phrase):
+        phrase1 = second_phrase
+        phrase2 = first_phrase
+    else:
+        phrase1 = first_phrase
+        phrase2 = second_phrase     
+    
+    
+    
+    anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2, False)    
+    #anchor_ratio_by_phrase2, match_matrix_by_phrase2 = get_match_ratios(phrase2, phrase1, debug)  
+              
 
     if debug:
-        print("For each in shortest:")        
-        print(match_matrix)
+        print("For each in phrase1 (" + str(phrase1) + "):")        
+        print(match_matrix_by_phrase1)
+        #print("For each in phrase2:")        
+        #print(match_matrix_by_phrase2)
     
     best_anchor_points = []
     
-    last_position_shortest = 0
-    last_position_longest = 0
+    last_position_phrase2 = 0
+    last_position_phrase1 = 0
     
-    for short_position, long_details in match_matrix.items():
-        long_position, best_ratio = long_details
-        long_start = int(long_position.split(":")[0])
-        long_end = int(long_position.split(":")[1])   
+    for phrase1_position, phrase2_details in match_matrix_by_phrase1.items():
+        phrase2_position, best_ratio = phrase2_details
+        phrase2_start = int(phrase2_position.split(":")[0])
+        phrase2_end = int(phrase2_position.split(":")[1])  
+        if debug:
+            print("phrase1 position: " + str(phrase1_position))
+            print("phrase2 position: " + str(phrase2_position))
+            print("phrase2 start: " + str(phrase2_start))
+            print("phrase2 end: " + str(phrase2_end))
+            print("best ratio: " + str(best_ratio))
+            
+         
         
         # make list of anchor points (points with highest match ratio)
         if best_ratio == anchor_ratio:
-            if short_position >= last_position_shortest and long_end >= last_position_longest:
-                last_position_shortest = short_position
-                last_position_longest = long_end
-                
-                best_anchor_points.append((short_position, long_position))
+            if phrase1_position >= last_position_phrase1 and phrase2_end >= last_position_phrase2:
+                last_position_phrase1 = phrase1_position
+                last_position_phrase2 = phrase2_end                
+                best_anchor_points.append((phrase1_position, phrase2_position))
                 
     if debug:
-        print(str(anchor_ratio))
-        print(best_anchor_points)
-        print("longest: " + str(longest) + ",  length: " + str(len("".join(longest))))
+        print("Best anchor ratio: " + str(anchor_ratio))
+        #print(str(anchor_ratio_by_phrase2))
+        print("Best anchor points:" + str(best_anchor_points))
+        for anchor_points in best_anchor_points:
+            phrase1_start, phrase2_range = anchor_points
+            phrase2_start = int(phrase2_range.split(":")[0])
+            phrase2_end = int(phrase2_range.split(":")[1])   
+            print("Anchor point - " + str(phrase1_start) + ": " + str(phrase1[phrase1_start]) + "/" + str(phrase2_start) + "-" + str(phrase2_end) + ": " + ' '.join(phrase2[int(phrase2_start):int(phrase2_end)])) 
+        
+        #print("phrase1: " + str(phrase1) + ",  length: " + str(len("".join(phrase1))))
+        #print("phrase2: " + str(phrase2) + ",  length: " + str(len("".join(phrase2))))
     
-    if ratio_check(len("".join(longest)), anchor_ratio):
+    #check if passes the ratio check given the length of the string
+    if ratio_check(len("".join(phrase1)), anchor_ratio):
         anchored_list = []
-        long_pointer = 0
-        short_pointer = 0
-        last_longest_anchored_point = 0
+        phrase1_pointer = 0
+        phrase2_pointer = 0
+        last_phrase1_anchored_point = 0
         
         for anchor_points in best_anchor_points:
-            short_start, long_range = anchor_points
-            long_start = int(long_range.split(":")[0])
-            long_end = int(long_range.split(":")[1])
-            shortest_token = ""
-            longest_token = ""
-            last_longest_anchored_point = long_end
+            phrase1_start, phrase2_range = anchor_points
+            phrase2_start = int(phrase2_range.split(":")[0])
+            phrase2_end = int(phrase2_range.split(":")[1])
+            phrase1_token = ""
+            phrase2_token = ""
+            last_phrase1_anchored_point = phrase2_end
             
-            # while short pointer is pointing at or before the short start and the long pointer has not reached the end of the long values
-            while short_pointer <= short_start and long_pointer <= long_end:
+            # while Phrase1 pointer is pointing at or before the phrase1 start and the Phrase2 pointer has not reached the end of the phrase2 values
+            while phrase1_pointer <= phrase1_start and phrase2_pointer <= phrase2_end:
                 if debug:
-                    print("Before - Short pointer: " + str(short_pointer) + ", short start: " + str(short_start)) 
-                    print("Before - Long pointer: " + str(long_pointer) + ", long start: " + str(long_start)) 
+                    print("Before - Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start)) 
+                    print("Before - Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start)) 
                 
-                # if short is at start but long is before the first start point
-                if short_pointer == short_start and long_pointer < long_start:
-                    longest_token = ' '.join(longest[long_pointer:long_start])
-                    anchored_list.append("(" + longest_token + "?)")
-                    long_pointer = long_start
+                # if phrase2 is at start but phrase1 is before the first start point
+                if phrase1_pointer == phrase1_start and phrase2_pointer < phrase2_start:
+                    phrase2_token = ' '.join(phrase2[phrase2_pointer:phrase2_start])
+                    anchored_list.append("(" + phrase2_token + "?)")
+                    phrase2_pointer = phrase2_start
                     
                     if debug:
-                        print("Added 'long' string to bring into alignment")
-                        print("Adding (longest): " + longest_token)
-                        print("Long pointer: " + str(long_pointer))
+                        print("Added 'phrase2' string to bring into alignment")
+                        print("Adding (phrase2): " + phrase2_token + " from " + str(phrase2))
+                        print("Phrase2 pointer: " + str(phrase2_pointer))
                         
-                # if pointer is before short start but long is at start point        
-                elif short_pointer < short_start and long_start == long_pointer:
-                    shortest_token = shortest[short_pointer]
-                    short_pointer += 1
-                    anchored_list.append("(" + shortest_token + "?)")
+                # if pointer is before phrase1 start but phrase2 is at start point        
+                elif phrase1_pointer < phrase1_start and phrase2_start == phrase2_pointer:
+                    phrase1_token = phrase1[phrase1_pointer]
+                    phrase1_pointer += 1
+                    anchored_list.append("(" + phrase1_token + "?)")
                     
                     if debug:
-                        print("Added 'short' string to bring into alignment")
-                        print("Adding (shortest): " + shortest_token)
-                        print("Short pointer: " + str(short_pointer))
+                        print("Added 'phrase1' string to bring into alignment")
+                        print("Adding (phrase1): " + phrase1_token + " from " + str(phrase1))
+                        print("Phrase1 pointer: " + str(phrase1_pointer))
                 
-                # if pointers for both long and short are at their respective start points        
-                elif short_start == short_pointer and long_start == long_pointer:
-                    shortest_token = shortest[short_start] 
-                    longest_token = ' '.join(longest[int(long_start):int(long_end)])                        
+                # if pointers for both phrase1 and phrase2 are at their respective start points        
+                elif phrase2_start == phrase2_pointer and phrase1_start == phrase1_pointer:
+                    phrase1_token = phrase1[phrase1_start] 
+                    phrase2_token = ' '.join(phrase2[int(phrase2_start):int(phrase2_end)])                        
                     
-                    if shortest_token != longest_token:
-                        token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
-                        #print("Combine two words called from Match_matrix (pointers matched) with " + longest_token + " and " + shortest_token)
-                        combined_token = combine_two_words(longest_token, shortest_token, token_ratio, False)
+                    if phrase2_token != phrase1_token:
+                        token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
+                        #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
+                        combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, True)
                         
                         if debug:
                             print("Added combined section")
-                            print("Shortest token: " + shortest_token)
-                            print("Longest token: " + longest_token)
+                            print("phrase1 token: " + phrase1_token)
+                            print("phrase2 token: " + phrase2_token)
                             print("Token ratio: " + str(token_ratio))
                             print("Adding (combined match): " + combined_token)
                     else:
-                        combined_token = shortest_token
+                        combined_token = phrase1_token
                         
                     anchored_list.append(combined_token)
-                    long_pointer = long_end
-                    short_pointer += 1
+                    phrase2_pointer = phrase2_end
+                    phrase1_pointer += 1
                     
-                # if pointers for both long and short are before their respective start points     
+                # if pointers for both phrase1 and phrase2 are before their respective start points     
                 else:
-                    shortest_token = ' '.join(shortest[short_pointer:short_start])
-                    longest_token = ' '.join(longest[int(long_pointer):int(long_start)])
-                    long_pointer = long_start
-                    short_pointer = short_start
+                    phrase1_token = ' '.join(phrase1[phrase1_pointer:phrase1_start])
+                    phrase2_token = ' '.join(phrase2[int(phrase2_pointer):int(phrase2_start)])
+                    phrase1_pointer = phrase1_start
+                    phrase2_pointer = phrase2_start
                     
-                    shortest_token = initials_replace(shortest_token, longest_token, debug) 
-                    longest_token = initials_replace(longest_token, shortest_token, debug)                                     
+                    phrase2_token = initials_replace(phrase2_token.strip(), phrase1_token.strip(), debug) 
+                    phrase1_token = initials_replace(phrase1_token.strip(), phrase2_token.strip(), debug)                                     
                     
-                    token_ratio = token_distribution(component_list, [shortest_token, longest_token], debug)
-                    #print("Combine two words called from Match_matrix (both pointers short) with " + longest_token + " and " + shortest_token)
-                    combined_token = combine_two_words(longest_token, shortest_token, token_ratio, debug)
+                    token_ratio = token_distribution(component_list, [phrase2_token, phrase1_token], debug)
+                    #print("Combine two words called from match_matrix_by_phrase2 (both pointers phrase2) with " + phrase1_token + " and " + phrase2_token)
+                    combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
                     
                     anchored_list.append(combined_token)
                     
                     if debug:
                         print("Adding combined starting string")
-                        print("Shortest token: " + shortest_token)
-                        print("Longest token: " + longest_token)
+                        print("phrase2 token: " + phrase2_token)
+                        print("phrase1 token: " + phrase1_token)
                         print("Token ratio: " + str(token_ratio))
                         print("Adding (combined gap): " + combined_token)
                                     
                 if debug:
-                    print("After - Short: " + shortest_token + ", pointer: " + str(short_pointer))
-                    print("After - Long: " + longest_token + ", pointer: " + str(long_pointer))                    
+                    print("After - phrase1: " + phrase1_token + ", phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start))
+                    print("After - phrase2: " + phrase2_token + ", phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start))
+                                     
         
-        if len(longest) > last_longest_anchored_point or len(shortest) > short_pointer:
-            shortest_end_token = ' '.join(shortest[short_pointer:])
-            longest_end_token = ' '.join(longest[int(long_end):])  
+        if len(phrase1) > last_phrase1_anchored_point or len(phrase2) > phrase2_pointer:
+            phrase1_end_token = ' '.join(phrase1[phrase1_pointer:])
+            phrase2_end_token = ' '.join(phrase2[int(phrase2_end):])  
             
-            shortest_end_token = initials_replace(shortest_end_token, longest_end_token, debug) 
-            longest_end_token = initials_replace(longest_end_token, shortest_end_token, debug)  
+            phrase2_end_token = initials_replace(phrase2_end_token.strip(), phrase1_end_token.strip(), debug) 
+            phrase1_end_token = initials_replace(phrase1_end_token.strip(), phrase2_end_token.strip(), debug)  
             
-            component_list = [shortest_end_token, longest_end_token]                              
+            component_list = [phrase2_end_token, phrase1_end_token]                              
                     
-            #end_token_ratio = token_distribution(component_list, [shortest_end_token, longest_end_token], debug)
+            end_token_ratio = token_distribution(component_list, [phrase2_end_token, phrase1_end_token], debug)
             
             if debug:
                 print("Adding end section")
-                print("Short pointer: " + str(short_pointer) + ", short end: " + str(len(shortest))) 
-                print("Long pointer: " + str(long_pointer) + ", long end: " + str(len(longest))) 
+                print("Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 end: " + str(len(phrase2))) 
+                print("Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 end: " + str(len(phrase1))) 
                 print("component list: " + str(component_list))
             
-            if short_pointer == len(shortest):
-                anchored_list.append("(" + longest_end_token + "?)")
-            elif longest_end_token == len(longest):
-                anchored_list.append("(" + shortest_end_token + "?)")
+            if phrase2_pointer == len(phrase2):
+                #print("Phrase2 pointer at end - adding end text from phrase1")
+                anchored_list.append("(" + phrase1_end_token + "?)")
+            elif phrase1_pointer == len(phrase1):
+                print("Phrase1 pointer at end - adding end text from phrase2")
+                anchored_list.append("(" + phrase2_end_token + "?)")
             else:
-                #combined_token = combine_two_words(longest_end_token, shortest_end_token, end_token_ratio, debug)
+                combined_token = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
                 end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
                 match_warnings.update(end_phrase_join_warnings)
                 anchored_list.append(end_phrase_join)
@@ -955,8 +1007,8 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
             print(anchored_list)        
         
     else:
-        match_warnings.add("Could not find any strong anchor points. '" + " ".join(shortest) + "' and '" + " ".join(longest) + "' appear to be distinct values.")
-        anchored_list = shortest + ["/"] + longest 
+        match_warnings.add("Could not find any strong anchor points. '" + " ".join(phrase2) + "' and '" + " ".join(phrase1) + "' appear to be distinct values.")
+        anchored_list = phrase2 + ["/"] + phrase1 
         
     '''
     combined = []
@@ -1021,6 +1073,10 @@ def get_match_matrix(longest, shortest, component_list, debug=False):
 
 def get_similarity_range(values, get_min = True, get_max = True):
     
+    #print("Min: " + str(get_min))
+    #print("Max: " + str(get_max))
+    #print("Checking: " + str(values))
+    
     flattened_values = []
     for value in values:
         if isinstance(value, str) and (value.strip() and value.strip() != "*"):
@@ -1045,6 +1101,9 @@ def get_similarity_range(values, get_min = True, get_max = True):
                         max = ratio
                     if ratio < min:
                         min = ratio
+    
+    #print("Min: " + str(min))
+    #print("Max: " + str(max))
                         
     if get_min and get_max:
         return (min, max)
@@ -1143,18 +1202,18 @@ test = {"1":["Hill Top Farm", "Hilltop farm", "Hill top farm"],
 
 test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]}
 
-test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
-         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+test3 = {#"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+         #"2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+         #"3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
          "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
 
-component_compare(names1)
-component_compare(names2)
-component_compare(address)
-component_compare(farm_name)
-component_compare(test)
-component_compare(test2)
-component_compare(test3)
+#print(component_compare(names1))
+#print(component_compare(names2))
+#print(component_compare(address))
+#print(component_compare(farm_name))
+#print(component_compare(test))
+#print(component_compare(test2))
+print(component_compare(test3, True))
 
 #punctuated_title("fiNd o(u)t")
