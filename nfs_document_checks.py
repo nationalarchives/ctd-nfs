@@ -804,7 +804,7 @@ def get_combined_owner_details_by_ref(owner_details):
         Returns:
             Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
     '''
-    return get_combined_details_by_ref(owner_details, 1)
+    return get_combined_details_by_ref(owner_details, ["Title", "Individual Name", "Group Names", "Addresses"], 1)
 
 
 # Group 6: Farmer
@@ -830,8 +830,7 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     ''' 
 
     warnings = {}
-    combined_details = {}
-    components = ["Title", "Individual Name", "Group Names", "Addresses"]
+    values = {}
     
     # Create combined values by getting similar values for each field
     # call get_combined_details_by_ref with combined values  
@@ -847,7 +846,12 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     else:
         shared = set(farmer_details.keys())
     
+    #print("Farmer details" + str(farmer_details))
+    #print("Addressee details" + str(addressee_details))
+    components = ["Title", "Individual Name", "Group Names", "Addresses"]
+    
     for ref in list(shared):
+        combined_details = {}
         combined_details[ref] = {}
         warnings[ref] = set()
         farmer_title = farmer_details[ref]["Title"]
@@ -860,13 +864,73 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         addressee_groups = addressee_details[ref]["Group Names"]
         addressee_addy = addressee_details[ref]["Addresses"]   
         
+        #print("\nRef: " + str(ref))
+        #print("Farmer addy: " + str(farmer_addy))
+        #print("Addressee addy: " + str(addressee_addy))
+        
+        #TO DO: Need to combine the values into one key not have each as separate keys:values!!!
+        addy_dict = dict()
+        combined_addy_dict = dict()
+        addy_dict["farmer"] = [str(addy[0]) for addy in farmer_addy]
+        addy_dict["addressee"] = [str(addy[0]) for addy in addressee_addy]
+            
+        #print("Addy dict: " + str(addy_dict))   
+        
+        combined_addy, combined_addy_warnings = dn.component_compare({'farmer': addy_dict['farmer']})
+        combined_addy_dict.update(combined_addy)
+        warnings[ref].update(combined_addy_warnings)
+        combined_addy, combined_addy_warnings = dn.component_compare({'addressee': addy_dict['addressee']})
+        combined_addy_dict.update(combined_addy)
+        
+        warnings[ref].update(combined_addy_warnings)
+        
+        #print("combined_addy: " + str(combined_addy_dict))
+        #print("combined_addressee_addy: " + str(combined_addressee_addy))
+        
+        #combined_addy = dn.component_compare(addy_dict)    
+        #print("combined_addy: " + str(combined_addy))
+        
         combined_details[ref].update({"Title": farmer_title + addressee_title})
         combined_details[ref].update({"Individual Name": farmer_name + addressee_name})  
+        combined_details[ref].update({"FIndividual Name": farmer_name})  
+        combined_details[ref].update({"AIndividual Name": addressee_name}) 
+        
         combined_details[ref].update({"Group Names": farmer_groups + addressee_groups})
-        combined_details[ref].update({"Addresses": farmer_addy + addressee_addy})    
-           
+        combined_details[ref].update({"FGroup Names": farmer_groups})
+        combined_details[ref].update({"AGroup Names": addressee_groups})
+        
+        combined_details[ref].update({"Addresses": [[combined_addy_dict["farmer"]], [combined_addy_dict["addressee"]]]}) 
+        combined_details[ref].update({"FAddresses": [combined_addy_dict["farmer"]]}) 
+        combined_details[ref].update({"AAddresses": [combined_addy_dict["addressee"]]}) 
+        
+        #print("Addresses (" + ref + "): " + str( combined_details[ref]["Addresses"]))  
+        
+        #print("Ref: " + str(ref))
+        #print("Details: " + str(combined_details[ref]))
+        
+        split_details = False
+        for component in components:
+            threshold = 80
+            min = dn.get_similarity_range(combined_details[ref][component], get_max=False)
+            print(component + ": " + str(min))
+            if min < threshold:
+                warnings[ref].add("Warning: Similarity (" + str(min) + ") below threshold (" + str(threshold) + ") for " + component)   
+                split_details = True
+                #print(ref + ": Adding similarity warning for " + component)
+                
+        if split_details:
+            components = ["Title", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
+            combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+            print("Combined values: " + str(combined_values))
+        else:        
+            combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+        
+        warnings = dic_merge(warnings, combined_warnings)
+        values = dic_merge(values, combined_values)
+
     
     for ref in list(farmer_only):
+        combined_details = {}
         combined_details[ref] = {}
         warnings[ref] = set()
         combined_details[ref].update({"Title": farmer_title})
@@ -874,8 +938,13 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details[ref].update({"Group Names": farmer_groups})
         combined_details[ref].update({"Addresses": farmer_addy})  
         warnings[ref].add("No addressee values given")
+        
+        combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+        warnings = dic_merge(warnings, combined_warnings)
+        values = dic_merge(values, combined_values)
     
     for ref in list(addressee_only):
+        combined_details = {}
         combined_details[ref] = {}
         warnings[ref] = set()
         combined_details[ref].update({"Title": addressee_title})
@@ -883,6 +952,10 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details[ref].update({"Group Names": addressee_groups})
         combined_details[ref].update({"Addresses": addressee_addy}) 
         warnings[ref].add("No farmer values given") 
+        
+        combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+        warnings = dic_merge(warnings, combined_warnings)
+        values = dic_merge(values, combined_values)
     
     #print("Farmer Details:")
     #print(farmer_details)
@@ -893,23 +966,15 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     #print("Combined Details:")
     #print(combined_details)
     
-    threshold = 80
-    for ref in combined_details.keys():
-        for component in components:
-            min = dn.get_similarity_range(combined_details[ref][component], get_max=False)
-            if min < threshold:
-                warnings[ref].add("Similarity (" + str(min) + ") below threshold (" + str(threshold) + ") for " + component) 
-        
+    #combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
     
-    combined_values, combined_warnings = get_combined_details_by_ref(combined_details)
     
-    warnings = dic_merge(warnings, combined_warnings)
     #print(warnings)
     
     return (combined_values, warnings)
         
     
-def get_combined_details_by_ref(details, expected_count = -1):
+def get_combined_details_by_ref(details, components, expected_count = -1):
     ''' Combines title, individual name, group name and addressee values as either "title individual name, address" or "group name, address", where there may be multiple group names and addresses, and flags warnings if unexpected values found.
     
         Key Arguments:  
@@ -926,7 +991,6 @@ def get_combined_details_by_ref(details, expected_count = -1):
           
     warnings = {}
     combined_details = {}
-    components = ["Title", "Individual Name", "Group Names", "Addresses"]
     
     titles = {}
     names = {}
@@ -935,7 +999,8 @@ def get_combined_details_by_ref(details, expected_count = -1):
     
     for ref, detail in details.items(): 
         warnings[ref] = set()
-        #print(details)
+        print("\n" + ref)
+        print("Values: " + str(detail))
         
         '''
         # lists of strings as single value expected
@@ -957,45 +1022,61 @@ def get_combined_details_by_ref(details, expected_count = -1):
         count = set()
         #for each type of field e.g. Title, Individual Name etc converts values to single string for each
         for component in components:
+            #print("Combining: " + component)
+            #print("Values: " + str(detail[component]))
             component_length = len(detail[component]) 
             count.add(component_length)
             values_to_merge_dict = {}
             
             if component_length > 1: # Check if there is more that one variation and if so merge
-                
-                if component == "Group Names" or component == "Addresses":
+                    
+                if "Group Names" in component or "Addresses" in component:
+                    #print(detail[component])
+                    #print(component)                     
                     values_to_merge_dict = array_zip(detail[component], component)
+                    #print("Values to merge: " + str(values_to_merge_dict)) 
                 else:
                     values_to_merge_dict[component] = detail[component]
                     #for i, values in enumerate(detail[component]):
                     #        values_to_merge_dict[component+str(i)] = [values]
-                     
-                merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
                 
+                
+
+                print("values_to_merge_dict: " + str(values_to_merge_dict)) 
+                merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
+                print("Merged Values: " + str(merged_values))
+            
                 for warning in merge_warnings.values():
                     if len(warning) > 0:
                         warnings[ref].update(warning)
+
+#TO DO - Need to deal with A and F version when they are being sent through separately
+
                 
-                if component == "Title":
+                if "Title" in component:
                     titles[ref] = list(merged_values.values())
-                elif component == "Individual Name":
+                elif "Individual Name" in component:
                     names[ref] = list(merged_values.values())
-                elif component == "Group Names":
+                elif "Group Names" in component:
                     groups[ref] = list(merged_values.values())
-                elif component == "Addresses":
+                elif "Addresses" in component:
                     addresses[ref] = list(merged_values.values())
                 else:
                     print("Error in get_combined_details_by_ref: unknown component type: " + component)  
             else: # If there are not multiple variations then get first value
-                if component == "Title":
+                #print("No variations so no merge needed")
+                if "Title" in component:
                     titles[ref] = detail[component][0]
-                elif component == "Individual Name":
+                elif "Individual Name" in component:
                     names[ref] = detail[component][0]
-                elif component == "Group Names":
+                elif "Group Names" in component:
                     groups[ref] = detail[component][0]
-                elif component == "Addresses":
-                    addresses[ref] = detail[component][0]  
-     
+                    print(component + ": " + str(detail[component][0]))
+                elif "Addresses" in component:
+                    addresses[ref] = detail[component][0] 
+                    print(component + ": " + str(detail[component][0])) 
+                    
+    
             
         if len(count) != 1: #Check how many distinct counts are in the set - should only be one as should be the same number of values for each component
             warnings[ref].add("Mismatch in number of expected answers.")    
@@ -1064,10 +1145,13 @@ def get_combined_details_by_ref(details, expected_count = -1):
             if address == "*":
                 address = "[..?]"
                 
-            combined_details[ref] = name + ", " + address  
+            if "Addresses" in components:                
+                combined_details[ref] = name + ", " + address  
+            else:
+                combined_details[ref] = "Farmer: " + name + ", " + address  
             
         else:  
-            group_names = []                 
+            group_names = []            
             if isinstance(group_value, list) and isinstance(addy_value, list): 
                 if len(group_value) != len(addy_value):
                     warnings[ref].add("Error: Length of group names (" + str(len(group_value))+ ") and addresses (" + str(len(addy_value)) + ") different") 
@@ -1095,7 +1179,7 @@ def get_combined_details_by_ref(details, expected_count = -1):
                         warnings[ref].add("Warning: No group name with " + addy)                
                  
             else:
-                print("get_combined_details_by_ref: Expecting lists for group and address values")
+                print("get_combined_details_by_ref: " + ref + ": Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
                 
             combined_details[ref] = "; ".join(group_names)
                
