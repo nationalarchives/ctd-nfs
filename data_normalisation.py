@@ -707,7 +707,7 @@ def align_two_phrases(string1, string2, component_list, debug=False):
     
     combined = ""
     
-    warnings = {"Note: Combining multi-length variations."}
+    warnings = {"Note: Combining multi-length or offset variations."}
     
     if len(string1) > len(string2):
         longest = string1
@@ -832,7 +832,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
     
     
     
-    anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2, False)    
+    anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2, debug)    
     #anchor_ratio_by_phrase2, match_matrix_by_phrase2 = get_match_ratios(phrase2, phrase1, debug)  
               
 
@@ -885,7 +885,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         anchored_list = []
         phrase1_pointer = 0
         phrase2_pointer = 0
-        last_phrase1_anchored_point = 0
+        last_phrase2_anchored_point = 0
         
         for anchor_points in best_anchor_points:
             phrase1_start, phrase2_range = anchor_points
@@ -893,7 +893,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
             phrase2_end = int(phrase2_range.split(":")[1])
             phrase1_token = ""
             phrase2_token = ""
-            last_phrase1_anchored_point = phrase2_end
+            last_phrase2_anchored_point = phrase2_end
             
             # while Phrase1 pointer is pointing at or before the phrase1 start and the Phrase2 pointer has not reached the end of the phrase2 values
             while phrase1_pointer <= phrase1_start and phrase2_pointer <= phrase2_end:
@@ -931,7 +931,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     if phrase2_token != phrase1_token:
                         token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
                         #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
-                        combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, True)
+                        combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
                         
                         if debug:
                             print("Added combined section")
@@ -970,11 +970,11 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                         print("Adding (combined gap): " + combined_token)
                                     
                 if debug:
-                    print("After - phrase1: " + phrase1_token + ", phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start))
-                    print("After - phrase2: " + phrase2_token + ", phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start))
+                    print("After - phrase1: " + phrase1_token + ", phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start) + ", phrase1 length: " + str(len(phrase1)))
+                    print("After - phrase2: " + phrase2_token + ", phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start) + ", phrase2 last anchor: " + str(last_phrase2_anchored_point))
                                      
         
-        if len(phrase1) > last_phrase1_anchored_point or len(phrase2) > phrase2_pointer:
+        if len(phrase2) > last_phrase2_anchored_point or len(phrase1) > phrase1_pointer:
             phrase1_end_token = ' '.join(phrase1[phrase1_pointer:])
             phrase2_end_token = ' '.join(phrase2[int(phrase2_end):])  
             
@@ -1202,9 +1202,9 @@ test = {"1":["Hill Top Farm", "Hilltop farm", "Hill top farm"],
 
 test2 = {"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]}
 
-test3 = {#"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         #"2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
-         #"3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+         "2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+         "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
          "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
 
@@ -1214,6 +1214,6 @@ test3 = {#"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgr
 #print(component_compare(farm_name))
 #print(component_compare(test))
 #print(component_compare(test2))
-print(component_compare(test3, True))
+print(component_compare(test3))
 
 #punctuated_title("fiNd o(u)t")
