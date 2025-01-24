@@ -125,7 +125,7 @@ def component_compare (values_to_check, debug=False):
                     string2 = list(processed_list)[1]
                     
                     if len(string1.split(' ')) > len(string2.split(' ')):
-                        string1 = string1.split(' ')
+                        longest = string1.split(' ')
                         shortest = string2.split(' ')
                     else:
                         longest = string2.split(' ')
@@ -995,7 +995,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 #print("Phrase2 pointer at end - adding end text from phrase1")
                 anchored_list.append("(" + phrase1_end_token + "?)")
             elif phrase1_pointer == len(phrase1):
-                print("Phrase1 pointer at end - adding end text from phrase2")
+                #print("Phrase1 pointer at end - adding end text from phrase2")
                 anchored_list.append("(" + phrase2_end_token + "?)")
             else:
                 combined_token = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
@@ -1214,6 +1214,6 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
 #print(component_compare(farm_name))
 #print(component_compare(test))
 #print(component_compare(test2))
-print(component_compare(test3))
+#print(component_compare(test3))
 
 #punctuated_title("fiNd o(u)t")
