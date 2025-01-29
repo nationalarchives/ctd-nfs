@@ -225,8 +225,8 @@ def component_compare (values_to_check, debug=False):
             else:
                 combined_values[key] = combined_phrases
     
-    #print(combined_values)
-    #print(warnings)
+    #print("Component compare combined values: " + str(combined_values))
+    #print("Component compare warnings: " + str(warnings))
                 
     return (combined_values, warnings)
 

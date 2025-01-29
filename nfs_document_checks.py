@@ -246,7 +246,7 @@ def filename_checks(filename1, filename2, type, row_num):
 # Warnings if unexpected number of rows matched
 
 def doc_type_check(type, row_num):
-    ''' Checks if the type of document matches one of the valid types
+    ''' Checks if the type of document matches one of the valid types (B496/EI, C 47/SSY, C 49/SSY, C51/SSY, SF, SF C69/SSY, Other, Cover)
     
         Keyword Arguments:
             type - string with document type 
@@ -256,7 +256,7 @@ def doc_type_check(type, row_num):
             Type value as string or raises a ValueError
     '''
     
-    allowed_types = ["C 51/SSY form", "B 496/EI form", "C 47/SSY form", "C 49/SSY form", "SF form C 69/SSY", "Other", "Cover"]
+    allowed_types = ["B496/EI", "C 47/SSY", "C 49/SSY", "C51/SSY", "SF", "SF C69/SSY", "Other", "Cover"]
         
     if type in allowed_types:
         return type
@@ -606,6 +606,7 @@ def extract_farms(full_csv):
     #print(farmer_details)
     #print(addressee_details)
     combined_farmer_info, combined_farmer_info_warnings = get_combined_farmer_details_by_ref(farmer_details, addressee_details)
+    #print("Combined Farmer Info: " + str(combined_farmer_info))
     
     for ref, combined_farmer_info in combined_farmer_info.items():
         farms[ref].update({"Farmer": [combined_farmer_info]})
@@ -877,12 +878,19 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         #print("Addy dict: " + str(addy_dict))   
         
         combined_addy, combined_addy_warnings = dn.component_compare({'farmer': addy_dict['farmer']})
+        #print("Combined addy: " + str(combined_addy))
+        #print("Combined addy warnings: " + str(combined_addy_warnings['farmer']))
         combined_addy_dict.update(combined_addy)
-        warnings[ref].update(combined_addy_warnings)
-        combined_addy, combined_addy_warnings = dn.component_compare({'addressee': addy_dict['addressee']})
-        combined_addy_dict.update(combined_addy)
+        #print("combined_addy_dict: " + str(combined_addy_dict))
+        warnings[ref].update(combined_addy_warnings['farmer'])
+        #print("Warnings: " + str(warnings))
         
-        warnings[ref].update(combined_addy_warnings)
+        combined_addy, combined_addy_warnings = dn.component_compare({'addressee': addy_dict['addressee']})
+        #print("Combined addy: " + str(combined_addy))
+        combined_addy_dict.update(combined_addy)
+        #print("combined_addy_dict: " + str(combined_addy_dict))        
+        warnings[ref].update(combined_addy_warnings['addressee'])
+        #print("Warnings: " + str(warnings))
         
         #print("combined_addy: " + str(combined_addy_dict))
         #print("combined_addressee_addy: " + str(combined_addressee_addy))
@@ -891,6 +899,9 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         #print("combined_addy: " + str(combined_addy))
         
         combined_details[ref].update({"Title": farmer_title + addressee_title})
+        combined_details[ref].update({"FTitle": farmer_title})
+        combined_details[ref].update({"ATitle": addressee_title})
+        
         combined_details[ref].update({"Individual Name": farmer_name + addressee_name})  
         combined_details[ref].update({"FIndividual Name": farmer_name})  
         combined_details[ref].update({"AIndividual Name": addressee_name}) 
@@ -912,21 +923,23 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         for component in components:
             threshold = 80
             min = dn.get_similarity_range(combined_details[ref][component], get_max=False)
-            print(component + ": " + str(min))
+            #print(component + ": " + str(min))
             if min < threshold:
                 warnings[ref].add("Warning: Similarity (" + str(min) + ") below threshold (" + str(threshold) + ") for " + component)   
                 split_details = True
                 #print(ref + ": Adding similarity warning for " + component)
                 
         if split_details:
-            components = ["Title", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
+            components = ["FTitle", "ATitle", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
             combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
-            print("Combined values: " + str(combined_values))
+            #print("Combined values: " + str(combined_values))
         else:        
             combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
         
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
+        
+        #print("Values: " + str(values))
 
     
     for ref in list(farmer_only):
@@ -971,7 +984,7 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     
     #print(warnings)
     
-    return (combined_values, warnings)
+    return (values, warnings)
         
     
 def get_combined_details_by_ref(details, components, expected_count = -1):
@@ -999,8 +1012,9 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
     
     for ref, detail in details.items(): 
         warnings[ref] = set()
-        print("\n" + ref)
-        print("Values: " + str(detail))
+        #print("\n" + ref)
+        #print("Values: " + str(detail))
+        #print("Components: " + str(components))
         
         '''
         # lists of strings as single value expected
@@ -1042,39 +1056,67 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                 
                 
 
-                print("values_to_merge_dict: " + str(values_to_merge_dict)) 
+                #print("values_to_merge_dict: " + str(values_to_merge_dict)) 
                 merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
-                print("Merged Values: " + str(merged_values))
+                #print("Merged Values: " + str(merged_values))
             
                 for warning in merge_warnings.values():
                     if len(warning) > 0:
                         warnings[ref].update(warning)
 
-#TO DO - Need to deal with A and F version when they are being sent through separately
-
-                
                 if "Title" in component:
-                    titles[ref] = list(merged_values.values())
+                    if ref in titles.keys():
+                        titles[ref].update({component: list(merged_values.values())})
+                    else:
+                        titles[ref] = {component: list(merged_values.values())}
                 elif "Individual Name" in component:
-                    names[ref] = list(merged_values.values())
+                    if ref in names.keys():
+                        names[ref].update({component: list(merged_values.values())})
+                    else: 
+                        names[ref] = {component: list(merged_values.values())}
                 elif "Group Names" in component:
-                    groups[ref] = list(merged_values.values())
+                    if ref in groups.keys():
+                        groups[ref].update({component: list(merged_values.values())})
+                    else:
+                        groups[ref] = {component: list(merged_values.values())}
                 elif "Addresses" in component:
-                    addresses[ref] = list(merged_values.values())
+                    if ref in addresses.keys():
+                        addresses[ref].update({component: list(merged_values.values())})
+                    else:
+                        addresses[ref] = {component: list(merged_values.values())}  
+                    #print("Addresses: " + str(addresses[ref]))                 
                 else:
                     print("Error in get_combined_details_by_ref: unknown component type: " + component)  
             else: # If there are not multiple variations then get first value
                 #print("No variations so no merge needed")
                 if "Title" in component:
-                    titles[ref] = detail[component][0]
+                    if ref in titles.keys():
+                        titles[ref].update({component: detail[component][0]})
+                    else:
+                        titles[ref] = {component: detail[component][0]}
                 elif "Individual Name" in component:
-                    names[ref] = detail[component][0]
+                    if ref in names.keys():
+                        names[ref].update({component: detail[component][0]})
+                    else: 
+                        names[ref] = {component: detail[component][0]}
                 elif "Group Names" in component:
-                    groups[ref] = detail[component][0]
-                    print(component + ": " + str(detail[component][0]))
+                    if ref in groups.keys():
+                        groups[ref].update({component: detail[component][0]})
+                    else:
+                        groups[ref] = {component: detail[component][0]}
+                    #print(component + ": " + str(detail[component][0]))
                 elif "Addresses" in component:
-                    addresses[ref] = detail[component][0] 
-                    print(component + ": " + str(detail[component][0])) 
+                    if ref in addresses.keys():
+                        if isinstance(detail[component][0], list):
+                            addresses[ref].update({component: detail[component][0]})
+                        else:
+                            addresses[ref].update({component: [detail[component][0]]})
+                    else:
+                        if isinstance(detail[component][0], list):
+                            addresses[ref] = {component: detail[component][0]}
+                        else:
+                            addresses[ref] = {component: [detail[component][0]]}
+                    #print("Addresses: " + str(addresses[ref]))  
                     
     
             
@@ -1089,105 +1131,151 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
             else:
                 warnings[ref].add("Expected " + str(expected_count) + " row of data, Got " + str(count_list[0]) + ".")
                 
-    for ref in details.keys():  
-        name = ""  
+                
+    for ref in details.keys():       
+        if "Addresses" in components:
+            # Expected values: ["Title", "Individual Name", "Group Names", "Addresses"]
+            name_string, name_warnings = generate_name(titles[ref]["Title"], names[ref]["Individual Name"], groups[ref]["Group Names"], addresses[ref]["Addresses"])
         
-        name_value = names[ref]
-        title_value = titles[ref]
-        group_value = groups[ref]
-        addy_value = addresses[ref] 
-        
-        if isinstance(name_value, list):
-            temp = set(name_value)
-            if len(temp) == 1 and (list(temp)[0] == ""):
-                name_value = ""
-            elif len(temp) == 1:
-                name_value = list(temp)[0]
+            combined_details[ref] = name_string
+            warnings[ref].update(name_warnings)
+        else:
+            # Expected values: ["FTitle", "ATitle" "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
+            
+            #print(ref + " get farmer name with title1: " + str(titles[ref]["FTitle"]) + ", name: " + str(names[ref]["FIndividual Name"]) + ", group names: " + str(groups[ref]["FGroup Names"]) + ", addresses: " + str(addresses[ref]["FAddresses"]))    
+            
+            farmer_name_string, farmer_name_warnings = generate_name(titles[ref]["FTitle"], names[ref]["FIndividual Name"], groups[ref]["FGroup Names"], addresses[ref]["FAddresses"])
+            #print("Farmer name warnings: " + str(farmer_name_warnings))
+            warnings[ref].update(farmer_name_warnings)
+            #print(warnings[ref])
+            if farmer_name_string != "":
+                farmer_name_string = "Farmer: " + farmer_name_string
+            #print("Farmer name: " + farmer_name_string)     
+            
+            addressee_name_string, addressee_name_warnings = generate_name(titles[ref]["ATitle"], names[ref]["AIndividual Name"], groups[ref]["AGroup Names"], addresses[ref]["AAddresses"])
+            #print("Addressee name warnings: " + str(addressee_name_warnings))
+            warnings[ref].update(addressee_name_warnings)
+            #print(warnings[ref])
+            
+            if addressee_name_string != "":
+                addressee_name_string = "Addressee: " + addressee_name_string
+                
+            #print(ref + " get addressee name with title: " + str(titles[ref]["ATitle"]) + ", name: " + str(names[ref]["AIndividual Name"]) + ", group names: " + str(groups[ref]["AGroup Names"]) + ", addresses: " + str(addresses[ref]["AAddresses"]) + ". Gives: " + addressee_name_string)
+            
+            if farmer_name_string != "" and addressee_name_string != "":
+                combined_details[ref] = farmer_name_string + "/" + addressee_name_string
+            elif farmer_name_string != "":
+                combined_details[ref] = farmer_name_string
             else:
-                warnings[ref].add("Error: multiple names found when one expected")
-                name_value = "/".join(name_value) 
+                combined_details[ref] = addressee_name_string
+              
+    #print(ref + ": Combined values: " + combined_details[ref]) 
+    #print("Warnings: " + str(warnings))          
+        
+    return(combined_details, warnings)      
 
-        if isinstance(title_value, list):
+
+def generate_name(title_value, name_value, group_value, addy_value):
+    warnings = set()
+    name = ""
+    
+    #print("Ref: " + ref)
+    #print("Title: " + str(title_value))
+    #print("Name: " + str(name_value))
+    #print("Group Names: " + str(group_value))
+    #print("Addresses: " + str(addy_value))
+    
+    # Check for expected value types
+    if isinstance(title_value, list):
             temp = set(title_value)
             if len(temp) == 1 and (list(temp)[0] == ""):
                 title_value = ""
             elif len(temp) == 1:
                 title_value = list(temp)[0]                
             else:
-                warnings[ref].add("Error: multiple names found when one expected")
+                warnings.add("Error: multiple names found when one expected")
                 title_value = "/".join(title_value) 
-
-        if isinstance(group_value, list):
-            temp = set(group_value)
-            if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
-                group_value = group_value[0]
         
-        if name_value != "*" and name_value != "":
-            #name
-            if title_value != "*":
-                name = title_value + " " + name_value
+    if isinstance(name_value, list):
+        temp = set(name_value)
+        if len(temp) == 1 and (list(temp)[0] == ""):
+            name_value = ""
+        elif len(temp) == 1:
+            name_value = list(temp)[0]
+        else:
+            warnings.add("Error: multiple names found when one expected")
+            name_value = "/".join(name_value) 
 
-            name = name.strip() 
-            
-            if isinstance(group_value, list):  
-                warnings[ref].add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
+    if isinstance(group_value, list):
+        temp = set(group_value)
+        if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
+            group_value = group_value[0]
+    
+    # Generate Combined String
+    if name_value != "*" and name_value != "":
+        #name
+        if title_value != "*":
+            name = title_value + " " + name_value
 
-            # Address            
-            address = ""
-            if isinstance(addy_value, list) and len(addy_value) > 1:
-                warnings[ref].add("Error: multiple addresses found when one expected") 
-                address = "/".join(addy_value)  
-            elif isinstance(addy_value, list):
-                address = addy_value[0]
-            else:
-                address = addy_value
-                
-            if address == "*":
-                address = "[..?]"
-                
-            if "Addresses" in components:                
-                combined_details[ref] = name + ", " + address  
-            else:
-                combined_details[ref] = "Farmer: " + name + ", " + address  
-            
-        else:  
-            group_names = []            
-            if isinstance(group_value, list) and isinstance(addy_value, list): 
-                if len(group_value) != len(addy_value):
-                    warnings[ref].add("Error: Length of group names (" + str(len(group_value))+ ") and addresses (" + str(len(addy_value)) + ") different") 
-                
-                for i, group in enumerate(group_value):
-                    group = group.strip()
-                    if group == "*":
-                        group = "[..?]"
-                        
-                    if i < len(addy_value) and addy_value[i].strip() != "":
-                        addy = addy_value[i]
-                        if addy.strip() == "*":
-                            addy = "[..?]"
-                        group_names.append(group + ", " + addy)
-                    else:
-                        group_names.append(group)  
-                        warnings[ref].add("Warning: No address with " + group)   
-                        
-                if len(addy_value) > len(group_value):
-                    for i in range(len(group_value) - 1, len(addy_value)):
-                        addy = addy_value[i]
-                        if addy.strip() == "*":
-                            addy = "[..?]"
-                        group_names.append("[..?], " + addy)
-                        warnings[ref].add("Warning: No group name with " + addy)                
-                 
-            else:
-                print("get_combined_details_by_ref: " + ref + ": Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
-                
-            combined_details[ref] = "; ".join(group_names)
-               
-    #print(combined_details) 
-    #print(warnings)           
+        name = name.strip() 
         
-    return(combined_details, warnings)      
+        if isinstance(group_value, list):  
+            warnings.add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
 
+        # Address            
+        address = ""
+        if isinstance(addy_value, list) and len(addy_value) > 1:
+            warnings.add("Error: multiple addresses found when one expected") 
+            address = "/".join(addy_value)  
+        elif isinstance(addy_value, list):
+            address = addy_value[0]
+        else:
+            address = addy_value
+            
+        if address == "*":
+            address = "[..?]"
+            
+              
+        combined_string = name + ", " + address  
+        
+    elif len(group_value) > 0 and len(addy_value) > 0:  
+        group_names = []      
+        #print("Groups: " + str(group_value) + ", addys: " + str(addy_value))      
+        if isinstance(group_value, list) and isinstance(addy_value, list): 
+            if len(group_value) != len(addy_value):
+                warnings.add("Error: Length of group names (" + str(len(group_value))+ ") and addresses (" + str(len(addy_value)) + ") different") 
+            
+            for i, group in enumerate(group_value):
+                group = group.strip()
+                if group == "*":
+                    group = "[..?]"
+                if i < len(addy_value) and addy_value[i].strip() != "":
+                    addy = addy_value[i]
+                    if addy.strip() == "*":
+                        addy = "[..?]"
+                    group_names.append(group + ", " + addy)
+                else:
+                    group_names.append(group)  
+                    warnings.add("Warning: No address with " + group)   
+                    
+            if len(addy_value) > len(group_value):
+                for i in range(len(group_value) - 1, len(addy_value)):
+                    addy = addy_value[i]
+                    if addy.strip() == "*":
+                        addy = "[..?]"
+                    group_names.append("[..?], " + addy)
+                    warnings.add("Warning: No group name with " + addy)                
+                
+        else:
+            print("get_combined_details_by_ref: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
+            warnings.add("Error: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value) + ". Not able to process")
+            
+        combined_string = "; ".join(group_names) 
+    else:
+        #print("Group value: " + str(group_value) + " and Addy value:" + str(addy_value))
+        combined_string = ""  
+    
+    return combined_string, warnings
 
 def array_zip(details_array, key = ""):
     ''' Takes a dictionary with an array of arrays and zips the arrays together, extending the shorter array if necessary
