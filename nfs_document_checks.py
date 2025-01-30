@@ -430,30 +430,42 @@ def extract_farms(full_csv):
             farmer_group_names = row['farmer_group_names']
             farmer_addresses = row['farmer_address']
             
-            combined = addressee_title + addressee_individual_name + addressee_group_names + addresses + farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
-            combined = combined.replace("*", "")
+            #combined = addressee_title + addressee_individual_name + addressee_group_names + addresses + farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
+            #combined = combined.replace("*", "")
             
-            #print(ref)
+            addressee_combined = addressee_title + addressee_individual_name + addressee_group_names + addresses
+            farmer_combined = farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
+            addressee_combined = addressee_combined.replace("*", "")
+            farmer_combined = farmer_combined.replace("*", "")
             
-            if len(combined) > 0:            
+            #print("Ref: " + ref)
+            #print("Farmer: " + farmer_combined)
+            #print("Addressee: " + addressee_combined)
+            
+            if len(farmer_combined) > 0:            
                 if "Farmer" in raw_farm_info[ref].keys():
                     raw_farm_info[ref]["Farmer"]["Title"] += [farmer_title]
                     raw_farm_info[ref]["Farmer"]["Individual Name"] += [farmer_individual_name]
                     raw_farm_info[ref]["Farmer"]["Group Names"] += [farmer_group_names.split(";")]
-                    raw_farm_info[ref]["Farmer"]["Addresses"] += [farmer_addresses.split(";")] 
+                    raw_farm_info[ref]["Farmer"]["Addresses"] += [farmer_addresses.split(";")]                                     
+                else:
+                    raw_farm_info[ref].update({"Farmer": {"Title": [farmer_title]}})
+                    raw_farm_info[ref]["Farmer"].update({"Individual Name": [farmer_individual_name]})
+                    raw_farm_info[ref]["Farmer"].update({"Group Names": [farmer_group_names.split(";")]})
+                    raw_farm_info[ref]["Farmer"].update({"Addresses": [farmer_addresses.split(";")]})                 
+
+            if len(addressee_combined) > 0:            
+                if "Addressee" in raw_farm_info[ref].keys():
                     raw_farm_info[ref]["Addressee"]["Title"] += [addressee_title]
                     raw_farm_info[ref]["Addressee"]["Individual Name"] += [addressee_individual_name]
                     raw_farm_info[ref]["Addressee"]["Group Names"] += [addressee_group_names.split(";")]
                     raw_farm_info[ref]["Addressee"]["Addresses"] += [addresses.split(";")]                                     
                 else:
-                    raw_farm_info[ref].update({"Farmer": {"Title": [farmer_title]}})
-                    raw_farm_info[ref]["Farmer"].update({"Individual Name": [farmer_individual_name]})
-                    raw_farm_info[ref]["Farmer"].update({"Group Names": [farmer_group_names.split(";")]})
-                    raw_farm_info[ref]["Farmer"].update({"Addresses": [farmer_addresses.split(";")]}) 
                     raw_farm_info[ref].update({"Addressee": {"Title": [addressee_title]}})
                     raw_farm_info[ref]["Addressee"].update({"Individual Name": [addressee_individual_name]})
                     raw_farm_info[ref]["Addressee"].update({"Group Names": [addressee_group_names.split(";")]})
-                    raw_farm_info[ref]["Addressee"].update({"Addresses": [addresses.split(";")]})                  
+                    raw_farm_info[ref]["Addressee"].update({"Addresses": [addresses.split(";")]})  
+
             
             # Group 7: Acreage
             # Input column: U (acreage - semi-colon separated list)
@@ -597,14 +609,15 @@ def extract_farms(full_csv):
     for farmer_ref, farmer_data in raw_farm_info.items():
         if "Farmer" in farmer_data.keys():
             farmer_details[farmer_ref] = farmer_data["Farmer"]   
-
+    #print("Farmer details: " + str(farmer_details))
+    
     # Addressee names
     addressee_details = {}
     for addressee_ref, addressee_data in raw_farm_info.items():
         if "Addressee" in addressee_data.keys():
-            addressee_details[addressee_ref] = addressee_data["Addressee"] 
-    #print(farmer_details)
-    #print(addressee_details)
+            addressee_details[addressee_ref] = addressee_data["Addressee"]              
+    #print("Addressee details: " + str(addressee_details))
+    
     combined_farmer_info, combined_farmer_info_warnings = get_combined_farmer_details_by_ref(farmer_details, addressee_details)
     #print("Combined Farmer Info: " + str(combined_farmer_info))
     
@@ -849,6 +862,10 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     
     #print("Farmer details" + str(farmer_details))
     #print("Addressee details" + str(addressee_details))
+    #print("Shared: " + str(shared))
+    #print("Farmer: " + str(farmer_only))
+    #print("Addressee: " + str(addressee_only))
+    
     components = ["Title", "Individual Name", "Group Names", "Addresses"]
     
     for ref in list(shared):
@@ -866,6 +883,7 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         addressee_addy = addressee_details[ref]["Addresses"]   
         
         #print("\nRef: " + str(ref))
+        #print("Farmer name: " + str(farmer_name))
         #print("Farmer addy: " + str(farmer_addy))
         #print("Addressee addy: " + str(addressee_addy))
         
@@ -930,10 +948,12 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
                 #print(ref + ": Adding similarity warning for " + component)
                 
         if split_details:
-            components = ["FTitle", "ATitle", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
-            combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+            #print("For " + ref + " combining values with separated farmer/addressee with: " + str(combined_details))
+            component_fields = ["FTitle", "ATitle", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
+            combined_values, combined_warnings = get_combined_details_by_ref(combined_details, component_fields)
             #print("Combined values: " + str(combined_values))
-        else:        
+        else:  
+            #print("For " + ref + " combining values with combined farmer/addressee with " + str(combined_details))      
             combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
         
         warnings = dic_merge(warnings, combined_warnings)
@@ -1142,7 +1162,7 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
         else:
             # Expected values: ["FTitle", "ATitle" "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
             
-            #print(ref + " get farmer name with title1: " + str(titles[ref]["FTitle"]) + ", name: " + str(names[ref]["FIndividual Name"]) + ", group names: " + str(groups[ref]["FGroup Names"]) + ", addresses: " + str(addresses[ref]["FAddresses"]))    
+            #print(ref + " get farmer name with title: " + str(titles[ref]["FTitle"]) + ", name: " + str(names[ref]["FIndividual Name"]) + ", group names: " + str(groups[ref]["FGroup Names"]) + ", addresses: " + str(addresses[ref]["FAddresses"]))    
             
             farmer_name_string, farmer_name_warnings = generate_name(titles[ref]["FTitle"], names[ref]["FIndividual Name"], groups[ref]["FGroup Names"], addresses[ref]["FAddresses"])
             #print("Farmer name warnings: " + str(farmer_name_warnings))
@@ -1179,7 +1199,6 @@ def generate_name(title_value, name_value, group_value, addy_value):
     warnings = set()
     name = ""
     
-    #print("Ref: " + ref)
     #print("Title: " + str(title_value))
     #print("Name: " + str(name_value))
     #print("Group Names: " + str(group_value))
@@ -1206,18 +1225,23 @@ def generate_name(title_value, name_value, group_value, addy_value):
             warnings.add("Error: multiple names found when one expected")
             name_value = "/".join(name_value) 
 
-    if isinstance(group_value, list):
-        temp = set(group_value)
-        if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
-            group_value = group_value[0]
+    #if isinstance(group_value, list):
+    #    temp = set(group_value)
+    #    print(temp)
+    #    if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
+    #        group_value = [group_value[0]]
     
     # Generate Combined String
     if name_value != "*" and name_value != "":
         #name
         if title_value != "*":
             name = title_value + " " + name_value
+        else:
+            name = name_value
 
         name = name.strip() 
+        
+        #print("Name: " + name)
         
         if isinstance(group_value, list):  
             warnings.add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
@@ -1237,6 +1261,7 @@ def generate_name(title_value, name_value, group_value, addy_value):
             
               
         combined_string = name + ", " + address  
+        #print("Combined name + address: " + combined_string)
         
     elif len(group_value) > 0 and len(addy_value) > 0:  
         group_names = []      
@@ -1438,6 +1463,8 @@ def date_check(potential_date, row_num):
             day = int(potential_date.split("/")[0])
             month = potential_date.split("/")[1]
             year = potential_date.split("/")[2]   
+        else:
+            raise ValueError("Date format not recognized")
             
     except ValueError as ve:
         warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as a valid date in the expected format (" + str(ve) + "). Further date checks cannot be carried out.")

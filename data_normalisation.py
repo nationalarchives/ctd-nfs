@@ -394,6 +394,8 @@ def chunk_punctuated_string(string_to_process, all=True):
 def combine_two_phrases(component_set, component_list, debug=False):
     #print(key + ": " + ", ".join([component for component in component_set]))
     #print(key + ": ")
+    
+    #debug = True
 
     split_components, count_of_component_lengths = get_tokens(component_set)
     #warnings = set()
@@ -990,6 +992,8 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 print("Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 end: " + str(len(phrase2))) 
                 print("Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 end: " + str(len(phrase1))) 
                 print("component list: " + str(component_list))
+                print("End token (phrase1): " + phrase1_end_token)
+                print("End token (phrase2): " + phrase2_end_token)
             
             if phrase2_pointer == len(phrase2):
                 #print("Phrase2 pointer at end - adding end text from phrase1")
@@ -998,10 +1002,17 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 #print("Phrase1 pointer at end - adding end text from phrase2")
                 anchored_list.append("(" + phrase2_end_token + "?)")
             else:
-                combined_token = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
-                end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
-                match_warnings.update(end_phrase_join_warnings)
-                anchored_list.append(end_phrase_join)
+                if " " in phrase1_end_token or " " in phrase2_end_token:
+                    end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
+                    #print("End phrase join: " + str(end_phrase_join))
+                    match_warnings.update(end_phrase_join_warnings)
+                    anchored_list.append(end_phrase_join)
+                else:
+                    combined_token = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
+                    #print("Combined token: " + str(combined_token))
+                    anchored_list.append(combined_token)
+
+
         
         if debug:
             print(anchored_list)        
@@ -1153,26 +1164,28 @@ names2 = {"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
          "17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
          "18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
          "19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
-         "20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                   
+         "20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                
         }
+
+names3 = {"1": ["Messrs Rowe and Raddy", "Mr A C Raddy for Rowe and Raddy"]}
 
 
 address = {"1":["Butlers Court Farm, Boddington, Gloucestershire", "Butlers Court, Boddington, Near Cheltenham", "Butlers Court, Boddington", "Butlers Court Farm, Boddington, Gloucestershire"], 
-         "2":["Whitehall, Hayden Hill, Cheltenham, Gloucestershire", "Whitehall Farm, Hayden, Cheltenham", "Whitehall Farm, Hayden, Cheltenham", "Whitehall, Hayden Hill, Cheltenham, Gloucestershire"], 
-         "3":["Boddington House Farm, Boddington, Gloucestershire", "Boddington House Farm, Boddington, Cheltenham", "Boddington House Farm, Near Cheltenham", "Boddington House, Boddington, Gloucestershire"],
-         "6":["Slate Mill, Boddington, Near Cheltenham, Gloucestershire","Slade Mill, Boddington, Cheltenham", "Slate Mill, Boddington", "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"],
-         "7":["Barrow Court, Boddington, Cheltenham, Gloucestershire", "14, Foregate Street, Worcester", "Barrow Court, Boddington", "Barrow Court, Boddington, Cheltenham, Gloucestershire"],
-         "9":["Manor Farm, Boddington, Near Cheltenham, Gloucestershire", "Guiting House, Temple Guiting, Gloucestershire", "Manor Farm, Boddington", "Manor Farm, Boddington, Near Cheltenham, Gloucestershire"],
-         "10":["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "192 High Street, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
-         "14":["14 Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, Charlton Kings, Cheltenham", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
-         "15":["Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire", "Mill House Farm, Boddington, Near Cheltenham", "Withybridge Farm, Boddington", "Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire"],
-         "16":["Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire", "Barrow Hill Farm, Boddington, Cheltenham", "Barrow Hill Farm, Boddington", "Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire"],
-         "18":["Brookes Laymes Farm, Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Brookes Laymes Farm, Boddington", "Brookes Laymes Farm, Boddington, Gloucestershire"],
-         "19":["Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Boddington", "Boddington, Gloucestershire"],
-         "20":["Hayden Farm, Boddington, Near Cheltenham, Gloucestershire", "Hayden Farm, Hayden, Cheltenham", "Hayden Farm, Boddington", "Hayden Farm, Boddington, Near Cheltenham, Gloucestershire"],
-         "22":["Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire", "Wilkins Farm, Boddington, Cheltenham", "Wilkins Farm, Barrow, Boddington", "Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire"],
-         "31":["1 Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire", "1 Hayden Hill Villas, Hayden Hill, Boddington", "Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire"],
-         "33":["Pilgrove, Hayden Hill, Near Cheltenham, Gloucestershire", "Pilgrove, Hayden Hill, Boddington, Gloucestershire", "Pilgrove, Hayden Hill, Cheltenham", "Pilgrove, Hayden Hilll, Near Cheltenham, Gloucestershire"]
+         #"2":["Whitehall, Hayden Hill, Cheltenham, Gloucestershire", "Whitehall Farm, Hayden, Cheltenham", "Whitehall Farm, Hayden, Cheltenham", "Whitehall, Hayden Hill, Cheltenham, Gloucestershire"], 
+         #"3":["Boddington House Farm, Boddington, Gloucestershire", "Boddington House Farm, Boddington, Cheltenham", "Boddington House Farm, Near Cheltenham", "Boddington House, Boddington, Gloucestershire"],
+         #"6":["Slate Mill, Boddington, Near Cheltenham, Gloucestershire","Slade Mill, Boddington, Cheltenham", "Slate Mill, Boddington", "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"],
+         #"7":["Barrow Court, Boddington, Cheltenham, Gloucestershire", "14, Foregate Street, Worcester", "Barrow Court, Boddington", "Barrow Court, Boddington, Cheltenham, Gloucestershire"],
+         #"9":["Manor Farm, Boddington, Near Cheltenham, Gloucestershire", "Guiting House, Temple Guiting, Gloucestershire", "Manor Farm, Boddington", "Manor Farm, Boddington, Near Cheltenham, Gloucestershire"],
+         #"10":["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "192 High Street, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+         #"14":["14 Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, Charlton Kings, Cheltenham", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+         #"15":["Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire", "Mill House Farm, Boddington, Near Cheltenham", "Withybridge Farm, Boddington", "Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire"],
+         #"16":["Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire", "Barrow Hill Farm, Boddington, Cheltenham", "Barrow Hill Farm, Boddington", "Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire"],
+         #"18":["Brookes Laymes Farm, Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Brookes Laymes Farm, Boddington", "Brookes Laymes Farm, Boddington, Gloucestershire"],
+         #"19":["Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Boddington", "Boddington, Gloucestershire"],
+         #"20":["Hayden Farm, Boddington, Near Cheltenham, Gloucestershire", "Hayden Farm, Hayden, Cheltenham", "Hayden Farm, Boddington", "Hayden Farm, Boddington, Near Cheltenham, Gloucestershire"],
+         #"22":["Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire", "Wilkins Farm, Boddington, Cheltenham", "Wilkins Farm, Barrow, Boddington", "Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire"],
+         #"31":["1 Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire", "1 Hayden Hill Villas, Hayden Hill, Boddington", "Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire"],
+         #"33":["Pilgrove, Hayden Hill, Near Cheltenham, Gloucestershire", "Pilgrove, Hayden Hill, Boddington, Gloucestershire", "Pilgrove, Hayden Hill, Cheltenham", "Pilgrove, Hayden Hilll, Near Cheltenham, Gloucestershire"]
          }
 
 farm_name = {"1":["*", "Holt Farm", "", ""], 
@@ -1210,10 +1223,11 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
 
 #print(component_compare(names1))
 #print(component_compare(names2))
+#print(component_compare(names3))
 #print(component_compare(address))
 #print(component_compare(farm_name))
 #print(component_compare(test))
 #print(component_compare(test2))
-#print(component_compare(test3))
+print(component_compare(test3))
 
 #punctuated_title("fiNd o(u)t")
