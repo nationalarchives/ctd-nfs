@@ -38,7 +38,7 @@ def component_compare (values_to_check, debug=False):
         
         warnings[key] = set()
         component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])   
-        component_list_caseless = [component.lower() for component in component_list if (component.strip() != "" and component.strip() != "*")]   
+        #component_list_caseless = [component.lower() for component in component_list if (component.strip() != "" and component.strip() != "*")]   
         alt_component_set = set([("".join(component.split())).lower() for component in component_list if (component.strip() != "" and component.strip() != "*")] )
 
 
@@ -136,7 +136,7 @@ def component_compare (values_to_check, debug=False):
                     
                     #distribution = split_part_distribution(component_list_caseless)
                     matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, debug)
-                    matched_value = re.sub(r'(\?)?\) \(', ' ', matched_value)
+                    matched_value = clean_brackets(matched_value)
                     component_set = set([matched_value])
                     warnings[key].update(matched_warnings)
                     
@@ -218,7 +218,8 @@ def component_compare (values_to_check, debug=False):
                 similar = similar.difference(best_similar)
                 similar.add(part_combined_phrases)
  
-            combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
+            #combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
+            combined_phrases = clean_brackets("".join(list(similar)))
             
             if len(distinct) > 0:
                 combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)" 
@@ -484,7 +485,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     
     ratio = fuzz.ratio(component1, component2)
     ratio_caseless = fuzz.ratio(component1.lower(), component2.lower())
-    ratio_caseless_no_punc = fuzz.ratio(re.sub(r'[^\w\s]', '', component1.lower()), re.sub(r'[^\w\s]', '', component2.lower()))
+    ratio_caseless_no_punc = fuzz.ratio(clean_string(component1.lower()), clean_string(component2.lower()))
        
     if debug:
         print("component1: " + component1)
@@ -495,6 +496,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         print("ratio (caseless, no punc): " + str(ratio_caseless_no_punc))
         
     if ratio_caseless_no_punc == 100:
+        
         if len(component1) > len(component2):
             return punctuated_title(component1) 
         else:
@@ -542,7 +544,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                 for section in section_split:
                     if section not in generated_string_list:
                         #print("Section not found: " + section)
-                        cleaned_section = re.sub(r'[^\w\s]', '', section)
+                        cleaned_section = clean_string(section)
                         
                         current_generated_string = ''.join(generated_string_list)
                         substr_count = current_generated_string.count(cleaned_section)
@@ -650,7 +652,7 @@ def get_context(letter_group, phrase_string):
     section_split_long = chunk_punctuated_string(phrase_string)
     #print("Chunked phrase string: " + str(section_split_long))
     context = []
-    cleaned_letter_group = re.sub(r'[^\w\s]', '', letter_group)
+    cleaned_letter_group = clean_string(letter_group)
     #print("Cleaned letter group: " + cleaned_letter_group)
     cleaned_letter_list = list(cleaned_letter_group)
     #print("Cleaned letter list: " + str(cleaned_letter_list))
@@ -730,7 +732,22 @@ def align_two_phrases(string1, string2, component_list, debug=False):
         print(aligned_phrase)
         
     return (aligned_phrase, warnings)
+
+def clean_string(string_to_clean):
+    return re.sub(r'[^\w\s]', '', string_to_clean)
+
+def clean_brackets(string_to_clean):
+    #print("\nClean brackets called with " + string_to_clean)
     
+    string_to_clean = re.sub(r'(\?)?\) \(', ' ', string_to_clean)
+    #print("String to clean before loop: " + string_to_clean) 
+    while bool(re.search(r'\(\((\w+)\?\)\?\)', string_to_clean)):
+        string_to_clean = re.sub(r'\(\((\w+)\?\)\?\)', r'(\1?)', string_to_clean)
+        #print("String to clean in loop: " + string_to_clean) 
+        
+    #print("Returning: " + string_to_clean)    
+        
+    return string_to_clean
 
 def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
     
@@ -738,16 +755,16 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
         print("phrase_to_be_processed: " + phrase_to_be_processed)
         print("phrase_for_comparison: " + phrase_for_comparison)
     
-    if True in [True for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]:
+    if True in [True for part in phrase_to_be_processed.split(' ') if len(clean_string(part)) < 2]:
         
-        initials = [part for part in phrase_to_be_processed.split(' ') if len(re.sub(r'[^\w\s]', '', part)) < 2]
+        initials = [part for part in phrase_to_be_processed.split(' ') if len(clean_string(part)) < 2]
         
         if debug:        
             print("\nInitials: " + str(initials))
             print("Split phrase for comparision: " + str(phrase_for_comparison.split(' ')))
         
         for initial in initials:
-            initial_no_punc = re.sub(r'[^\w\s]', '', initial)
+            initial_no_punc = clean_string(initial)
             for comparison_part in phrase_for_comparison.split(' '):
                 if debug: 
                     print("Comparison part: " + comparison_part)
@@ -774,8 +791,8 @@ def get_match_ratios(phrase1, phrase2, debug = False):
                 combined_string = ''.join(phrase2[j1:j2+1])
                 key = str(j1) + ":" + str(j2+1)
                 
-                combined_string_no_punc = re.sub(r'[^\w\s]', '', combined_string)
-                phrase2_no_punc = re.sub(r'[^\w\s]', '', phrase1[i])
+                combined_string_no_punc = clean_string(combined_string)
+                phrase2_no_punc = clean_string(phrase1[i])
                 
                 if debug:
                     print(combined_string_no_punc)
@@ -903,10 +920,23 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     print("Before - Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start)) 
                     print("Before - Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start)) 
                 
-                # if phrase2 is at start but phrase1 is before the first start point
+                # if phrase1 is at start but phrase2 is before the first start point
                 if phrase1_pointer == phrase1_start and phrase2_pointer < phrase2_start:
                     phrase2_token = ' '.join(phrase2[phrase2_pointer:phrase2_start])
-                    anchored_list.append("(" + phrase2_token + "?)")
+                    
+                    if len(anchored_list) > 0 and phrase2_pointer > 0:
+                        if debug: 
+                            print("Anchored List: " + str(anchored_list[-1]))
+                            print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
+                            print("New token: " + str(phrase2_token))
+                        
+                        if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
+                            anchored_list[-1] = str(anchored_list[-1])[:-1]
+                            phrase2_token = phrase2_token[:-1]
+                            anchored_list.append("(" + phrase2_token + "?),")
+                        else:
+                           anchored_list.append("(" + phrase2_token + "?)")
+                           
                     phrase2_pointer = phrase2_start
                     
                     if debug:
@@ -917,8 +947,21 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 # if pointer is before phrase1 start but phrase2 is at start point        
                 elif phrase1_pointer < phrase1_start and phrase2_start == phrase2_pointer:
                     phrase1_token = phrase1[phrase1_pointer]
+                    
+                    if len(anchored_list) > 0 and phrase1_pointer > 0:
+                        if debug: 
+                            print("Anchored List: " + str(anchored_list[-1]))
+                            print("Previous token: " + str(phrase1[phrase1_pointer - 1]))
+                            print("New token: " + str(phrase1_token))
+                        
+                        if str(anchored_list[-1])[-1] == "," and str(phrase1[phrase1_pointer - 1])[-1] != "," and phrase1_token[-1] == ",":
+                            anchored_list[-1] = str(anchored_list[-1])[:-1]
+                            phrase1_token = phrase1_token[:-1]
+                            anchored_list.append("(" + phrase1_token + "?),")
+                        else:
+                           anchored_list.append("(" + phrase1_token + "?)")                    
+
                     phrase1_pointer += 1
-                    anchored_list.append("(" + phrase1_token + "?)")
                     
                     if debug:
                         print("Added 'phrase1' string to bring into alignment")
@@ -934,7 +977,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                         token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
                         #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
                         combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
-                        
+
                         if debug:
                             print("Added combined section")
                             print("phrase1 token: " + phrase1_token)
@@ -1170,9 +1213,9 @@ names2 = {"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
 names3 = {"1": ["Messrs Rowe and Raddy", "Mr A C Raddy for Rowe and Raddy"]}
 
 
-address = {"1":["Butlers Court Farm, Boddington, Gloucestershire", "Butlers Court, Boddington, Near Cheltenham", "Butlers Court, Boddington", "Butlers Court Farm, Boddington, Gloucestershire"], 
+address = {#"1":["Butlers Court Farm, Boddington, Gloucestershire", "Butlers Court, Boddington, Near Cheltenham", "Butlers Court, Boddington", "Butlers Court Farm, Boddington, Gloucestershire"], 
          #"2":["Whitehall, Hayden Hill, Cheltenham, Gloucestershire", "Whitehall Farm, Hayden, Cheltenham", "Whitehall Farm, Hayden, Cheltenham", "Whitehall, Hayden Hill, Cheltenham, Gloucestershire"], 
-         #"3":["Boddington House Farm, Boddington, Gloucestershire", "Boddington House Farm, Boddington, Cheltenham", "Boddington House Farm, Near Cheltenham", "Boddington House, Boddington, Gloucestershire"],
+         "3":["Boddington House Farm, Boddington, Gloucestershire", "Boddington House Farm, Boddington, Cheltenham", "Boddington House Farm, Near Cheltenham", "Boddington House, Boddington, Gloucestershire"],
          #"6":["Slate Mill, Boddington, Near Cheltenham, Gloucestershire","Slade Mill, Boddington, Cheltenham", "Slate Mill, Boddington", "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"],
          #"7":["Barrow Court, Boddington, Cheltenham, Gloucestershire", "14, Foregate Street, Worcester", "Barrow Court, Boddington", "Barrow Court, Boddington, Cheltenham, Gloucestershire"],
          #"9":["Manor Farm, Boddington, Near Cheltenham, Gloucestershire", "Guiting House, Temple Guiting, Gloucestershire", "Manor Farm, Boddington", "Manor Farm, Boddington, Near Cheltenham, Gloucestershire"],
@@ -1224,10 +1267,10 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
 #print(component_compare(names1))
 #print(component_compare(names2))
 #print(component_compare(names3))
-#print(component_compare(address))
+print(component_compare(address))
 #print(component_compare(farm_name))
 #print(component_compare(test))
 #print(component_compare(test2))
-print(component_compare(test3))
+#print(component_compare(test3))
 
 #punctuated_title("fiNd o(u)t")

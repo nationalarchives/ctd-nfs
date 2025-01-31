@@ -1243,7 +1243,7 @@ def generate_name(title_value, name_value, group_value, addy_value):
         
         #print("Name: " + name)
         
-        if isinstance(group_value, list):  
+        if isinstance(group_value, list) and True in [True for group in group_value if group != "*" and group != ""]:
             warnings.add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
 
         # Address            
@@ -1292,7 +1292,7 @@ def generate_name(title_value, name_value, group_value, addy_value):
                     warnings.add("Warning: No group name with " + addy)                
                 
         else:
-            print("get_combined_details_by_ref: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
+            #print("get_combined_details_by_ref: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
             warnings.add("Error: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value) + ". Not able to process")
             
         combined_string = "; ".join(group_names) 
