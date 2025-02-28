@@ -8,11 +8,14 @@
 #   
 #
 
+# Functions:
+
+
 #####################
 #   To Do:
 #
-#   Deal with spaces in the wrong places e.g. Hill Stone vs Hillstone
-#   Deal with addresses
+#   Need to do more testing with phrases espec. of different lengths - maybe do need to do the check merging both ways
+#   See if there is a better way to check mismatches based on match level of chunks since addresses with extra information are incorrectly identified as a mismatch.
 
 from rapidfuzz import fuzz
 import difflib, re, itertools
@@ -141,6 +144,10 @@ def component_compare (values_to_check, debug=False):
                     warnings[key].update(matched_warnings)
                     
                     #print(component_set)
+                elif len(component_set_caseless) > 2:
+                    # Not implemented yet
+                    pass
+                    
        
         #distribution = split_distribution(component_list)
         #distribution = split_part_distribution(component_list)
@@ -232,6 +239,15 @@ def component_compare (values_to_check, debug=False):
     return (combined_values, warnings)
 
 def punctuated_title(to_convert):
+    ''' Converts string to punctuated title case
+    
+        Key argument:
+            to_convert - string to be converted
+        
+        Returns:
+            Converted string   
+    '''
+    
     #print(to_convert)
     lower_to_upper = re.sub(r'(\s|^)([a-z])', to_upper, to_convert)
     #print(lower_to_upper)
@@ -393,6 +409,17 @@ def chunk_punctuated_string(string_to_process, all=True):
     return chunked_list     
 
 def combine_two_phrases(component_set, component_list, debug=False):
+    ''' Combine two string phrases
+    
+        Key Arguments:
+            component_set - Set of the component values
+            component_list - List of the component values
+            debug - Boolean. False by default. If True the extra debug is printed out
+            
+        Returns:
+            A tuple with the combined phrase as a string and a set of warnings        
+    '''
+    
     #print(key + ": " + ", ".join([component for component in component_set]))
     #print(key + ": ")
     
@@ -472,7 +499,7 @@ def combine_two_phrases(component_set, component_list, debug=False):
 '''
 
 def combine_two_words (component1, component2, word_ratio, debug=False):
-    ''' Combine two words
+    ''' Combine two text chunks into a single chunk
     
         Keyword arguments:
         component1 - single word string
@@ -690,15 +717,16 @@ def get_context(letter_group, phrase_string):
     return context
 
 def align_two_phrases(string1, string2, component_list, debug=False):
-    ''' Check if two strings align and return a combined version
+    ''' Checks if two strings align and return a combined version
 
-        keyword arguments:
-        string 1 - the first phrase
-        string 2 - the second phrase
-        component_list - list of components
-        debug - boolean, False by default, if True print out debug
+        Key Arguments:
+            string 1 - the first phrase
+            string 2 - the second phrase
+            component_list - list of components
+            debug - boolean, False by default, if True print out debug
         
-        returns tuple with string with combined values and warnings
+        Returns:
+            tuple with string with combined values and warnings
     '''
     if debug:
         print("align_two_phrases called with '" + str(string1) + "' & '" + str(string2) + "'" )
@@ -734,9 +762,26 @@ def align_two_phrases(string1, string2, component_list, debug=False):
     return (aligned_phrase, warnings)
 
 def clean_string(string_to_clean):
+    ''' Remove everything except spaces and word characters
+    
+        Key arguments:
+            string_to_clean - string to be processed
+            
+        Returns:
+            Processed string
+    
+    '''
     return re.sub(r'[^\w\s]', '', string_to_clean)
 
 def clean_brackets(string_to_clean):
+    ''' Tidy up brackets by removing doubled additions
+    
+        Key Arguments:
+            string_to_clean - string to tidy up
+            
+        Returns:
+            Tidied string   
+    '''
     #print("\nClean brackets called with " + string_to_clean)
     
     string_to_clean = re.sub(r'(\?)?\) \(', ' ', string_to_clean)
@@ -750,6 +795,16 @@ def clean_brackets(string_to_clean):
     return string_to_clean
 
 def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
+    ''' Compare two phrases. If there are any initials (single letter word when punctuation removed) in the phrase to be processed then check if they match with the first letter of the phrase for comparison then expand the initial to the matching word.
+    
+        Key Argument:
+            phrase_to_be_processed - string to be processed
+            phrase_for_comparison - string to use for comparison
+            debug - boolean, False by default, if True print out debug
+            
+        Returns:
+            Processed string
+    '''
     
     if debug: 
         print("phrase_to_be_processed: " + phrase_to_be_processed)
@@ -761,7 +816,7 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
         
         if debug:        
             print("\nInitials: " + str(initials))
-            print("Split phrase for comparision: " + str(phrase_for_comparison.split(' ')))
+            print("Split phrase for comparison: " + str(phrase_for_comparison.split(' ')))
         
         for initial in initials:
             initial_no_punc = clean_string(initial)
@@ -778,6 +833,18 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
 
 
 def get_match_ratios(phrase1, phrase2, debug = False):
+    ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
+    
+        Key Arguments:
+            phrase1 - list of phrase sections for comparison
+            phrase2 - list of phrase sections for comparison
+            debug - boolean, False by default, if True print out debug
+            
+        Returns:
+            Tuple with float ratio of best match between phrase chunks and dictionary with tuple containing the section of phrase2 being compared as "phrase2 start position: 
+            phrase2 end position" and the similarity ration of the phrase1 phrase chunk to the section of phrase2 with the position of the phrase1 word chunk as the key
+    '''
+
     match_matrix = {}
     anchor_ratio = 0
     
@@ -1126,6 +1193,16 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
     #print(match_matrix)
 
 def get_similarity_range(values, get_min = True, get_max = True):
+    ''' Gets the range of similarities for a given set of values and returns either the highest similarity, the lowest or both
+    
+        Keyword arguments:
+            values - string or list of strings
+            get_min - boolean. If True return the lowest level of similarity found between the values
+            get_max - boolean. If True return the highest level of similarity found between the values
+            
+        Outputs:
+            Returns either a number representing either the highest or lowest similarity or a tuple with both lowest and highest values
+    '''
     
     #print("Min: " + str(get_min))
     #print("Max: " + str(get_max))
@@ -1267,7 +1344,7 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
 #print(component_compare(names1))
 #print(component_compare(names2))
 #print(component_compare(names3))
-print(component_compare(address))
+#print(component_compare(address))
 #print(component_compare(farm_name))
 #print(component_compare(test))
 #print(component_compare(test2))

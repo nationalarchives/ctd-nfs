@@ -8,7 +8,7 @@
 
 # Functions:
 #   load_spreadsheet_data(processing_folder)
-#   output_excel(output_file, values)
+#   output_excel(output_file, values) 
 #   filename_pattern_check(filename, row_num)
 #   reference_pattern_check(ref, row_num)
 #   filename_checks(filename1, filename2, type, row_num)
@@ -21,7 +21,8 @@
 #   get_combined_farm_names_by_ref(farm_names)
 #   get_combined_owner_details_by_ref(owner_details)
 #   get_combined_farmer_details_by_ref(farmer_details, addressee_details)
-#   get_combined_details_by_ref(details, expected_count = -1)
+#   get_combined_details_by_ref(details, components, expected_count = -1)
+#   generate_name(title_value, name_value, group_value, addy_value)
 #   array_zip(details_array, key = "")
 #   dic_merge(dic1, dic2)
 #   date_processing(field_date, primary_dates, row_num)
@@ -32,7 +33,7 @@
 #   To Do:
 #
 #   Improve name merging
-#   Create test spreadsheets
+#   Create full range of test spreadsheets
 
 
 import csv, re, datetime
@@ -49,6 +50,9 @@ def load_spreadsheet_data(processing_folder):
 
         Keyword Arguments:
             processing_folder - string with path to folder
+            
+        Returns:
+            No returns but throws OSError is file can't be read
     '''
     
     try: 
@@ -77,7 +81,7 @@ def output_excel(output_file, values):
             values - nested dictionary of values to be output. The top keys are the unique reference for each farm and nested below that are the values for that farm with the column name as the keys
             
         Outputs:
-            No return but a file is saved to the specified folder
+            No return but throws OSError if the specified file can't be saved. 
     '''
     
     wb = Workbook()
@@ -85,7 +89,7 @@ def output_excel(output_file, values):
     
     headings = ["Reference", "Reference Warnings", "Filenames", "Filename Warnings", "Type", "Type Warnings", "Farm Number", "Farm Number Warnings", "Farm Name", "Farm Name Warnings", "Landowner", "Landowner Warnings", "Farmer", "Farmer Warnings", "Acreage", "Acreage Warnings", "OS Sheet Number", "Field Date", "Field Date Warnings", "Primary Date", "Primary Date Warnings"]
     default_widths = [20, 20, 30, 20, 15, 20, 15, 20, 30, 20, 30, 20, 30, 20,15, 20, 15, 15, 20, 15, 20]
- 
+    
     for i in range(0, len(headings)):
         column = headings[i]
         col_num = i+1
@@ -105,9 +109,12 @@ def output_excel(output_file, values):
             
             sheet.row_dimensions[row].height = None
             row+=1
-               
-    print("Saving " + str(output_file))
-    wb.save(output_file)
+    
+    try:           
+        wb.save(output_file)
+        print("Saving " + str(output_file))       
+    except OSError as e:
+        print("Error in saving spreadsheet: " + e)
         
 
 def filename_pattern_check(filename, row_num):
@@ -117,7 +124,7 @@ def filename_pattern_check(filename, row_num):
         filename - string with the filename to be checked
         row_num - string with number of row in spreadsheet
         
-    Outputs:
+    Returns:
         Tuple containing the central part of the filename and the final count at the end of the filename, a warning or raises an ValueError  
     '''
     
@@ -126,6 +133,9 @@ def filename_pattern_check(filename, row_num):
             ref_component = m.group(1)
             iteration_num = m.group(3)
             return (ref_component, iteration_num, "")
+        if m := re.match(r"^MAF32-(\d*-\d*)( Pt\d*)?.tif$", filename):
+            ref_component = m.group(1)
+            return (ref_component, 0, "Row " + row_num + ": " + filename + " matches expected cover pattern. Error is this is not a cover.")
         elif m := re.match(r"^MAF32-(\d*-\d*).*(\d*)?.tif$", filename):
             ref_component = m.group(1)
             iteration_num = m.group(2)
@@ -143,7 +153,7 @@ def reference_pattern_check(ref, row_num):
         filename - string with the filename to be checked
         row_num - string with number of row in spreadsheet
         
-    Outputs:   
+    Returns:   
         The reference value or raises a ValueError   
     '''
     
@@ -176,7 +186,7 @@ def filename_checks(filename1, filename2, type, row_num):
             type - the name of the form
             row_num - string with number of row in spreadsheet 
             
-        Outputs:
+        Returns:
             Tuple containing the central part of the filename for use in the reference and a set of warnings
     '''
     warnings = set()
@@ -252,7 +262,7 @@ def doc_type_check(type, row_num):
             type - string with document type 
             row_num - string with number of row in spreadsheet        
              
-        Outputs: 
+        Returns: 
             Type value as string or raises a ValueError
     '''
     
@@ -265,11 +275,12 @@ def doc_type_check(type, row_num):
     
 
 def extract_farms(full_csv):
-    ''' 
+    ''' Extracts the data for each farm from the CSV data, checks it and returns the collated data and warnings for each farm (by reference)
+    
         Keyword Arguments:
             full_csv - dictionary with the values from the CSV and the column headings as keys
     
-        Outputs:
+        Returns:
             Farm values and warnings in a nested dictionary using the farm reference as a keys and the output column names as the second level keys
     '''
     
@@ -646,7 +657,7 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
             row_num - string with number of row in spreadsheet
             existing_ref - list of existing references 
             
-        Outputs:
+        Returns:
             Tuple containing a list of generated references and a list of warnings
     '''
     
@@ -677,12 +688,16 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
                
         warnings.add("Row " + row_num + ": Warning - Additional farms present")
     elif farm_type != "Other" or farm_type != "Cover":        
-        warnings.add("Row " + row_num + ": Error - No farm number specified")
+        warnings.add("Row " + row_num + ": Note - type is " + farm_type.lower() + " so no farm number specified")
+        ref = generate_ref("MAF 32/" + box_string + "/" + farm_type, existing_refs)
+        ref_list[ref] = farm_type
         
     #print(row_num + ": box - " + box_string + ", primary farm num - " + primary_farm_string + ", type: " + farm_type + ", ref: " + ref)
    
     if type == "Cover" and primary_farm_string != "*":
         warnings.add("Row " + row_num + ": Error - Type is cover and farm number is specified")
+        ref = generate_ref("MAF 32/" + box_string + "/" + farm_type, existing_refs)
+        ref_list[ref] = farm_type
                
     return (ref_list, warnings)  
 
@@ -694,7 +709,7 @@ def generate_ref(base_ref, existing_refs):
             base_ref - string with the proposed reference 
             existing_refs - list of already used references
         
-        Outputs:
+        Returns:
             Reference string      
     '''
     
@@ -729,7 +744,7 @@ def generate_farm_number_for_record(county, parish, farm_nums, ref):
             farm_nums - string with semi-colon separated list of farm numbers
             ref - string with unique record string
             
-        Outputs:
+        Returns:
             Set with generated farm number (only one number is expected)
     
     '''
@@ -752,9 +767,8 @@ def generate_farm_numbers(county, parish, farm_nums):
             parish - string with the parish information
             farm_nums - string with semi-colon separated list of farm numbers
             
-        Outputs:
-            Set with generated farm numbers
-    
+        Returns:
+            Set with generated farm numbers    
     '''
     county_code = county.split(" ")[0]
     parish_num = parish.split(" ")[0]
@@ -781,7 +795,7 @@ def get_combined_farm_names_by_ref(farm_names):
         Keyword Arguments: 
             farm_names - dictionary with list of farm names for each farm using the farm reference as the key
             
-        Outputs:
+        Returns:
             Tuple with dictionary of combined name value for each farm, and a dictionary of with a set of warnings for each farm
     '''
     
@@ -833,7 +847,7 @@ def get_combined_owner_details_by_ref(owner_details):
 # Warnings: if not similar [Output column: I (Farmer Warnings)] 
 
 def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
-    ''' Combines owner values and flags warnings if unexpected values found
+    ''' Combines farmer values and flags warnings if unexpected values found
     
         Key Arguments:  
             farmer_details - dictionary with each reference key containing a dictionary with the following: key: 'Title' - list of string values, 'Individual Name' - list of string values, 'Group Names' - list of lists with string values and 'Addresses' - list of lists with string values
@@ -966,38 +980,66 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details = {}
         combined_details[ref] = {}
         warnings[ref] = set()
+        
+        farmer_title = farmer_details[ref]["Title"]
+        farmer_name = farmer_details[ref]["Individual Name"]
+        farmer_groups = farmer_details[ref]["Group Names"]
+        farmer_addy = farmer_details[ref]["Addresses"]
+        
         combined_details[ref].update({"Title": farmer_title})
         combined_details[ref].update({"Individual Name": farmer_name})  
         combined_details[ref].update({"Group Names": farmer_groups})
         combined_details[ref].update({"Addresses": farmer_addy})  
         warnings[ref].add("No addressee values given")
         
+        #print("\nFarmer only")
+        #print("Ref: " + str(ref))
+        #print("Farmer name: " + str(farmer_name))
+        #print("Farmer groups: " + str(farmer_groups))
+        #print("Farmer addy: " + str(farmer_addy))
+        #print("values: " + str(values))
+        
         combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+        #print("Combined Values:" + str(combined_values))
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
+        #print("Values:" + str(values))
     
     for ref in list(addressee_only):
         combined_details = {}
         combined_details[ref] = {}
         warnings[ref] = set()
+        addressee_title = addressee_details[ref]["Title"]
+        addressee_name = addressee_details[ref]["Individual Name"]
+        addressee_groups = addressee_details[ref]["Group Names"]
+        addressee_addy = addressee_details[ref]["Addresses"]   
+        
         combined_details[ref].update({"Title": addressee_title})
         combined_details[ref].update({"Individual Name": addressee_name})  
         combined_details[ref].update({"Group Names": addressee_groups})
         combined_details[ref].update({"Addresses": addressee_addy}) 
         warnings[ref].add("No farmer values given") 
+
+        #print("\nAddressee only")
+        #print("Ref: " + str(ref))
+        #print("Addressee name: " + str(addressee_name))
+        #print("Addressee groups: " + str(addressee_groups))
+        #print("Addressee addy: " + str(addressee_addy))
+        #print("values: " + str(values))
         
         combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
+        #print("Combined Values:" + str(combined_values))
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
+        #print("Values:" + str(values))
+        
     
-    #print("Farmer Details:")
-    #print(farmer_details)
-    #print()
-    #print("Addressee Details:")
-    #print(addressee_details)
-    #print()
-    #print("Combined Details:")
-    #print(combined_details)
+    #print("Farmer Details:" + str(farmer_details))
+    #print("Addressee Details:" + str(addressee_details))
+    #print("Combined Details:" + str(combined_details))
+    #print("Combined Values:" + str(combined_values))
+    #print("Final Values:" + str(values))
+    #print("Warnings:" + str(warnings))
     
     #combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
     
@@ -1018,7 +1060,7 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                                 'Addresses' - list of lists with string values
             expected_count - optional integer. If positive integer in given then a check is carried out on the number of rows with with data
                         
-        Outputs:
+        Returns:
             Tuple with a dictionary with the combined values for each field by reference, and a dictionary with a set of warnings for each reference
     '''
           
@@ -1033,7 +1075,7 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
     for ref, detail in details.items(): 
         warnings[ref] = set()
         #print("\n" + ref)
-        #print("Values: " + str(detail))
+        #print("get_combined_details_by_ref Initial Values: " + str(detail))
         #print("Components: " + str(components))
         
         '''
@@ -1196,6 +1238,19 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
 
 
 def generate_name(title_value, name_value, group_value, addy_value):
+    ''' Create a string combining the name components into a single value.
+
+        Key Arguments:  
+            title_value - string or list of strings giving the title value(s). Single value expected.
+            name_value - string or list of strings giving the individual name value(s). Single value expected.
+            group_value - string or list of strings giving the names of group name value(s)
+            addy_value - string or list of strings giving the address value(s)
+                            
+        Returns:
+            Tuple with string with the combined value, and a set of warnings   
+    
+    '''
+    
     warnings = set()
     name = ""
     
@@ -1339,7 +1394,7 @@ def dic_merge(dic1, dic2):
             dic1 - nested dictionary 
             dic2 - nested dictionary
             
-        Outputs:
+        Returns:
             Merged dictionary
     '''
     
@@ -1387,12 +1442,12 @@ def dic_merge(dic1, dic2):
 def date_processing(field_date, primary_dates, row_num):
     ''' Checks if dates are valid and that field date occurred before primary date(s)
     
-        keyword Arguments: 
+        Key Arguments: 
             field_date - string with the date of the field information
             primary_dates - semi-colon separated string with the date or dates of the primary records
             row_num - string with the number of the row in the source spreadsheet
             
-        Outputs:
+        Returns:
             Tuple of tuples. The first tuple contains a string with the field date value and a set of warnings related to the field dates, the second tuple contains the same but for the primary dates.
     '''
     
@@ -1438,7 +1493,7 @@ def date_processing(field_date, primary_dates, row_num):
 def date_check(potential_date, row_num):    
     ''' Checks if the date, given as a string, is a valid date
     
-        Keyword Arguments:
+        Key Arguments:
             potential_date - string containing the date value for checking
             row_num - string with the number of the row in the source spreadsheet
             
