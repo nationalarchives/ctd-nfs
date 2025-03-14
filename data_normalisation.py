@@ -145,8 +145,9 @@ def component_compare (values_to_check, debug=False):
                     
                     #print(component_set)
                 elif len(component_set_caseless) > 2:
-                    # Not implemented yet
-                    pass
+                    # 2025-03-14: Not implemented yet
+                    print("WARNING! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
+                    warnings[key].add("ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
                     
        
         #distribution = split_distribution(component_list)
@@ -256,9 +257,27 @@ def punctuated_title(to_convert):
     return converted
 
 def to_upper(match):
+    ''' Convert matched text to uppercase
+    
+        Key Arguments:
+            match - a regex match with two groups expected. The first group matches whitespace or the start of a line. The second group is subsequent lowercase text.
+            
+        Returns:
+            String with value of first group followed by value of second group converted to uppercase.
+    '''
+    
     return match.group(1) + match.group(2).upper()  
 
 def to_lower(match):
+    ''' Convert matched text to uppercase
+    
+        Key Arguments:
+            match - a regex match with two groups expected. The first group matches something that is not whitespace. The second group is subsequent uppercase text.
+            
+        Returns:
+            String with value of first group followed by value of second group converted to lowercase.
+    '''
+    
     return match.group(1) + match.group(2).lower()                            
                 
 def ratio_check(length, ratio):
@@ -281,7 +300,7 @@ def ratio_check(length, ratio):
         return False                  
 
 def split_distribution (component_list):
-    ''' Calculates the distribution of a pair of variations
+    ''' Calculates the distribution of a pair of variations. (Note - not currently used. Superseded by split_part_distribution)
         
         Keyword arguments:
         component_list - list of components
@@ -345,10 +364,10 @@ def token_distribution (component_list, tokens, debug=False):
     return component_distribution        
 
 def get_tokens (component_set):
-    ''' split the components into words
+    ''' split the components in the set into substrings and return  
     
         Keyword arguments:
-        component_set - set of components 
+            component_set - set of components 
         
         return a tuple containing a list of components and a list of the lengths of those components
     '''
@@ -362,6 +381,16 @@ def get_tokens (component_set):
     return (tokens, list(count_set))   
 
 def combine_connected_letters(list_to_test, string_to_compare):
+    ''' Checks for multiple corrections from the same source string next to each other and combines them
+    
+        Keyword arguments:
+            list_to_test - list of string sections to be checked
+            string_to_compare - string to compare against
+            
+        Returns:
+            List of tidied up string sections
+    '''
+    
     #print("String to test: " + string_to_test + " , string to compare: " + string_to_compare)    
     string_to_test = ''.join(list_to_test)
     
@@ -398,6 +427,17 @@ def combine_connected_letters(list_to_test, string_to_compare):
     return list_to_test                         
 
 def chunk_punctuated_string(string_to_process, all=True):
+    ''' Split the given string up on "(?)" and bracketed phrases ending in "?)" 
+    
+        Key Arguments:
+            string_to_process - String to be split up
+            all - Boolean. True by default. If True return all the sections. If False only return the sections with question marks in.
+            
+        Returns:
+            List with the chunked parts
+    
+    '''
+    
     match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', string_to_process)
     chunked_list = []
     for match_result in match_results:
@@ -502,8 +542,8 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     ''' Combine two text chunks into a single chunk
     
         Keyword arguments:
-        component1 - single word string
-        component2 - single word string
+        component1 - string treated as discrete chunk of text
+        component2 - string treated as discrete chunk of text
         word_ratio - dictionary of variation ratio
         debug - boolean, False by default, if True print out debug
         
@@ -513,6 +553,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     ratio = fuzz.ratio(component1, component2)
     ratio_caseless = fuzz.ratio(component1.lower(), component2.lower())
     ratio_caseless_no_punc = fuzz.ratio(clean_string(component1.lower()), clean_string(component2.lower()))
+    warnings = set()
        
     if debug:
         print("component1: " + component1)
@@ -613,6 +654,10 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                         else:
                             contexts = get_context(section, component1 + "|" + component2)
                             
+                            # 2025-03-13: Not implemented yet
+                            print("WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
+                            warnings.add("WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
+                            
                             #print(cleaned_section)
                             #print(contexts)
                         
@@ -673,9 +718,20 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         print("Generated string 2 (compared to " + component2 + "): " + str(generated_string_list))
         #print("Generated string: " + generated_string)
         
-    return generated_string
+    return (generated_string, warnings)
 
 def get_context(letter_group, phrase_string):
+    ''' Finds the substring within the phrase and returns it with the immediately surrounding letters for every place it is found in the parent phrase
+    
+        Keyword Arguments:
+            letter_group - string containing a substring of the phrase_string
+            phrase_string - string with a text that contains the letter_group
+            
+        Returns:
+            List of strings from each place in the phrase_string where the letter_group appears. These string are composed of the letter group and the proceeding and following characters.
+    
+    '''
+    
     section_split_long = chunk_punctuated_string(phrase_string)
     #print("Chunked phrase string: " + str(section_split_long))
     context = []
@@ -997,6 +1053,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                             print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
                             print("New token: " + str(phrase2_token))
                         
+                        # if the end of the last thing added to the anchored list is a comma, the end of the previous phrase2 section wasn't a comma and the end of the current section is a comma
                         if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
                             anchored_list[-1] = str(anchored_list[-1])[:-1]
                             phrase2_token = phrase2_token[:-1]
@@ -1043,7 +1100,8 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     if phrase2_token != phrase1_token:
                         token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
                         #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
-                        combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                        combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                        match_warnings.update(combination_warnings)
 
                         if debug:
                             print("Added combined section")
@@ -1070,7 +1128,8 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     
                     token_ratio = token_distribution(component_list, [phrase2_token, phrase1_token], debug)
                     #print("Combine two words called from match_matrix_by_phrase2 (both pointers phrase2) with " + phrase1_token + " and " + phrase2_token)
-                    combined_token = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                    combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                    match_warnings.update(combination_warnings)
                     
                     anchored_list.append(combined_token)
                     
@@ -1118,9 +1177,10 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     match_warnings.update(end_phrase_join_warnings)
                     anchored_list.append(end_phrase_join)
                 else:
-                    combined_token = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
+                    combined_token, combination_warnings = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
                     #print("Combined token: " + str(combined_token))
                     anchored_list.append(combined_token)
+                    match_warnings.update(combination_warnings)
 
 
         
