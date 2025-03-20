@@ -27,6 +27,7 @@
 #   dic_merge(dic1, dic2)
 #   date_processing(field_date, primary_dates, row_num)
 #   date_check(potential_date, row_num)
+#   get_similarity_range(values, get_min = True, get_max = True)
 
 
 #####################
@@ -1557,6 +1558,59 @@ def date_check(potential_date, row_num):
     return (date, warnings)
             
 
+
+def get_similarity_range(values, get_min = True, get_max = True):
+    ''' Gets the range of similarities for a given set of values and returns either the highest similarity, the lowest or both
+    
+        Keyword arguments:
+            values - string or list of strings
+            get_min - boolean. If True return the lowest level of similarity found between the values
+            get_max - boolean. If True return the highest level of similarity found between the values
+            
+        Outputs:
+            Returns either a number representing either the highest or lowest similarity or a tuple with both lowest and highest values
+    '''
+    
+    #print("Min: " + str(get_min))
+    #print("Max: " + str(get_max))
+    #print("Checking: " + str(values))
+    
+    flattened_values = []
+    for value in values:
+        if isinstance(value, str) and (value.strip() and value.strip() != "*"):
+            flattened_values.append(value)
+        elif isinstance(value, list):
+            value = [x for x in value if x.strip() and x.strip() != "*"]
+            flattened_values += value
+    
+    values_set = set(flattened_values)
+    
+    if len(values_set) == 1:
+        min = 100
+        max = 100
+    else:
+        max = 0
+        min = 100
+        for i, value1 in enumerate(list(values_set)):
+            for j, value2 in enumerate(list(values_set)):
+                if i != j:
+                    ratio = fuzz.ratio(value1, value2)
+                    if ratio > max:
+                        max = ratio
+                    if ratio < min:
+                        min = ratio
+    
+    #print("Min: " + str(min))
+    #print("Max: " + str(max))
+                        
+    if get_min and get_max:
+        return (min, max)
+    elif get_min:
+        return min
+    else:
+        return max
+        
+  
 
 processing_folder = "processing"
 load_spreadsheet_data(processing_folder)
