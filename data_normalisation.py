@@ -9,11 +9,31 @@
 #
 
 # Functions:
-
+#   component_compare (values_to_check, debug=False)
+#   punctuated_title(to_convert)
+#   to_upper(match)
+#   to_lower(match)
+#   ratio_check(length, ratio)
+#   split_distribution (component_list)
+#   split_part_distribution (component_list)
+#   token_distribution (component_list, tokens, debug=False)
+#   get_tokens (component_set)
+#   combine_connected_letters(list_to_test, string_to_compare)
+#   chunk_punctuated_string(string_to_process, all=True)
+#   combine_two_phrases(component_set, component_list, debug=False)
+#   combine_two_words (component1, component2, word_ratio, debug=False)
+#   get_context(letter_group, phrase_string)
+#   align_two_phrases(string1, string2, component_list, debug=False)
+#   clean_string(string_to_clean)
+#   clean_brackets(string_to_clean)
+#   initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
+#   get_match_ratios(phrase1, phrase2, debug = False)
+#   get_match_matrix(first_phrase, second_phrase, component_list, debug=False)
 
 #####################
 #   To Do:
-#
+#   
+#   
 #   Need to do more testing with phrases espec. of different lengths - maybe do need to do the check merging both ways
 #   See if there is a better way to check mismatches based on match level of chunks since addresses with extra information are incorrectly identified as a mismatch.
 
@@ -887,7 +907,6 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
                     
     return phrase_to_be_processed
 
-
 def get_match_ratios(phrase1, phrase2, debug = False):
     ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
     
@@ -935,7 +954,6 @@ def get_match_ratios(phrase1, phrase2, debug = False):
                     anchor_ratio = ratio  
                     
     return (anchor_ratio, match_matrix)
-
 
 def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
     ''' get the comparison matrix
