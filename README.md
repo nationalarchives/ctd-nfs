@@ -35,3 +35,7 @@ if using anaconda activate the nfs environment if not already activated (if acti
     pyinstaller --name NFS_QA --hidden-import openpyxl.cell._writer nfs_document_checks.py
 
  Pyinstaller will generate a NFS_QA folder and put it in a dist folder. This will contain and executable file and a folder called _internal. The following folders need to be added to the NFS_QA folder - a process folder which contains an output folder (and optionally an ignore folder) as the processing and output folder are expected by the code. Once these folders have been added the NFS_QA folder can be shared (recommend zipping to distribute). 
+
+ ## Running the code
+
+If running the application then double clicking on the exe file will run the default process on any CSV files in the processing folder. The output will be saved to the output folder as xlsx files with the same name as the corresponding csv file. 
