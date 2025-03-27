@@ -1,5 +1,9 @@
 # ctd-nfs
 Code developed to support the National Farm Survey QA and transformation process. This includes libraries for combining string variants.
+
+The repo contains the following files:
+* The main library is nfs_document_checks.py. This file contains the code to read in the CSVs from the processing folder, processes the data and save the results into a new spreadsheet in the outputs folder 
+* The above is supported by the data normalisation library (data_normalisation.py) which has the methods to support the string integration. 
  
 ## Anaconda
 
