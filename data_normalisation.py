@@ -38,9 +38,7 @@
 #   See if there is a better way to check mismatches based on match level of chunks since addresses with extra information are incorrectly identified as a mismatch.
 
 from rapidfuzz import fuzz
-import difflib, re, itertools
-
-
+import difflib, re
 
 
 def component_compare (values_to_check, debug=False):
