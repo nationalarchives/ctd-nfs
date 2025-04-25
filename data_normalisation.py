@@ -36,6 +36,8 @@
 #   
 #   Need to do more testing with phrases espec. of different lengths - maybe do need to do the check merging both ways
 #   See if there is a better way to check mismatches based on match level of chunks since addresses with extra information are incorrectly identified as a mismatch.
+#   In component_compare - code for the case 'len(component_set_caseless) > 2' hasn't been implemented
+#   In combine_two_words - code for the case 'substr_count is > 1' hasn't been implemented
 
 from rapidfuzz import fuzz
 import difflib, re
@@ -166,6 +168,7 @@ def component_compare (values_to_check, debug=False):
                     # 2025-03-14: Not implemented yet
                     print("WARNING! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
                     warnings[key].add("ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
+                    print(component_set_caseless)
                     
        
         #distribution = split_distribution(component_list)
@@ -275,7 +278,7 @@ def punctuated_title(to_convert):
     return converted
 
 def to_upper(match):
-    ''' Convert matched text to uppercase
+    ''' Convert text in the second group of a regex match object to uppercase
     
         Key Arguments:
             match - a regex match with two groups expected. The first group matches whitespace or the start of a line. The second group is subsequent lowercase text.
@@ -287,7 +290,7 @@ def to_upper(match):
     return match.group(1) + match.group(2).upper()  
 
 def to_lower(match):
-    ''' Convert matched text to uppercase
+    ''' Convert text in the second group of a regex match object to lowercase
     
         Key Arguments:
             match - a regex match with two groups expected. The first group matches something that is not whitespace. The second group is subsequent uppercase text.
@@ -584,9 +587,9 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     if ratio_caseless_no_punc == 100:
         
         if len(component1) > len(component2):
-            return punctuated_title(component1) 
+            return (punctuated_title(component1), warnings) 
         else:
-            return punctuated_title(component2)
+            return (punctuated_title(component2), warnings)
     else:
         component1_count = 0
         component2_count = 0
@@ -677,7 +680,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                             warnings.add("WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
                             
                             #print(cleaned_section)
-                            #print(contexts)
+                            print(contexts)
                         
                         #print("Generated string list: " + str(generated_string_list))        
                         
@@ -842,7 +845,7 @@ def clean_string(string_to_clean):
             string_to_clean - string to be processed
             
         Returns:
-            Processed string
+            Cleaned string
     
     '''
     return re.sub(r'[^\w\s]', '', string_to_clean)
@@ -854,7 +857,7 @@ def clean_brackets(string_to_clean):
             string_to_clean - string to tidy up
             
         Returns:
-            Tidied string   
+            Cleaned string   
     '''
     #print("\nClean brackets called with " + string_to_clean)
     
@@ -1070,12 +1073,17 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                             print("New token: " + str(phrase2_token))
                         
                         # if the end of the last thing added to the anchored list is a comma, the end of the previous phrase2 section wasn't a comma and the end of the current section is a comma
-                        if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
-                            anchored_list[-1] = str(anchored_list[-1])[:-1]
-                            phrase2_token = phrase2_token[:-1]
-                            anchored_list.append("(" + phrase2_token + "?),")
-                        else:
-                           anchored_list.append("(" + phrase2_token + "?)")
+                        try:
+                            if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
+                                anchored_list[-1] = str(anchored_list[-1])[:-1]
+                                phrase2_token = phrase2_token[:-1]
+                                anchored_list.append("(" + phrase2_token + "?),")
+                            else:
+                                anchored_list.append("(" + phrase2_token + "?)")
+                        except Exception as e:
+                            print("Anchored List: " + str(anchored_list[-1]))
+                            print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
+                            print("New token: " + str(phrase2_token))
                            
                     phrase2_pointer = phrase2_start
                     
@@ -1116,6 +1124,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     if phrase2_token != phrase1_token:
                         token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
                         #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
+                        
                         combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
                         match_warnings.update(combination_warnings)
 

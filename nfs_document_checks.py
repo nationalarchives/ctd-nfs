@@ -40,14 +40,14 @@
 import csv, re, datetime
 import data_normalisation as dn
 from pathlib import Path
-from openpyxl import Workbook, load_workbook
+from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 #from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
 def load_spreadsheet_data(processing_folder):
-    ''' Process any csv files in the processing folder
+    ''' Processes any csv files in the designated processing folder
 
         Keyword Arguments:
             processing_folder - string with path to folder
@@ -75,7 +75,7 @@ def load_spreadsheet_data(processing_folder):
         
 
 def output_excel(output_file, values):
-    ''' Save a spreadsheet containing the values for checking
+    ''' Saves a spreadsheet containing the processed values for QA checking
     
         keyword Arguments:
             output_file - path to output file
@@ -955,7 +955,7 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         split_details = False
         for component in components:
             threshold = 80
-            min = dn.get_similarity_range(combined_details[ref][component], get_max=False)
+            min = get_similarity_range(combined_details[ref][component], get_max=False)
             #print(component + ": " + str(min))
             if min < threshold:
                 warnings[ref].add("Warning: Similarity (" + str(min) + ") below threshold (" + str(threshold) + ") for " + component)   
@@ -1054,11 +1054,20 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
     ''' Combines title, individual name, group name and addressee values as either "title individual name, address" or "group name, address", where there may be multiple group names and addresses, and flags warnings if unexpected values found.
     
         Key Arguments:  
-            details - dictionary with each reference key containing a dictionary with the following: 
+            details - dictionary with each reference key containing a dictionary with one of the following: 
                     reference:  'Title' - list of string values, 
                                 'Individual Name' - list of string values, 
-                                'Group Names' - list of lists with string values, and 
-                                'Addresses' - list of lists with string values
+                                'Group Names' - list of lists with string values, 
+                                'Addresses' - list of lists with string values.
+                    reference:  'FTitle' - list of string values,
+                                'ATitle' - list of string values,
+                                'FIndividual Name' - list of string values,
+                                'AIndividual Name' - list of string values,
+                                'FGroup Names' - list of string values,
+                                'AGroup Names' - list of string values,
+                                'FAddresses' - list of string values,
+                                'AAddresses' - list of string values.                                           
+            components - a list of the expected fields in the details dictionary
             expected_count - optional integer. If positive integer in given then a check is carried out on the number of rows with with data
                         
         Returns:
