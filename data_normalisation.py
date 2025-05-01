@@ -166,9 +166,14 @@ def component_compare (values_to_check, debug=False):
                     #print(component_set)
                 elif len(component_set_caseless) > 2:
                     # 2025-03-14: Not implemented yet
-                    print("WARNING! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
-                    warnings[key].add("ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
+                    print("1. WARNING! - len(component_set_caseless) > 2 in component_compare.")
+                    #warnings[key].add("1. ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
                     print(component_set_caseless)
+                    reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set_caseless, debug)
+                    combined_values[key] = reduced_values
+                    
+                    for reduced_warning in reduced_warnings:
+                        warnings[key].add(reduced_warning)
                     
        
         #distribution = split_distribution(component_list)
@@ -190,75 +195,83 @@ def component_compare (values_to_check, debug=False):
                 print("Component list: " + str(component_list))
             combined_values[key] = two_phrase_join
         else:   # More than two variations
-            
-            #print(component_set)
-            warnings[key].add("Warning: Attempting to combine multiple (>2) variations.")
-            distinct = []
-            
-            for component1 in component_set:
-                max_ratio = 0
-                for component2 in component_set:
-                    if component1 != component2:
-                        ratio = fuzz.ratio(component1, component2)
-                        if ratio > max_ratio:
-                            max_ratio = ratio
-                        #print(component1 + "-" + component2 + ": " + str(ratio))
-                
-                if max_ratio < 50:
-                    distinct.append(component1) 
-                    
-            similar = component_set - set(distinct)
-            
-            #similar_list =[component for component in component_list if component in similar]
-            #print("Similar list")
-            #print(similar_list)
-            #subset_distribution = split_part_distribution(similar_list)
-            modified_best_similar_list = []
-
-            while len(similar) > 1:
-                if debug:
-                    print(key + ": Option E")
-                    print(similar)              
-
-                best_match = 0
-                best_similar = {}
-                for component1 in similar:
-                    for component2 in similar:
-                        if component1 != component2:
-                            ratio = fuzz.ratio(component1, component2)   
-                            if ratio > best_match:
-                                best_match = ratio
-                                best_similar = {component1, component2}
-                                
-                best_similar_list = modified_best_similar_list + [component for component in component_list if component in best_similar]
-                if debug:
-                    print("Print calling combined phrases with:")
-                    print("Best similar: " + str(best_similar))
-                    print("Best similar list: " + str(best_similar_list))                   
-                part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
-                #print(part_sub_set_warnings)                              
-                warnings[key].update(part_sub_set_warnings)
-                #part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
-                #part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
-                
-                for i in range (0, len(best_similar_list)):
-                    modified_best_similar_list.append(part_combined_phrases)
-                
-                similar = similar.difference(best_similar)
-                similar.add(part_combined_phrases)
- 
-            #combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
-            combined_phrases = clean_brackets("".join(list(similar)))
-            
-            if len(distinct) > 0:
-                combined_values[key] = combined_phrases + "/(" + "?/ ".join(distinct) + "?)" 
-            else:
-                combined_values[key] = combined_phrases
+            reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set, debug)
+            combined_values[key] = reduced_values
+            for reduced_warning in reduced_warnings:
+                warnings[key].add(reduced_warning)
     
     #print("Component compare combined values: " + str(combined_values))
     #print("Component compare warnings: " + str(warnings))
                 
     return (combined_values, warnings)
+
+
+def reduce_multiple_variations(component_list, component_set, debug=False):
+    #print(component_set)
+    warnings = set()
+    warnings.add("Warning: Attempting to combine multiple (>2) variations.")
+    distinct = []
+    
+    for component1 in component_set:
+        max_ratio = 0
+        for component2 in component_set:
+            if component1 != component2:
+                ratio = fuzz.ratio(component1, component2)
+                if ratio > max_ratio:
+                    max_ratio = ratio
+                #print(component1 + "-" + component2 + ": " + str(ratio))
+        
+        if max_ratio < 50:
+            distinct.append(component1) 
+            
+    similar = component_set - set(distinct)
+    
+    #similar_list =[component for component in component_list if component in similar]
+    #print("Similar list")
+    #print(similar_list)
+    #subset_distribution = split_part_distribution(similar_list)
+    modified_best_similar_list = []
+
+    while len(similar) > 1:
+        if debug:
+            print("reduce_multiple_variations: Option E")
+            print(similar)              
+
+        best_match = 0
+        best_similar = {}
+        for component1 in similar:
+            for component2 in similar:
+                if component1 != component2:
+                    ratio = fuzz.ratio(component1, component2)   
+                    if ratio > best_match:
+                        best_match = ratio
+                        best_similar = {component1, component2}
+                        
+        best_similar_list = modified_best_similar_list + [component for component in component_list if component in best_similar]
+        if debug:
+            print("Print calling combined phrases with:")
+            print("Best similar: " + str(best_similar))
+            print("Best similar list: " + str(best_similar_list))                   
+        part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
+        #print(part_sub_set_warnings)                              
+        warnings.update(part_sub_set_warnings)
+        #part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
+        #part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
+        
+        for i in range (0, len(best_similar_list)):
+            modified_best_similar_list.append(part_combined_phrases)
+        
+        similar = similar.difference(best_similar)
+        similar.add(part_combined_phrases)
+
+    #combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
+    combined_phrases = clean_brackets("".join(list(similar)))
+    
+    if len(distinct) > 0:
+        return (combined_phrases + "/(" + "?/ ".join(distinct) + "?)", warnings)
+    else:
+        return (combined_phrases, warnings)
+
 
 def punctuated_title(to_convert):
     ''' Converts string to punctuated title case
@@ -676,8 +689,8 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                             contexts = get_context(section, component1 + "|" + component2)
                             
                             # 2025-03-13: Not implemented yet
-                            print("WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
-                            warnings.add("WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
+                            print("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
+                            warnings.add("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
                             
                             #print(cleaned_section)
                             print(contexts)
