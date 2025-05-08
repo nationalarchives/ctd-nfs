@@ -595,7 +595,7 @@ def extract_farms(full_csv):
     for farm_ref, farm_data in raw_farm_info.items():
         if "Farm Name" in farm_data.keys():
             farm_names[farm_ref] = farm_data["Farm Name"]
-          
+               
     combined_farm_names, combined_farm_name_warnings = get_combined_farm_names_by_ref(farm_names)
     #print(combined_farm_names)
     

@@ -10,6 +10,7 @@
 
 # Functions:
 #   component_compare (values_to_check, debug=False)
+#   reduce_multiple_variations(component_list, component_set, debug=False)
 #   punctuated_title(to_convert)
 #   to_upper(match)
 #   to_lower(match)
@@ -36,7 +37,6 @@
 #   
 #   Need to do more testing with phrases espec. of different lengths - maybe do need to do the check merging both ways
 #   See if there is a better way to check mismatches based on match level of chunks since addresses with extra information are incorrectly identified as a mismatch.
-#   In component_compare - code for the case 'len(component_set_caseless) > 2' hasn't been implemented
 #   In combine_two_words - code for the case 'substr_count is > 1' hasn't been implemented
 
 from rapidfuzz import fuzz
@@ -166,9 +166,9 @@ def component_compare (values_to_check, debug=False):
                     #print(component_set)
                 elif len(component_set_caseless) > 2:
                     # 2025-03-14: Not implemented yet
-                    print("1. WARNING! - len(component_set_caseless) > 2 in component_compare.")
+                    #print("1. WARNING! - len(component_set_caseless) > 2 in component_compare.")
                     #warnings[key].add("1. ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
-                    print(component_set_caseless)
+                    #print(component_set_caseless)
                     reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set_caseless, debug)
                     combined_values[key] = reduced_values
                     
@@ -207,6 +207,18 @@ def component_compare (values_to_check, debug=False):
 
 
 def reduce_multiple_variations(component_list, component_set, debug=False):
+    ''' Function to deal with combine the best matches and reduce the variations down to a final string
+    
+        Keyword arguments:
+        component_list - a list of variations original values
+        component_set - a set of the variations, these may have been processed to remove case
+        debug - boolean, False by default, if True print out debug
+        
+        Returns    
+            Tuple containing string with the combined value and a set of warnings
+
+    '''
+    
     #print(component_set)
     warnings = set()
     warnings.add("Warning: Attempting to combine multiple (>2) variations.")
@@ -655,46 +667,52 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                         # does it appear more than once in generated string?
                         # if yes then need to get context to position for positioning
                         # if no then need to insert into list in replace of the individual sections 
-                        
-                        if substr_count < 2:
-                            #current_generated_string = re.sub(cleaned_section, section, current_generated_string)
-                            
-                            contexts = get_context(section, component1 + "|" + component2)
-                            #print(cleaned_section)
-                            #print(contexts)
-                            
-                            for context in contexts:
-                                if section in context:
-                                    context = [context[0]] + list(cleaned_section) + context[2:]
+                        if len(cleaned_section) > 0: 
+                            if substr_count < 2:
+                                #current_generated_string = re.sub(cleaned_section, section, current_generated_string)
+                                
+                                contexts = get_context(section, component1 + "|" + component2)
+                                #print(cleaned_section)
+                                #print(contexts)
+                                
+                                for context in contexts:
+                                    if section in context:
+                                        context = [context[0]] + list(cleaned_section) + context[2:]
+                                        
+                                    replacement = [context[0]] + [section] + context[len(cleaned_section)+1:]
                                     
-                                replacement = [context[0]] + [section] + context[len(cleaned_section)+1:]
+                                    #print("Replacement: " + str(replacement))
+                                    #print("Context before removing |: " + str(context))
+                                    if "|" in context:
+                                        context.remove("|")                                    
+                                    #print("Context after removing |: " + str(context))
+                                    
+                                    context_string = ''.join(context)
+                                    #print("context: " + context_string)
+                                    replacement_string = ''.join(replacement)
+                                    #print("replacement: " + replacement_string)
+                                    #print("current string: " + current_generated_string)
+                                    if context_string in current_generated_string:
+                                        current_generated_string = current_generated_string.replace(context_string, replacement_string)
+                                    #print("new string: " + current_generated_string)
+                                    
+                                generated_string_list = chunk_punctuated_string(current_generated_string)
                                 
-                                #print("Replacement: " + str(replacement))
-                                #print("Context: " + str(context))
-                                if "|" in context:
-                                    context = context.remove("|")
+                            else:
+                                contexts = get_context(section, component1 + "|" + component2)
                                 
-                                context_string = ''.join(context)
-                                #print("context: " + context_string)
-                                replacement_string = ''.join(replacement)
-                                #print("replacement: " + replacement_string)
-                                #print("current string: " + current_generated_string)
-                                if context_string in current_generated_string:
-                                    current_generated_string = current_generated_string.replace(context_string, replacement_string)
-                                #print("new string: " + current_generated_string)
+                                # 2025-03-13: Not implemented yet
+                                print("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
+                                warnings.add("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
                                 
-                            generated_string_list = chunk_punctuated_string(current_generated_string)
+                                print("Cleaned section: '" + cleaned_section + "'")
+                                print("Section: '" + section + "'")
+                                print("Contexts: " + str(contexts))
+                                print("Component1: " + component1)
+                                print("Component2: " + component2)
+                                print("Substr count: " + str(substr_count))
+                                print("Generated String List: " + str(generated_string_list))
                             
-                        else:
-                            contexts = get_context(section, component1 + "|" + component2)
-                            
-                            # 2025-03-13: Not implemented yet
-                            print("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
-                            warnings.add("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
-                            
-                            #print(cleaned_section)
-                            print(contexts)
-                        
                         #print("Generated string list: " + str(generated_string_list))        
                         
                 
@@ -915,7 +933,13 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
                     print("Comparison part: " + comparison_part)
                     
                 if comparison_part != '' and initial_no_punc == comparison_part[0]:
-                    phrase_to_be_processed = re.sub(r'^'+initial+r'(\s|$)', comparison_part, phrase_to_be_processed)
+                    try:
+                        
+                        phrase_to_be_processed = re.sub(r'^' + re.escape(initial) + r'(\s|$)', comparison_part, phrase_to_be_processed)
+                    except Exception as e:
+                        print("Error with phrase_to_be_processed. Values - initial: " + re.escape(initial) + ", comparison_part: " + comparison_part + ", phrase_to_be_processed: " + phrase_for_comparison)
+                        print(e)
+                    
                     if debug: 
                         print("Processed phrase: " + phrase_to_be_processed + "\n")   
                     
@@ -1094,7 +1118,10 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                             else:
                                 anchored_list.append("(" + phrase2_token + "?)")
                         except Exception as e:
-                            print("Anchored List: " + str(anchored_list[-1]))
+                            print("Exception thrown when trying to deal with anchored list: " + str(e))
+                            print("Length of Anchored List: " + str(len(anchored_list)))
+                            print("Anchored List: " + str(anchored_list))
+                            print("Last section of Anchored List: " + str(anchored_list[-1]))
                             print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
                             print("New token: " + str(phrase2_token))
                            
@@ -1149,8 +1176,10 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                             print("Adding (combined match): " + combined_token)
                     else:
                         combined_token = phrase1_token
-                        
-                    anchored_list.append(combined_token)
+                    
+                    if combined_token.strip() != '':   
+                        anchored_list.append(combined_token)
+
                     phrase2_pointer = phrase2_end
                     phrase1_pointer += 1
                     
@@ -1169,7 +1198,8 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
                     match_warnings.update(combination_warnings)
                     
-                    anchored_list.append(combined_token)
+                    if combined_token.strip() != '':  
+                        anchored_list.append(combined_token)
                     
                     if debug:
                         print("Adding combined starting string")
@@ -1213,11 +1243,13 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
                     #print("End phrase join: " + str(end_phrase_join))
                     match_warnings.update(end_phrase_join_warnings)
-                    anchored_list.append(end_phrase_join)
+                    if end_phrase_join.strip() != '':  
+                        anchored_list.append(end_phrase_join)
                 else:
                     combined_token, combination_warnings = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
                     #print("Combined token: " + str(combined_token))
-                    anchored_list.append(combined_token)
+                    if combined_token.strip() != '': 
+                        anchored_list.append(combined_token)
                     match_warnings.update(combination_warnings)
 
 
