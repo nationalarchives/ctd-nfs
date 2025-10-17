@@ -162,6 +162,7 @@ cython_debug/
 *.exe
 /NFS_QA/_internal
 *.csv#
+*.csv
 *.xlsx
 .~lock*
 *.txt
