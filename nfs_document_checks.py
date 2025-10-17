@@ -1526,20 +1526,11 @@ def date_check(potential_date, row_num):
                          """, re.VERBOSE)
     
     try:
-        if "-" in potential_date:
-            day = int(potential_date.split("-")[0])
-            month = potential_date.split("-")[1]
-            year = potential_date.split("-")[2]
-        elif " " in potential_date:
-            day = int(potential_date.split(" ")[0])
-            month = potential_date.split(" ")[1]
-            year = potential_date.split(" ")[2]
-        elif "/" in potential_date:
-            day = int(potential_date.split("/")[0])
-            month = potential_date.split("/")[1]
-            year = potential_date.split("/")[2]   
-        else:
-            raise ValueError("Date format not recognized")
+        if rgxmatch := DATE_RGX.search(potential_date):
+            if 'day' in rgxmatch.groups():
+                primary_dtime = datetime.strptime(potential_date, "%d %B %Y")
+            else:
+                primary_dtime = datetime.strptime(potential_date, "%B %Y")
             
     except ValueError as ve:
         warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as a valid date in the expected format (" + str(ve) + "). Further date checks cannot be carried out.")
