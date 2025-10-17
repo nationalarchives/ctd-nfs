@@ -1533,7 +1533,10 @@ def date_check(potential_date, row_num):
                 primary_dtime = datetime.strptime(potential_date, "%B %Y")
             
     except ValueError as ve:
-        warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as a valid date in the expected format ({str(ve)}). Further date checks cannot be carried out.")
+        if ve == "day is out of range for month":
+            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
+        else:
+            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as a valid date in the expected format ({ve}). Further date checks cannot be carried out.")
         return (potential_date, warnings)   
         
           
