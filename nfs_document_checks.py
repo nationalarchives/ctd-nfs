@@ -1517,13 +1517,7 @@ def date_check(potential_date, row_num):
     potential_date = potential_date.strip()
 
     MONTH_NAMES: list = "|".join(list(calendar.month_name)[1:])
-    DATE_RGX = re.compile(fr"""
-                         ^
-                         (?:(?P<day>\d\d?) +)?
-                         (?P<month>{MONTH_NAMES})\ +
-                         (?P<year>\d{4})
-                         $
-                         """, re.VERBOSE)
+    DATE_RGX = re.compile(fr"""^(?:(?P<day>\d\d?) +)?(?P<month>{MONTH_NAMES})\ +(?P<year>\d{4})$""")
     
     try:
         if rgxmatch := DATE_RGX.search(potential_date):
