@@ -1538,7 +1538,7 @@ def date_check(potential_date, row_num):
         
           
     if rgxmatch['year'] not in ["1941", "1942", "1943"]:
-        warnings.add("Row " + row_num + ": Error - Date (" + potential_date + ") is not recognized as within the expected range.")
+        warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as within the expected range.")
         
     year = int(year)
     
