@@ -1531,15 +1531,14 @@ def date_check(potential_date, row_num):
                 primary_dtime = datetime.strptime(potential_date, "%d %B %Y")
             else:
                 primary_dtime = datetime.strptime(potential_date, "%B %Y")
-            
+        else:
+            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not in the expected format. Further date checks cannot be carried out.")
+                  
     except ValueError as ve:
         if ve == "day is out of range for month":
             warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
-        else:
-            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as a valid date in the expected format ({ve}). Further date checks cannot be carried out.")
         return (potential_date, warnings)   
-        
-          
+                 
     if rgxmatch['year'] not in ["1941", "1942", "1943"]:
         warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as within the expected range.")
         
