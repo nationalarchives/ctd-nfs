@@ -1521,7 +1521,7 @@ def date_check(potential_date, row_num):
                          ^
                          (?:(?P<day>\d\d?) +)?
                          (?P<month>{MONTH_NAMES})\ +
-                         (?P<year>19\d\d)
+                         (?P<year>\d{4})
                          $
                          """, re.VERBOSE)
     
