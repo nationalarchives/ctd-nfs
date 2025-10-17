@@ -40,6 +40,8 @@
 import csv, re, datetime
 import data_normalisation as dn
 from pathlib import Path
+import calendar
+
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 #from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
@@ -1514,7 +1516,15 @@ def date_check(potential_date, row_num):
     warnings = set()
     potential_date = potential_date.strip()
 
-    #print(row_num + ": " + potential_date)
+    MONTH_NAMES: list = "|".join(list(calendar.month_name)[1:])
+    DATE_RGX = re.compile(fr"""
+                         ^
+                         (?:(?P<day>\d\d?) +)?
+                         (?P<month>{MONTH_NAMES})\ +
+                         (?P<year>19\d\d)
+                         $
+                         """, re.VERBOSE)
+    
     try:
         if "-" in potential_date:
             day = int(potential_date.split("-")[0])
