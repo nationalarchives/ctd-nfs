@@ -1528,9 +1528,11 @@ def date_check(potential_date, row_num):
             warning = f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out."
             return (potential_date, warning)   
                     
-    if rgxmatch['year'] not in ["1941", "1942", "1943"]:
-        warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as within the expected range.")
-        
+    if rgxmatch := DATE_DDMMMYYYY_RGX.search(potential_date) or DATE_MMMYYYY_RGX.search(potential_date):
+        if rgxmatch['year'] not in ["1941", "1942", "1943"]:
+            warning = f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range."
+            return (potential_date, warning)
+
     year = int(year)
     
     if month.isdigit():
