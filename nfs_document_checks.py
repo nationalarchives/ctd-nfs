@@ -1520,20 +1520,14 @@ def date_check(potential_date, row_num):
     DATE_DDMMMYYYY_RGX = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
     DATE_MMMYYYY_RGX = re.compile(fr"""^(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
     
-    try:
-        if rgxmatch := DATE_RGX.search(potential_date):
-            if 'day' in rgxmatch.groups():
-                primary_dtime = datetime.strptime(potential_date, "%d %B %Y")
-            else:
-                primary_dtime = datetime.strptime(potential_date, "%B %Y")
-        else:
-            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not in the expected format. Further date checks cannot be carried out.")
-                  
-    except ValueError as ve:
-        if ve == "day is out of range for month":
-            warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
-        return (potential_date, warnings)   
-                 
+    if DATE_DDMMMYYYY_RGX.search(potential_date):
+        try:
+            datetime.strptime(potential_date, "%d %B %Y")
+        except ValueError as ve:
+            # ve = "day is out of range for month":
+            warning = f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out."
+            return (potential_date, warning)   
+                    
     if rgxmatch['year'] not in ["1941", "1942", "1943"]:
         warnings.add(f"Row {row_num}: Error - Date ({potential_date}) is not recognized as within the expected range.")
         
