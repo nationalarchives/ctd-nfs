@@ -1522,16 +1522,16 @@ def date_check(potential_date, row_num):
     
     if rgxmatch := RGX_DAYMONTHYEAR.search(potential_date) or RGX_MONTHYEAR.search(potential_date):
         if rgxmatch['year'] not in ["1941", "1942", "1943"]:
-            warning = f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range."
-            return (potential_date, warning)
+            warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range.")
+            return (potential_date, warnings)
 
     if RGX_DAYMONTHYEAR.search(potential_date):
         try:
-            datetime.strptime(potential_date, "%d %B %Y")
+            return (datetime.strptime(potential_date, "%d %B %Y"), warnings)
         except ValueError as ve:
             # ve = "day is out of range for month":
-            warning = f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out."
-            return (potential_date, warning)   
+            warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
+            return (potential_date, warnings)   
                     
     year = int(year)
     
