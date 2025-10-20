@@ -1527,14 +1527,14 @@ def date_check(potential_date, row_num):
 
     if RGX_DAYMONTHYEAR.search(potential_date):
         try:
-            return (datetime.strptime(potential_date, "%d %B %Y"), warnings)
+            return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
         except ValueError as ve:
             # ve = "day is out of range for month":
             warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
             return (potential_date, warnings)   
                     
     if RGX_MONTHYEAR.search(potential_date):
-        return (datetime.strptime(potential_date, "%B %Y"), warnings)
+        return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
                     
     else:
         warning = f"Row {row_num}: Error: Date ({potential_date}) is not in the expected format. Further date checks cannot be carried out."

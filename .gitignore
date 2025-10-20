@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+#*.py[cod]
 *$py.class
 
 # C extensions
@@ -161,6 +161,7 @@ cython_debug/
 *.zip
 *.exe
 /NFS_QA/_internal
+processing
 *.csv#
 *.xlsx
 .~lock*
