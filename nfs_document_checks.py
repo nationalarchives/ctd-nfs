@@ -1517,10 +1517,10 @@ def date_check(potential_date, row_num):
     potential_date = potential_date.strip()
 
     MONTH_NAMES: list = "|".join(list(calendar.month_name)[1:])
-    DATE_DDMMMYYYY_RGX = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
-    DATE_MMMYYYY_RGX = re.compile(fr"""^(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
+    RGX_DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
+    RGX_MONTHYEAR = re.compile(fr"""^(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
     
-    if DATE_DDMMMYYYY_RGX.search(potential_date):
+    if RGX_DAYMONTHYEAR.search(potential_date):
         try:
             datetime.strptime(potential_date, "%d %B %Y")
         except ValueError as ve:
@@ -1528,7 +1528,7 @@ def date_check(potential_date, row_num):
             warning = f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out."
             return (potential_date, warning)   
                     
-    if rgxmatch := DATE_DDMMMYYYY_RGX.search(potential_date) or DATE_MMMYYYY_RGX.search(potential_date):
+    if rgxmatch := RGX_DAYMONTHYEAR.search(potential_date) or RGX_MONTHYEAR.search(potential_date):
         if rgxmatch['year'] not in ["1941", "1942", "1943"]:
             warning = f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range."
             return (potential_date, warning)
