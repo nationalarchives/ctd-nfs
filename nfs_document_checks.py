@@ -1529,16 +1529,18 @@ def date_check(potential_date, row_num):
         try:
             return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
         except ValueError as ve:
-            # ve = "day is out of range for month":
-            warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
-            return (potential_date, warnings)   
+            warnings.add(f'Row {row_num}: Error: Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+            # TODO: change error message
+            # except ValueError as exception: (exception = "day is out of range for month")
+            # warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
+
                     
     if RGX_MONTHYEAR.search(potential_date):
         return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
                     
     else:
-        warning = f"Row {row_num}: Error: Date ({potential_date}) is not in the expected format. Further date checks cannot be carried out."
-        return (potential_date, warning)
+        warnings.add(f'Row {row_num}: Error: Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+        return (potential_date, warnings)
 
 
 def get_similarity_range(values, get_min = True, get_max = True):
