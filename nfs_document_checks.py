@@ -1533,6 +1533,9 @@ def date_check(potential_date, row_num):
             warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({ve}). Further date checks cannot be carried out.")
             return (potential_date, warnings)   
                     
+    if RGX_MONTHYEAR.search(potential_date):
+        return (datetime.strptime(potential_date, "%B %Y"), warnings)
+                    
     year = int(year)
     
     if month.isdigit():
