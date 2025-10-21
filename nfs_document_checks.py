@@ -130,16 +130,19 @@ def filename_pattern_check(filename, row_num):
     Returns:
         Tuple containing the central part of the filename and the final count at the end of the filename, a warning or raises an ValueError  
     '''
-    
+    RGX_FILENAMEPATTERN1 = re.compile(r"""^^MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif$""")
+    RGX_FILENAMEPATTERN2 = re.compile(r"""^MAF32-(\d*-\d*)( Pt\d*)?.tif$""")
+    RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(\d*-\d*).*(\d*)?.tif$""")
+
     if filename != "":
-        if m := re.match(r"^MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif$", filename):
+        if m := RGX_FILENAMEPATTERN1.match(filename):
             ref_component = m.group(1)
             iteration_num = m.group(3)
             return (ref_component, iteration_num, "")
-        if m := re.match(r"^MAF32-(\d*-\d*)( Pt\d*)?.tif$", filename):
+        if m := RGX_FILENAMEPATTERN2.match(filename):
             ref_component = m.group(1)
             return (ref_component, 0, "Row " + row_num + ": " + filename + " matches expected cover pattern. Error is this is not a cover.")
-        elif m := re.match(r"^MAF32-(\d*-\d*).*(\d*)?.tif$", filename):
+        elif m := RGX_FILENAMEPATTERN3.match(filename):
             ref_component = m.group(1)
             iteration_num = m.group(2)
             return (ref_component, iteration_num, "Row " + row_num + ": " + filename + " does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
@@ -591,7 +594,7 @@ def extract_farms(full_csv):
             else:
                 farms[ref]["Primary Date Warnings"] = primary_date_warnings
 
-    #print(raw_farm_info) 
+    # print(raw_farm_info) 
     # Farm names
     farm_names = {}
     for farm_ref, farm_data in raw_farm_info.items():
@@ -599,7 +602,7 @@ def extract_farms(full_csv):
             farm_names[farm_ref] = farm_data["Farm Name"]
                
     combined_farm_names, combined_farm_name_warnings = get_combined_farm_names_by_ref(farm_names)
-    #print(combined_farm_names)
+    # print(f"DEBUG: {combined_farm_names}")
     
     for ref, combined_farm_name in combined_farm_names.items():
         farms[ref].update({"Farm Name": [combined_farm_name]})
@@ -611,7 +614,7 @@ def extract_farms(full_csv):
         if "Landowner" in owner_data.keys():
             owner_details[owner_ref] = owner_data["Landowner"]    
     
-    #print(owner_details)
+    # print(f"DEBUG: {owner_details}")
     combined_owner_info, combined_owner_info_warnings = get_combined_owner_details_by_ref(owner_details) 
 
     for ref, combined_owner_info in combined_owner_info.items():
@@ -623,17 +626,17 @@ def extract_farms(full_csv):
     for farmer_ref, farmer_data in raw_farm_info.items():
         if "Farmer" in farmer_data.keys():
             farmer_details[farmer_ref] = farmer_data["Farmer"]   
-    #print("Farmer details: " + str(farmer_details))
+    # print(f"DEBUG: Farmer details: {str(farmer_details)}")
     
     # Addressee names
     addressee_details = {}
     for addressee_ref, addressee_data in raw_farm_info.items():
         if "Addressee" in addressee_data.keys():
             addressee_details[addressee_ref] = addressee_data["Addressee"]              
-    #print("Addressee details: " + str(addressee_details))
+    # print(f"DEBUG: Addressee details: {str(addressee_details)}\n\n")
     
     combined_farmer_info, combined_farmer_info_warnings = get_combined_farmer_details_by_ref(farmer_details, addressee_details)
-    #print("Combined Farmer Info: " + str(combined_farmer_info))
+    print(f"DEBUG: Combined Farmer Info: {str(combined_farmer_info)}\n\n")
     
     for ref, combined_farmer_info in combined_farmer_info.items():
         farms[ref].update({"Farmer": [combined_farmer_info]})
@@ -722,7 +725,6 @@ def generate_ref(base_ref, existing_refs):
         while temp_ref in existing_refs:
             temp_ref = temp_ref.split("-")[0] + "-" + str(counter)
             counter += 1   
-         
         return temp_ref
     else:
         return base_ref
@@ -809,6 +811,7 @@ def get_combined_farm_names_by_ref(farm_names):
         if count != 2:
             warnings[ref].add("Expected 2 rows of data, Got " + str(count) + ".")
     
+    print("DEBUG: FINISHED get_combined_farm_names_by_ref")
     return (combined_names, warnings)
 
 
@@ -835,6 +838,7 @@ def get_combined_owner_details_by_ref(owner_details):
         Returns:
             Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
     '''
+    print("DEBUG: FINISHED get_combined_owner_details_by_ref")
     return get_combined_details_by_ref(owner_details, ["Title", "Individual Name", "Group Names", "Addresses"], 1)
 
 
@@ -877,11 +881,11 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     else:
         shared = set(farmer_details.keys())
     
-    #print("Farmer details" + str(farmer_details))
-    #print("Addressee details" + str(addressee_details))
-    #print("Shared: " + str(shared))
-    #print("Farmer: " + str(farmer_only))
-    #print("Addressee: " + str(addressee_only))
+    # print("DEBUG: Farmer details" + str(farmer_details))
+    # print("DEBUG: Addressee details" + str(addressee_details))
+    # print("DEBUG: Shared: " + str(shared))
+    # print("DEBUG: Farmer: " + str(farmer_only))
+    # print("DEBUG: Addressee: " + str(addressee_only))
     
     components = ["Title", "Individual Name", "Group Names", "Addresses"]
     
@@ -899,10 +903,10 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         addressee_groups = addressee_details[ref]["Group Names"]
         addressee_addy = addressee_details[ref]["Addresses"]   
         
-        #print("\nRef: " + str(ref))
-        #print("Farmer name: " + str(farmer_name))
-        #print("Farmer addy: " + str(farmer_addy))
-        #print("Addressee addy: " + str(addressee_addy))
+        print("DEBUG: DEBUG: \nRef: " + str(ref))
+        print("DEBUG: Farmer name: " + str(farmer_name))
+        print("DEBUG: Farmer addy: " + str(farmer_addy))
+        print("DEBUG: Addressee addy: " + str(addressee_addy))
         
         #TO DO: Need to combine the values into one key not have each as separate keys:values!!!
         addy_dict = dict()
