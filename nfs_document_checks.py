@@ -130,9 +130,9 @@ def filename_pattern_check(filename, row_num):
     Returns:
         Tuple containing the central part of the filename and the final count at the end of the filename, a warning or raises an ValueError  
     '''
-    RGX_FILENAMEPATTERN1 = re.compile(r"""^^MAF32-(\d*-\d*)( Pt\d*)?_(\d*).tif$""")
-    RGX_FILENAMEPATTERN2 = re.compile(r"""^MAF32-(\d*-\d*)( Pt\d*)?.tif$""")
-    RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(\d*-\d*).*(\d*)?.tif$""")
+    RGX_FILENAMEPATTERN1 = re.compile(r"""^^MAF32-(?P<ref_component>\d*-\d*)( Pt\d*)?_(?P<iteration_num>\d*).tif$""")
+    RGX_FILENAMEPATTERN2 = re.compile(r"""^MAF32-(?P<ref_component>\d*-\d*)( Pt\d*)?.tif$""")
+    RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(?P<ref_component>\d*-\d*).*(?P<iteration_num>\d*)?.tif$""")
 
     if filename != "":
         if m := RGX_FILENAMEPATTERN1.match(filename):
