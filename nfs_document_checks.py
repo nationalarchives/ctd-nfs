@@ -135,12 +135,12 @@ def filename_pattern_check(filename, row_num):
     RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(?P<box_and_parish>\d*-\d*).*(?P<image_number>\d*)?.tif$""")
 
     if filename != "":
-        if m := RGX_FILENAMEPATTERN1.match(filename):
-            return (m['box_and_parish'], m['image_number'], "")
-        if m := RGX_FILENAMEPATTERN2.match(filename):
-            return (m['box_and_parish'], 0, f"Row {row_num}: {filename} matches expected cover pattern. Error is this is not a cover.")
-        elif m := RGX_FILENAMEPATTERN3.match(filename):
-            return (m['box_and_parish'], m['image_number'], f"Row {row_num}: {filename} does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")
+        if rgxmatch := RGX_FILENAMEPATTERN1.match(filename):
+            return (rgxmatch['box_and_parish'], rgxmatch['image_number'], "")
+        if rgxmatch := RGX_FILENAMEPATTERN2.match(filename):
+            return (rgxmatch['box_and_parish'], 0, f"Row {row_num}: {filename} matches expected cover pattern. Error is this is not a cover.")
+        elif rgxmatch := RGX_FILENAMEPATTERN3.match(filename):
+            return (rgxmatch['box_and_parish'], rgxmatch['image_number'], f"Row {row_num}: {filename} does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")
         else:   
             raise ValueError(f"Row {row_num}: {filename} does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
     else:
