@@ -130,9 +130,9 @@ def filename_pattern_check(filename, row_num):
     Returns:
         Tuple containing the central part of the filename and the final count at the end of the filename, a warning or raises an ValueError  
     '''
-    RGX_FILENAMEPATTERN1 = re.compile(r"""^^MAF32-(?P<box_and_parish>\d*-\d*)( Pt\d*)?_(?P<image_number>\d*).tif$""")
-    RGX_FILENAMEPATTERN2 = re.compile(r"""^MAF32-(?P<box_and_parish>\d*-\d*)( Pt\d*)?.tif$""")
-    RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(?P<box_and_parish>\d*-\d*).*(?P<image_number>\d*)?.tif$""")
+    RGX_FILENAMEPATTERN1 = re.compile(r"""^MAF32-(?P<box_and_parish>\d+[-_]\d+)( Pt\d+)?_+(?P<image_number>\d+)\.tif$""")
+    RGX_FILENAMEPATTERN2 = re.compile(r"""^MAF32-(?P<box_and_parish>\d+[-_]\d+)( Pt\d+)?\.tif$""")
+    RGX_FILENAMEPATTERN3 = re.compile(r"""^MAF32-(?P<box_and_parish>\d+[-_]\d+).*?_+(?P<image_number>\d+)?\.tif$""")
 
     if not filename:
         raise ValueError(f"Row {row_num}: Error - Blank filename found. Further checks on the filename could not be carried out and an accurate reference could not be generated.")        
