@@ -136,16 +136,11 @@ def filename_pattern_check(filename, row_num):
 
     if filename != "":
         if m := RGX_FILENAMEPATTERN1.match(filename):
-            ref_component = m.group(1)
-            iteration_num = m.group(3)
-            return (ref_component, iteration_num, "")
+            return (m['ref_component'], m['iteration_num'], "")
         if m := RGX_FILENAMEPATTERN2.match(filename):
-            ref_component = m.group(1)
-            return (ref_component, 0, "Row " + row_num + ": " + filename + " matches expected cover pattern. Error is this is not a cover.")
+            return (m['ref_component'], 0, "Row " + row_num + ": " + filename + " matches expected cover pattern. Error is this is not a cover.")
         elif m := RGX_FILENAMEPATTERN3.match(filename):
-            ref_component = m.group(1)
-            iteration_num = m.group(2)
-            return (ref_component, iteration_num, "Row " + row_num + ": " + filename + " does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
+            return (m['ref_component'], m['iteration_num'], "Row " + row_num + ": " + filename + " does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
         else:   
             raise ValueError("Row " + row_num + ": " + filename + " does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
     else:
