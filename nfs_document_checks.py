@@ -634,7 +634,7 @@ def extract_farms(full_csv):
     # print(f"DEBUG: Addressee details: {str(addressee_details)}\n\n")
     
     combined_farmer_info, combined_farmer_info_warnings = get_combined_farmer_details_by_ref(farmer_details, addressee_details)
-    print(f"DEBUG: Combined Farmer Info: {str(combined_farmer_info)}\n\n")
+    # print(f"DEBUG: Combined Farmer Info: {str(combined_farmer_info)}\n\n")
     
     for ref, combined_farmer_info in combined_farmer_info.items():
         farms[ref].update({"Farmer": [combined_farmer_info]})
@@ -809,7 +809,7 @@ def get_combined_farm_names_by_ref(farm_names):
         if count != 2:
             warnings[ref].add("Expected 2 rows of data, Got " + str(count) + ".")
     
-    print("DEBUG: FINISHED get_combined_farm_names_by_ref")
+    # print("DEBUG: FINISHED get_combined_farm_names_by_ref")
     return (combined_names, warnings)
 
 
@@ -836,7 +836,7 @@ def get_combined_owner_details_by_ref(owner_details):
         Returns:
             Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
     '''
-    print("DEBUG: FINISHED get_combined_owner_details_by_ref")
+    # print("DEBUG: FINISHED get_combined_owner_details_by_ref")
     return get_combined_details_by_ref(owner_details, ["Title", "Individual Name", "Group Names", "Addresses"], 1)
 
 
@@ -901,10 +901,10 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         addressee_groups = addressee_details[ref]["Group Names"]
         addressee_addy = addressee_details[ref]["Addresses"]   
         
-        print("DEBUG: DEBUG: \nRef: " + str(ref))
-        print("DEBUG: Farmer name: " + str(farmer_name))
-        print("DEBUG: Farmer addy: " + str(farmer_addy))
-        print("DEBUG: Addressee addy: " + str(addressee_addy))
+        # print("DEBUG: DEBUG: \nRef: " + str(ref))
+        # print("DEBUG: Farmer name: " + str(farmer_name))
+        # print("DEBUG: Farmer addy: " + str(farmer_addy))
+        # print("DEBUG: Addressee addy: " + str(addressee_addy))
         
         #TO DO: Need to combine the values into one key not have each as separate keys:values!!!
         addy_dict = dict()
