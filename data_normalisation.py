@@ -41,6 +41,7 @@
 
 from rapidfuzz import fuzz
 import difflib, re
+import itertools
 
 
 def component_compare (values_to_check, debug=False):
@@ -251,19 +252,30 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
 
         best_match = 0
         best_similar = {}
-        for component1 in similar:
-            for component2 in similar:
-                if component1 != component2:
-                    ratio = fuzz.ratio(component1, component2)   
-                    if ratio > best_match:
-                        best_match = ratio
-                        best_similar = {component1, component2}
+        # for component1 in similar:
+        #     for component2 in similar:  
+        #         if component1 != component2:
+        #             ratio = fuzz.ratio(component1, component2)   
+        #             if ratio > best_match:
+        #                 best_match = ratio
+        #                 best_similar = {component1, component2}
+        for (component1, component2) in itertools.combinations(similar, 2):
+            print(f"[DEBUG] {component1=}, {component2=}")
+            ratio = fuzz.ratio(component1, component2)   
+            if ratio > best_match:
+                best_match = ratio
+                best_similar = {component1, component2}
                         
         best_similar_list = modified_best_similar_list + [component for component in component_list if component in best_similar]
-        if debug:
-            print("Print calling combined phrases with:")
-            print("Best similar: " + str(best_similar))
-            print("Best similar list: " + str(best_similar_list))                   
+        # if debug:
+            # print("[DEBUG] Print calling combined phrases with:")
+        if not best_similar:
+            print(f"[DEBUG] {distinct=}")
+            print(f"[DEBUG] {component_list=}")
+            print(f"[DEBUG] {component_set=}")
+            print(f"[DEBUG] {similar=}")
+            print(f"[DEBUG] {best_similar=}")
+            print(f"[DEBUG] {best_similar_list=}")                   
         part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
         #print(part_sub_set_warnings)                              
         warnings.update(part_sub_set_warnings)
@@ -510,14 +522,14 @@ def combine_two_phrases(component_set, component_list, debug=False):
     #print(key + ": ")
     
     #debug = True
-
+    # print(f"[DEBUG] {component_set=}")
     split_components, count_of_component_lengths = get_tokens(component_set)
     #warnings = set()
     distribution = split_part_distribution(component_list)
     if debug:
         print("Combine_two_phrases called")
-        print(split_components)
-        print(count_of_component_lengths)
+        print(f"{split_components=}")
+        print(f"{count_of_component_lengths=}")
         print(len(count_of_component_lengths))
         print("distribution: " + str(distribution))
         
