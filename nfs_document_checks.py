@@ -74,6 +74,23 @@ def load_spreadsheet_data(processing_folder):
                 
     except OSError as e:
         print("Error in data loading: " + e)
+
+    
+def processing_files(processing_folder) -> None:
+    for input_file in Path(processing_folder).glob("*.csv"):     
+        try:
+            base_filename = Path(input_file).stem
+            print(f"Processing file: {base_filename}")
+
+            # csv.register_dialect(name="nfs_csv", skipinitialspace=True)
+            with open(input_file, newline='') as file_obj:
+                csv_data = csv.DictReader(file_obj, skipinitialspace=True) 
+                farm_values = extract_farms(csv_data)
+
+            output_excel(Path(processing_folder, "output", base_filename + ".xlsx"), farm_values)
+
+        except csv.Error as csv_error_message:
+            print(f"!!! ERROR in data loading: {csv_error_message}")
         
 
 def output_excel(output_file, values):
@@ -1599,4 +1616,5 @@ def get_similarity_range(values, get_min = True, get_max = True):
   
 
 processing_folder = "processing"
-load_spreadsheet_data(processing_folder)
+# load_spreadsheet_data(processing_folder)
+processing_files(processing_folder)

@@ -59,12 +59,15 @@ def component_compare (values_to_check, debug=False):
     warnings = {}
     
     for key, component_list in values_to_check.items():
+        print(f"DEBUG: {key=}")
+        print(f"DEBUG: {component_list=}")
         
         warnings[key] = set()
         component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])   
         #component_list_caseless = [component.lower() for component in component_list if (component.strip() != "" and component.strip() != "*")]   
         alt_component_set = set([("".join(component.split())).lower() for component in component_list if (component.strip() != "" and component.strip() != "*")] )
-
+        print(f"DEBUG:\t{component_set=}")
+        print(f"DEBUG:\t{alt_component_set=}")
 
         # does the default set have the same number of values as the set with all the spaces and cases removed
         if len(component_set) != len(alt_component_set):
