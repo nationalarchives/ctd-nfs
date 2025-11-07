@@ -53,7 +53,7 @@ from rapidfuzz import fuzz
 
 
 """
-FarmOccupier, FarmOwner and Farmer will be initialised with lists of the relevant components from each row for that farm.
+Farm Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
 """
 @dataclass
 class Occupier:
@@ -82,7 +82,7 @@ class Farmer:
 @dataclass
 class Farm:
     catalogue_reference: str
-    forms: dict[list]
+    forms: dict[list] = {'C51/SSY': [], 'B496/EI': [], 'C 47/SSY': [], 'C 49/SSY': [], 'SF': [], 'SF C69/SSY': [], 'Other': [], 'Cover': []}
     county: str
     parish: str
     primary_farm_number: str
