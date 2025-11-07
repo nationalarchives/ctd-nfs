@@ -37,6 +37,7 @@
 #   Create full range of test spreadsheets
 
 
+from dataclasses import dataclass
 import csv, re, datetime
 import data_normalisation as dn
 from pathlib import Path
@@ -48,6 +49,10 @@ from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
+
+@dataclass
+class Farm:
+    pass
 
 def processing_files(processing_folder) -> None:
     for input_file in Path(processing_folder).glob("*.csv"):     
