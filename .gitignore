@@ -163,7 +163,12 @@ cython_debug/
 /NFS_QA/_internal
 processing
 *.csv#
+*.csv
 *.xlsx
 .~lock*
+<<<<<<< HEAD
 *.txt
 difflib_experiment.py
+=======
+*.txt
+>>>>>>> dc62ebc3e529d22f16a277a522e7e48a5403cd2a
