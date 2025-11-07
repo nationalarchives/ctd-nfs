@@ -52,9 +52,50 @@ from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
 
+"""
+FarmOccupier, FarmOwner and Farmer will be initialised with lists of the relevant components from each row for that farm.
+"""
+@dataclass
+class FarmOccupier:
+    addressee_title: list[str]
+    addressee_individual_name: list[str]
+    addressee_group_names: list[str]
+    address: list[str]
+
+
+@dataclass
+class FarmOwner:
+    owner_title: list[str]
+    owner_individual_name: list[str]
+    owner_group_names: list[str]
+    owner_address: list[str]
+
+
+@dataclass
+class FarmFarmer:
+    farmer_title: list[str]
+    farmer_individual_name: list[str]
+    farmer_group_names: list[str]
+    farmer_address: list[str]
+
+
 @dataclass
 class Farm:
-    pass
+    catalogue_reference: str
+    forms: dict[list]
+    county: str
+    parish: str
+    primary_farm_number: str
+    additional_farms: list
+    farm_names: list
+    occupiers: list[FarmOccupier]
+    owners: list[FarmOwner]
+    farmers: list[FarmFarmer]
+    acreage: list[str]
+    OS_map_sheet: list[str]
+    field_info_date: list[str]
+    primary_record_date: list[str]
+
 
 def processing_files(processing_folder) -> None:
     for input_file in Path(processing_folder).glob("*.csv"):     
