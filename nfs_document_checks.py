@@ -103,9 +103,9 @@ def output_excel(output_file, values):
     
     try:           
         wb.save(output_file)
-        print("Saving " + str(output_file))       
+        print(f"Saving {output_file}")       
     except OSError as e:
-        print("Error in saving spreadsheet: " + e)
+        print(f"Error in saving spreadsheet: {e}")
         
 
 def filename_pattern_check(filename, row_num):
