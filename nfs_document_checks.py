@@ -38,14 +38,16 @@
 
 
 from dataclasses import dataclass
-import csv, re, datetime
-import data_normalisation as dn
+import csv
+import re
+import datetime
 from pathlib import Path
 import calendar
 
+import data_normalisation as dn
+
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
-#from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
