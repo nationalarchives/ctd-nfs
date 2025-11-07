@@ -48,41 +48,13 @@ from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
-def load_spreadsheet_data(processing_folder):
-    ''' Processes any csv files in the designated processing folder
 
-        Keyword Arguments:
-            processing_folder - string with path to folder
-            
-        Returns:
-            No returns but throws OSError is file can't be read
-    '''
-    
-    try: 
-        for file in Path(processing_folder).glob("*.csv"):     
-  
-            base_filename = Path(file).stem
-            print("Processing file:" + str(base_filename))   
-                        
-            with open(file, newline='') as f:
-                values = csv.DictReader(f) 
-                farm_values = extract_farms(values)  
-                #print(farm_values)                
-            
-            #print(file)    
-            output_excel(Path(processing_folder, "output", base_filename + ".xlsx"), farm_values)
-                
-    except OSError as e:
-        print("Error in data loading: " + e)
-
-    
 def processing_files(processing_folder) -> None:
     for input_file in Path(processing_folder).glob("*.csv"):     
         try:
             base_filename = Path(input_file).stem
             print(f"Processing file: {base_filename}")
 
-            # csv.register_dialect(name="nfs_csv", skipinitialspace=True)
             with open(input_file, newline='') as file_obj:
                 csv_data = csv.DictReader(file_obj, skipinitialspace=True) 
                 farm_values = extract_farms(csv_data)
@@ -1616,5 +1588,4 @@ def get_similarity_range(values, get_min = True, get_max = True):
   
 
 processing_folder = "processing"
-# load_spreadsheet_data(processing_folder)
 processing_files(processing_folder)
