@@ -166,3 +166,4 @@ processing
 *.xlsx
 .~lock*
 *.txt
+difflib_experiment.py
