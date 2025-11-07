@@ -56,7 +56,7 @@ from rapidfuzz import fuzz
 FarmOccupier, FarmOwner and Farmer will be initialised with lists of the relevant components from each row for that farm.
 """
 @dataclass
-class FarmOccupier:
+class Occupier:
     addressee_title: list[str]
     addressee_individual_name: list[str]
     addressee_group_names: list[str]
@@ -64,7 +64,7 @@ class FarmOccupier:
 
 
 @dataclass
-class FarmOwner:
+class Owner:
     owner_title: list[str]
     owner_individual_name: list[str]
     owner_group_names: list[str]
@@ -72,7 +72,7 @@ class FarmOwner:
 
 
 @dataclass
-class FarmFarmer:
+class Farmer:
     farmer_title: list[str]
     farmer_individual_name: list[str]
     farmer_group_names: list[str]
@@ -88,9 +88,9 @@ class Farm:
     primary_farm_number: str
     additional_farms: list
     farm_names: list
-    occupiers: list[FarmOccupier]
-    owners: list[FarmOwner]
-    farmers: list[FarmFarmer]
+    occupiers: list[Occupier]
+    owners: list[Owner]
+    farmers: list[Farmer]
     acreage: list[str]
     OS_map_sheet: list[str]
     field_info_date: list[str]
