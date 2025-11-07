@@ -94,7 +94,6 @@ def output_excel(output_file, values):
             sheet.cell(row, 1, ref)
             
             farm_values = values[ref]
-            #print(ref + ": " + ", ".join(farm_values))
 
             if column != "Reference" and column in farm_values.keys():
                 sheet.cell(row, headings.index(column)+1, ",\n".join(farm_values[column])).alignment = Alignment(wrap_text=True, vertical='top')
@@ -152,10 +151,8 @@ def reference_pattern_check(ref, row_num):
     
     if ref != "":
         if re.match(r"^MAF 32/\d*/\d*/(Cover|Other)?\d*$", ref):
-            #print(ref + " matches pattern.")
             return (ref)
         else:
-            #print(ref + " not match pattern.")
             raise ValueError("Row " + row_num + ": " + ref + " does not match expected pattern. Further work with this reference may contain inaccuracies.")
     else:
         raise ValueError("Row " + row_num + ": Error - Blank reference found. Further work with this reference could not be carried out and farm information could not be generated.")        
@@ -189,15 +186,12 @@ def filename_checks(filename1, filename2, type, row_num):
     if not(filename1 == "" and filename2 == ""):   
         try:
             ref_part1, iteration_num1, warning = filename_pattern_check(filename1, row_num)
-            #print(row_num + ": " + ref_part1 + ", warning: " + warning)
             if warning != "":
                 warnings.add(warning)
         except ValueError as e:
             warnings.add(str(e))
             ref_part1 = ""
             iteration_num1 = -1
-            #print(iteration_num1 + ": " + iteration_num2)
-            #print(warnings) 
         
         try:
             if filename2 != "":
@@ -222,10 +216,6 @@ def filename_checks(filename1, filename2, type, row_num):
                 warnings.add("Row " + row_num + ": Only one file name given (" + iteration_num1 + iteration_num2 + ")")                    
             elif type == "Cover" and ref_part2 != "":
                 warnings.add("Row " + row_num + ": Type is cover but two file names given (" + iteration_num1 + iteration_num2 + ")")
- 
-
-            #print(iteration_num1 + ": " + iteration_num2)
-            #print(warnings)  
                 
             if ref_part1 != "":
                 return (ref_part1, warnings)
@@ -299,23 +289,12 @@ def extract_farms(full_csv):
             type_warnings.update([str(ve)])
 
         farm_refs, ref_warnings = generate_references(ref_component.replace("-","/"), primary_farm_number.strip(), additional_farm_number.strip(), form, str(row_num), farms.keys())
-        
-        #print("Row: " + str(row_num) + ", Farm refs (" + ref_component.replace("-","/") + ", farm_num: " + primary_farm_number.strip() + ") :")
-        #print(farm_refs)
-        #print()
-        #print(ref_warnings)
 
         for temp_ref in farm_refs.keys():
-            #core_ref = temp_ref.split("-")[0]
             ref = temp_ref.split("-")[0]
-            #print("Checking: " + core_ref + ": " + form)
             if ref in farms.keys() and form not in farms[ref]["Type"]: 
-                #ref = core_ref            
                 farms[ref]["Type"] += [form]
-                #print("Row " + str(row_num) +  ": Core ref in dict, form not in dict. Adding " + form + " to " + ref)       
             elif ref in farms.keys() and form in farms[ref]["Type"]:
-                #ref = temp_ref
-                #print("Row " + str(row_num) + ": Core ref (" + ref + ") in dict and form in dict")
                 if ref in farms.keys():
                     farms[ref]["Type"] += [form]
                 else:
@@ -323,11 +302,9 @@ def extract_farms(full_csv):
                                  
                 type_warnings.add("Row " + str(row_num) + ": Warning - Multiple '" + form + "' forms for " + ref)
             else:
-                #ref = core_ref 
                 farms[ref] = {"Type": [form]}
                 if ref not in raw_farm_info.keys():
                     raw_farm_info[ref] = dict()
-                #print("Row " + str(row_num) + ": Neither Core ref or form in dict. Adding " + form + " to " + ref)
 
             # count rows
             if ref in row_counts.keys():
@@ -420,8 +397,6 @@ def extract_farms(full_csv):
                     raw_farm_info[ref]["Landowner"].update({"Individual Name": [owner_individual_name]})
                     raw_farm_info[ref]["Landowner"].update({"Group Names": [owner_group_names.split(";")]})
                     raw_farm_info[ref]["Landowner"].update({"Addresses": [owner_addresses.split(";")]}) 
-                    
-                #print(raw_farm_info[ref]["Landowner"])                                
 
             # Input columns: I (addressee_title), J (addressee_individual_name), K (addressee_group_names), L (address) 
             # Input columns: Q (farmer_title), R (farmer_individual_name), S (farmer_group_names), T (farmer_address)
@@ -434,17 +409,10 @@ def extract_farms(full_csv):
             farmer_group_names = row['farmer_group_names']
             farmer_addresses = row['farmer_address']
             
-            #combined = addressee_title + addressee_individual_name + addressee_group_names + addresses + farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
-            #combined = combined.replace("*", "")
-            
             addressee_combined = addressee_title + addressee_individual_name + addressee_group_names + addresses
             farmer_combined = farmer_title + farmer_individual_name + farmer_group_names + farmer_addresses
             addressee_combined = addressee_combined.replace("*", "")
             farmer_combined = farmer_combined.replace("*", "")
-            
-            #print("Ref: " + ref)
-            #print("Farmer: " + farmer_combined)
-            #print("Addressee: " + addressee_combined)
             
             if len(farmer_combined) > 0:            
                 if "Farmer" in raw_farm_info[ref].keys():
@@ -502,8 +470,6 @@ def extract_farms(full_csv):
                 else:
                     farms[ref].update({"OS Sheet Number": {OS_map}})
                     row_counts[ref].update({"OS_sheet_number":1}) 
-
-                #print(farms[ref]["OS Sheet Number"])
             
             # Dates
             field_date = row["field_info_date"]
@@ -512,9 +478,6 @@ def extract_farms(full_csv):
             field_date_values, primary_date_values = date_processing(field_date, primary_date, str(row_num))
             checked_field_date, field_date_warnings = field_date_values
             checked_primary_date, primary_date_warnings = primary_date_values
-            
-            #print("Checked Field Date: " + checked_field_date)
-            #print("Checked Primary Date: " + checked_primary_date)
             
             if checked_field_date != "":
                 if "Field Date" in farms[ref].keys():               
@@ -540,15 +503,12 @@ def extract_farms(full_csv):
                     farms[ref]["Reference Warnings"].update([str(ve)])
                 else:
                     farms[ref]["Reference Warnings"] = {str(ve)}   
- 
                                 
             # Warnings
             if "Reference Warnings" in farms[ref].keys():
                 farms[ref]["Reference Warnings"].update(ref_warnings)
             else:
                 farms[ref]["Reference Warnings"] = ref_warnings
-                
-            #print(farms[ref]["Reference Warnings"])
 
             if "Type Warnings" in farms[ref].keys():
                 farms[ref]["Type Warnings"].update(type_warnings)
@@ -581,7 +541,6 @@ def extract_farms(full_csv):
             else:
                 farms[ref]["Primary Date Warnings"] = primary_date_warnings
 
-    # print(raw_farm_info) 
     # Farm names
     farm_names = {}
     for farm_ref, farm_data in raw_farm_info.items():
@@ -589,7 +548,6 @@ def extract_farms(full_csv):
             farm_names[farm_ref] = farm_data["Farm Name"]
                
     combined_farm_names, combined_farm_name_warnings = get_combined_farm_names_by_ref(farm_names)
-    # print(f"DEBUG: {combined_farm_names}")
     
     for ref, combined_farm_name in combined_farm_names.items():
         farms[ref].update({"Farm Name": [combined_farm_name]})
@@ -601,7 +559,6 @@ def extract_farms(full_csv):
         if "Landowner" in owner_data.keys():
             owner_details[owner_ref] = owner_data["Landowner"]    
     
-    # print(f"DEBUG: {owner_details}")
     combined_owner_info, combined_owner_info_warnings = get_combined_owner_details_by_ref(owner_details) 
 
     for ref, combined_owner_info in combined_owner_info.items():
@@ -613,24 +570,18 @@ def extract_farms(full_csv):
     for farmer_ref, farmer_data in raw_farm_info.items():
         if "Farmer" in farmer_data.keys():
             farmer_details[farmer_ref] = farmer_data["Farmer"]   
-    # print(f"DEBUG: Farmer details: {str(farmer_details)}")
     
     # Addressee names
     addressee_details = {}
     for addressee_ref, addressee_data in raw_farm_info.items():
         if "Addressee" in addressee_data.keys():
             addressee_details[addressee_ref] = addressee_data["Addressee"]              
-    # print(f"DEBUG: Addressee details: {str(addressee_details)}\n\n")
     
     combined_farmer_info, combined_farmer_info_warnings = get_combined_farmer_details_by_ref(farmer_details, addressee_details)
-    # print(f"DEBUG: Combined Farmer Info: {str(combined_farmer_info)}\n\n")
     
     for ref, combined_farmer_info in combined_farmer_info.items():
         farms[ref].update({"Farmer": [combined_farmer_info]})
         farms[ref].update({"Farmer Warnings": combined_farmer_info_warnings[ref]})   
-           
-    #print(farms)   
-    #print(row_counts)
                 
     return (farms)  
 
@@ -684,8 +635,6 @@ def generate_references(box_string, primary_farm_string, additional_farm_string,
         warnings.add("Row " + row_num + ": Note - type is " + farm_type.lower() + " so no farm number specified")
         ref = generate_ref("MAF 32/" + box_string + "/" + farm_type, existing_refs)
         ref_list[ref] = farm_type
-        
-    #print(row_num + ": box - " + box_string + ", primary farm num - " + primary_farm_string + ", type: " + farm_type + ", ref: " + ref)
    
     if type == "Cover" and primary_farm_string != "*":
         warnings.add("Row " + row_num + ": Error - Type is cover and farm number is specified")
@@ -798,7 +747,6 @@ def get_combined_farm_names_by_ref(farm_names):
         if count != 2:
             warnings[ref].add("Expected 2 rows of data, Got " + str(count) + ".")
     
-    # print("DEBUG: FINISHED get_combined_farm_names_by_ref")
     return (combined_names, warnings)
 
 
@@ -825,7 +773,6 @@ def get_combined_owner_details_by_ref(owner_details):
         Returns:
             Tuple with a dictionary with the combined values for each field by reference and a dictionary with a set of warnings for each reference
     '''
-    # print("DEBUG: FINISHED get_combined_owner_details_by_ref")
     return get_combined_details_by_ref(owner_details, ["Title", "Individual Name", "Group Names", "Addresses"], 1)
 
 
@@ -868,12 +815,6 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
     else:
         shared = set(farmer_details.keys())
     
-    # print("DEBUG: Farmer details" + str(farmer_details))
-    # print("DEBUG: Addressee details" + str(addressee_details))
-    # print("DEBUG: Shared: " + str(shared))
-    # print("DEBUG: Farmer: " + str(farmer_only))
-    # print("DEBUG: Addressee: " + str(addressee_only))
-    
     components = ["Title", "Individual Name", "Group Names", "Addresses"]
     
     for ref in list(shared):
@@ -890,40 +831,20 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         addressee_groups = addressee_details[ref]["Group Names"]
         addressee_addy = addressee_details[ref]["Addresses"]   
         
-        # print("DEBUG: DEBUG: \nRef: " + str(ref))
-        # print("DEBUG: Farmer name: " + str(farmer_name))
-        # print("DEBUG: Farmer addy: " + str(farmer_addy))
-        # print("DEBUG: Addressee addy: " + str(addressee_addy))
-        
         #TO DO: Need to combine the values into one key not have each as separate keys:values!!!
         addy_dict = dict()
         combined_addy_dict = dict()
         addy_dict["farmer"] = [str(addy[0]) for addy in farmer_addy]
         addy_dict["addressee"] = [str(addy[0]) for addy in addressee_addy]
-            
-        #print("Addy dict: " + str(addy_dict))   
         
         combined_addy, combined_addy_warnings = dn.component_compare({'farmer': addy_dict['farmer']})
-        #print("Combined addy: " + str(combined_addy))
-        #print("Combined addy warnings: " + str(combined_addy_warnings['farmer']))
         combined_addy_dict.update(combined_addy)
-        #print("combined_addy_dict: " + str(combined_addy_dict))
         warnings[ref].update(combined_addy_warnings['farmer'])
-        #print("Warnings: " + str(warnings))
         
         combined_addy, combined_addy_warnings = dn.component_compare({'addressee': addy_dict['addressee']})
-        #print("Combined addy: " + str(combined_addy))
         combined_addy_dict.update(combined_addy)
-        #print("combined_addy_dict: " + str(combined_addy_dict))        
         warnings[ref].update(combined_addy_warnings['addressee'])
-        #print("Warnings: " + str(warnings))
-        
-        #print("combined_addy: " + str(combined_addy_dict))
-        #print("combined_addressee_addy: " + str(combined_addressee_addy))
-        
-        #combined_addy = dn.component_compare(addy_dict)    
-        #print("combined_addy: " + str(combined_addy))
-        
+
         combined_details[ref].update({"Title": farmer_title + addressee_title})
         combined_details[ref].update({"FTitle": farmer_title})
         combined_details[ref].update({"ATitle": addressee_title})
@@ -940,35 +861,22 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details[ref].update({"FAddresses": [combined_addy_dict["farmer"]]}) 
         combined_details[ref].update({"AAddresses": [combined_addy_dict["addressee"]]}) 
         
-        #print("Addresses (" + ref + "): " + str( combined_details[ref]["Addresses"]))  
-        
-        #print("Ref: " + str(ref))
-        #print("Details: " + str(combined_details[ref]))
-        
         split_details = False
         for component in components:
             threshold = 80
             min = get_similarity_range(combined_details[ref][component], get_max=False)
-            #print(component + ": " + str(min))
             if min < threshold:
                 warnings[ref].add("Warning: Similarity (" + str(min) + ") below threshold (" + str(threshold) + ") for " + component)   
                 split_details = True
-                #print(ref + ": Adding similarity warning for " + component)
                 
         if split_details:
-            #print("For " + ref + " combining values with separated farmer/addressee with: " + str(combined_details))
             component_fields = ["FTitle", "ATitle", "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
             combined_values, combined_warnings = get_combined_details_by_ref(combined_details, component_fields)
-            #print("Combined values: " + str(combined_values))
         else:  
-            #print("For " + ref + " combining values with combined farmer/addressee with " + str(combined_details))      
             combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
         
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
-        
-        #print("Values: " + str(values))
-
     
     for ref in list(farmer_only):
         combined_details = {}
@@ -986,18 +894,9 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details[ref].update({"Addresses": farmer_addy})  
         warnings[ref].add("No addressee values given")
         
-        #print("\nFarmer only")
-        #print("Ref: " + str(ref))
-        #print("Farmer name: " + str(farmer_name))
-        #print("Farmer groups: " + str(farmer_groups))
-        #print("Farmer addy: " + str(farmer_addy))
-        #print("values: " + str(values))
-        
         combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
-        #print("Combined Values:" + str(combined_values))
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
-        #print("Values:" + str(values))
     
     for ref in list(addressee_only):
         combined_details = {}
@@ -1013,33 +912,11 @@ def get_combined_farmer_details_by_ref(farmer_details, addressee_details):
         combined_details[ref].update({"Group Names": addressee_groups})
         combined_details[ref].update({"Addresses": addressee_addy}) 
         warnings[ref].add("No farmer values given") 
-
-        #print("\nAddressee only")
-        #print("Ref: " + str(ref))
-        #print("Addressee name: " + str(addressee_name))
-        #print("Addressee groups: " + str(addressee_groups))
-        #print("Addressee addy: " + str(addressee_addy))
-        #print("values: " + str(values))
         
         combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
-        #print("Combined Values:" + str(combined_values))
         warnings = dic_merge(warnings, combined_warnings)
         values = dic_merge(values, combined_values)
-        #print("Values:" + str(values))
-        
-    
-    #print("Farmer Details:" + str(farmer_details))
-    #print("Addressee Details:" + str(addressee_details))
-    #print("Combined Details:" + str(combined_details))
-    #print("Combined Values:" + str(combined_values))
-    #print("Final Values:" + str(values))
-    #print("Warnings:" + str(warnings))
-    
-    #combined_values, combined_warnings = get_combined_details_by_ref(combined_details, components)
-    
-    
-    #print(warnings)
-    
+
     return (values, warnings)
         
     
@@ -1077,32 +954,10 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
     
     for ref, detail in details.items(): 
         warnings[ref] = set()
-        #print("\n" + ref)
-        #print("get_combined_details_by_ref Initial Values: " + str(detail))
-        #print("Components: " + str(components))
         
-        '''
-        # lists of strings as single value expected
-        titles[ref] = "/".join(details["Title"])
-        names[ref] = "/".join(details["Individual Name"])
-        # lists of lists because multiple values allowed
-        for gname in details["Group Names"]:
-            if ref in groups.keys():
-                groups[ref] += "/".join(gname)
-            else:
-                groups[ref] = "/".join(gname)
-        for addy in details["Addresses"]:
-            if ref in addresses.keys():
-                addresses[ref] += "/".join(addy)
-            else:
-                addresses[ref] = "/".join(addy)
-        '''
-
         count = set()
         #for each type of field e.g. Title, Individual Name etc converts values to single string for each
         for component in components:
-            #print("Combining: " + component)
-            #print("Values: " + str(detail[component]))
             component_length = len(detail[component]) 
             count.add(component_length)
             values_to_merge_dict = {}
@@ -1110,20 +965,11 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
             if component_length > 1: # Check if there is more that one variation and if so merge
                     
                 if "Group Names" in component or "Addresses" in component:
-                    #print(detail[component])
-                    #print(component)                     
                     values_to_merge_dict = array_zip(detail[component], component)
-                    #print("Values to merge: " + str(values_to_merge_dict)) 
                 else:
                     values_to_merge_dict[component] = detail[component]
-                    #for i, values in enumerate(detail[component]):
-                    #        values_to_merge_dict[component+str(i)] = [values]
-                
-                
 
-                #print("values_to_merge_dict: " + str(values_to_merge_dict)) 
                 merged_values, merge_warnings = dn.component_compare(values_to_merge_dict)
-                #print("Merged Values: " + str(merged_values))
             
                 for warning in merge_warnings.values():
                     if len(warning) > 0:
@@ -1149,11 +995,9 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                         addresses[ref].update({component: list(merged_values.values())})
                     else:
                         addresses[ref] = {component: list(merged_values.values())}  
-                    #print("Addresses: " + str(addresses[ref]))                 
                 else:
                     print("Error in get_combined_details_by_ref: unknown component type: " + component)  
             else: # If there are not multiple variations then get first value
-                #print("No variations so no merge needed")
                 if "Title" in component:
                     if ref in titles.keys():
                         titles[ref].update({component: detail[component][0]})
@@ -1169,7 +1013,6 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                         groups[ref].update({component: detail[component][0]})
                     else:
                         groups[ref] = {component: detail[component][0]}
-                    #print(component + ": " + str(detail[component][0]))
                 elif "Addresses" in component:
                     if ref in addresses.keys():
                         if isinstance(detail[component][0], list):
@@ -1181,7 +1024,6 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                             addresses[ref] = {component: detail[component][0]}
                         else:
                             addresses[ref] = {component: [detail[component][0]]}
-                    #print("Addresses: " + str(addresses[ref]))  
                     
     
             
@@ -1207,25 +1049,16 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
         else:
             # Expected values: ["FTitle", "ATitle" "FIndividual Name", "AIndividual Name", "FGroup Names", "AGroup Names",  "FAddresses",  "AAddresses"]
             
-            #print(ref + " get farmer name with title: " + str(titles[ref]["FTitle"]) + ", name: " + str(names[ref]["FIndividual Name"]) + ", group names: " + str(groups[ref]["FGroup Names"]) + ", addresses: " + str(addresses[ref]["FAddresses"]))    
-            
             farmer_name_string, farmer_name_warnings = generate_name(titles[ref]["FTitle"], names[ref]["FIndividual Name"], groups[ref]["FGroup Names"], addresses[ref]["FAddresses"])
-            #print("Farmer name warnings: " + str(farmer_name_warnings))
             warnings[ref].update(farmer_name_warnings)
-            #print(warnings[ref])
             if farmer_name_string != "":
                 farmer_name_string = "Farmer: " + farmer_name_string
-            #print("Farmer name: " + farmer_name_string)     
             
             addressee_name_string, addressee_name_warnings = generate_name(titles[ref]["ATitle"], names[ref]["AIndividual Name"], groups[ref]["AGroup Names"], addresses[ref]["AAddresses"])
-            #print("Addressee name warnings: " + str(addressee_name_warnings))
             warnings[ref].update(addressee_name_warnings)
-            #print(warnings[ref])
             
             if addressee_name_string != "":
                 addressee_name_string = "Addressee: " + addressee_name_string
-                
-            #print(ref + " get addressee name with title: " + str(titles[ref]["ATitle"]) + ", name: " + str(names[ref]["AIndividual Name"]) + ", group names: " + str(groups[ref]["AGroup Names"]) + ", addresses: " + str(addresses[ref]["AAddresses"]) + ". Gives: " + addressee_name_string)
             
             if farmer_name_string != "" and addressee_name_string != "":
                 combined_details[ref] = farmer_name_string + "/" + addressee_name_string
@@ -1233,9 +1066,6 @@ def get_combined_details_by_ref(details, components, expected_count = -1):
                 combined_details[ref] = farmer_name_string
             else:
                 combined_details[ref] = addressee_name_string
-              
-    #print(ref + ": Combined values: " + combined_details[ref]) 
-    #print("Warnings: " + str(warnings))          
         
     return(combined_details, warnings)      
 
@@ -1257,11 +1087,6 @@ def generate_name(title_value, name_value, group_value, addy_value):
     warnings = set()
     name = ""
     
-    #print("Title: " + str(title_value))
-    #print("Name: " + str(name_value))
-    #print("Group Names: " + str(group_value))
-    #print("Addresses: " + str(addy_value))
-    
     # Check for expected value types
     if isinstance(title_value, list):
             temp = set(title_value)
@@ -1282,12 +1107,6 @@ def generate_name(title_value, name_value, group_value, addy_value):
         else:
             warnings.add("Error: multiple names found when one expected")
             name_value = "/".join(name_value) 
-
-    #if isinstance(group_value, list):
-    #    temp = set(group_value)
-    #    print(temp)
-    #    if len(temp) == 1 and (list(temp)[0] == "" or list(temp)[0] == "*"):
-    #        group_value = [group_value[0]]
     
     # Generate Combined String
     if name_value != "*" and name_value != "":
@@ -1298,8 +1117,6 @@ def generate_name(title_value, name_value, group_value, addy_value):
             name = name_value
 
         name = name.strip() 
-        
-        #print("Name: " + name)
         
         if isinstance(group_value, list) and True in [True for group in group_value if group != "*" and group != ""]:
             warnings.add("Error: values found in both name (" + name_value + ") and groups (" + ";".join(group_value) + ")")    
@@ -1319,11 +1136,9 @@ def generate_name(title_value, name_value, group_value, addy_value):
             
               
         combined_string = name + ", " + address  
-        #print("Combined name + address: " + combined_string)
         
     elif len(group_value) > 0 and len(addy_value) > 0:  
         group_names = []      
-        #print("Groups: " + str(group_value) + ", addys: " + str(addy_value))      
         if isinstance(group_value, list) and isinstance(addy_value, list): 
             if len(group_value) != len(addy_value):
                 warnings.add("Error: Length of group names (" + str(len(group_value))+ ") and addresses (" + str(len(addy_value)) + ") different") 
@@ -1350,12 +1165,10 @@ def generate_name(title_value, name_value, group_value, addy_value):
                     warnings.add("Warning: No group name with " + addy)                
                 
         else:
-            #print("get_combined_details_by_ref: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value))
             warnings.add("Error: Expecting lists for group and address values got " + str(group_value) + " and " + str(addy_value) + ". Not able to process")
             
         combined_string = "; ".join(group_names) 
     else:
-        #print("Group value: " + str(group_value) + " and Addy value:" + str(addy_value))
         combined_string = ""  
     
     return combined_string, warnings
@@ -1465,10 +1278,8 @@ def date_processing(field_date, primary_dates, row_num):
     
     if type(checked_field_date) is datetime.datetime:
         checked_field_date_str = checked_field_date.strftime('%d %B %Y')
-        #print("Checked field date is datetime. String version is " + checked_field_date_str)
     else:
         checked_field_date_str = checked_field_date
-        #print("Checked field date is not datetime. String version is " + checked_field_date_str)
     
     if len(primary_dates.split(";")) > 1:
         primary_date_warnings.add("Row " + row_num + ": Multiple dates listed.")
@@ -1546,10 +1357,6 @@ def get_similarity_range(values, get_min = True, get_max = True):
             Returns either a number representing either the highest or lowest similarity or a tuple with both lowest and highest values
     '''
     
-    #print("Min: " + str(get_min))
-    #print("Max: " + str(get_max))
-    #print("Checking: " + str(values))
-    
     flattened_values = []
     for value in values:
         if isinstance(value, str) and (value.strip() and value.strip() != "*"):
@@ -1574,9 +1381,6 @@ def get_similarity_range(values, get_min = True, get_max = True):
                         max = ratio
                     if ratio < min:
                         min = ratio
-    
-    #print("Min: " + str(min))
-    #print("Max: " + str(max))
                         
     if get_min and get_max:
         return (min, max)
