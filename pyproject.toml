@@ -9,3 +9,8 @@ dependencies = [
     "pyinstaller>=6.16.0",
     "rapidfuzz>=3.14.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
