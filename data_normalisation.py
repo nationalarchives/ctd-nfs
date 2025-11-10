@@ -59,15 +59,11 @@ def component_compare (values_to_check, debug=False):
     warnings = {}
     
     for key, component_list in values_to_check.items():
-        print(f"DEBUG: {key=}")
-        print(f"DEBUG: {component_list=}")
         
         warnings[key] = set()
         component_set = set([component for component in component_list if (component.strip() != "" and component.strip() != "*")])   
         #component_list_caseless = [component.lower() for component in component_list if (component.strip() != "" and component.strip() != "*")]   
         alt_component_set = set([("".join(component.split())).lower() for component in component_list if (component.strip() != "" and component.strip() != "*")] )
-        print(f"DEBUG:\t{component_set=}")
-        print(f"DEBUG:\t{alt_component_set=}")
 
         # does the default set have the same number of values as the set with all the spaces and cases removed
         if len(component_set) != len(alt_component_set):
@@ -75,33 +71,10 @@ def component_compare (values_to_check, debug=False):
                      
             # does the default set and the caseless set not have the same length while the caseless and the space+caseless have the same length
             if len(component_set) != len(component_set_caseless) and len(alt_component_set) == len(component_set_caseless):
-                #print("Case Issue")
                 
                 #Assumption: Case mismatch - convert to title case.
                 component_set = {punctuated_title(item) for item in component_set}
                 
-                #print(component_set)
-            
-                '''
-                for i in range(0, len(diff_list)):
-                    
-                    if diff_list[i][0] != ' ' and i > 0 and diff_list[i-1].strip() == '':
-                        if i+1 < len(diff_list) and diff_list[i][-1].lower() == diff_list[i+1][-1].lower():
-                            print("Case diff after space: " + diff_list[i] + "/" + diff_list[i+1])
-                        else:
-                            print("Not case diff after space: " + diff_list[i] + "/" + diff_list[i+1])
-                            case_only = False
-                    elif diff_list[i][0] != ' ' and i > 0 and diff_list[i-1][0] != ' ':
-                        print("Diff after diff: " + diff_list[i-1] + "/" + diff_list[i])
-                    elif diff_list[i][0] != ' ' and i > 0:
-                        if i+1 < len(diff_list) and diff_list[i][-1].lower() == diff_list[i+1][-1].lower():
-                            print("Case diff not after space: " + diff_list[i] + "/" + diff_list[i+1])
-                        else:
-                            print("Not case diff not after space: " + diff_list[i] + "/" + diff_list[i+1])
-                    else:
-                        print("Not a diff: " + diff_list[i])
-                '''
-                                            
             else:
                 
                 if debug:
@@ -114,16 +87,6 @@ def component_compare (values_to_check, debug=False):
                     print("No cases (" + str(len(component_set_caseless)) + "):")
                     print(component_set_caseless)
                 
-                #max_length = 0
-                #for component in component_set_caseless:
-                #    if len(component.split(' ')) > max_length:
-                #        max_length = len(component.split(' '))
-                
-                
-                #if len(component_set_caseless) in distribution.values:
-                #    for k, value in component_set_caseless.items():
-                #        pass
-                  
                 if len(component_set_caseless) == 2:
                 
                     case_variation_alignment = {}
@@ -136,17 +99,12 @@ def component_compare (values_to_check, debug=False):
                                 else:
                                     case_variation_alignment[uncased_value] = [cased_value]
 
-                    #print(case_variation_alignment)
-                    
                     processed_list = []
                     for grouped_list in case_variation_alignment.values():
                         if len(grouped_list) == 1:
                             processed_list.append(grouped_list[0])
                         else:
                             processed_list.append(punctuated_title(grouped_list[0]))                       
-                    
-                    #phrase1 = list(component_set_caseless)[0]
-                    #string2 = list(component_set_caseless)[1]
                     
                     string1 = list(processed_list)[0]
                     string2 = list(processed_list)[1]
@@ -158,31 +116,19 @@ def component_compare (values_to_check, debug=False):
                         longest = string2.split(' ')
                         shortest = string1.split(' ')                         
                     
-                    #print(longest)   
-                    #print(shortest) 
-                    
-                    #distribution = split_part_distribution(component_list_caseless)
                     matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, debug)
                     matched_value = clean_brackets(matched_value)
                     component_set = set([matched_value])
                     warnings[key].update(matched_warnings)
                     
-                    #print(component_set)
                 elif len(component_set_caseless) > 2:
                     # 2025-03-14: Not implemented yet
-                    #print("1. WARNING! - len(component_set_caseless) > 2 in component_compare.")
-                    #warnings[key].add("1. ERROR! - len(component_set_caseless) > 2 in component_compare. This code hasn't been implemented yet!")
-                    #print(component_set_caseless)
                     reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set_caseless, debug)
                     combined_values[key] = reduced_values
                     
                     for reduced_warning in reduced_warnings:
                         warnings[key].add(reduced_warning)
                     
-       
-        #distribution = split_distribution(component_list)
-        #distribution = split_part_distribution(component_list)
-
         if len(component_set) < 2:  # One version
             basic_join = "".join([component for component in component_set])
             if debug:
@@ -190,8 +136,6 @@ def component_compare (values_to_check, debug=False):
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
             two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list, debug)
-            #two_phrase_join = re.sub(r'(\?)?\) \(', ' ', two_phrase_join)
-            #print("Two phase warnings:" + str(two_phrase_join_warnings))
             warnings[key].update(two_phrase_join_warnings)
             if debug:
                 print("Two part join - " + str(key) + ": " + two_phrase_join)
@@ -204,9 +148,6 @@ def component_compare (values_to_check, debug=False):
             for reduced_warning in reduced_warnings:
                 warnings[key].add(reduced_warning)
     
-    #print("Component compare combined values: " + str(combined_values))
-    #print("Component compare warnings: " + str(warnings))
-                
     return (combined_values, warnings)
 
 
@@ -223,7 +164,6 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
 
     '''
     
-    #print(component_set)
     warnings = set()
     warnings.add("Warning: Attempting to combine multiple (>2) variations.")
     distinct = []
@@ -235,17 +175,12 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
                 ratio = fuzz.ratio(component1, component2)
                 if ratio > max_ratio:
                     max_ratio = ratio
-                #print(component1 + "-" + component2 + ": " + str(ratio))
         
         if max_ratio < 50:
             distinct.append(component1) 
             
     similar = component_set - set(distinct)
     
-    #similar_list =[component for component in component_list if component in similar]
-    #print("Similar list")
-    #print(similar_list)
-    #subset_distribution = split_part_distribution(similar_list)
     modified_best_similar_list = []
 
     while len(similar) > 1:
@@ -267,15 +202,9 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
         else:
             best_similar = component_set
             best_similar_list = component_list
-        pass
-        # if debug:
-            # print("[DEBUG] Print calling combined phrases with:")
 
         part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
-        #print(part_sub_set_warnings)                              
         warnings.update(part_sub_set_warnings)
-        #part_combined_phrases = re.sub(r'\(+', '(', part_combined_phrases)
-        #part_combined_phrases = re.sub(r'(\?\))+', '?)', part_combined_phrases)
         
         for i in range (0, len(best_similar_list)):
             modified_best_similar_list.append(part_combined_phrases)
@@ -283,7 +212,6 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
         similar = similar.difference(best_similar)
         similar.add(part_combined_phrases)
 
-    #combined_phrases = re.sub(r'(\?)?\) \(', ' ', "".join(list(similar)))
     combined_phrases = clean_brackets("".join(list(similar)))
     
     if len(distinct) > 0:
@@ -302,11 +230,8 @@ def punctuated_title(to_convert):
             Converted string   
     '''
     
-    #print(to_convert)
     lower_to_upper = re.sub(r'(\s|^)([a-z])', to_upper, to_convert)
-    #print(lower_to_upper)
     converted = re.sub(r'([^\s])([A-Z])', to_lower, lower_to_upper)
-    #print(upper_to_lower)
     return converted
 
 def to_upper(match):
@@ -388,9 +313,7 @@ def split_part_distribution (component_list):
                 component_distribution[part] = component_distribution[part] + 1
             else:
                 component_distribution[part] = 1
-                
-    #print(component_distribution)
-            
+                           
     return component_distribution
 
 def token_distribution (component_list, tokens, debug=False):
@@ -444,7 +367,6 @@ def combine_connected_letters(list_to_test, string_to_compare):
             List of tidied up string sections
     '''
     
-    #print("String to test: " + string_to_test + " , string to compare: " + string_to_compare)    
     string_to_test = ''.join(list_to_test)
     
     replacements = re.findall(r'((\(\w+\?\))+)', string_to_test)
@@ -454,28 +376,18 @@ def combine_connected_letters(list_to_test, string_to_compare):
             group_clean = re.sub(r'[\(\?\)]', '', group)
             
             longest_match_group = ""
-            #print("match_group: " + group_clean)
             for s in range(0, len(group_clean)):
                 for i in range(1, len(group_clean) + 1):
                     if i > s:
                         substr = group_clean[s:i]
-                        #print("Checking: " + substr + " in " + string_to_compare)
                         if substr in string_to_compare and len(substr) > len(longest_match_group):
                             longest_match_group = substr
                             
             if len(longest_match_group) > 1:
                 longest_match_group_split = re.sub(r'(\w)', r'\\(\1\\?\\)', longest_match_group)
-                #print(longest_match_group_split + " in " + string_to_test)
                 result = re.sub(longest_match_group_split, r'(' + longest_match_group + '?)', string_to_test)
-                
-                #match_results = re.findall(r'((\(\w+\?\))|(\(\?\))|(.))', result)
-                #result_list = []
-                #for match_result in match_results:
-                #    result_list.append(match_result[0])    
-                # return results_list            
 
-                return chunk_punctuated_string(result)
-                    
+                return chunk_punctuated_string(result)                   
     
     return list_to_test                         
 
@@ -513,83 +425,18 @@ def combine_two_phrases(component_set, component_list, debug=False):
             A tuple with the combined phrase as a string and a set of warnings        
     '''
     
-    #print(key + ": " + ", ".join([component for component in component_set]))
-    #print(key + ": ")
-    
-    #debug = True
-    # print(f"[DEBUG] {component_set=}")
     split_components, count_of_component_lengths = get_tokens(component_set)
-    #warnings = set()
     distribution = split_part_distribution(component_list)
     if debug:
         print("Combine_two_phrases called")
         print(f"{split_components=}")
         print(f"{count_of_component_lengths=}")
         print(len(count_of_component_lengths))
-        print("distribution: " + str(distribution))
-        
+        print("distribution: " + str(distribution))    
         
     aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list, debug)
-    #print(key + " aligned phrases: " + str(aligned_phrases))
     return (aligned_phrases, phrase_warnings) 
-    
-    '''
-    if len(count_of_component_lengths) < 2: # all variants are the same number of parts
-        #print("Combine two phrases")
-        
 
-        
-        generated_component = ""
-        for part in range (0, count_of_component_lengths[0]):  # looping over each part                                    
-            
-            parts = {split_components[variant][part]: len(split_components[variant][part]) for variant in range (0, len(split_components))}
-            #print(parts)
-            
-            if 1 in parts.values(): #if name parts contain a 1 letter component or components (i.e. initials)
-                initials = list(set([part[0] for part in parts.keys()])) # create set of first letters
-                
-                if len(initials) < 2: #if initials and first letters match 
-                    non_initials = list(set([part for part in parts.keys() if len(part) > 1])) #compare components that aren't 1 letter
-                    #print(non_initials)
-                    
-                    if len(non_initials) == 1:
-                        generated_component += " " + non_initials[0]
-                    elif len(non_initials) < 1:
-                        generated_component += initials[0]
-                        
-                    warnings.add("Note: Combining initial and names.")
-                else:
-                    #print("Option A")
-                    generated_component += " " + combine_two_words(list(parts.keys())[0], list(parts.keys())[1], distribution, debug)
-                    #print(parts)
-                
-            elif len(parts.keys()) < 2: # component tokens are the same
-                generated_component += " " + list(parts.keys())[0]
-            elif len(parts.keys()) == 2: # if there are two variations
-                #print("Option B")
-                generated_component += " " + combine_two_words(list(parts.keys())[0], list(parts.keys())[1], distribution, debug)
-                warnings.add("Note: Combining variations.")
-            else: # if there are more than two versions
-                print(key + ": Option C")
-                warnings.add("Note: Combining variations.")
-                    
-        #print(key + ": " + generated_component.strip())
-        return (generated_component.strip(), warnings)
-    
-    else:
-        
-        aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list)
-        if debug:
-            print("Option D - Align two phrases")
-            #print(split_components[0])
-            #print(split_components[1])
-            print(key + ": " + list(align_two_phrases(split_components[0], split_components[1], component_list, debug))[0])
-            
-        warnings.update(phrase_warnings)
-            
-        #warnings.add("Note: Combining multi-length variations.")
-        return (aligned_phrases, warnings)  
-'''
 
 def combine_two_words (component1, component2, word_ratio, debug=False):
     ''' Combine two text chunks into a single chunk
@@ -632,9 +479,6 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                 
             if component2.lower() == key.lower():
                 component2_count = word_ratio[key]
-        
-        #print(component1 + ": " + str(component1_count))
-        #print(component2 + ": " + str(component2_count))
                     
         if component1_count > component2_count:
             generated_string_list =  component1 + " (" + component2 + "?)"
@@ -653,34 +497,26 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                     component1_to_test = component1_to_test.lower()
                     component2_to_test = component2_to_test.lower()
                     
-                    
                 diff = difflib.Differ().compare(component1_to_test, component2_to_test)                 
                                    
                 generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
                 
                 section_split = chunk_punctuated_string(component1 + component2, False)
-                #print("Generated String: " + str(generated_string_list))
-                #print("Components: " + str(section_split))
                 
                 for section in section_split:
                     if section not in generated_string_list:
-                        #print("Section not found: " + section)
                         cleaned_section = clean_string(section)
                         
                         current_generated_string = ''.join(generated_string_list)
                         substr_count = current_generated_string.count(cleaned_section)
                         
-                        #print("Substr count: " + str(substr_count))
                         # does it appear more than once in generated string?
                         # if yes then need to get context to position for positioning
                         # if no then need to insert into list in replace of the individual sections 
                         if len(cleaned_section) > 0: 
                             if substr_count < 2:
-                                #current_generated_string = re.sub(cleaned_section, section, current_generated_string)
                                 
                                 contexts = get_context(section, component1 + "|" + component2)
-                                #print(cleaned_section)
-                                #print(contexts)
                                 
                                 for context in contexts:
                                     if section in context:
@@ -688,20 +524,13 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                                         
                                     replacement = [context[0]] + [section] + context[len(cleaned_section)+1:]
                                     
-                                    #print("Replacement: " + str(replacement))
-                                    #print("Context before removing |: " + str(context))
                                     if "|" in context:
                                         context.remove("|")                                    
-                                    #print("Context after removing |: " + str(context))
                                     
                                     context_string = ''.join(context)
-                                    #print("context: " + context_string)
                                     replacement_string = ''.join(replacement)
-                                    #print("replacement: " + replacement_string)
-                                    #print("current string: " + current_generated_string)
                                     if context_string in current_generated_string:
                                         current_generated_string = current_generated_string.replace(context_string, replacement_string)
-                                    #print("new string: " + current_generated_string)
                                     
                                 generated_string_list = chunk_punctuated_string(current_generated_string)
                                 
@@ -719,54 +548,15 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
                                 print("Component2: " + component2)
                                 print("Substr count: " + str(substr_count))
                                 print("Generated String List: " + str(generated_string_list))
-                            
-                        #print("Generated string list: " + str(generated_string_list))        
-                        
-                
+
             else:            
                 comp_list = [component1, component2]
                 generated_string_list = "/".join(sorted(comp_list, key=str.lower)) + "(?)"        
-    
-    '''
-    elif ratio_check(len(component1), ratio): # if the variations are similar
-        #generated_component += " " + list(parts.keys())[0] + "/" + list(parts.keys())[1]
-        if ratio_caseless > ratio:
-            diff = difflib.Differ().compare(component1.lower(), component2.lower())
-        else:
-            diff = difflib.Differ().compare(component1, component2)   
-        
-        generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
-    else:
-        #print("Option B: " + str(ratio))
-        
-        component1_count = 0
-        component2_count = 0
-        
-        for key in word_ratio:
-            if component1.lower() == key.lower():
-                component1_count = word_ratio[key]
-                
-            if component2.lower() == key.lower():
-                component2_count = word_ratio[key]
-        
-        #print(component1 + ": " + str(component1_count))
-        #print(component2 + ": " + str(component2_count))
-            
-        
-        if component1_count > component2_count:
-            generated_string_list =  component1 + " (" + component2 + "?)"
-        elif component2_count > component1_count:
-            generated_string_list =  component2 + " (" + component1 + "?)"
-        else:
-            comp_list = [component1, component2]
-            generated_string_list = "/".join(sorted(comp_list, key=str.lower))
-        '''    
     
     generated_string_list1 = combine_connected_letters(generated_string_list, component1)
     generated_string_list = combine_connected_letters(generated_string_list1, component2)
 
     generated_string = ''.join(generated_string_list)
-    #print("Generated string: " + generated_string)    
     
     if ratio_caseless > ratio:
         generated_string = punctuated_title(generated_string)
@@ -775,7 +565,6 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         print("Generated string list: " + str(generated_string_list))
         print("Generated string 1 (compared to " + component1 + "): " + str(generated_string_list1))
         print("Generated string 2 (compared to " + component2 + "): " + str(generated_string_list))
-        #print("Generated string: " + generated_string)
         
     return (generated_string, warnings)
 
@@ -792,12 +581,9 @@ def get_context(letter_group, phrase_string):
     '''
     
     section_split_long = chunk_punctuated_string(phrase_string)
-    #print("Chunked phrase string: " + str(section_split_long))
     context = []
     cleaned_letter_group = clean_string(letter_group)
-    #print("Cleaned letter group: " + cleaned_letter_group)
     cleaned_letter_list = list(cleaned_letter_group)
-    #print("Cleaned letter list: " + str(cleaned_letter_list))
     
     for i, x in enumerate(section_split_long):
         start = 0
@@ -808,16 +594,12 @@ def get_context(letter_group, phrase_string):
             chunk_to_check = section_split_long[i:i + length_of_letters]
         else:
             chunk_to_check = section_split_long[i:]
-        
-        #print("Cleaned letter list: " + str(cleaned_letter_list) + ", current chunk: " + str(chunk_to_check))
-        
+               
         if x == letter_group:
             if i - 1 > 0:
                 start = i - 1
             if i + 2 <= end:
                 end = i + 2
-            #print("Checking: " + x + ", Start:" + str(start) + ", End:" + str(end)) 
-            #print("Section with context" + str(section_split_long[start:end]))      
             context.append(section_split_long[start:end])    
             
         if chunk_to_check == cleaned_letter_list:
@@ -825,8 +607,6 @@ def get_context(letter_group, phrase_string):
                 start = i - 1
             if i + 1 + length_of_letters <= end:
                 end = i + 1 + length_of_letters
-            #print("Checking: " + str(chunk_to_check) + ", Start:" + str(start) + ", End:" + str(end)) 
-            #print("Section with context" + str(section_split_long[start:end]))      
             context.append(section_split_long[start:end])  
         
     return context
@@ -845,12 +625,6 @@ def align_two_phrases(string1, string2, component_list, debug=False):
     '''
     if debug:
         print("align_two_phrases called with '" + str(string1) + "' & '" + str(string2) + "'" )
-    
-    #diff = difflib.Differ().compare(string1, string2)
-    #print("\n".join(diff))
-    
-    #components1 = string1.split(" ")
-    #components2 = string2.split(" ")
     
     combined = ""
     
@@ -897,15 +671,10 @@ def clean_brackets(string_to_clean):
         Returns:
             Cleaned string   
     '''
-    #print("\nClean brackets called with " + string_to_clean)
     
     string_to_clean = re.sub(r'(\?)?\) \(', ' ', string_to_clean)
-    #print("String to clean before loop: " + string_to_clean) 
     while bool(re.search(r'\(\((\w+)\?\)\?\)', string_to_clean)):
         string_to_clean = re.sub(r'\(\((\w+)\?\)\?\)', r'(\1?)', string_to_clean)
-        #print("String to clean in loop: " + string_to_clean) 
-        
-    #print("Returning: " + string_to_clean)    
         
     return string_to_clean
 
@@ -1011,22 +780,12 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         
         return tuple with string containing combined values and warnings
     '''
-    #debug = True
     if debug:
         print("Match matrix called with " + str(first_phrase) + " and " + str(second_phrase))
     match_warnings = set()
     
-    #match_matrix_by_phrase2 = {}
     match_matrix_by_phrase1 = {}
-    #print(phrase1)
-    #print(phrase2)
-    
-    #for i in range(0, len(phrase1)):
-    #    match_matrix_by_phrase2[i] = {j: fuzz.ratio(phrase1[i], phrase2[j]) for j in range(0, len(phrase2))}
-    
-    #print("Form each in phrase1:")
-    #print(match_matrix_by_phrase2)
-    
+
     # by default, phrase1 should be shorter or the same length as phrase2
     if len(first_phrase) > len(second_phrase):
         phrase1 = second_phrase
@@ -1035,11 +794,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         phrase1 = first_phrase
         phrase2 = second_phrase     
     
-    
-    
     anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2, debug)    
-    #anchor_ratio_by_phrase2, match_matrix_by_phrase2 = get_match_ratios(phrase2, phrase1, debug)  
-              
 
     if debug:
         print("For each in phrase1 (" + str(phrase1) + "):")        
@@ -1062,9 +817,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
             print("phrase2 start: " + str(phrase2_start))
             print("phrase2 end: " + str(phrase2_end))
             print("best ratio: " + str(best_ratio))
-            
-         
-        
+
         # make list of anchor points (points with highest match ratio)
         if best_ratio == anchor_ratio:
             if phrase1_position >= last_position_phrase1 and phrase2_end >= last_position_phrase2:
@@ -1073,17 +826,11 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 best_anchor_points.append((phrase1_position, phrase2_position))
                 
     if debug:
-        print("Best anchor ratio: " + str(anchor_ratio))
-        #print(str(anchor_ratio_by_phrase2))
-        print("Best anchor points:" + str(best_anchor_points))
         for anchor_points in best_anchor_points:
             phrase1_start, phrase2_range = anchor_points
             phrase2_start = int(phrase2_range.split(":")[0])
             phrase2_end = int(phrase2_range.split(":")[1])   
             print("Anchor point - " + str(phrase1_start) + ": " + str(phrase1[phrase1_start]) + "/" + str(phrase2_start) + "-" + str(phrase2_end) + ": " + ' '.join(phrase2[int(phrase2_start):int(phrase2_end)])) 
-        
-        #print("phrase1: " + str(phrase1) + ",  length: " + str(len("".join(phrase1))))
-        #print("phrase2: " + str(phrase2) + ",  length: " + str(len("".join(phrase2))))
     
     #check if passes the ratio check given the length of the string
     if ratio_check(len("".join(phrase1)), anchor_ratio):
@@ -1201,7 +948,6 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     phrase1_token = initials_replace(phrase1_token.strip(), phrase2_token.strip(), debug)                                     
                     
                     token_ratio = token_distribution(component_list, [phrase2_token, phrase1_token], debug)
-                    #print("Combine two words called from match_matrix_by_phrase2 (both pointers phrase2) with " + phrase1_token + " and " + phrase2_token)
                     combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
                     match_warnings.update(combination_warnings)
                     
@@ -1240,26 +986,20 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 print("End token (phrase2): " + phrase2_end_token)
             
             if phrase2_pointer == len(phrase2):
-                #print("Phrase2 pointer at end - adding end text from phrase1")
                 anchored_list.append("(" + phrase1_end_token + "?)")
             elif phrase1_pointer == len(phrase1):
-                #print("Phrase1 pointer at end - adding end text from phrase2")
                 anchored_list.append("(" + phrase2_end_token + "?)")
             else:
                 if " " in phrase1_end_token or " " in phrase2_end_token:
                     end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
-                    #print("End phrase join: " + str(end_phrase_join))
                     match_warnings.update(end_phrase_join_warnings)
                     if end_phrase_join.strip() != '':  
                         anchored_list.append(end_phrase_join)
                 else:
                     combined_token, combination_warnings = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
-                    #print("Combined token: " + str(combined_token))
                     if combined_token.strip() != '': 
                         anchored_list.append(combined_token)
                     match_warnings.update(combination_warnings)
-
-
         
         if debug:
             print(anchored_list)        
@@ -1268,67 +1008,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         match_warnings.add("Could not find any strong anchor points. '" + " ".join(phrase2) + "' and '" + " ".join(phrase1) + "' appear to be distinct values.")
         anchored_list = phrase2 + ["/"] + phrase1 
         
-    '''
-    combined = []
-    
-    checking = True
-    x = 0
-    y = 0
-    
-    while x < len(shortest) and checking: 
-        #best_match_ratio = max(match_matrix[i].values())
-        #number_of_best_matches = list(match_matrix[i].values()).count(best_match_ratio)   
-        #print("x:" + str(x))
-        #print("y:" + str(y))
-        #print("longest:" + str(len(longest)))
-        
-        sorted_options = dict(sorted(match_matrix2[x].items(), key=lambda item: item[1], reverse=True))        
-        
-        #print("Sorted:")
-        #print(sorted_options)
-        best_match_ratio = max(list(sorted_options.values()))
-        
-        if best_match_ratio < 1: # there is no match
-            combined.append("(" + longest[x] + ")")
-            
-            if x <= len(longest):
-                x += 1                       
-        else:
-            best_match_longest = longest[x]
-            
-            not_assigned = True
-            m = 0            
-            #while not_assigned and m < len(shortest):
-            #    if list(sorted_options.keys())[m] > y:   
-            #        y = list(sorted_options.keys())[0]
-            #        not_assigned = False
-            #    else:
-            #        m += 1
-                    
-            best_match_shortest = shortest[y]
-            
-            #print(best_match_longest[0])
-            #print(best_match_shortest[0])
-            
-            combined.append(combine_two_words(best_match_longest, best_match_shortest, word_ratio))
-            
-            if x <= len(longest):
-                x += 1
-            
-            #print("x:" + str(x) + " / " + str(len(longest)))         
-            #print(combined) 
-            
-            #print("x:" + str(x) + " / " + str(len(longest)))      
-            #print(combined) 
-
-    if debug:
-        print(combined)  
-     '''       
-        
     return (' '.join(anchored_list), match_warnings)
-        
-    #print(match_matrix)
-  
         
 
 
@@ -1425,14 +1105,3 @@ test3 = {"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgro
          "3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
          "4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
         }
-
-#print(component_compare(names1))
-#print(component_compare(names2))
-#print(component_compare(names3))
-#print(component_compare(address))
-#print(component_compare(farm_name))
-#print(component_compare(test))
-#print(component_compare(test2))
-#print(component_compare(test3))
-
-#punctuated_title("fiNd o(u)t")
