@@ -234,6 +234,7 @@ def punctuated_title(to_convert):
     converted = re.sub(r'([^\s])([A-Z])', to_lower, lower_to_upper)
     return converted
 
+
 def to_upper(match):
     ''' Convert text in the second group of a regex match object to uppercase
     
@@ -246,6 +247,7 @@ def to_upper(match):
     
     return match.group(1) + match.group(2).upper()  
 
+
 def to_lower(match):
     ''' Convert text in the second group of a regex match object to lowercase
     
@@ -257,7 +259,8 @@ def to_lower(match):
     '''
     
     return match.group(1) + match.group(2).lower()                            
-                
+
+
 def ratio_check(length, ratio):
     ''' Checks similarity ratio with a sliding scale based on length of the phrase
     
@@ -276,6 +279,7 @@ def ratio_check(length, ratio):
         return True
     else:
         return False                  
+
 
 def split_distribution (component_list):
     ''' Calculates the distribution of a pair of variations. (Note - not currently used. Superseded by split_part_distribution)
@@ -296,6 +300,7 @@ def split_distribution (component_list):
             
     return component_distribution
 
+
 def split_part_distribution (component_list):
     ''' Calculates the distribution of variation parts
         
@@ -315,6 +320,7 @@ def split_part_distribution (component_list):
                 component_distribution[part] = 1
                            
     return component_distribution
+
 
 def token_distribution (component_list, tokens, debug=False):
     ''' Calculates the distribution of variation tokens
@@ -339,6 +345,7 @@ def token_distribution (component_list, tokens, debug=False):
             
     return component_distribution        
 
+
 def get_tokens (component_set):
     ''' split the components in the set into substrings and return  
     
@@ -355,6 +362,7 @@ def get_tokens (component_set):
         count_set.add(len(tokenized_component))
               
     return (tokens, list(count_set))   
+
 
 def combine_connected_letters(list_to_test, string_to_compare):
     ''' Checks for multiple corrections from the same source string next to each other and combines them
@@ -391,6 +399,7 @@ def combine_connected_letters(list_to_test, string_to_compare):
     
     return list_to_test                         
 
+
 def chunk_punctuated_string(string_to_process, all=True):
     ''' Split the given string up on "(?)" and bracketed phrases ending in "?)" 
     
@@ -412,6 +421,7 @@ def chunk_punctuated_string(string_to_process, all=True):
             chunked_list.append(match_result[0])
         
     return chunked_list     
+
 
 def combine_two_phrases(component_set, component_list, debug=False):
     ''' Combine two string phrases
@@ -568,6 +578,7 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
         
     return (generated_string, warnings)
 
+
 def get_context(letter_group, phrase_string):
     ''' Finds the substring within the phrase and returns it with the immediately surrounding letters for every place it is found in the parent phrase
     
@@ -611,6 +622,7 @@ def get_context(letter_group, phrase_string):
         
     return context
 
+
 def align_two_phrases(string1, string2, component_list, debug=False):
     ''' Checks if two strings align and return a combined version
 
@@ -650,6 +662,7 @@ def align_two_phrases(string1, string2, component_list, debug=False):
         
     return (aligned_phrase, warnings)
 
+
 def clean_string(string_to_clean):
     ''' Remove everything except spaces and word characters
     
@@ -661,6 +674,7 @@ def clean_string(string_to_clean):
     
     '''
     return re.sub(r'[^\w\s]', '', string_to_clean)
+
 
 def clean_brackets(string_to_clean):
     ''' Tidy up brackets by removing doubled additions
@@ -677,6 +691,7 @@ def clean_brackets(string_to_clean):
         string_to_clean = re.sub(r'\(\((\w+)\?\)\?\)', r'(\1?)', string_to_clean)
         
     return string_to_clean
+
 
 def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
     ''' Compare two phrases. If there are any initials (single letter word when punctuation removed) in the phrase to be processed then check if they match with the first letter of the phrase for comparison then expand the initial to the matching word.
@@ -720,6 +735,7 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
                         print("Processed phrase: " + phrase_to_be_processed + "\n")   
                     
     return phrase_to_be_processed
+
 
 def get_match_ratios(phrase1, phrase2, debug = False):
     ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
@@ -768,6 +784,7 @@ def get_match_ratios(phrase1, phrase2, debug = False):
                     anchor_ratio = ratio  
                     
     return (anchor_ratio, match_matrix)
+
 
 def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
     ''' get the comparison matrix
