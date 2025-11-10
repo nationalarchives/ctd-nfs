@@ -7,10 +7,10 @@ requires-python = ">=3.13"
 dependencies = [
     "openpyxl>=3.1.5",
     "pyinstaller>=6.16.0",
-    "rapidfuzz>=3.14.1",
+    "rapidfuzz>=3.14.3",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.4.2",
+    "pytest>=9.0.0",
 ]
