@@ -1,6 +1,3 @@
-"""
-"""
-
 import pytest
 
 
@@ -12,4 +9,131 @@ def farms():
         {'filename_1': 'MAF32-228-1_23.tif', 'filename_2': 'MAF32-228-1_24.tif', 'document_type': 'B496/EI', 'county': 'DM Durham', 'parish': '1 Barnard Castle', 'primary_farm_number': '4', 'additional_farms': '', 'farm_name': '9 King Street', 'addressee_title': '', 'addressee_individual_name': '', 'addressee_group_names': '', 'address': '', 'owner_title': '*', 'owner_individual_name': '*', 'owner_group_names': 'Mr Kellett; Mr Swift; Mr W Bain; Mrs Mane; Mrs Todd; W Walton', 'owner_address': '8 Sendal, Yorkshire; Barnard Castle; Darlington Road, Barnard Castle; Gallowgate, Barnard Castle; Gallowgate, Barnard Castle; 24 Coronation Road, Redcar', 'farmer_title': '*', 'farmer_individual_name': 'W J Chaplow', 'farmer_group_names': '*', 'farmer_address': 'Barnard Castle', 'acreage': '30/Nil Acres', 'OS_map_sheet': 'XL NE 1898', 'field_info_date': '*', 'primary_record_date': '19 April 1943', '': ''},
         {'filename_1': 'MAF32-247-23_75.tif', 'filename_2': 'MAF32-247-23_76.tif', 'document_type': 'B496/EI', 'county': 'RD Rutland', 'parish': '23 Hambleton', 'primary_farm_number': '19', 'additional_farms': '', 'farm_name': 'Armley Lodge', 'addressee_title': '', 'addressee_individual_name': '', 'addressee_group_names': '', 'address': '', 'owner_title': '*', 'owner_individual_name': '*', 'owner_group_names': 'Nichols, Agent for the Earl of Ancaster', 'owner_address': 'Hambleton, Oakham', 'farmer_title': '*', 'farmer_individual_name': '*', 'farmer_group_names': 'Woodhead Bros', 'farmer_address': 'Hambleton, Oakham', 'acreage': 'Arable 127.5; Grass 45; 172.5', 'OS_map_sheet': '9 NE1931 Edition', 'field_info_date': '30 January 1942', 'primary_record_date': '*'},
         )
+
+
+@pytest.fixtures()
+def names1():
+	return({
+        "1": ["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
+		"2": ["", "W H Buckle", "W H Buckle", "W H Buckle"], 
+		"3": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+		"6": ["A E Cook", "A E Cook", "A E Cook", "A E Cook"],
+		"7": ["A G Griffiths", "W L Edmunds", "W L Edmunds", "W L Edmunds"],
+		"9": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"],
+		"10": ["", "F W Hinton", "", "F W Hinton"],
+		"14": ["G P Rymer", "G P Rymer", "G P Rymer", "G P Rymer"],
+		"15": ["A Spragg", "A Spragg", "A Spragg", "A Spragg"],
+		"16": ["H Bowl", "Harry Bowl", "H Bowl", "Harry Bowl"],
+		"18": ["A Tombs", "A Tombs", "A Tombs", "A Tombs"],
+		"19": ["C Tombs", "C Toombs", "C Toombs", "C Toombs"],
+		"20": ["G O Tombs", "G O Tombs", "G O Tombs", "G O Tombs"],
+		"22": ["G Wilkins", "G Wilkins", "Geo Wilkin", "G Wilkins"],
+		"31": ["", "F Bendall", "F Bendall", "F Bendall"],
+		"33": ["F Thomas", "Frank Thomas", "F. Thomas", "Frank Thomas"]
+         })
+
+
+@pytest.fixtures()
+def names2():
+	return({
+		"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+		"2": ["R Burroughs", "R Burroughs", "R Burroughs", "R Burroughs"],
+		"3": ["R Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
+		"4": ["R Burroughs", "J Burroghs", "J Burroughs", "R Burroughs"], 
+		"5": ["R J Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"],
+		"6": ["J R Burroghs", "J Burroughs", "J Burroughs", "J Burroughs"], 
+		"7": ["J R Burrows", "J Burroughs", "J Burroughs", "J Burroughs"], 
+		"8": ["R J Burroughs", "R L Burroughs", "R Burroughs", "R Burroughs"],
+		"9": ["R J Burrows", "R L Burroughs", "J Burroughs", "J Burroughs"],
+		"10": ["R J Burrows", "R L Burroughs", "R Burroughs", "R Burroughs"],
+		"11": ["R Burrows", "R Burroughs", "R Burroughs", "F Rymer"],
+		"12": ["R Burrows", "R Burroughs", "R Burroughs", "R Rymer"],
+		"13": ["R Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+		"14": ["R Burrows", "R F Burroughs", "R Burroughs", "F Rymer"],
+		"15": ["R J Burrows", "F Burroughs", "R Burroughs", "F Rymer"],
+		"16": ["R J Burrows", "R Burroughs", "R Burroughs", "R J Burroghs"],
+		"17": ["R J Burrows", "A E Cook", "G P Rymer", "Geo Wilkin"],
+		"18": ["R J Burrows", "R Burroughs", "G P Rymer", "Geo Wilkin"],
+		"19": ["R J Burrows", "R Burroughs", "R Burroghs", "R J Burroghs"],
+		"20": ["E Stacey", "A G Cooper bailiff for J S Gibbons Esq", "A G Cooper (bailiff to J S Gibbons)", "A G Cooper bailiff for J S Gibbons Esq"]                
+        })
+
+
+@pytest.fixtures()
+def names3():
+	return({"1": ["Messrs Rowe and Raddy", "Mr A C Raddy for Rowe and Raddy"]})
+
+
+@pytest.fixtures()
+def address():
+	return({
+		"1": ["Butlers Court Farm, Boddington, Gloucestershire", "Butlers Court, Boddington, Near Cheltenham", "Butlers Court, Boddington", "Butlers Court Farm, Boddington, Gloucestershire"], 
+		"2": ["Whitehall, Hayden Hill, Cheltenham, Gloucestershire", "Whitehall Farm, Hayden, Cheltenham", "Whitehall Farm, Hayden, Cheltenham", "Whitehall, Hayden Hill, Cheltenham, Gloucestershire"], 
+		"3": ["Boddington House Farm, Boddington, Gloucestershire", "Boddington House Farm, Boddington, Cheltenham", "Boddington House Farm, Near Cheltenham", "Boddington House, Boddington, Gloucestershire"],
+		"6": ["Slate Mill, Boddington, Near Cheltenham, Gloucestershire","Slade Mill, Boddington, Cheltenham", "Slate Mill, Boddington", "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"],
+		"7": ["Barrow Court, Boddington, Cheltenham, Gloucestershire", "14, Foregate Street, Worcester", "Barrow Court, Boddington", "Barrow Court, Boddington, Cheltenham, Gloucestershire"],
+		"9": ["Manor Farm, Boddington, Near Cheltenham, Gloucestershire", "Guiting House, Temple Guiting, Gloucestershire", "Manor Farm, Boddington", "Manor Farm, Boddington, Near Cheltenham, Gloucestershire"],
+		"10": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "192 High Street, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+		"14": ["14 Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, Charlton Kings, Cheltenham", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+		"15": ["Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire", "Mill House Farm, Boddington, Near Cheltenham", "Withybridge Farm, Boddington", "Withy Bridge Farm, Boddington, Near Cheltenham, Gloucestershire"],
+		"16": ["Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire", "Barrow Hill Farm, Boddington, Cheltenham", "Barrow Hill Farm, Boddington", "Barrow Hill Farm, Boddington, Cheltenham, Gloucestershire"],
+		"18": ["Brookes Laymes Farm, Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Brookes Laymes Farm, Boddington", "Brookes Laymes Farm, Boddington, Gloucestershire"],
+		"19": ["Boddington, Gloucestershire", "Brooklaines Farm, Boddington, Cheltenham", "Boddington", "Boddington, Gloucestershire"],
+		"20": ["Hayden Farm, Boddington, Near Cheltenham, Gloucestershire", "Hayden Farm, Hayden, Cheltenham", "Hayden Farm, Boddington", "Hayden Farm, Boddington, Near Cheltenham, Gloucestershire"],
+		"22": ["Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire", "Wilkins Farm, Boddington, Cheltenham", "Wilkins Farm, Barrow, Boddington", "Wilkins Farm, Barrow, Boddington, Cheltenham, Gloucestershire"],
+		"31": ["1 Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire", "1 Hayden Hill Villas, Hayden Hill, Boddington", "Hayden Hill Villas, Hayden Hill, Boddington, Cheltenham, Gloucestershire"],
+		"33": ["Pilgrove, Hayden Hill, Near Cheltenham, Gloucestershire", "Pilgrove, Hayden Hill, Boddington, Gloucestershire", "Pilgrove, Hayden Hill, Cheltenham", "Pilgrove, Hayden Hilll, Near Cheltenham, Gloucestershire"],
+		})
+
+
+@pytest.fixtures()
+def farm_name():
+	return({
+		"1": ["*", "Holt Farm", "", ""], 
+		"2": ["*", "Park Valley Farm", "", ""], 
+		"3": ["Home Farm", "Serge Hill", "", ""],
+		"4": ["Buckmans Farm etc", "Cuckmans Farm", "", ""],
+		"5": ["Old Parkbury Farm", "Old Parkbury", "", ""],
+		"6": ["*", "Netherwylde Farm", "", ""],
+		"8": ["*", "Smug Oak Farm", "", ""],
+		"9": ["*", "Garston Manor", "", ""],
+		"10": ["*", "Silver Birches", "", ""],
+		"11": ["*", "Spooners", "", ""],
+		"12A": ["", "Land at Ninnings Farm", "", ""],
+		"12B": ["Millhouse Farm", "Millhouse Farm", "", ""],
+		"13": ["*", "Harperbury", "", ""],
+		"17": ["*", "Land at Park Street", "", ""],
+		"18": ["*", "Home Farm", "", ""],
+		"19": ["Little Munden Farm", "Little Munden Farm", "", ""],
+		"20": ["Noke Farm", "Noke Farm", "", ""]
+         })
+
+
+@pytest.fixtures()
+def test():
+	return({
+		"1": ["Hill Top Farm", "Hilltop farm", "Hill top farm"],
+		"2": ["Hill Top Farm", "Hilltop farm", "Hilltop farm"],
+		"3": ["Hill Top Farm", "Hill top farm", "Hill Top farm"],
+		"4": ["Hill Top Farm", "Hilltop farm"],
+		"5": ["HillTop Farm", "Hilltop farm"]
+		})
+
+
+@pytest.fixtures()
+def test2():
+	return({
+		"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]
+		})
+
+
+@pytest.fixtures()
+def test3():
+	return({
+		"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
+		"2": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings"],
+		"3": ["14, Montpellier Grove, Cheltenham, Gloucestershire", "The Laurels, London Road, Charlton Kings", "The Laurels, London Road"],
+		"4": ['Parkside, Frizington, Cumberland', 'Parkside Farm, Frizington', 'Parkside, Frizington, Cumberland']
+        })
+
 
