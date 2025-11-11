@@ -1,6 +1,20 @@
 from dataclasses import dataclass, field
 import re
 
+
+def make_forms_mapping() -> dict:
+    """Create a mapping of form codes to empty lists for storing filenames."""
+    return {
+        'C51/SSY': [],
+        'B496/EI': [],
+        'C 47/SSY': [],
+        'C 49/SSY': [],
+        'SF': [],
+        'SF C69/SSY': [],
+        'Other': [],
+        'Cover': []
+    }
+
 @dataclass
 class Farm:
     """
@@ -10,7 +24,6 @@ class Farm:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
     catalogue_reference: str
-    forms: dict[list] = field(default={'C51/SSY': [], 'B496/EI': [], 'C 47/SSY': [], 'C 49/SSY': [], 'SF': [], 'SF C69/SSY': [], 'Other': [], 'Cover': []})
     county: str
     parish: str
     primary_farm_number: str
@@ -35,6 +48,7 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
+    forms: dict[list] = field(default_factory=make_forms_mapping)
 
     def clean_value(self, field_value: str) -> list[str]:
         """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
