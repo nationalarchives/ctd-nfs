@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import re
 
 @dataclass
 class Farm:
@@ -34,5 +35,9 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
+
+    def split_and_strip_value(self, field_value: str) -> list[str]:
+        """Utility method to split a field value by commas and strip whitespace."""
+        return [item.strip() for item in re.split(r", *", field_value)]
 
 
