@@ -37,12 +37,12 @@
 #   Create full range of test spreadsheets
 
 
-from dataclasses import dataclass
 import csv
 import re
 import datetime
 from pathlib import Path
 import calendar
+import pprint
 
 import data_normalisation as dn
 
@@ -51,44 +51,7 @@ from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 from rapidfuzz import fuzz
 
-
-"""
-Farm Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
-"""
-@dataclass
-class Farm:
-    """
-    all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
-    all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
-    e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
-    These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
-    """
-    catalogue_reference: str
-    forms: dict[list] = {'C51/SSY': [], 'B496/EI': [], 'C 47/SSY': [], 'C 49/SSY': [], 'SF': [], 'SF C69/SSY': [], 'Other': [], 'Cover': []}
-    county: str
-    parish: str
-    primary_farm_number: str
-    additional_farms: list
-    farm_names: list
-    # occupier details
-    addressee_title: list[str] | str
-    addressee_individual_name: list[str] | str
-    addressee_group_names: list[str]
-    address: list[str] | str
-    # owner details
-    owner_title: list[str] | str
-    owner_individual_name: list[str] | str
-    owner_group_names: list[str]
-    owner_address: list[str] | str
-    # farmer details
-    farmer_title: list[str] | str
-    farmer_individual_name: list[str] | str
-    farmer_group_names: list[str]
-    farmer_address: list[str] | str
-    acreage: list[str] | str
-    OS_map_sheet: list[str] | str
-    field_info_date: list[str] | str
-    primary_record_date: list[str] | str
+prettyoutput = pprint.PrettyPrinter(indent=4)
 
 
 def processing_files(processing_folder) -> None:
