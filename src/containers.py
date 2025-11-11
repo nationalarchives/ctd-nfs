@@ -41,3 +41,6 @@ class Farm:
         return [item.strip() for item in re.split(r", *", field_value)]
 
 
+def create_farm(raw_fram_data: dict) -> Farm:
+    return Farm()
+    
