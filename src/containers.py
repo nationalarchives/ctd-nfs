@@ -36,9 +36,9 @@ class Farm:
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
 
-    def split_and_strip_value(self, field_value: str) -> list[str]:
-        """Utility method to split a field value by commas and strip whitespace."""
-        return [item.strip() for item in re.split(r", *", field_value)]
+    def clean_value(self, field_value: str) -> list[str]:
+        """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
+        return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
 def create_farm(raw_farm_data: dict) -> Farm:
