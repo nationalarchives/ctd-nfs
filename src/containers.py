@@ -41,7 +41,31 @@ class Farm:
         return [item.strip() for item in re.split(r", *", field_value)]
 
 
-def create_farm(raw_fram_data: dict) -> Farm:
-    stripped_data = {key: value for key, value in raw_fram_data.items()}
-    return Farm()
-    
+def create_farm(raw_farm_data: dict) -> Farm:
+    stripped_data = {key: value for key, value in raw_farm_data.items()}
+    return Farm(
+        # catalogue_reference & forms will have special methods to assign value
+        # catalogue_reference=make_catalogue_reference(stripped_data),
+        # forms=assign_filenames_to_forms(stripped_data),
+        county=stripped_data['county'],
+        parish=stripped_data['parish'],
+        primary_farm_number=stripped_data['primary_farm_number'],
+        additional_farms=Farm().split_and_strip_value(stripped_data['additional_farms']),
+        farm_names=Farm().split_and_strip_value(stripped_data['farm_names']),
+        addressee_title=stripped_data['addressee_title'],
+        addressee_individual_name=stripped_data['addressee_individual_name'],
+        addressee_group_names=Farm().split_and_strip_value(stripped_data['addressee_group_names']),
+        address=stripped_data['address'],
+        owner_title=stripped_data['owner_title'],
+        owner_individual_name=stripped_data['owner_individual_name'],
+        owner_group_names=Farm().split_and_strip_value(stripped_data['owner_group_names']),
+        owner_address=stripped_data['owner_address'],
+        farmer_title=stripped_data['farmer_title'],
+        farmer_individual_name=stripped_data['farmer_individual_name'],
+        farmer_group_names=Farm().split_and_strip_value(stripped_data['farmer_group_names']),
+        farmer_address=stripped_data['farmer_address'],
+        acreage=stripped_data['acreage'],
+        OS_map_sheet=stripped_data['OS_map_sheet'],
+        field_info_date=stripped_data['field_info_date'],
+        primary_record_date=stripped_data['primary_record_date'],
+    )
