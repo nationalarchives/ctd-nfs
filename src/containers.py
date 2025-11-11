@@ -42,5 +42,6 @@ class Farm:
 
 
 def create_farm(raw_fram_data: dict) -> Farm:
+    stripped_data = {key: value for key, value in raw_fram_data.items()}
     return Farm()
     
