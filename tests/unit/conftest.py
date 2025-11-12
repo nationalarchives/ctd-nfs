@@ -11,7 +11,7 @@ def farms():
         )
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def names1():
 	return({
         "1": ["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
@@ -33,7 +33,7 @@ def names1():
          })
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def names2():
 	return({
 		"1": ["R A Burroghs", "R Burroughs", "R Burroughs", "R Burroughs"],
@@ -59,12 +59,12 @@ def names2():
         })
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def names3():
 	return({"1": ["Messrs Rowe and Raddy", "Mr A C Raddy for Rowe and Raddy"]})
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def address():
 	return({
 		"1": ["Butlers Court Farm, Boddington, Gloucestershire", "Butlers Court, Boddington, Near Cheltenham", "Butlers Court, Boddington", "Butlers Court Farm, Boddington, Gloucestershire"], 
@@ -86,7 +86,7 @@ def address():
 		})
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def farm_name():
 	return({
 		"1": ["*", "Holt Farm", "", ""], 
@@ -109,7 +109,7 @@ def farm_name():
          })
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def test():
 	return({
 		"1": ["Hill Top Farm", "Hilltop farm", "Hill top farm"],
@@ -120,14 +120,14 @@ def test():
 		})
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def test2():
 	return({
 		"1": ["Winstall Farm, South Normanton, Alfreton, Derbyshire", "South Normanton, near Alfreton, Derbyshire", "Winstall Farm, South Normanton, Alfreton, Derbyshire"]
 		})
 
 
-@pytest.fixtures()
+@pytest.fixture()
 def test3():
 	return({
 		"1": ["c/o Mr S Fluck, Pilgrove Farm, Hayden Hill, Cheltenham", "Pilgrove Farm, Hayden Hill, Cheltenham", "c/o Mr G Fluck, Pilgrove Farm, Hayden Hill, Cheltenham, Gloucestershire"],
