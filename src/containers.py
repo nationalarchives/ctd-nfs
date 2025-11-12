@@ -23,12 +23,11 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    catalogue_reference: str
     county: str
     parish: str
     primary_farm_number: str
     additional_farms: list[str]
-    farm_names: list[str]
+    farm_name: list[str]
     # occupier details
     addressee_title: list[str] | str
     addressee_individual_name: list[str] | str
@@ -48,13 +47,14 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
+    catalogue_reference: str = ""
     forms: dict[list] = field(default_factory=make_forms_mapping)
 
     def clean_value(self, field_value: str) -> list[str]:
         """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
         return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
-    def __post_init__(self, raw_farm_data: dict = None):
+    def __init__(self, raw_farm_data: dict):
         stripped_data = {key: value for key, value in raw_farm_data.items()}
         """catalogue_reference & forms will have special methods to assign values later"""
         # self.catalogue_reference = make_catalogue_reference(stripped_data),
@@ -63,7 +63,7 @@ class Farm:
         self.parish = stripped_data['parish'],
         self.primary_farm_number = stripped_data['primary_farm_number'],
         self.additional_farms = self.clean_value(stripped_data['additional_farms']),
-        self.farm_names = self.clean_value(stripped_data['farm_names']),
+        self.farm_name = self.clean_value(stripped_data['farm_name']),
         self.addressee_title = stripped_data['addressee_title'],
         self.addressee_individual_name = stripped_data['addressee_individual_name'],
         self.addressee_group_names = self.clean_value(stripped_data['addressee_group_names']),
