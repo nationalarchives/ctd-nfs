@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import re
+from typing import ClassVar
 
 
 def make_forms_mapping() -> dict:
@@ -14,6 +15,23 @@ def make_forms_mapping() -> dict:
         'Other': [],
         'Cover': []
     }
+
+
+def make_warnings_mapping() -> dict:
+    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
+    return {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
+
 
 @dataclass
 class Farm:
@@ -49,6 +67,7 @@ class Farm:
     primary_record_date: list[str] | str
     catalogue_reference: str = ""
     forms: dict[list] = field(default_factory=make_forms_mapping)
+    warnings: dict[list] = field(default_factory=make_warnings_mapping)
 
     def clean_value(self, field_value: str) -> list[str]:
         """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
