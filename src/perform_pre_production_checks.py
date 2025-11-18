@@ -30,14 +30,14 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
-    if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
-        return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
+    # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
+    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
 
-    elif rgxmatch := RGX_FILENAMEPATTERN_COVER.match(filename):
-        return (rgxmatch['box_number'], rgxmatch['parish_number'], 0, f"Row {row_num}: {filename} matches expected cover pattern. Error is this is not a cover.")
+    # elif rgxmatch := RGX_FILENAMEPATTERN_COVER.match(filename):
+    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], 0, f"Row {row_num}: {filename} matches expected cover pattern. Error is this is not a cover.")
     
-    elif rgxmatch := RGX_FILENAMEPATTERN.match(filename):
-        return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], f"Row {row_num}: {filename} does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
+    # elif rgxmatch := RGX_FILENAMEPATTERN.match(filename):
+    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], f"Row {row_num}: {filename} does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
     
-    else:   
-        raise ValueError(f"Row {row_num}: {filename} does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
+    # else:   
+    #     raise ValueError(f"Row {row_num}: {filename} does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
