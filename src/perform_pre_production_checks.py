@@ -47,7 +47,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if not filename2 and form != 'Cover':
         warnings['Filename Warnings'] = {f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."}
 
-    if RGX_FILENAMEPATTERN_COVER(filename1) and form != 'Cover':
+    if RGX_FILENAMEPATTERN_COVER.match(filename1) and form != 'Cover':
         warnings['Filename Warnings'] = {f"Row {row_num}": f"{filename1} matches cover pattern but form is not a Cover."}
 
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
