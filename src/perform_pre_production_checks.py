@@ -44,6 +44,9 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
         if form == 'Cover':
             warnings['Filename Warnings'] = {f"Row {row_num}": f"Form type is 'Cover' but two form images were provided: {filename1} and {filename2}."}
 
+    if not filename2 and form != 'Cover':
+        warnings['Filename Warnings'] = {f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."}
+        
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
 
