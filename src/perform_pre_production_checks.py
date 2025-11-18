@@ -57,7 +57,8 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if RGX_FILENAMEPATTERN_COVER.match(filename1) and form != 'Cover':
         warnings['Filename Warnings'] = {f"Row {row_num}": f"{filename1} matches cover pattern but form is not a Cover."}
 
-    if RGX_FILENAMEPATTERN_OTHER.match(filename2 or '') and form != 'Cover':
+    if RGX_FILENAMEPATTERN_OTHER.match(filename2) and form != 'Cover':
+        pass
 
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
