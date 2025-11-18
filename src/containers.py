@@ -73,21 +73,9 @@ class Farm:
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
-    # occupier details
-    addressee_title: list[str] | str
-    addressee_individual_name: list[str] | str
-    addressee_group_names: list[str]
-    address: list[str] | str
-    # owner details
-    owner_title: list[str] | str
-    owner_individual_name: list[str] | str
-    owner_group_names: list[str]
-    owner_address: list[str] | str
-    # farmer details
-    farmer_title: list[str] | str
-    farmer_individual_name: list[str] | str
-    farmer_group_names: list[str]
-    farmer_address: list[str] | str
+    occupier: Occupier
+    owner: Owner
+    farmer: Farmer
     acreage: list[str] | str
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
