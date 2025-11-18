@@ -110,10 +110,12 @@ class Farm:
             owner_group_names=self.clean_value(stripped_data['owner_group_names']),
             owner_address=stripped_data['owner_address']
         ),
-        self.farmer_title = stripped_data['farmer_title'],
-        self.farmer_individual_name = stripped_data['farmer_individual_name'],
-        self.farmer_group_names = self.clean_value(stripped_data['farmer_group_names']),
-        self.farmer_address = stripped_data['farmer_address'],
+        self.farmer = Farmer(
+            farmer_title=stripped_data['farmer_title'],
+            farmer_individual_name=stripped_data['farmer_individual_name'],
+            farmer_group_names=self.clean_value(stripped_data['farmer_group_names']),
+            farmer_address=stripped_data['farmer_address']
+        ),
         self.acreage = stripped_data['acreage'],
         self.OS_map_sheet = stripped_data['OS_map_sheet'],
         self.field_info_date = stripped_data['field_info_date'],
