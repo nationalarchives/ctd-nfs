@@ -41,6 +41,8 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
         image2 = int(rgxmatch2['image_number'])
         if image2 != image1 + 1:
             warnings['Filename Warnings'] = {f"Row {row_num}": f"{filename1} and {filename2} are not consecutive images."}
+        if form == 'Cover':
+            warnings['Filename Warnings'] = {f"Row {row_num}": f"Form type is 'Cover' but two form images were provided: {filename1} and {filename2}."}
 
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
