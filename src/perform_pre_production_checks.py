@@ -30,6 +30,9 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
+    if not (rgxmatch1 := RGX_FILENAMEPATTERN_FORM.match(filename1)):
+        warnings['Filename Warnings'] = {f"Row {row_num}": f"{filename1} does not match expected pattern for form images."}
+
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
 
