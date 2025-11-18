@@ -28,7 +28,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
 
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>0*\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
-    RGX_FILENAMEPATTERN = re.compile(r"""^MAF_*.*?\.tif$""")
+    RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
     if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
         return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
