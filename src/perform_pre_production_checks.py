@@ -1,4 +1,6 @@
-import re       
+import re
+
+from containers import make_warnings_mapping
 
 def perform_pre_production_checks(row_num: int, form: str, parish: str, filename1: str, filename2: str = None) -> str | dict:
     """
@@ -21,6 +23,8 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     Returns:
         str or dict: "Pass" or dictionary with warning messages for any issues found
     """
+
+    warnings = make_warnings_mapping()
 
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>0*\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
