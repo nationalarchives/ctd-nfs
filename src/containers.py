@@ -98,10 +98,12 @@ class Farm:
         self.primary_farm_number = stripped_data['primary_farm_number'],
         self.additional_farms = self.clean_value(stripped_data['additional_farms']),
         self.farm_name = self.clean_value(stripped_data['farm_name']),
-        self.addressee_title = stripped_data['addressee_title'],
-        self.addressee_individual_name = stripped_data['addressee_individual_name'],
-        self.addressee_group_names = self.clean_value(stripped_data['addressee_group_names']),
-        self.address = stripped_data['address'],
+        self.occupier = Occupier(
+            addressee_title=stripped_data['addressee_title'],
+            addressee_individual_name=stripped_data['addressee_individual_name'],
+            addressee_group_names=self.clean_value(stripped_data['addressee_group_names']),
+            address=stripped_data['address']
+        ),
         self.owner_title = stripped_data['owner_title'],
         self.owner_individual_name = stripped_data['owner_individual_name'],
         self.owner_group_names = self.clean_value(stripped_data['owner_group_names']),
