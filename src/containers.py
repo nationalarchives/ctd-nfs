@@ -33,6 +33,33 @@ def make_warnings_mapping() -> dict:
     }
 
 
+"""
+Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
+"""
+@dataclass
+class Occupier:
+    addressee_title: list[str] | str
+    addressee_individual_name: list[str] | str
+    addressee_group_names: list[str] | str
+    address: list[str] | str
+
+
+@dataclass
+class Owner:
+    owner_title: list[str] | str
+    owner_individual_name: list[str] | str
+    owner_group_names: list[str] | str
+    owner_address: list[str] | str
+
+
+@dataclass
+class Farmer:
+    farmer_title: list[str] | str
+    farmer_individual_name: list[str] | str
+    farmer_group_names: list[str] | str
+    farmer_address: list[str] | str
+
+
 @dataclass
 class Farm:
     """
