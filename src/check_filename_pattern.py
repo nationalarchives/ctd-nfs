@@ -9,6 +9,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     * if two filenames provided, that they are consecutive (i.e. filename1 precedes filename2)
     * that parish number in filename matches parish number in spreadsheet
     * that box number in filename matches form number in spreadsheet
+    * confirm form type is valid for filename(s) provided
     
     Args:
         row_num (int): row number from original csv, used for reporting errors/warning
@@ -16,13 +17,9 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
         parish (str): parish number from spreadsheet row
         filename1 (str): first filename to check
         filename2 (str, optional): second filename to check. Defaults to None.
-    If the filename does not match the expected pattern then ValueError exception is thrown.
-
-    Raises:
-        ValueError: _description_
 
     Returns:
-        str or dict: "Pass" or dictionary with row numbers and warning messages for any issues found
+        str or dict: "Pass" or dictionary with warning messages for any issues found
     """
 
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>0*\d+)\.tif$""")
