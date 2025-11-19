@@ -42,10 +42,10 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. Box number of {filename1} will be used in reference."})
 
         if filename1_match['parish_number'] != filename2_match['parish_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. Number from full parish name: '{parish}' will be used in catalogue reference."})
 
         elif filename1_match['parish_number'] != parish_number:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match parish value from data: '{parish_number}'."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. Number from full parish name: '{parish}' will be used in catalogue reference."})
 
         
 
