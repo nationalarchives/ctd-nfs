@@ -58,6 +58,21 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
 
 
 def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_match: re.Match, warnings: dict) -> dict:
+    """
+    Performs checks on the box numbers, parish numbers and image numbers of the two file names
+    * box numbers should be the same in the both file name
+    * parish numbers should be the same in the both file name, and also match the number in the full parish name
+    * image numbers must be consecutive
+
+    Args:
+        csv_values (dict): _description_
+        filename1_match (_type_): _description_
+        filename2_match (_type_): _description_
+        warnings (dict: warning messages for any issues found
+
+    Returns:
+        warnings (dict):
+    """
 
     if filename1_match['box_number'] != filename2_match['box_number']:
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} have different box numbers. " \
