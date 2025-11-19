@@ -17,8 +17,8 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
         row_num (int): row number from original csv, used for reporting errors/warning
         form (str): form number from spreadsheet row
         parish (str): parish number and name e.g. "1 Alkington"
-        filename1 (str): first filename to check
-        filename2 (str, optional): second filename to check. Defaults to None.
+        filename1 (str): front page of form
+        filename2 (str, optional): back page of form Defaults to None, not used if form is Cover 
 
     Returns:
         str or dict: "Pass" or dictionary with warning messages for any issues found
