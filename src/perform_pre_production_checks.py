@@ -57,7 +57,7 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
                                               f"No further checks on this row performed."})
 
 
-def check_filename_parts(csv_values: dict, filename1_match, filename2_match, warnings) -> dict:
+def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_match: re.Match, warnings: dict) -> dict:
 
     if filename1_match['box_number'] != filename2_match['box_number']:
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} have different box numbers. " \
