@@ -29,12 +29,16 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
+    
     warnings = make_warnings_mapping()
-    if not (filename1_match := RGX_FILENAMEPATTERN_FORM.match(filename1)):
+    filename1_match = RGX_FILENAMEPATTERN_FORM.match(filename1)
+    filename2_match = RGX_FILENAMEPATTERN_FORM.match(filename2)
+
+    if not filename1_match:
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
 
-    if filename2 and not (filename2_match := RGX_FILENAMEPATTERN_FORM.match(filename2)):
+    if filename2 and not filename2_match:
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
@@ -62,7 +66,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if not filename2 and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."})
 
-    if filename1_match['image_number'] == "0001" and not filename2 and form != 'Cover':
+    if filename1_match.get('image_number', "") == "0001" and not filename2 and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} is image number 0001 which is usually a cover image. " \
                                               f"Form type is '{form}' but only one form image was provided."})
     
