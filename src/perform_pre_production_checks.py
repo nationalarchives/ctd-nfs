@@ -31,20 +31,25 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
 
     warnings = make_warnings_mapping()
     if not (filename1_match := RGX_FILENAMEPATTERN_FORM.match(filename1)):
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. Further checks on filenames could not be carried out and an accurate reference could not be generated."})
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. " \
+                                              f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
 
     if filename2 and not (filename2_match := RGX_FILENAMEPATTERN_FORM.match(filename2)):
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images. Further checks on filenames could not be carried out and an accurate reference could not be generated."})
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images. " \
+                                              f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
     if filename1_match and filename2_match:
         if filename1_match['box_number'] != filename2_match['box_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. Box number of {filename1} will be used in reference."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. " \
+                                                  f"Box number of {filename1} will be used in reference."})
 
         if filename1_match['parish_number'] != filename2_match['parish_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. Number from full parish name: '{parish}' will be used in catalogue reference."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. " \
+                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
 
         elif filename1_match['parish_number'] != parish_number:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. Number from full parish name: '{parish}' will be used in catalogue reference."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. " \
+                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
        
         image1 = int(filename1_match['image_number'])
         image2 = int(filename2_match['image_number'])
