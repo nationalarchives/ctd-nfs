@@ -62,8 +62,12 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if not filename2 and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."})
 
+    if filename1_match['image_number'] == "0001" and not filename2 and form != 'Cover':
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} is image number 0001 which is usually a cover image. " \
+                                              f"Form type is '{form}' but only one form image was provided."})
+    
     if RGX_FILENAMEPATTERN_COVER.match(filename1) and form != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches cover pattern but form is not a Cover."})
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches cover pattern but form is {form}."})
 
     if RGX_FILENAMEPATTERN_OTHER.match(filename2) and form != 'Cover':
         pass
