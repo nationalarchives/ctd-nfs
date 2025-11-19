@@ -95,17 +95,17 @@ class Farm:
             addressee_group_names=self.clean_value(stripped_data['addressee_group_names']),
             address=stripped_data['address']
         ),
-        self.owner = Owner(
-            owner_title=stripped_data['owner_title'],
-            owner_individual_name=stripped_data['owner_individual_name'],
-            owner_group_names=self.clean_value(stripped_data['owner_group_names']),
-            owner_address=stripped_data['owner_address']
+        self.owner = Details(
+            title=stripped_data['owner_title'],
+            individual_name=stripped_data['owner_individual_name'],
+            group_names=self.clean_value(stripped_data['owner_group_names']),
+            address=stripped_data['owner_address']
         ),
-        self.farmer = Farmer(
-            farmer_title=stripped_data['farmer_title'],
-            farmer_individual_name=stripped_data['farmer_individual_name'],
-            farmer_group_names=self.clean_value(stripped_data['farmer_group_names']),
-            farmer_address=stripped_data['farmer_address']
+        self.farmer = Details(
+            title=stripped_data['farmer_title'],
+            individual_name=stripped_data['farmer_individual_name'],
+            group_names=self.clean_value(stripped_data['farmer_group_names']),
+            address=stripped_data['farmer_address']
         ),
         self.acreage = stripped_data['acreage'],
         self.OS_map_sheet = stripped_data['OS_map_sheet'],
