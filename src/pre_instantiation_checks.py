@@ -2,7 +2,7 @@ import re
 
 from containers import make_warnings_mapping, make_forms_mapping
 
-def perform_pre_production_checks(csv_values: dict) -> str | dict:
+def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     """
     Verify that values which identify the farm (forms, parish, box number, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
