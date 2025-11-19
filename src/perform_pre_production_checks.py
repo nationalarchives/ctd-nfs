@@ -56,6 +56,10 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
     if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']):
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form or cover patterns. " \
                                               f"No further checks on this row performed."})
+        
+    if warnings['Filename Warnings']:
+        return warnings
+    return "Pass"
 
 
 def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_match: re.Match, warnings: dict) -> dict:
