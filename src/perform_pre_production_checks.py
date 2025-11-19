@@ -31,14 +31,14 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
     if not (filename1_match := RGX_FILENAMEPATTERN_FORM.match(filename1)):
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images."})
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. Further checks on filenames could not be carried out and an accurate reference could not be generated."})
 
     if filename2 and not (filename2_match := RGX_FILENAMEPATTERN_FORM.match(filename2)):
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images."})
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images. Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
     if filename1_match and filename2_match:
         if filename1_match['box_number'] != filename2_match['box_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers."})
+            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. Box number of {filename1} will be used in reference."})
 
         if filename1_match['parish_number'] != filename2_match['parish_number']:
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers."})
