@@ -1,6 +1,7 @@
 import re
 
-from containers import make_warnings_mapping, make_forms_mapping
+from farm_class_setup import make_warnings_mapping, make_forms_mapping
+
 
 def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     """
