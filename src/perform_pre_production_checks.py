@@ -70,7 +70,12 @@ def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_
     * image numbers must be consecutive
 
     Args:
-        csv_values (dict): _description_
+        csv_values (dict): dictionary with the following keys
+            row_num (int): row number from original csv, used for reporting errors/warning
+            form (str): form number from spreadsheet row
+            parish (str): parish number and name e.g. "1 Alkington"
+            filename1 (str): front page of form
+            filename2 (str, optional): back page of form Defaults to None, not used if form is Cover 
         filename1_match (re.Match): 
         filename2_match (re.Match): 
         warnings (dict): warning messages for any issues found
