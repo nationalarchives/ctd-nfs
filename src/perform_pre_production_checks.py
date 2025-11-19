@@ -83,14 +83,3 @@ def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_
     return warnings
 
 
-    # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
-    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
-
-    # elif rgxmatch := RGX_FILENAMEPATTERN_COVER.match(filename):
-    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], 0, f"Row {row_num}: {filename} matches expected cover pattern. Error is this is not a cover.")
-    
-    # elif rgxmatch := RGX_FILENAMEPATTERN.match(filename):
-    #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], f"Row {row_num}: {filename} does not match expected pattern. Provisional values have been extracted to use in the reference but their accuracy cannot be guaranteed.")                       
-    
-    # else:   
-    #     raise ValueError(f"Row {row_num}: {filename} does not match expected pattern. Further checks on filenames could not be carried out and an accurate reference could not be generated.")
