@@ -41,7 +41,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
     if filename1_match and filename2_match:
-        check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings)
+        warnings = check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings)
 
     if not filename2 and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."})
