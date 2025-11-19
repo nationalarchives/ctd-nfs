@@ -25,12 +25,12 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
         str or dict: "Pass" or dictionary with warning messages for any issues found
     """
 
-    RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
-    RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
+    RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
+    RGX_FILENAMEPATTERN_COVER: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
    
-    filename1_match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename1'])
-    filename2_match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename2'])
-    warnings = make_warnings_mapping()
+    filename1_match: re.Match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename1'])
+    filename2_match: re.Match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename2'])
+    warnings: dict = make_warnings_mapping()
 
     if not filename1_match:
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} does not match expected pattern for form images. " \
