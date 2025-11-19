@@ -16,7 +16,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     Args:
         row_num (int): row number from original csv, used for reporting errors/warning
         form (str): form number from spreadsheet row
-        parish (str): parish number from spreadsheet row
+        parish (str): parish number and name e.g. "1 Alkington"
         filename1 (str): first filename to check
         filename2 (str, optional): second filename to check. Defaults to None.
 
