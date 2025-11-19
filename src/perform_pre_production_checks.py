@@ -30,21 +30,21 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
 
-    if not (rgxmatch1 := RGX_FILENAMEPATTERN_FORM.match(filename1)):
+    if not (filename1_match := RGX_FILENAMEPATTERN_FORM.match(filename1)):
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images."})
 
-    if filename2 and not (rgxmatch2 := RGX_FILENAMEPATTERN_FORM.match(filename2)):
+    if filename2 and not (filename2_match := RGX_FILENAMEPATTERN_FORM.match(filename2)):
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images."})
     
-    if rgxmatch1 and rgxmatch2:
-        if rgxmatch1['box_number'] != rgxmatch2['box_number']:
+    if filename1_match and filename2_match:
+        if filename1_match['box_number'] != filename2_match['box_number']:
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers."})
 
-        if rgxmatch1['parish_number'] != rgxmatch2['parish_number']:
+        if filename1_match['parish_number'] != filename2_match['parish_number']:
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers."})
 
-        image1 = int(rgxmatch1['image_number'])
-        image2 = int(rgxmatch2['image_number'])
+        image1 = int(filename1_match['image_number'])
+        image2 = int(filename2_match['image_number'])
         if image2 != image1 + 1:
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} are not consecutive images."})
 
