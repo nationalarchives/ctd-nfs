@@ -24,13 +24,12 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
         str or dict: "Pass" or dictionary with warning messages for any issues found
     """
 
-    warnings = make_warnings_mapping()
-
+    parish_number = parish.split()[0]
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>0*\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
-    parish_number = parish.split()[0]
 
+    warnings = make_warnings_mapping()
     if not (filename1_match := RGX_FILENAMEPATTERN_FORM.match(filename1)):
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. Further checks on filenames could not be carried out and an accurate reference could not be generated."})
 
@@ -46,9 +45,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
 
         elif filename1_match['parish_number'] != parish_number:
             warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. Number from full parish name: '{parish}' will be used in catalogue reference."})
-
-        
-
+       
         image1 = int(filename1_match['image_number'])
         image2 = int(filename2_match['image_number'])
         if image2 != image1 + 1:
