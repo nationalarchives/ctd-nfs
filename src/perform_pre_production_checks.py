@@ -2,7 +2,7 @@ import re
 
 from containers import make_warnings_mapping
 
-def perform_pre_production_checks(row_num: int, form: str, parish: str, filename1: str, filename2: str = None) -> str | dict:
+def perform_pre_production_checks(csv_values: dict) -> str | dict:
     """
     Verify that values which identify the farm (forms, parish, box number, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
@@ -24,60 +24,61 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
         str or dict: "Pass" or dictionary with warning messages for any issues found
     """
 
-    parish_number = parish.split()[0]
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
    
-    filename1_match = RGX_FILENAMEPATTERN_FORM.match(filename1)
-    filename2_match = RGX_FILENAMEPATTERN_FORM.match(filename2)
+    filename1_match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename1'])
+    filename2_match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename2'])
     warnings = make_warnings_mapping()
 
     if not filename1_match:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. " \
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
 
-    if filename2 and not filename2_match:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename2} does not match expected pattern for form images. " \
+    if csv_values['filename2'] and not filename2_match:
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
     if filename1_match and filename2_match:
-        warnings = check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings)
+        warnings = check_filename_parts(csv_values, filename1_match, filename2_match, warnings)
 
-    if not filename2 and form != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."})
+    if not csv_values['filename2'] and csv_values['form'] != 'Cover':
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"Form type is '{csv_values['form']}' but only one form image was provided: {csv_values['filename1']}."})
 
-    if filename1_match.get('image_number', "") == "0001" and not filename2 and form != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} is image number 0001 which is usually a cover image. " \
-                                              f"Form type is '{form}' but only one form image was provided."})
+    if filename1_match.get('image_number', "") == "0001" and not csv_values['filename2'] and csv_values['form'] != 'Cover':
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} is image number 0001 which is usually a cover image. " \
+                                              f"Form type is '{csv_values['form']}' but only one form image was provided."})
     
-    if RGX_FILENAMEPATTERN_COVER.match(filename1) and form != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches cover pattern but form is {form}."})
+    if RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']) and csv_values['form'] != 'Cover':
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches cover pattern but form is {csv_values['form']}."})
 
-    if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(filename1):
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches expected form or cover patterns. " \
+    if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']):
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form or cover patterns. " \
                                               f"No further checks on this row performed."})
 
 
-def check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings) -> dict:
-    if filename1_match['box_number'] != filename2_match['box_number']:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. " \
-                                                  f"Box number of {filename1} will be used in reference."})
+def check_filename_parts(csv_values: dict, filename1_match, filename2_match, warnings) -> dict:
 
+    if filename1_match['box_number'] != filename2_match['box_number']:
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} have different box numbers. " \
+                                                  f"Box number of {csv_values['filename1']} will be used in reference."})
+
+    parish_number = csv_values['parish'].split()[0]
     if filename1_match['parish_number'] != filename2_match['parish_number']:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. " \
-                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} have different parish numbers. " \
+                                                  f"Number from full parish name: '{csv_values['parish']}' will be used in catalogue reference."})
 
     elif filename1_match['parish_number'] != parish_number:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. " \
-                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} do not match value from parish name: '{parish_number}'. " \
+                                                  f"Number from full parish name: '{csv_values['parish']}' will be used in catalogue reference."})
        
     image1 = int(filename1_match['image_number'])
     image2 = int(filename2_match['image_number'])
     if image2 != image1 + 1:
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} are not consecutive images."})
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} and {csv_values['filename2']} are not consecutive images."})
 
-    if form == 'Cover':
-        warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is 'Cover' but two form images were provided: {filename1} and {filename2}."})
+    if csv_values['form'] == 'Cover':
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"Form type is 'Cover' but two form images were provided: {csv_values['filename1']} and {csv_values['filename2']}."})
 
     return warnings
 
