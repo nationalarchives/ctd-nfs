@@ -41,25 +41,7 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
     if filename1_match and filename2_match:
-        if filename1_match['box_number'] != filename2_match['box_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. " \
-                                                  f"Box number of {filename1} will be used in reference."})
-
-        if filename1_match['parish_number'] != filename2_match['parish_number']:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. " \
-                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
-
-        elif filename1_match['parish_number'] != parish_number:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. " \
-                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
-       
-        image1 = int(filename1_match['image_number'])
-        image2 = int(filename2_match['image_number'])
-        if image2 != image1 + 1:
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} are not consecutive images."})
-
-        if form == 'Cover':
-            warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is 'Cover' but two form images were provided: {filename1} and {filename2}."})
+        check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings)
 
     if not filename2 and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is '{form}' but only one form image was provided: {filename1}."})
@@ -74,6 +56,31 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(filename1):
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches expected form or cover patterns. " \
                                               f"No further checks on this row performed."})
+
+
+def check_filenames(row_num, form, parish, filename1, filename2, parish_number, filename1_match, filename2_match, warnings) -> dict:
+    if filename1_match['box_number'] != filename2_match['box_number']:
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different box numbers. " \
+                                                  f"Box number of {filename1} will be used in reference."})
+
+    if filename1_match['parish_number'] != filename2_match['parish_number']:
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} have different parish numbers. " \
+                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
+
+    elif filename1_match['parish_number'] != parish_number:
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} do not match value from parish name: '{parish_number}'. " \
+                                                  f"Number from full parish name: '{parish}' will be used in catalogue reference."})
+       
+    image1 = int(filename1_match['image_number'])
+    image2 = int(filename2_match['image_number'])
+    if image2 != image1 + 1:
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} and {filename2} are not consecutive images."})
+
+    if form == 'Cover':
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"Form type is 'Cover' but two form images were provided: {filename1} and {filename2}."})
+
+    return warnings
+
 
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
