@@ -71,8 +71,7 @@ class Farm:
         """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
         return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
-    def __init__(self, raw_farm_data: dict):
-        stripped_data = {key: value.strip() for key, value in raw_farm_data.items()}
+    def __init__(self, stripped_data: dict):
         """catalogue_reference & forms will have special methods to assign values later"""
         # self.catalogue_reference = make_catalogue_reference(stripped_data),
         # self.forms = assign_filenames_to_forms(stripped_data),
