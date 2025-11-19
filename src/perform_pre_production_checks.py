@@ -27,12 +27,10 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     parish_number = parish.split()[0]
     RGX_FILENAMEPATTERN_FORM = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
-    RGX_FILENAMEPATTERN_OTHER = re.compile(r"""^MAF_*.*?\.tif$""")
-
-    
-    warnings = make_warnings_mapping()
+   
     filename1_match = RGX_FILENAMEPATTERN_FORM.match(filename1)
     filename2_match = RGX_FILENAMEPATTERN_FORM.match(filename2)
+    warnings = make_warnings_mapping()
 
     if not filename1_match:
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} does not match expected pattern for form images. " \
@@ -73,8 +71,9 @@ def perform_pre_production_checks(row_num: int, form: str, parish: str, filename
     if RGX_FILENAMEPATTERN_COVER.match(filename1) and form != 'Cover':
         warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches cover pattern but form is {form}."})
 
-    if RGX_FILENAMEPATTERN_OTHER.match(filename2) and form != 'Cover':
-        pass
+    if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(filename1):
+        warnings['Filename Warnings'].append({f"Row {row_num}": f"{filename1} matches expected form or cover patterns. " \
+                                              f"No further checks on this row performed."})
 
     # if rgxmatch := RGX_FILENAMEPATTERN_FORM.match(filename):
     #     return (rgxmatch['box_number'], rgxmatch['parish_number'], rgxmatch['image_number'], "")
