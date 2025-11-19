@@ -1,6 +1,6 @@
 import re
 
-from containers import make_warnings_mapping
+from containers import make_warnings_mapping, make_forms_mapping
 
 def perform_pre_production_checks(csv_values: dict) -> str | dict:
     """
@@ -53,12 +53,16 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
     if RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']) and csv_values['form'] != 'Cover':
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches cover pattern but form is {csv_values['form']}."})
 
-    if not filename1_match and RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']):
-        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form or cover patterns. " \
+    if RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']):
+        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form for cover patterns. " \
                                               f"No further checks on this row performed."})
-        
-    if warnings['Filename Warnings']:
+
+    if csv_values['form'] not in make_forms_mapping():
+        warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": f"Form type '{csv_values['form']}' is not a recognised form."})
+
+    if warnings['Filename Warnings'] or warnings['Type Warnings']:
         return warnings
+    
     return "Pass"
 
 
