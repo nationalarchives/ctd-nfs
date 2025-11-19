@@ -14,11 +14,12 @@ def perform_pre_production_checks(csv_values: dict) -> str | dict:
     * confirm form type is valid for filename(s) provided
     
     Args:
-        row_num (int): row number from original csv, used for reporting errors/warning
-        form (str): form number from spreadsheet row
-        parish (str): parish number and name e.g. "1 Alkington"
-        filename1 (str): front page of form
-        filename2 (str, optional): back page of form Defaults to None, not used if form is Cover 
+        csv_values (dict): dictionary with the following keys
+            row_num (int): row number from original csv, used for reporting errors/warning
+            form (str): form number from spreadsheet row
+            parish (str): parish number and name e.g. "1 Alkington"
+            filename1 (str): front page of form
+            filename2 (str, optional): back page of form Defaults to None, not used if form is Cover 
 
     Returns:
         str or dict: "Pass" or dictionary with warning messages for any issues found
@@ -66,9 +67,9 @@ def check_filename_parts(csv_values: dict, filename1_match: re.Match, filename2_
 
     Args:
         csv_values (dict): _description_
-        filename1_match (_type_): _description_
-        filename2_match (_type_): _description_
-        warnings (dict: warning messages for any issues found
+        filename1_match (re.Match): 
+        filename2_match (re.Match): 
+        warnings (dict): warning messages for any issues found
 
     Returns:
         warnings (dict):
