@@ -104,7 +104,8 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
 
     if csv_values['form'] == 'Cover':
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"Form type is 'Cover' but two form images were provided: {csv_values['filename1']} and {csv_values['filename2']}."})
-
+        warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": "[see Filename Warnings]"})
+    
     return warnings
 
 
@@ -138,11 +139,15 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
         if image_number_is_cover:
             warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} is image number 0001 which is usually a cover image. " \
                                             f"'{csv_values['form']}' in data but only one form image was provided."})    
+            warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": "[see Filename Warnings]"})
+    
         elif pattern_matches['cover']:
             warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches cover pattern but form is {csv_values['form']}."})
+            warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": "[see Filename Warnings]"})
 
     if pattern_matches['cover'] and csv_values['filename2']:
         warnings['Filename Wiarnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form for cover patterns. " \
                                                f"but two images provided: {csv_values['filename1']} & {csv_values['filename2']}"})
+        warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": "[see Filename Warnings]"})
     
     return warnings
