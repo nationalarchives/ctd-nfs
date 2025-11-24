@@ -47,19 +47,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     if pattern_matches['filename1'] and pattern_matches['filename2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
 
-    if not csv_values['filename2'] and csv_values['form'] != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"Form type is '{csv_values['form']}' but only one form image was provided: {csv_values['filename1']}."})
-
-    if pattern_matches['filename1'].get('image_number', "") == "0001" and not csv_values['filename2'] and csv_values['form'] != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} is image number 0001 which is usually a cover image. " \
-                                              f"Form type is '{csv_values['form']}' but only one form image was provided."})
-    
-    if RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']) and csv_values['form'] != 'Cover':
-        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches cover pattern but form is {csv_values['form']}."})
-
-    if RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']):
-        warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form for cover patterns. " \
-                                              f"No further checks on this row performed."})
+    warnings = check_cover_image_consistency(csv_values, warnings)
 
     if csv_values['form'] not in make_forms_mapping():
         warnings['Type Warnings'].append({f"Row {csv_values['row_num']}": f"Form type '{csv_values['form']}' is not a recognised form."})
@@ -120,3 +108,41 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
     return warnings
 
 
+def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
+    """
+    Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern 
+    i.e. no image number suffix in filename or image number is 0001
+
+    Args:
+        csv_values (dict): dictionary with the following keys
+            row_num (int): row number from original csv, used for reporting errors/warning
+            form (str): form number from spreadsheet row
+            parish (str): parish number and name e.g. "1 Alkington"
+            filename1 (str): front page of form
+            filename2 (str, optional): back page of form Defaults to None, not used if form is Cover 
+
+        pattern_matches
+            'filename1' (re.Match): match for filename1 against form pattern
+            'filename2' (re.Match): match for filename2 against form pattern
+            'cover' (re.Match): match for filename1 against cover pattern
+
+        warnings (dict): warning messages for any issues found
+
+    Returns:
+        warnings (dict):
+    """
+    image_number_is_cover = pattern_matches['filename1'].get('image_number', "") == "0001"
+    cover_is_form = csv_values['form'] == 'Cover'
+    
+    if not cover_is_form:
+        if image_number_is_cover:
+            warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} is image number 0001 which is usually a cover image. " \
+                                            f"'{csv_values['form']}' in data but only one form image was provided."})    
+        elif pattern_matches['cover']:
+            warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches cover pattern but form is {csv_values['form']}."})
+
+    if pattern_matches['cover'] and csv_values['filename2']:
+        warnings['Filename Wiarnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} matches expected form for cover patterns. " \
+                                               f"but two images provided: {csv_values['filename1']} & {csv_values['filename2']}"})
+    
+    return warnings
