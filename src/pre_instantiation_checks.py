@@ -28,9 +28,12 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
 
     RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     RGX_FILENAMEPATTERN_COVER: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
-   
-    filename1_match: re.Match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename1'])
-    filename2_match: re.Match = RGX_FILENAMEPATTERN_FORM.match(csv_values['filename2'])
+
+    pattern_matches: dict[re.Match] = {
+        'filename1': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename1']),
+        'filename2': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename2']),
+        'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename1']),
+    }
     warnings: dict = make_warnings_mapping()
 
     if not filename1_match:
