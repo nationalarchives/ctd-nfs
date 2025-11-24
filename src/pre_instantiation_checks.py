@@ -44,13 +44,13 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated."})
     
-    if filename1_match and filename2_match:
-        warnings = check_filename_parts(csv_values, filename1_match, filename2_match, warnings)
+    if pattern_matches['filename1'] and pattern_matches['filename2']:
+        warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
 
     if not csv_values['filename2'] and csv_values['form'] != 'Cover':
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"Form type is '{csv_values['form']}' but only one form image was provided: {csv_values['filename1']}."})
 
-    if filename1_match.get('image_number', "") == "0001" and not csv_values['filename2'] and csv_values['form'] != 'Cover':
+    if pattern_matches['filename1'].get('image_number', "") == "0001" and not csv_values['filename2'] and csv_values['form'] != 'Cover':
         warnings['Filename Warnings'].append({f"Row {csv_values['row_num']}": f"{csv_values['filename1']} is image number 0001 which is usually a cover image. " \
                                               f"Form type is '{csv_values['form']}' but only one form image was provided."})
     
