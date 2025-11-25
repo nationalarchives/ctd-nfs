@@ -112,6 +112,122 @@ def farms():
 
 
 @pytest.fixture()
+def bad_farm_initial_values():
+	return	[
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-194-1_59.tif",
+				"filename_2": "",
+				"document_type": "Cover",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
+			},
+			'warning': "Row 203: Form type is 'Cover' but MAF32-194-1_59.tif does not match expected cover pattern."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-194-1_59.tif",
+				"filename_2": "MAF32-195-1_60.tif",
+				"document_type": "C51/SSY",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
+			},
+			'warning': "Row 203: MAF32-194-1_59.tif and MAF32-195-1_60.tif have different box numbers. Box number of MAF32-194-1_59.tif will be used in the catalogue reference."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-5-98_28.tif",
+				"filename_2": "MAF32-5-96_29.tif",
+				"document_type": "B496/EI",
+				"county": "HF Herefordshire",
+				"parish": "98 Clehonger",
+			},
+			'warning': "Row 203: MAF32-5-98_28.tif and MAF32-5-96_29.tif have different parish numbers. Parish number from full parish name '98 Clehonger' will be used in the catalogue reference."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-5-96_28.tif",
+				"filename_2": "MAF32-5-96_29.tif",
+				"document_type": "B496/EI",
+				"county": "HF Herefordshire",
+				"parish": "98 Clehonger",
+			},
+			'warning': "Row 203: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a diffeent parish number from parish name '98 Clehonger'. Parish number from full parish name will be used in the catalogue reference."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-167-28_386.tif",
+				"filename_2": "MAF32-167-28_388.tif",
+				"document_type": "C 47/SSY",
+				"county": "CU Cumberland",
+				"parish": "28 Aikton",
+			},
+			'warning': "Row 203: MAF32-167-28_386.tif and MAF32-167-28_388.tif are either not consecutive images or in the wrong order."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-167-28_386.tif",
+				"filename_2": "MAF32-167-28_385.tif",
+				"document_type": "C 47/SSY",
+				"county": "CU Cumberland",
+				"parish": "28 Aikton",
+			},
+			'warning': "Row 203: MAF32-167-28_386.tif and MAF32-167-28_385.tif are either not consecutive images or in the wrong order."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-51-285_0001.tif",
+				"filename_2": "",
+				"document_type": "SF",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'warning': "Row 203: MAF32-51-285_0001.tif is image number 0001 which is expected to be a cover image, but form type is 'SF'."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-51-285_0001.tif",
+				"filename_2": "MAF32-51-285_0002.tif",
+				"document_type": "Cover",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'warning': "Row 203: Form type is 'Cover', and MAF32-51-285_0001.tif matches expected pattern for cover image but additional image MAF32-51-285_0002.tif was also provided."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-51-285.tif",
+				"filename_2": "",
+				"document_type": "SF",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'warning': "Row 203: MAF32-51-285.tif matches cover pattern but form type is 'SF'."
+		},
+		{
+			'data':{
+				'row_num': '203',
+				"filename_1": "MAF32-51-285.tif",
+				"filename_2": "",
+				"document_type": "SF47/SSY",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'warning': "Row 203: Form type 'SF47/SSY' is not a recognised form."
+		},		
+	]
+
+
+@pytest.fixture()
 def names1():
 	return({
         "1": ["H Arkell", "H Arkell", "H Arkell", "H Arkell"], 
