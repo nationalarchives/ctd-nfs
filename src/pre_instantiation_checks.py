@@ -153,4 +153,5 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
     if images_are_for_document_which_is_not_cover and document_type_is_cover:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: Form type is 'Cover' but two form images were provided: {csv_values['filename_1']} and {csv_values['filename_2']}.")
         warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
+    
     return warnings
