@@ -213,19 +213,24 @@ def bad_farm_initial_values():
 			},
 			'warning': "Row 9999: MAF32-51-285.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
 		},
-		{
+	]
+
+
+@pytest.fixture()
+def bad_form():
+	return	[
+				{
 			'data':{
-				'row_num': '203',
+				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
 				"filename_2": "",
 				"document_type": "SF47/SSY",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'warning': "Row 203: Form type 'SF47/SSY' is not a recognised form."
+			'warning': "Row 10101: Form type 'SF47/SSY' is not a recognised form."
 		},		
 	]
-
 
 @pytest.fixture()
 def names1():
