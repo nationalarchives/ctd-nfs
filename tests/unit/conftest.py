@@ -189,7 +189,7 @@ def bad_farm_initial_values():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'warning': "Row 203: MAF32-51-285_0001.tif is image number 0001 which is expected to be a cover image, but form type is 'SF'."
+			'warning': "Row 7777: MAF32-51-285_0001.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
 		},
 		{
 			'data':{
@@ -211,7 +211,7 @@ def bad_farm_initial_values():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'warning': "Row 203: MAF32-51-285.tif matches cover pattern but form type is 'SF'."
+			'warning': "Row 9999: MAF32-51-285.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
 		},
 		{
 			'data':{
