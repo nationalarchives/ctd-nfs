@@ -51,9 +51,6 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
-    if csv_values['document_type'] not in make_forms_mapping():
-        warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: Form type '{csv_values['document_type']}' is not a recognised form.")
-
     if warnings['Filename Warnings'] or warnings['Type Warnings']:
         return warnings
     
