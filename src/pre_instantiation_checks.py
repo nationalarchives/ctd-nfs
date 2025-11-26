@@ -43,6 +43,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     if csv_values['filename_2'] and not pattern_matches['filename_2']:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
+        return warnings
     
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
