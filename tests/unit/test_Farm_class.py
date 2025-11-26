@@ -12,6 +12,12 @@ def test_filename_pre_instantiation_checks_pass(bad_farm_initial_values):
 	for test in bad_farm_initial_values:
 		result = perform_pre_instantiation_checks(test['data'])
 		assert test['warning'] == result['Filename Warnings'][0]
+
+
+def test_form_pre_instantiation_checks_pass(bad_form):
+	for test in bad_form:
+		result = perform_pre_instantiation_checks(test['data'])
+		assert test['warning'] == result['Type Warnings'][0]
             
 
 # def pre_instantiation_checks_passed(farms):
