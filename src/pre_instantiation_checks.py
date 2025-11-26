@@ -48,7 +48,8 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
 
-    warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings)
+    if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
+        warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
     if csv_values['document_type'] not in make_forms_mapping():
         warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: Form type '{csv_values['document_type']}' is not a recognised form.")
@@ -112,7 +113,8 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
 
 def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
     """
-    Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern 
+    Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern
+    * if document type is 'Cover', only one image should be provided, and it should match either the cover pattern aor the form pattern with image number 0001
     i.e. no image number suffix in filename or image number is 0001
 
     Args:
@@ -133,26 +135,25 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
     Returns:
         warnings (dict):
     """
-    image_number_is_cover = pattern_matches['filename_1']['image_number'] == "0001"
-    cover_is_form = csv_values['document_type'] == 'Cover'
+    is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
+    is_cover_document = csv_values['document_type'] == 'Cover'
+    are_images_for_document_which_is_not_cover = pattern_matches['filename_1']['image_number'] != "0001" and pattern_matches['filename_2']
     
-    if not cover_is_form:
-        if image_number_is_cover:
-            warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_1']} is image number 0001 which is expected to be a cover image,+ " \
-                                                   f"but form type is '{csv_values['document_type']}'.")
-            warnings['Type Warnings'].append(f"'{csv_values['document_type']}' in data but only one form image was provided.")
-    
-        elif pattern_matches['cover']:
-            warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_1']} matches cover pattern but form type is '{csv_values['document_type']}'.")
-            warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
-    else:
-        if not pattern_matches['cover']:
-            warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern.")
-            warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
-    
-    if pattern_matches['cover'] and csv_values['filename_2']:
-        warnings['Filename Wiarnings'].append(f"Row {csv_values['row_num']}: Form type is '{csv_values['document_type']}', and {csv_values['filename_1']} matches expected pattern for cover image " \
-                                               f"but additional image {csv_values['filename_2']} was also provided.")
+    if is_cover_document and not is_cover_image:
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern or have image number 0001.")
+        warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
+
+    if not is_cover_document and is_cover_image:
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_1']} matches expected cover pattern or has image number 0001 but form type is '{csv_values['document_type']}'.")
+        warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
+
+    if is_cover_document and is_cover_image and csv_values['filename_2']:
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: Form type is 'Cover', and {csv_values['filename_1']} matches expected pattern for cover image " \
+                                             f"but additional image {csv_values['filename_2']} was also provided.")
+        warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: document is listed as 'Cover' in data but two form images provided.")
+
+    if are_images_for_document_which_is_not_cover and is_cover_document:
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern.")
         warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: [see Filename Warnings]")
     
     return warnings
