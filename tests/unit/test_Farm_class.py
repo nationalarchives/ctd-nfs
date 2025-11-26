@@ -20,17 +20,3 @@ def test_form_pre_instantiation_checks_pass(bad_form):
 		assert test['warning'] == result['Type Warnings'][0]
             
 
-# def pre_instantiation_checks_passed(farms):
-	# results = []
-	# for farm in farms:
-	# 	csv_values = {
-	# 		'row_num': farms.index(farm) + 1,
-	# 		'form': farm['document_type'],
-	# 		'parish': farm['parish'],
-	# 		'filename1': farm['filename_1'],
-	# 		'filename2': farm['filename_2']
-	# 	}
-	# 	result = perform_pre_instantiation_checks(csv_values)
-	# 	results.append(result)
-	# return results
-
