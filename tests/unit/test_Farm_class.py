@@ -8,8 +8,7 @@ def test_farm_dataclass_instantiation(farms):
         assert isinstance(new_farm, Farm)
 
 
-def test_pre_instantiation_checks_pass(bad_farm_initial_values):
-	# item = pre_instantiation_checks_passed(bad_farm_initial_values)
+def test_filename_pre_instantiation_checks_pass(bad_farm_initial_values):
 	for test in bad_farm_initial_values:
 		result = perform_pre_instantiation_checks(test['data'])
 		assert test['warning'] == result['Filename Warnings'][0]
