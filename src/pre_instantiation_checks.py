@@ -3,7 +3,7 @@ import re
 from src.farm_class_setup import make_warnings_mapping, make_forms_mapping
 
 
-def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
+def perform_pre_instantiation_checks(csv_values: dict) -> dict:
     """
     Verify that values which identify the farm (forms, parish, box number, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
@@ -23,7 +23,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
             filename_2 (str, optional): back page of form Defaults to None, not used if form is Cover 
 
     Returns:
-        str or dict: "Pass" or dictionary with warning messages for any issues found
+        dict: either the box & parish number (for later use to generate the catalogue & farm references), or warning messages for any issues found
     """
 
     RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
@@ -34,21 +34,23 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
         'filename_2': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename_2']),
         'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename_1']),
     }
+    
+    reference_values: dict | str = None
     warnings: dict = make_warnings_mapping()
 
     if csv_values['document_type'] not in make_forms_mapping():
         warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: Form type '{csv_values['document_type']}' is not a recognised form.")
-        return warnings
+        return {reference_values, warnings}
 
     if not (pattern_matches['filename_1'] or pattern_matches['cover']):
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_1']} does not match expected pattern for form images or cover. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return warnings
+        return {reference_values, warnings}
 
     if csv_values['filename_2'] and not pattern_matches['filename_2']:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return warnings
+        return {reference_values, warnings}
     
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
@@ -56,10 +58,11 @@ def perform_pre_instantiation_checks(csv_values: dict) -> str | dict:
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
-    if warnings['Filename Warnings'] or warnings['Type Warnings']:
-        return warnings
-    
-    return "Pass"
+    reference_values['box_number'] = pattern_matches['filename_1']['box_number'] if pattern_matches['filename_1'] else pattern_matches['cover']['box_number']
+    reference_values['parish_number'] = pattern_matches['filename_1']['parish_number'] if pattern_matches['filename_1'] else pattern_matches['cover']['parish_number']
+
+    return {reference_values, warnings}
+
 
 
 def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
