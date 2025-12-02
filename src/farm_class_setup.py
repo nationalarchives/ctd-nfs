@@ -83,35 +83,35 @@ class Farm:
     forms: dict[list] = field(default_factory=make_forms_mapping)
     warnings: dict[list] = field(default_factory=make_warnings_mapping)
 
-    def __init__(self, stripped_data: dict):
+    def __init__(self, cleaned_csv_data: dict):
         """catalogue_reference & forms will have special methods to assign values later"""
         # self.catalogue_reference = make_catalogue_reference(stripped_data),
         # self.forms = assign_filenames_to_forms(stripped_data),
-        self.county = stripped_data['county'],
-        self.parish = stripped_data['parish'],
-        self.primary_farm_number = stripped_data['primary_farm_number'],
-        self.additional_farms = self.clean_value(stripped_data['additional_farms']),
-        self.farm_name = self.clean_value(stripped_data['farm_name']),
+        self.county = cleaned_csv_data['county'],
+        self.parish = cleaned_csv_data['parish'],
+        self.primary_farm_number = cleaned_csv_data['primary_farm_number'],
+        self.additional_farms = self.clean_value(cleaned_csv_data['additional_farms']),
+        self.farm_name = self.clean_value(cleaned_csv_data['farm_name']),
         self.addressee = Details(
-            title=stripped_data['addressee_title'],
-            individual_name=stripped_data['addressee_individual_name'],
-            group_names=self.clean_value(stripped_data['addressee_group_names']),
-            address=stripped_data['address']
+            title=cleaned_csv_data['addressee_title'],
+            individual_name=cleaned_csv_data['addressee_individual_name'],
+            group_names=self.clean_value(cleaned_csv_data['addressee_group_names']),
+            address=cleaned_csv_data['address']
         ),
         self.owner = Details(
-            title=stripped_data['owner_title'],
-            individual_name=stripped_data['owner_individual_name'],
-            group_names=self.clean_value(stripped_data['owner_group_names']),
-            address=stripped_data['owner_address']
+            title=cleaned_csv_data['owner_title'],
+            individual_name=cleaned_csv_data['owner_individual_name'],
+            group_names=self.clean_value(cleaned_csv_data['owner_group_names']),
+            address=cleaned_csv_data['owner_address']
         ),
         self.farmer = Details(
-            title=stripped_data['farmer_title'],
-            individual_name=stripped_data['farmer_individual_name'],
-            group_names=self.clean_value(stripped_data['farmer_group_names']),
-            address=stripped_data['farmer_address']
+            title=cleaned_csv_data['farmer_title'],
+            individual_name=cleaned_csv_data['farmer_individual_name'],
+            group_names=self.clean_value(cleaned_csv_data['farmer_group_names']),
+            address=cleaned_csv_data['farmer_address']
         ),
-        self.acreage = stripped_data['acreage'],
-        self.OS_map_sheet = stripped_data['OS_map_sheet'],
-        self.field_info_date = stripped_data['field_info_date'],
-        self.primary_record_date = stripped_data['primary_record_date'],
+        self.acreage = cleaned_csv_data['acreage'],
+        self.OS_map_sheet = cleaned_csv_data['OS_map_sheet'],
+        self.field_info_date = cleaned_csv_data['field_info_date'],
+        self.primary_record_date = cleaned_csv_data['primary_record_date'],
 
