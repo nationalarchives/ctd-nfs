@@ -43,11 +43,20 @@ class Details:
     address: list[str] | str
 
 
-d
-
 def split_items(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
+
+
+def clean_value(raw_csv_data: dict) -> dict:
+    """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
+    cleaned_data = {}
+    for key, value in raw_csv_data.items():
+        if ";" in value:
+            cleaned_data[key] = split_items(value)
+        else:
+            cleaned_data[key] = value.strip()
+    return cleaned_data
 
 
 @dataclass
