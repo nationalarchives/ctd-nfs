@@ -35,7 +35,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
         'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename_1']),
     }
     
-    reference_values: dict | str = None
+    reference_values = {}
     warnings: dict = make_warnings_mapping()
 
     if csv_values['document_type'] not in make_forms_mapping():
