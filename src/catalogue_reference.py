@@ -68,7 +68,6 @@ def make_catalogue_reference(reference_data: dict[str]) -> str:
         reference = reference_data['document_type']
         # ref_list[ref] = csv_data['document_type']
 
-
     # else if document_type is 'Cover' and primary farm number is given:
     #   add warning - "Error - Type is cover and farm number is specified"
     #   add document type to catalogue reference
@@ -77,8 +76,7 @@ def make_catalogue_reference(reference_data: dict[str]) -> str:
         warnings.add(f"Row {reference_data['row_num']}: Error - Type is cover and farm number is specified")
         reference = reference_data['document_type']
         # ref_list[ref] = csv_data['document_type']
-
-               
+              
     catalogue_reference = \
         f"MAF 32/" \
         f"{reference_data['box_number']}/" \
