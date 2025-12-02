@@ -58,8 +58,12 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
-    reference_values['box_number'] = pattern_matches['filename_1']['box_number'] if pattern_matches['filename_1'] else pattern_matches['cover']['box_number']
-    reference_values['parish_number'] = pattern_matches['filename_1']['parish_number'] if pattern_matches['filename_1'] else pattern_matches['cover']['parish_number']
+    if pattern_matches['cover']:
+        reference_values['box_number'] = pattern_matches['cover']['box_number']
+        reference_values['parish_number'] = pattern_matches['cover']['parish_number']
+    else:
+        reference_values['box_number'] = pattern_matches['filename_1']['box_number']
+        reference_values['parish_number'] = pattern_matches['filename_1']['parish_number']
 
     return {reference_values, warnings}
 
