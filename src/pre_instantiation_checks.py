@@ -3,7 +3,7 @@ import re
 from src.farm_class_setup import make_warnings_mapping, make_forms_mapping
 
 
-def perform_pre_instantiation_checks(csv_values: dict) -> dict:
+def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
     """
     Verify that values which identify the farm (forms, parish, box number, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
@@ -40,17 +40,17 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
 
     if csv_values['document_type'] not in make_forms_mapping():
         warnings['Type Warnings'].append(f"Row {csv_values['row_num']}: Form type '{csv_values['document_type']}' is not a recognised form.")
-        return {reference_values, warnings}
+        return (reference_values, warnings)
 
     if not (pattern_matches['filename_1'] or pattern_matches['cover']):
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_1']} does not match expected pattern for form images or cover. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return {reference_values, warnings}
+        return (reference_values, warnings)
 
     if csv_values['filename_2'] and not pattern_matches['filename_2']:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_num']}: {csv_values['filename_2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return {reference_values, warnings}
+        return (reference_values, warnings)
     
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
@@ -65,7 +65,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
         reference_values['box_number'] = pattern_matches['filename_1']['box_number']
         reference_values['parish_number'] = pattern_matches['filename_1']['parish_number']
 
-    return {reference_values, warnings}
+    return (reference_values, warnings)
 
 
 
