@@ -32,17 +32,6 @@ def make_warnings_mapping() -> dict:
     }
 
 
-"""
-Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
-"""
-@dataclass
-class Details:
-    title: list[str] | str
-    individual_name: list[str] | str
-    group_names: list[str] | str
-    address: list[str] | str
-
-
 def split_items(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
@@ -57,6 +46,17 @@ def clean_value(raw_csv_data: dict) -> dict:
         else:
             cleaned_data[key] = value.strip()
     return cleaned_data
+
+
+"""
+Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
+"""
+@dataclass
+class Details:
+    title: list[str] | str
+    individual_name: list[str] | str
+    group_names: list[str] | str
+    address: list[str] | str
 
 
 @dataclass
