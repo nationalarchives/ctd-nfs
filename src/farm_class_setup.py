@@ -43,6 +43,11 @@ class Details:
     address: list[str] | str
 
 
+def clean_value(field_value: str) -> list[str]:
+    """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
+    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
+
+
 @dataclass
 class Farm:
     """
@@ -66,10 +71,6 @@ class Farm:
     catalogue_reference: str = "MAF 32/"
     forms: dict[list] = field(default_factory=make_forms_mapping)
     warnings: dict[list] = field(default_factory=make_warnings_mapping)
-
-    def clean_value(self, field_value: str) -> list[str]:
-        """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
-        return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
     def __init__(self, stripped_data: dict):
         """catalogue_reference & forms will have special methods to assign values later"""
