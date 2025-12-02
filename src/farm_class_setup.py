@@ -43,7 +43,9 @@ class Details:
     address: list[str] | str
 
 
-def clean_value(field_value: str) -> list[str]:
+d
+
+def split_items(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
