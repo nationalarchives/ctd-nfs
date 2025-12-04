@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import re
+import csv
 
 
 def make_forms_mapping() -> dict:
@@ -37,7 +38,7 @@ def split_items(field_value: str) -> list[str]:
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
-def clean_csv_data(raw_csv_data: dict) -> dict:
+def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
     """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
     cleaned_data = []
     for row in raw_csv_data:
