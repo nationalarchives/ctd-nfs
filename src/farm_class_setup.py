@@ -90,31 +90,31 @@ class Farm:
         """catalogue_reference & forms will have special methods to assign values later"""
         # self.catalogue_reference = make_catalogue_reference(stripped_data),
         # self.forms = assign_filenames_to_forms(stripped_data),
-        self.county = cleaned_csv_data['county'],
-        self.parish = cleaned_csv_data['parish'],
-        self.primary_farm_number = cleaned_csv_data['primary_farm_number'],
-        self.additional_farms = cleaned_csv_data['additional_farms'],
-        self.farm_name = cleaned_csv_data['farm_name'],
+        self.county = cleaned_csv_data['county']
+        self.parish = cleaned_csv_data['parish']
+        self.primary_farm_number = cleaned_csv_data['primary_farm_number']
+        self.additional_farms = cleaned_csv_data['additional_farms']
+        self.farm_name = cleaned_csv_data['farm_name']
         self.addressee = Details(
             title=cleaned_csv_data['addressee_title'],
             individual_name=cleaned_csv_data['addressee_individual_name'],
             group_names=cleaned_csv_data['addressee_group_names'],
-            address=cleaned_csv_data['address']
-        ),
+            address=cleaned_csv_data['address'],
+        )
         self.owner = Details(
             title=cleaned_csv_data['owner_title'],
             individual_name=cleaned_csv_data['owner_individual_name'],
             group_names=cleaned_csv_data['owner_group_names'],
-            address=cleaned_csv_data['owner_address']
-        ),
+            address=cleaned_csv_data['owner_address'],
+        )
         self.farmer = Details(
             title=cleaned_csv_data['farmer_title'],
             individual_name=cleaned_csv_data['farmer_individual_name'],
             group_names=cleaned_csv_data['farmer_group_names'],
-            address=cleaned_csv_data['farmer_address']
-        ),
-        self.acreage = cleaned_csv_data['acreage'],
-        self.OS_map_sheet = cleaned_csv_data['OS_map_sheet'],
-        self.field_info_date = cleaned_csv_data['field_info_date'],
-        self.primary_record_date = cleaned_csv_data['primary_record_date'],
+            address=cleaned_csv_data['farmer_address'],
+        )
+        self.acreage = cleaned_csv_data['acreage']
+        self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
+        self.field_info_date = cleaned_csv_data['field_info_date']
+        self.primary_record_date = cleaned_csv_data['primary_record_date']
 
