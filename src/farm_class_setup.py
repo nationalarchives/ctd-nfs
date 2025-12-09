@@ -90,7 +90,6 @@ class Farm:
 
     def __init__(self, cleaned_csv_data: dict):
         """catalogue_reference & forms will have special methods to assign values later"""
-        # self.catalogue_reference = make_catalogue_reference(stripped_data),
         # self.forms = assign_filenames_to_forms(stripped_data),
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
@@ -121,4 +120,56 @@ class Farm:
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
+
+    def make_catalogue_reference(self, row_number: int):
+        """
+        Creates a catalogue reference for each farm in the required format: f"MAF 32/<box number>/<parish number>/<farm number>"
+        box number and parish number will be parsed from filename
+        If reference can't be created due to missing data, a warning is added to the warnings set
+        •	The full catalogue reference as will be displayed in the catalogue
+        •	There can only be one catalogue reference per farm. In some instances, this may not be the case. See warnings and checks for more information.
+        Must begin “MAF 32”. See Overview of Catalogue structure for example. The piece/box number should be able to be extracted from the filename(s) in column A for most cases but not all.
+
+        Args:
+            row_number (int): row number in the csv file for warning messages
+        """        
+
+        primary_farm_number_missing: bool = self.primary_farm_number == "*"
+
+        if primary_farm_number_missing:
+            farm_value = self.document_type
+            self.is_a_primary_farm = False
+
+        elif self.primary_farm_number and not self.additional_farms:
+            farm_value = self.primary_farm_number
+
+        elif not self.primary_farm_number and self.additional_farms:
+            self.is_a_primary_farm = False
+            additional_farms = []
+            for additional_farm_number in self.additional_farms:
+                farm_value = additional_farm_number
+                additional_farms.append(additional_farm_number)
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Additional farm but no primary farm given"
+
+        elif self.primary_farm_number and self.additional_farms:
+            additional_farms = []
+            farm_value = self.primary_farm_number
+            for additional_farm_number in self.additional_farms:
+                farm_value = additional_farm_number
+                additional_farms.append(additional_farm_number)
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Warning - Additional farms present"
+
+        elif self.document_type not in ["Other", "Cover"]:
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {self.document_type.lower()} so no farm number specified"
+            farm_value = self.document_type
+
+        if self.document_type == "Cover" and self.primary_farm_number:
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Type is cover and farm number is specified"
+            farm_value = self.document_type
+
+        self.catalogue_reference = \
+            f"MAF 32/" \
+            f"{self.box_number}/" \
+            f"{self.parish_number}/" \
+            f"{farm_value}"
 
