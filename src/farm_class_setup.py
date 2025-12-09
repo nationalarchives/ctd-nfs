@@ -121,7 +121,7 @@ class Farm:
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
 
-    def make_catalogue_reference(self, row_number: int):
+    def make_catalogue_reference(self, row_number: int, document_type: str) -> None:
         """
         Creates a catalogue reference for each farm in the required format: f"MAF 32/<box number>/<parish number>/<farm number>"
         box number and parish number will be parsed from filename
@@ -137,7 +137,7 @@ class Farm:
         primary_farm_number_missing: bool = self.primary_farm_number == "*"
 
         if primary_farm_number_missing:
-            farm_value = self.document_type
+            farm_value = document_type
             self.is_a_primary_farm = False
 
         elif self.primary_farm_number and not self.additional_farms:
@@ -159,13 +159,13 @@ class Farm:
                 additional_farms.append(additional_farm_number)
             self.warnings['Reference Warnings'] = f"Row {row_number}: Warning - Additional farms present"
 
-        elif self.document_type not in ["Other", "Cover"]:
-            self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {self.document_type.lower()} so no farm number specified"
-            farm_value = self.document_type
+        elif document_type not in ["Other", "Cover"]:
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {document_type.lower()} so no farm number specified"
+            farm_value = document_type
 
-        if self.document_type == "Cover" and self.primary_farm_number:
+        if document_type == "Cover" and self.primary_farm_number:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Type is cover and farm number is specified"
-            farm_value = self.document_type
+            farm_value = document_type
 
         self.catalogue_reference = \
             f"MAF 32/" \
