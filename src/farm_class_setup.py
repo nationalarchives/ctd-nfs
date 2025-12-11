@@ -134,6 +134,8 @@ class Farm:
             row_number (int): row number in the csv file for warning messages
             reference_values (dict): box number, parish number & document_type parsed from filename
         """        
+        self.box_number = reference_values['box_number']
+        self.parish_number = reference_values['parish_number']
         primary_farm_number_missing: bool = self.primary_farm_number == "*"
 
         if primary_farm_number_missing:
