@@ -121,7 +121,7 @@ class Farm:
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
 
-    def make_catalogue_reference(self, row_number: int, document_type: str) -> None:
+    def make_catalogue_reference(self, row_number: int, reference_values: dict) -> None:
         """
         Creates a catalogue reference for each farm in the required format: f"MAF 32/<box number>/<parish number>/<farm number>"
         box number and parish number will be parsed from filename
@@ -132,12 +132,12 @@ class Farm:
 
         Args:
             row_number (int): row number in the csv file for warning messages
+            reference_values (dict): box number, parish number & document_type parsed from filename
         """        
-
         primary_farm_number_missing: bool = self.primary_farm_number == "*"
 
         if primary_farm_number_missing:
-            farm_value = document_type
+            farm_value = reference_values['document_type']
             self.is_a_primary_farm = False
 
         elif self.primary_farm_number and not self.additional_farms:
@@ -159,13 +159,13 @@ class Farm:
                 additional_farms.append(additional_farm_number)
             self.warnings['Reference Warnings'] = f"Row {row_number}: Warning - Additional farms present"
 
-        elif document_type not in ["Other", "Cover"]:
-            self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {document_type.lower()} so no farm number specified"
-            farm_value = document_type
+        elif reference_values['document_type'] not in ["Other", "Cover"]:
+            self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {reference_values['document_type'].lower()} so no farm number specified"
+            farm_value = reference_values['document_type']
 
-        if document_type == "Cover" and self.primary_farm_number:
+        if reference_values['document_type'] == "Cover" and self.primary_farm_number:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Type is cover and farm number is specified"
-            farm_value = document_type
+            farm_value = reference_values['document_type']
 
         self.catalogue_reference = \
             f"MAF 32/" \
