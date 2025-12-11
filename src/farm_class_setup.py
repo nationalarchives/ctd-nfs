@@ -137,13 +137,11 @@ class Farm:
 
         if primary_farm_number_missing:
             farm_value = reference_values['document_type']
-            self.is_a_primary_farm = False
 
         elif self.primary_farm_number and not self.additional_farms:
             farm_value = self.primary_farm_number
 
         elif not self.primary_farm_number and self.additional_farms:
-            self.is_a_primary_farm = False
             additional_farms = []
             for additional_farm_number in self.additional_farms:
                 farm_value = additional_farm_number
