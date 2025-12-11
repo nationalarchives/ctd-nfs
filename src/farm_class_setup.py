@@ -142,18 +142,9 @@ class Farm:
             farm_value = self.primary_farm_number
 
         elif not self.primary_farm_number and self.additional_farms:
-            additional_farms = []
-            for additional_farm_number in self.additional_farms:
-                farm_value = additional_farm_number
-                additional_farms.append(additional_farm_number)
             self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Additional farm but no primary farm given"
 
         elif self.primary_farm_number and self.additional_farms:
-            additional_farms = []
-            farm_value = self.primary_farm_number
-            for additional_farm_number in self.additional_farms:
-                farm_value = additional_farm_number
-                additional_farms.append(additional_farm_number)
             self.warnings['Reference Warnings'] = f"Row {row_number}: Warning - Additional farms present"
 
         elif reference_values['document_type'] not in ["Other", "Cover"]:
