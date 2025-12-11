@@ -83,6 +83,7 @@ class Farm:
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
     catalogue_reference: str
+    farm_reference: str
     forms: dict[list] = field(default_factory=make_forms_mapping)
     warnings: dict[list] = field(default_factory=make_warnings_mapping)
 
