@@ -1,6 +1,6 @@
 import re
 
-from farm_class_setup import make_warnings_mapping, make_forms_mapping
+from src.farm_class_setup import make_warnings_mapping, make_forms_mapping
 
 
 def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
@@ -23,7 +23,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
             filename_2 (str, optional): back page of form Defaults to None, not used if form is Cover 
 
     Returns:
-        dict: either the box & parish number (for later use to generate the catalogue & farm references), or warning messages for any issues found
+        dict: the box,parish number & document_type (for later use to generate the catalogue & farm references), and warning messages for any issues found
     """
 
     RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
@@ -58,6 +58,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
+    reference_values['document_type'] = csv_values['document_type']
     if pattern_matches['cover']:
         reference_values['box_number'] = pattern_matches['cover']['box_number']
         reference_values['parish_number'] = pattern_matches['cover']['parish_number']
