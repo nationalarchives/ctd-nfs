@@ -73,9 +73,7 @@ class Farm:
     county: str
     parish: str
     primary_farm_number: str
-    is_a_primary_farm: bool
     additional_farms: list[str]
-    is_an_additional_farm: bool
     farm_name: list[str]
     addressee: Details
     owner: Details
@@ -94,8 +92,6 @@ class Farm:
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
         self.primary_farm_number = cleaned_csv_data['primary_farm_number']
-        if self.primary_farm_number and self.primary_farm_number != "*":
-            self.is_a_primary_farm = True
         self.additional_farms = cleaned_csv_data['additional_farms']
         self.farm_name = cleaned_csv_data['farm_name']
         self.addressee = Details(
