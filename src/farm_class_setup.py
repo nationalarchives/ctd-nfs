@@ -139,10 +139,7 @@ class Farm:
 
         if farm_is_unclassified:
             Farm.total_unclassified_farms_per_county[self.county] += 1
-            farm_value = f"U{Farm.total_unclassified_farms_per_county[self.county]}"
-
-        else:
-            farm_value = self.primary_farm_number
+            self.primary_farm_number = f"U{Farm.total_unclassified_farms_per_county[self.county]}"
 
         if reference_values['document_type'] not in ["Other", "Cover"]:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {reference_values['document_type'].lower()} so no farm number specified"
@@ -156,7 +153,7 @@ class Farm:
             f"MAF 32/" \
             f"{self.piece}/" \
             f"{self.parish_number}/" \
-            f"{farm_value}"
+            f"{self.primary_farm_number}"
 
     def make_farm_reference(self):
         """
