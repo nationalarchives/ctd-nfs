@@ -144,12 +144,6 @@ class Farm:
         elif self.primary_farm_number and not self.additional_farms:
             farm_value = self.primary_farm_number
 
-        elif not self.primary_farm_number and self.additional_farms:
-            self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Additional farm but no primary farm given"
-
-        elif self.primary_farm_number and self.additional_farms:
-            self.warnings['Reference Warnings'] = f"Row {row_number}: Warning - Additional farms present"
-
         elif reference_values['document_type'] not in ["Other", "Cover"]:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {reference_values['document_type'].lower()} so no farm number specified"
             farm_value = reference_values['document_type']
