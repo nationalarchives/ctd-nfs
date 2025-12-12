@@ -158,3 +158,9 @@ class Farm:
             f"{self.parish_number}/" \
             f"{farm_value}"
 
+    def make_farm_reference(self):
+        """
+        Create a unique farm reference using the county code, parish number and primary farm number
+        """
+        county_code = self.county.split()[0]
+        self.farm_reference = f"{county_code}/{self.parish_number}/{self.primary_farm_number}"
