@@ -135,7 +135,7 @@ class Farm:
         """        
         self.piece = reference_values['piece']
         self.parish_number = reference_values['parish_number']
-        primary_farm_number_missing: bool = self.primary_farm_number == "*"
+        farm_is_unclassified: bool self.primary_farm_number in ["", "*"]
 
         if primary_farm_number_missing:
             farm_value = reference_values['document_type']
