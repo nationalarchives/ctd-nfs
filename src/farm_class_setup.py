@@ -123,16 +123,13 @@ class Farm:
 
     def make_catalogue_reference(self, row_number: int, reference_values: dict) -> None:
         """
-        Creates a catalogue reference for each farm in the required format: f"MAF 32/<box number>/<parish number>/<farm number>"
-        box number and parish number will be parsed from filename
-        If reference can't be created due to missing data, a warning is added to the warnings set
-        •	The full catalogue reference as will be displayed in the catalogue
-        •	There can only be one catalogue reference per farm. In some instances, this may not be the case. See warnings and checks for more information.
-        Must begin “MAF 32”. See Overview of Catalogue structure for example. The piece/box number should be able to be extracted from the filename(s) in column A for most cases but not all.
+        The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
+        Each farm must have a unique catalogue reference.
+        If a farm does not have a primary_farm_number, a farm number starting with U will be created. Farm numbers must be unique within a parish
 
         Args:
             row_number (int): row number in the csv file for warning messages
-            reference_values (dict): box number, parish number & document_type parsed from filename
+            reference_values (dict): piece, parish number & document_type parsed from filename
         """        
         self.piece = reference_values['piece']
         self.parish_number = reference_values['parish_number']
