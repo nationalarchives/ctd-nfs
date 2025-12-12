@@ -5,13 +5,13 @@ from src.farm_class_setup import make_warnings_mapping, make_forms_mapping
 
 def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
     """
-    Verify that values which identify the farm (forms, parish, box number, farm number) are consistent between the two filenames and the data in the spreadsheet row.
+    Verify that values which identify the farm (forms, parish, piece, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
     Checks preformed:
     * that filename matches the expected format
     * if two filenames provided, that they are consecutive (i.e. filename_1 precedes filename_2)
     * that parish number in filename matches parish number in spreadsheet
-    * that box number in filename matches form number in spreadsheet
+    * that piece in filename matches form number in spreadsheet
     * confirm form type is valid for filename(s) provided
     
     Args:
@@ -23,11 +23,11 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
             filename_2 (str, optional): back page of form Defaults to None, not used if form is Cover 
 
     Returns:
-        dict: the box,parish number & document_type (for later use to generate the catalogue & farm references), and warning messages for any issues found
+        dict: the piece, parish number & document_type (for later use to generate the catalogue & farm references), and warning messages for any issues found
     """
 
-    RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
-    RGX_FILENAMEPATTERN_COVER: re.Pattern = re.compile(r"""^MAF32-(?P<box_number>\d+)[-_](?P<parish_number>\d+)\.tif$""")
+    RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
+    RGX_FILENAMEPATTERN_COVER: re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
 
     pattern_matches: dict[re.Match] = {
         'filename_1': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename_1']),
@@ -60,10 +60,10 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
 
     reference_values['document_type'] = csv_values['document_type']
     if pattern_matches['cover']:
-        reference_values['box_number'] = pattern_matches['cover']['box_number']
+        reference_values['piece'] = pattern_matches['cover']['piece']
         reference_values['parish_number'] = pattern_matches['cover']['parish_number']
     else:
-        reference_values['box_number'] = pattern_matches['filename_1']['box_number']
+        reference_values['piece'] = pattern_matches['filename_1']['piece']
         reference_values['parish_number'] = pattern_matches['filename_1']['parish_number']
 
     return (reference_values, warnings)
@@ -72,9 +72,9 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
 
 def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
     """
-    Performs checks on the box numbers, parish numbers and image numbers of the two file names
-    * box numbers should be the same in the both file name
-    * parish numbers should be the same in the both file name, and also match the number in the full parish name
+    Performs checks on the piece, parish number and image number of the two file names
+    * piece must be the same in the both file name
+    * parish number must be the same in the both file name, and also match the number in the full parish name
     * image numbers must be consecutive
 
     Args:
@@ -96,8 +96,8 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
         warnings (dict):
     """
 
-    if pattern_matches['filename_1']['box_number'] != pattern_matches['filename_2']['box_number']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different box numbers. " \
+    if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different pieces. " \
                                                   f"Box number of {csv_values['filename_1']} will be used in the catalogue reference.")
 
     parish_number = csv_values['parish'].split()[0]
