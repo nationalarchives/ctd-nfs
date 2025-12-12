@@ -66,6 +66,7 @@ class Details:
 @dataclass
 class Farm:
     all_farms: ClassVar[dict[str, "Farm"]] = {}
+    total_unclassified_farms_per_county: ClassVar[dict[int]] = {}   
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
     all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
