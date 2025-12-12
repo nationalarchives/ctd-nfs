@@ -135,10 +135,11 @@ class Farm:
         """        
         self.piece = reference_values['piece']
         self.parish_number = reference_values['parish_number']
-        farm_is_unclassified: bool self.primary_farm_number in ["", "*"]
+        farm_is_unclassified: bool = self.primary_farm_number in ["", "*"]
 
-        if primary_farm_number_missing:
-            farm_value = reference_values['document_type']
+        if farm_is_unclassified:
+            Farm.total_unclassified_farms_per_county[self.county] += 1
+            farm_value = Farm.total_unclassified_farms_per_county[self.county]
 
         elif self.primary_farm_number and not self.additional_farms:
             farm_value = self.primary_farm_number
