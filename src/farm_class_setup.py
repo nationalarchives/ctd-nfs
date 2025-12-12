@@ -94,6 +94,8 @@ class Farm:
         """catalogue_reference & forms will have special methods to assign values later"""
         # self.forms = assign_filenames_to_forms(stripped_data),
         self.county = cleaned_csv_data['county']
+        if self.county not in Farm.total_unclassified_farms_per_county:
+            Farm.total_unclassified_farms_per_county[self.county] = 0
         self.parish = cleaned_csv_data['parish']
         self.primary_farm_number = cleaned_csv_data['primary_farm_number']
         self.additional_farms = cleaned_csv_data['additional_farms']
