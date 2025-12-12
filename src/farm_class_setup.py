@@ -141,6 +141,8 @@ class Farm:
             Farm.total_unclassified_farms_per_county[self.county] += 1
             self.primary_farm_number = f"U{Farm.total_unclassified_farms_per_county[self.county]}"
 
+        """
+        TODO: as CTD team for decisions for these options
         if reference_values['document_type'] not in ["Other", "Cover"]:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {reference_values['document_type'].lower()} so no farm number specified"
             farm_value = reference_values['document_type']
@@ -148,6 +150,7 @@ class Farm:
         if reference_values['document_type'] == "Cover" and self.primary_farm_number:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Error - Type is cover and farm number is specified"
             farm_value = reference_values['document_type']
+        """
 
         self.catalogue_reference = \
             f"MAF 32/" \
@@ -158,6 +161,10 @@ class Farm:
     def make_farm_reference(self):
         """
         Create a unique farm reference using the county code, parish number and primary farm number
+        This must be invoked after the catalogue reference has been created.
         """
         county_code = self.county.split()[0]
-        self.farm_reference = f"{county_code}/{self.parish_number}/{self.primary_farm_number}"
+        self.farm_reference = \
+            f"{county_code}/" \
+            f"{self.parish_number}/" \
+            f"{self.primary_farm_number}"
