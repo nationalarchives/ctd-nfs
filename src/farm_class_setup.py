@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import re
 import csv
+from typing import ClassVar
 
 
 def make_forms_mapping() -> dict:
@@ -64,6 +65,7 @@ class Details:
 
 @dataclass
 class Farm:
+    all_farms: ClassVar[dict[str, "Farm"]] = {}
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
     all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
