@@ -139,7 +139,7 @@ class Farm:
 
         if farm_is_unclassified:
             Farm.total_unclassified_farms_per_county[self.county] += 1
-            farm_value = Farm.total_unclassified_farms_per_county[self.county]
+            farm_value = f"U{Farm.total_unclassified_farms_per_county[self.county]}"
 
         else:
             farm_value = self.primary_farm_number
