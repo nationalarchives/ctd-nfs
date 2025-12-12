@@ -141,10 +141,10 @@ class Farm:
             Farm.total_unclassified_farms_per_county[self.county] += 1
             farm_value = Farm.total_unclassified_farms_per_county[self.county]
 
-        elif self.primary_farm_number and not self.additional_farms:
+        else:
             farm_value = self.primary_farm_number
 
-        elif reference_values['document_type'] not in ["Other", "Cover"]:
+        if reference_values['document_type'] not in ["Other", "Cover"]:
             self.warnings['Reference Warnings'] = f"Row {row_number}: Note - type is {reference_values['document_type'].lower()} so no farm number specified"
             farm_value = reference_values['document_type']
 
