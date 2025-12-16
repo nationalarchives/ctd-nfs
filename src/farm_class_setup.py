@@ -54,9 +54,17 @@ def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
     return cleaned_data
 
 
-def get_catalogue_reference(county_code: str, parish_number: str) -> str:
-    """Create a lookup dictionary from the pieces lookup table for catalogue references."""
+def get_references(county_code: str, parish_number: str) -> tuple:
+    """
+    Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
 
+    Args:
+        county_code (str):  
+        parish_number (str): 
+
+    Returns:
+        tuple: 
+    """    
     all_references = (
         reference
         for reference in all_references
@@ -64,7 +72,7 @@ def get_catalogue_reference(county_code: str, parish_number: str) -> str:
     )
     reference_record = next(all_references, None)
     
-    return reference_record['Catalogue ref']
+    return (reference_record['Catalogue ref'], reference_record['County & Parish'])
 
 
 @dataclass
