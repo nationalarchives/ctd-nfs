@@ -154,6 +154,13 @@ class Farm:
             self.forms[document_type].append(filename_2)
     
     def set_references(self) -> None:
+        """ 
+        The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
+        Each farm must have a unique catalogue reference.
+        Create both the catalogue reference and farm reference for the farm using values from the lookup table and primary farm number
+        The catalogue reference is made up of the catalogue reference from the lookup table and the primary farm number
+        The farm reference is made up of the county code, parish number and primary farm number
+        """        
         county_code = self.county.split()[0]
         parish_number = self.parish.split()[0]
 
