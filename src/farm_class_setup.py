@@ -89,12 +89,10 @@ class Farm:
     primary_record_date: list[str] | str
     catalogue_reference: str
     farm_reference: str
-    forms: dict[list] = field(default_factory=make_forms_mapping)
-    warnings: dict[list] = field(default_factory=make_warnings_mapping)
 
     def __init__(self, cleaned_csv_data: dict):
-        """catalogue_reference & forms will have special methods to assign values later"""
-        # self.forms = assign_filenames_to_forms(stripped_data),
+        self.forms = make_forms_mapping()
+        self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         if self.county not in Farm.total_unclassified_farms_per_county:
             Farm.total_unclassified_farms_per_county[self.county] = 0
@@ -124,7 +122,18 @@ class Farm:
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
+        self.warnings = make_warnings_mapping()
 
+    def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):
+        """_summary_
+
+        Args:
+            csv_data (dict): _description_
+        """
+        self.forms[document_type].append(filename_1)
+        if filename_2:
+            self.forms[document_type].append(filename_2)
+    
     def make_catalogue_reference(self, row_number: int, reference_values: dict) -> None:
         """
         The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
