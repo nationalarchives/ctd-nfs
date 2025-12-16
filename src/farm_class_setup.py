@@ -3,6 +3,8 @@ import re
 import csv
 from typing import ClassVar
 
+from constants import DATA
+
 
 def make_forms_mapping() -> dict:
     """Create a mapping of form codes to empty lists for storing filenames."""
