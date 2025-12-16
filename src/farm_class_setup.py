@@ -141,6 +141,7 @@ class Farm:
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
         self.warnings = make_warnings_mapping()
+        self.set_references()
 
     def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):
         """_summary_
@@ -152,6 +153,20 @@ class Farm:
         if filename_2:
             self.forms[document_type].append(filename_2)
     
+    def set_references(self) -> None:
+        county_code = self.county.split()[0]
+        parish_number = self.parish.split()[0]
+
+        catalogue_reference, county_and_parish = get_references(county_code, parish_number)
+
+        self.catalogue_reference = \
+            f"{catalogue_reference}/" \
+            f"{self.primary_farm_number}"
+
+        self.farm_reference = \
+            f"{county_and_parish}/" \
+            f"{self.primary_farm_number}"
+
     def make_catalogue_reference(self, row_number: int, reference_values: dict) -> None:
         """
         The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
