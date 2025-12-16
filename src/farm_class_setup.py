@@ -54,9 +54,19 @@ def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
     return cleaned_data
 
 
-"""
-Occupier, Owner and Farmer will be initialised with lists of the relevant components from each row for that farm.
-"""
+def get_catalogue_reference(county_code: str, parish_number: str) -> str:
+    """Create a lookup dictionary from the pieces lookup table for catalogue references."""
+
+    all_references = (
+        reference
+        for reference in all_references
+        if reference['county_code'] == county_code and reference['parish_number'] == parish_number
+    )
+    reference_record = next(all_references, None)
+    
+    return reference_record['Catalogue ref']
+
+
 @dataclass
 class Details:
     title: list[str] | str
