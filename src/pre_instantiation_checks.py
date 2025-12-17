@@ -30,7 +30,7 @@ import re
 from constants import FARM_SETUP
 
 
-def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
+def perform_pre_instantiation_checks(csv_values: dict) -> dict:
     """
     Verify that values which identify the farm (forms, parish, piece, farm number) are consistent between the two filenames and the data in the spreadsheet row.
     If inconsistencies are found, raise ValueError with appropriate message.
@@ -66,17 +66,17 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
 
     if csv_values['document_type'] not in FARM_SETUP.FORMS_MAP():
         warnings['Type Warnings'].append(f"Row {csv_values['row_number']}: Form type '{csv_values['document_type']}' is not a recognised form.")
-        return (reference_values, warnings)
+        return warnings
 
     if not (pattern_matches['filename_1'] or pattern_matches['cover']):
         warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} does not match expected pattern for form images or cover. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return (reference_values, warnings)
+        return warnings
 
     if csv_values['filename_2'] and not pattern_matches['filename_2']:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_2']} does not match expected pattern for form images. " \
                                               f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return (reference_values, warnings)
+        return warnings
     
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
@@ -84,7 +84,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
 
-    return (reference_values, warnings)
+    return warnings
 
 
 
