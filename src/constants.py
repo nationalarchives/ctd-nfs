@@ -25,6 +25,18 @@ class FarmSetup():
         ('Other', []),
         ('Cover', []),
     ])
+    WARNINGS_MAP = {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
 
 
 class DataFolders():
