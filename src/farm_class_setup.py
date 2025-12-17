@@ -67,7 +67,7 @@ def get_references(county_code: str, parish_number: str) -> tuple:
     """    
     all_references = (
         reference
-        for reference in all_references
+        for reference in DATA.LOOKUP_TABLE
         if reference['County Code'] == county_code and reference['Parish Number'] == parish_number
     )
     reference_record = next(all_references, None)
