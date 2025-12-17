@@ -86,7 +86,6 @@ class Details:
 @dataclass
 class Farm:
     all_farms: ClassVar[dict[str, "Farm"]] = {}
-    total_unclassified_farms_per_county: ClassVar[dict[int]] = {}   
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
     all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
@@ -112,8 +111,6 @@ class Farm:
         self.forms = initialise_forms_mapping()
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
-        if self.county not in Farm.total_unclassified_farms_per_county:
-            Farm.total_unclassified_farms_per_county[self.county] = 0
         self.parish = cleaned_csv_data['parish']
         self.primary_farm_number = cleaned_csv_data['primary_farm_number']
         self.additional_farms = cleaned_csv_data['additional_farms']
