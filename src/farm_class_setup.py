@@ -6,7 +6,7 @@ from typing import ClassVar
 from constants import DATA
 
 
-def make_forms_mapping() -> dict:
+def initialise_forms_mapping() -> dict:
     """Create a mapping of form codes to empty lists for storing filenames."""
     return {
         'C51/SSY': [],
@@ -109,7 +109,7 @@ class Farm:
     farm_reference: str
 
     def __init__(self, cleaned_csv_data: dict):
-        self.forms = make_forms_mapping()
+        self.forms = initialise_forms_mapping()
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         if self.county not in Farm.total_unclassified_farms_per_county:
