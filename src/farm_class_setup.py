@@ -20,7 +20,7 @@ def initialise_forms_mapping() -> dict:
     }
 
 
-def make_warnings_mapping() -> dict:
+def initialise_warnings_mapping() -> dict:
     """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
     return {
         'Reference Warnings': [],
@@ -140,7 +140,7 @@ class Farm:
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
-        self.warnings = make_warnings_mapping()
+        self.warnings = initialise_warnings_mapping()
         self.set_references()
 
     def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):
