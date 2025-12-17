@@ -161,8 +161,8 @@ class Farm:
         The catalogue reference is made up of the catalogue reference from the lookup table and the primary farm number
         The farm reference is made up of the county code, parish number and primary farm number
         """        
-        county_code = self.county.split()[0]
-        parish_number = self.parish.split()[0]
+        county_code, _ = self.county.split()
+        parish_number, _ = self.parish.split()
 
         catalogue_reference, county_and_parish = get_references(county_code, parish_number)
 
