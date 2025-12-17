@@ -3,21 +3,7 @@ import re
 import csv
 from typing import ClassVar
 
-from constants import DATA
-
-
-def initialise_forms_mapping() -> dict:
-    """Create a mapping of form codes to empty lists for storing filenames."""
-    return {
-        'C51/SSY': [],
-        'B496/EI': [],
-        'C 47/SSY': [],
-        'C 49/SSY': [],
-        'SF': [],
-        'SF C69/SSY': [],
-        'Other': [],
-        'Cover': []
-    }
+from constants import DATA, FARM_SETUP
 
 
 def initialise_warnings_mapping() -> dict:
@@ -108,7 +94,7 @@ class Farm:
     farm_reference: str
 
     def __init__(self, cleaned_csv_data: dict):
-        self.forms = initialise_forms_mapping()
+        self.forms = FARM_SETUP.FORMS_MAP.copy()
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
