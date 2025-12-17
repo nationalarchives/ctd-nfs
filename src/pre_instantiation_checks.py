@@ -1,3 +1,30 @@
+"""
+Pre-instantiation checks to ensure that farm identifying values are consistent between filenames and spreadsheet data.
+1: invalid form type
+        can be ignored as we already check for these before running it through the merger so any that remain ought to be correct
+
+2: either filename is invalid
+        We would like warnings
+
+3: piece numbers or parish numbers don't match between filenames
+        We would like warnings
+
+4: parish number in filenames doesn't match number in parish name
+        We would like warnings
+
+5: images not consecutive
+        can be ignored as we already check for these before running it through the merger so any that remain ought to be correct
+
+6: form type is Cover but the filename_1 doesn't have a cover pattern (and vice versa)
+        We would like warnings
+
+7: form type is Cover but two filenames provided
+        we would like a warning if the form type is cover and there are two filenames paired with each other
+        
+8: valid filenames but form is Cover
+        this can probably also be ignored, my understanding is that covers will be ignored in the final upload, but probably best not to reject the row at this point
+"""
+
 import re
 
 from constants import FARM_SETUP
@@ -35,7 +62,6 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
         'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename_1']),
     }
     
-    reference_values = {}
     warnings: dict = FARM_SETUP.WARNINGS_MAP.copy()
 
     if csv_values['document_type'] not in FARM_SETUP.FORMS_MAP():
@@ -57,14 +83,6 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
 
     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
         warnings = check_cover_image_consistency(csv_values, pattern_matches, warnings) 
-
-    reference_values['document_type'] = csv_values['document_type']
-    if pattern_matches['cover']:
-        reference_values['piece'] = pattern_matches['cover']['piece']
-        reference_values['parish_number'] = pattern_matches['cover']['parish_number']
-    else:
-        reference_values['piece'] = pattern_matches['filename_1']['piece']
-        reference_values['parish_number'] = pattern_matches['filename_1']['parish_number']
 
     return (reference_values, warnings)
 
