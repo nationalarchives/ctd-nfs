@@ -1,6 +1,6 @@
 import re
 
-from src.farm_class_setup import make_warnings_mapping, make_forms_mapping
+from constants import FARM_SETUP
 
 
 def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
@@ -36,9 +36,9 @@ def perform_pre_instantiation_checks(csv_values: dict) -> tuple[dict, dict]:
     }
     
     reference_values = {}
-    warnings: dict = make_warnings_mapping()
+    warnings: dict = FARM_SETUP.WARNINGS_MAP.copy()
 
-    if csv_values['document_type'] not in make_forms_mapping():
+    if csv_values['document_type'] not in FARM_SETUP.FORMS_MAP():
         warnings['Type Warnings'].append(f"Row {csv_values['row_number']}: Form type '{csv_values['document_type']}' is not a recognised form.")
         return (reference_values, warnings)
 
