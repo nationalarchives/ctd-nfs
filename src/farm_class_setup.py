@@ -82,14 +82,26 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
+    filename_1: str
+    filename_2: str
+    document_type: str
     county: str
     parish: str
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
-    addressee: Details
-    owner: Details
-    farmer: Details
+    addressee_title: list[str] | str
+    addressee_individual_name: list[str] | str
+    addressee_group_names: list[str] | str
+    address: list[str] | str
+    owner_title: list[str] | str
+    owner_individual_name: list[str] | str
+    owner_group_names: list[str] | str
+    owner_address: list[str] | str
+    farmer_title: list[str] | str
+    farmer_individual_name: list[str] | str
+    farmer_group_names: list[str] | str
+    farmer_address: list[str] | str
     acreage: list[str] | str
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
