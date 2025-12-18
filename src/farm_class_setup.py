@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
 import csv
 from typing import ClassVar
@@ -24,6 +24,22 @@ def initialise_forms_mapping() -> OrderedDict:
         ('Other', []),
         ('Cover', []),
     ])
+
+
+def initialise_warnings_mapping() -> dict:
+    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
+    return {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -106,16 +122,13 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
-    catalogue_reference: str
-    farm_reference: str
-    forms: OrderedDict[str, list[str]]
 
-    def __init__(self, cleaned_csv_data: dict):
-        self.county = cleaned_csv_data['county']
-        self.parish = cleaned_csv_data['parish']
-        self.primary_farm_number = cleaned_csv_data['primary_farm_number']
-        self.additional_farms = cleaned_csv_data['additional_farms']
-        self.farm_name = cleaned_csv_data['farm_name']
+    catalogue_reference: str = ""
+    farm_reference: str = ""
+    forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
+    warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
+
+    def __post_init__(self):
         self.addressee = Details(
             title=cleaned_csv_data['addressee_title'],
             individual_name=cleaned_csv_data['addressee_individual_name'],
@@ -140,31 +153,18 @@ class Farm:
         self.primary_record_date = cleaned_csv_data['primary_record_date']
 
         self.create_references()
-        self.forms = initialise_forms_mapping()
-        self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
-        self.warnings = {
-            'Reference Warnings': [],
-            'Filename Warnings': [],
-            'Type Warnings': [],
-            'Farm Number Warnings': [],
-            'Farm Name Warnings': [],
-            'Landowner Warnings': [],
-            'Farmer Warnings': [],
-            'Acreage Warnings': [],
-            'Field Date Warnings': [],
-            'Primary Date Warnings': []
-        }
+        self.assign_filenames_to_forms(),
 
-    def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):
+    def assign_filenames_to_forms(self):
         """_summary_
 
         Args:
             csv_data (dict): _description_
         """
-        self.forms[document_type].append(filename_1)
-        if filename_2:
-            self.forms[document_type].append(filename_2)
-    
+        self.forms[self.document_type].append(self.filename_1)
+        if self.filename_2:
+            self.forms[self.document_type].append(self.filename_2)
+
     def create_references(self) -> None:
         """ 
         The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
