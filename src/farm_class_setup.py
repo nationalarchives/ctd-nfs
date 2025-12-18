@@ -163,7 +163,7 @@ class Farm:
         The farm reference is made up of the county code, parish number and primary farm number
         """        
         county_code, _ = self.county.split()
-        parish_number, _ = self.parish.split()
+        parish_number, *_ = self.parish.split()
 
         catalogue_reference, county_and_parish = get_references(county_code, parish_number)
 
