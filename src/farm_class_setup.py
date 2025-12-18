@@ -26,22 +26,6 @@ def initialise_forms_mapping() -> OrderedDict:
     ])
 
 
-def initialise_warnings_mapping() -> dict:
-    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
-    return {
-        'Reference Warnings': [],
-		'Filename Warnings': [],
-		'Type Warnings': [],
-		'Farm Number Warnings': [],
-		'Farm Name Warnings': [],
-		'Landowner Warnings': [],
-		'Farmer Warnings': [],
-		'Acreage Warnings': [],
-		'Field Date Warnings': [],
-		'Primary Date Warnings': []
-    }
-
-
 def split_list_values(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
