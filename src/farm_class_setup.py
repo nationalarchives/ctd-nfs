@@ -2,22 +2,27 @@ from dataclasses import dataclass
 import re
 import csv
 from typing import ClassVar
+from collections import OrderedDict
 
 from constants import DATA
 
 
-def initialise_forms_mapping() -> dict:
-    """Create a mapping of form codes to empty lists for storing filenames."""
-    return {
-        'C51/SSY': [],
-        'B496/EI': [],
-        'C 47/SSY': [],
-        'C 49/SSY': [],
-        'SF': [],
-        'SF C69/SSY': [],
-        'Other': [],
-        'Cover': []
-    }
+def initialise_forms_mapping() -> OrderedDict:
+    """Create a mapping of form codes to empty lists for storing filenames.
+        An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
+    Returns:
+        OrderedDict: Mapping of form codes to empty lists.
+    """
+    return OrderedDict([
+        ('C 47/SSY', []),
+        ('C 49/SSY', []),
+        ('C51/SSY', []),
+        ('SF', []),
+        ('SF C69/SSY', []),
+        ('B496/EI', []),
+        ('Other', []),
+        ('Cover', []),
+    ])
 
 
 def initialise_warnings_mapping() -> dict:
@@ -106,6 +111,7 @@ class Farm:
     primary_record_date: list[str] | str
     catalogue_reference: str
     farm_reference: str
+    forms: OrderedDict[str, list[str]]
 
     def __init__(self, cleaned_csv_data: dict):
         self.forms = initialise_forms_mapping()
