@@ -112,6 +112,7 @@ class Farm:
     catalogue_reference: str
     farm_reference: str
     forms: OrderedDict[str, list[str]]
+    warnings: dict[str, list[str]]
 
     def __init__(self, cleaned_csv_data: dict):
         self.forms = initialise_forms_mapping()
