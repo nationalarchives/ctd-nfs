@@ -27,7 +27,7 @@ Pre-instantiation checks to ensure that farm identifying values are consistent b
 
 import re
 
-from constants import FARM_SETUP
+from farm_class_setup import initialise_forms_mapping, initialise_warnings_mapping
 
 
 def perform_pre_instantiation_checks(csv_values: dict) -> dict:
@@ -62,22 +62,10 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
         'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename_1']),
     }
     
-    warnings: dict = FARM_SETUP.WARNINGS_MAP.copy()
-
-    if csv_values['document_type'] not in FARM_SETUP.FORMS_MAP():
-        warnings['Type Warnings'].append(f"Row {csv_values['row_number']}: Form type '{csv_values['document_type']}' is not a recognised form.")
-        return warnings
-
-    if not (pattern_matches['filename_1'] or pattern_matches['cover']):
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} does not match expected pattern for form images or cover. " \
-                                              f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return warnings
-
-    if csv_values['filename_2'] and not pattern_matches['filename_2']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_2']} does not match expected pattern for form images. " \
-                                              f"Further checks on filenames could not be carried out and an accurate reference could not be generated.")
-        return warnings
+    if not perform_pre_instantiation_checks(csv_values, pattern_matches):
+        return
     
+    warnings: dict = initialise_warnings_mapping()
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
 
@@ -86,6 +74,46 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
 
     return warnings
 
+
+def perform_rejection_checks(csv_values: dict, pattern_matches: dict[re.Match]) -> bool:
+    """
+    Perform checks which will result in the row being rejected if they fail
+    * invalid form type
+    * either filename is invalid
+    * images not consecutive
+
+    Args:
+        csv_values (dict): dictionary with the following keys
+
+    Returns:
+        bool: True if row should be rejected, False otherwise
+    """
+    valid_forms = initialise_forms_mapping().keys()
+    values_not_used_for_covers = [
+        item 
+        for key, item in csv_values.items() 
+        if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
+    ]
+    
+    rules = {
+        f"Form type '{csv_values['document_type']}' is not a recognised form.": 
+            lambda: csv_values['document_type'] not in valid_forms,
+        
+        f"{csv_values['filename_1']} does not match expected pattern for form images or cover.": 
+            lambda: not (pattern_matches['filename_1'] or pattern_matches['cover']),
+        
+        f"{csv_values['filename_2']} does not match expected pattern for form images. ":             
+            lambda: csv_values['filename_2'] and not pattern_matches['filename_2'],
+
+        f"{csv_values['filename_1']} and {csv_values['filename_2']} have valid form patterns but no farm data provided.":
+            lambda: (csv_values['filename_2'] and pattern_matches['filename_2']) \
+                and not any(values_not_used_for_covers)
+    }
+    
+    errors = (msg for msg, check in rules.items() if not check())
+    if error_messaage := next(errors, None):
+        print(f"Row {csv_values['row_number']} will be rejected: {error_messaage}")
+        return False
 
 
 def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
