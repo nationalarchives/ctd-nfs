@@ -110,7 +110,7 @@ def perform_rejection_checks(csv_values: dict, pattern_matches: dict[re.Match]) 
                 and all(no_farm_details_provided)
     }
     
-    errors = (msg for msg, check in rules.items() if not check())
+    errors = (msg for msg, check in rules.items() if check())
     if error_messaage := next(errors, None):
         print(f"Row {csv_values['row_number']} will be rejected: {error_messaage}")
         return False
