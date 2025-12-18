@@ -141,21 +141,22 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
     Returns:
         warnings (dict):
     """
+    row = f"Row {csv_values['row_number']}: "
 
     if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different pieces.")
+        warnings['Filename Warnings'].append(f"{row}{csv_values['filename_1']} and {csv_values['filename_2']} have different pieces.")
 
     parish_number = csv_values['parish'].split()[0]
     if pattern_matches['filename_1']['parish_number'] != pattern_matches['filename_2']['parish_number']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different parish numbers.")
+        warnings['Filename Warnings'].append(f"{row}{csv_values['filename_1']} and {csv_values['filename_2']} have different parish numbers.")
 
     elif pattern_matches['filename_1']['parish_number'] != parish_number:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have a diffeent parish number from parish name '{csv_values['parish']}'.")
+        warnings['Filename Warnings'].append(f"{row}{csv_values['filename_1']} and {csv_values['filename_2']} have a diffeent parish number from parish name '{csv_values['parish']}'.")
        
     image1 = int(pattern_matches['filename_1']['image_number'])
     image2 = int(pattern_matches['filename_2']['image_number'])
     if image2 != image1 + 1:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} are either not consecutive images or in the wrong order.")
+        warnings['Filename Warnings'].append(f"{row}{csv_values['filename_1']} and {csv_values['filename_2']} are either not consecutive images or in the wrong order.")
     
     return warnings
 
