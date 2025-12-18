@@ -128,7 +128,7 @@ class Farm:
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
 
-        self.set_references()
+        self.create_references()
         self.forms = initialise_forms_mapping()
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.warnings = {
@@ -154,7 +154,7 @@ class Farm:
         if filename_2:
             self.forms[document_type].append(filename_2)
     
-    def set_references(self) -> None:
+    def create_references(self) -> None:
         """ 
         The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
         Each farm must have a unique catalogue reference.
