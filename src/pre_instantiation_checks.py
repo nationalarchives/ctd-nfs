@@ -88,7 +88,7 @@ def perform_rejection_checks(csv_values: dict, pattern_matches: dict[re.Match]) 
     Returns:
         bool: True if row should be rejected, False otherwise
     """
-    valid_forms = initialise_forms_mapping().keys()
+    valid_forms = list(initialise_forms_mapping().keys())
     no_farm_details_provided = [
         item == ""
         for key, item in csv_values.items() 
