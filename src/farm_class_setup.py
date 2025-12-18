@@ -7,41 +7,6 @@ from collections import OrderedDict
 from src.constants import DATA
 
 
-def initialise_forms_mapping() -> OrderedDict:
-    """Create a mapping of form codes to empty lists for storing filenames.
-        An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
-        An enum was not used here as the form codes are not valid enum names .
-    Returns:
-        OrderedDict: Mapping of form codes to empty lists.
-    """
-    return OrderedDict([
-        ('C 47/SSY', []),
-        ('C 49/SSY', []),
-        ('C51/SSY', []),
-        ('SF', []),
-        ('SF C69/SSY', []),
-        ('B496/EI', []),
-        ('Other', []),
-        ('Cover', []),
-    ])
-
-
-def initialise_warnings_mapping() -> dict:
-    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
-    return {
-        'Reference Warnings': [],
-		'Filename Warnings': [],
-		'Type Warnings': [],
-		'Farm Number Warnings': [],
-		'Farm Name Warnings': [],
-		'Landowner Warnings': [],
-		'Farmer Warnings': [],
-		'Acreage Warnings': [],
-		'Field Date Warnings': [],
-		'Primary Date Warnings': []
-    }
-
-
 def split_list_values(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
@@ -154,16 +119,6 @@ class Farm:
 
         self.create_references()
         self.assign_filenames_to_forms(),
-
-    def assign_filenames_to_forms(self):
-        """_summary_
-
-        Args:
-            csv_data (dict): _description_
-        """
-        self.forms[self.document_type].append(self.filename_1)
-        if self.filename_2:
-            self.forms[self.document_type].append(self.filename_2)
 
     def create_references(self) -> None:
         """ 
