@@ -1,28 +1,8 @@
 from dataclasses import dataclass, field
-import re
-import csv
 from typing import ClassVar
 from collections import OrderedDict
 
 from src.constants import DATA
-
-
-def split_list_values(field_value: str) -> list[str]:
-    """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
-    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
-
-
-def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
-    """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
-    cleaned_data = []
-    for row in raw_csv_data:
-        for key, value in row.items():
-            if ";" in value:
-                row[key] = split_list_values(value)
-            else:
-                row[key] = value.strip()
-        cleaned_data.append(row)
-    return cleaned_data
 
 
 def get_references(county_code: str, parish_number: str) -> tuple:
@@ -44,6 +24,41 @@ def get_references(county_code: str, parish_number: str) -> tuple:
     reference_record = next(all_references, None)
     
     return (reference_record['Catalogue ref'], reference_record['County & Parish'])
+
+
+def initialise_forms_mapping() -> OrderedDict:
+    """Create a mapping of form codes to empty lists for storing filenames.
+        An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
+        An enum was not used here as the form codes are not valid enum names .
+    Returns:
+        OrderedDict: Mapping of form codes to empty lists.
+    """
+    return OrderedDict([
+        ('C 47/SSY', []),
+        ('C 49/SSY', []),
+        ('C51/SSY', []),
+        ('SF', []),
+        ('SF C69/SSY', []),
+        ('B496/EI', []),
+        ('Other', []),
+        ('Cover', []),
+    ])
+
+
+def initialise_warnings_mapping() -> dict:
+    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
+    return {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
 
 
 @dataclass
@@ -112,11 +127,6 @@ class Farm:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
-        self.acreage = cleaned_csv_data['acreage']
-        self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
-        self.field_info_date = cleaned_csv_data['field_info_date']
-        self.primary_record_date = cleaned_csv_data['primary_record_date']
-
         self.create_references()
         self.assign_filenames_to_forms(),
 
@@ -140,4 +150,14 @@ class Farm:
         self.farm_reference = \
             f"{county_and_parish}/" \
             f"{self.primary_farm_number}"
+
+    def assign_filenames_to_forms(self):
+        """_summary_
+
+        Args:
+            csv_data (dict): _description_
+        """
+        self.forms[self.document_type].append(self.filename_1)
+        if self.filename_2:
+            self.forms[self.document_type].append(self.filename_2)
 
