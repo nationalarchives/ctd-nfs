@@ -143,17 +143,14 @@ def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Ma
     """
 
     if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different pieces. " \
-                                                  f"Box number of {csv_values['filename_1']} will be used in the catalogue reference.")
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different pieces.")
 
     parish_number = csv_values['parish'].split()[0]
     if pattern_matches['filename_1']['parish_number'] != pattern_matches['filename_2']['parish_number']:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different parish numbers. " \
-                                                  f"Parish number from full parish name '{csv_values['parish']}' will be used in the catalogue reference.")
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have different parish numbers.")
 
     elif pattern_matches['filename_1']['parish_number'] != parish_number:
-        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have a diffeent parish number from parish name '{csv_values['parish']}'. " \
-                                                  f"Parish number from full parish name will be used in the catalogue reference.")
+        warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: {csv_values['filename_1']} and {csv_values['filename_2']} have a diffeent parish number from parish name '{csv_values['parish']}'.")
        
     image1 = int(pattern_matches['filename_1']['image_number'])
     image2 = int(pattern_matches['filename_2']['image_number'])
