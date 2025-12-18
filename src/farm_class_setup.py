@@ -7,24 +7,6 @@ from collections import OrderedDict
 from constants import DATA
 
 
-def initialise_forms_mapping() -> OrderedDict:
-    """Create a mapping of form codes to empty lists for storing filenames.
-        An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
-    Returns:
-        OrderedDict: Mapping of form codes to empty lists.
-    """
-    return OrderedDict([
-        ('C 47/SSY', []),
-        ('C 49/SSY', []),
-        ('C51/SSY', []),
-        ('SF', []),
-        ('SF C69/SSY', []),
-        ('B496/EI', []),
-        ('Other', []),
-        ('Cover', []),
-    ])
-
-
 def initialise_warnings_mapping() -> dict:
     """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
     return {
@@ -98,6 +80,7 @@ class Farm:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
     county: str
+    forms: OrderedDict[str, list[str]]
     parish: str
     primary_farm_number: str
     additional_farms: list[str]
@@ -111,11 +94,21 @@ class Farm:
     primary_record_date: list[str] | str
     catalogue_reference: str
     farm_reference: str
-    forms: OrderedDict[str, list[str]]
     warnings: dict[str, list[str]]
 
     def __init__(self, cleaned_csv_data: dict):
-        self.forms = initialise_forms_mapping()
+        self.forms = OrderedDict([
+            # An orderedDict is used as there is a chronological significance to the order of the forms.
+            # An enum as considered but can't be because form codes are not valid enum names
+            ('C 47/SSY', []),
+            ('C 49/SSY', []),
+            ('C51/SSY', []),
+            ('SF', []),
+            ('SF C69/SSY', []),
+            ('B496/EI', []),
+            ('Other', []),
+            ('Cover', []),
+        ])
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
