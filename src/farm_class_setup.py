@@ -130,22 +130,22 @@ class Farm:
 
     def __post_init__(self):
         self.addressee = Details(
-            title=cleaned_csv_data['addressee_title'],
-            individual_name=cleaned_csv_data['addressee_individual_name'],
-            group_names=cleaned_csv_data['addressee_group_names'],
-            address=cleaned_csv_data['address'],
+            title=self.addressee_title,
+            individual_name=self.addressee_individual_name,
+            group_names=self.addressee_group_names,
+            address=self.address,
         )
         self.owner = Details(
-            title=cleaned_csv_data['owner_title'],
-            individual_name=cleaned_csv_data['owner_individual_name'],
-            group_names=cleaned_csv_data['owner_group_names'],
-            address=cleaned_csv_data['owner_address'],
+            title=self.owner_title,
+            individual_name=self.owner_individual_name,
+            group_names=self.owner_group_names,
+            address=self.owner_address,
         )
         self.farmer = Details(
-            title=cleaned_csv_data['farmer_title'],
-            individual_name=cleaned_csv_data['farmer_individual_name'],
-            group_names=cleaned_csv_data['farmer_group_names'],
-            address=cleaned_csv_data['farmer_address'],
+            title=self.farmer_title,
+            individual_name=self.farmer_individual_name,
+            group_names=self.farmer_group_names,
+            address=self.farmer_address,
         )
         self.acreage = cleaned_csv_data['acreage']
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
