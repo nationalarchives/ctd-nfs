@@ -83,7 +83,6 @@ class Farm:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
     county: str
-    forms: OrderedDict[str, list[str]]
     parish: str
     primary_farm_number: str
     additional_farms: list[str]
@@ -97,11 +96,10 @@ class Farm:
     primary_record_date: list[str] | str
     catalogue_reference: str
     farm_reference: str
+    forms: OrderedDict[str, list[str]]
     warnings: dict[str, list[str]]
 
     def __init__(self, cleaned_csv_data: dict):
-        self.forms = initialise_forms_mapping()
-        self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
         self.primary_farm_number = cleaned_csv_data['primary_farm_number']
@@ -129,6 +127,10 @@ class Farm:
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
+
+        self.set_references()
+        self.forms = initialise_forms_mapping()
+        self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.warnings = {
             'Reference Warnings': [],
             'Filename Warnings': [],
@@ -141,7 +143,6 @@ class Farm:
             'Field Date Warnings': [],
             'Primary Date Warnings': []
         }
-        self.set_references()
 
     def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):
         """_summary_
