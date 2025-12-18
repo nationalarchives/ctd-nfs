@@ -89,8 +89,8 @@ def perform_rejection_checks(csv_values: dict, pattern_matches: dict[re.Match]) 
         bool: True if row should be rejected, False otherwise
     """
     valid_forms = initialise_forms_mapping().keys()
-    values_not_used_for_covers = [
-        item 
+    no_farm_details_provided = [
+        item == ""
         for key, item in csv_values.items() 
         if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
     ]
@@ -107,7 +107,7 @@ def perform_rejection_checks(csv_values: dict, pattern_matches: dict[re.Match]) 
 
         f"{csv_values['filename_1']} and {csv_values['filename_2']} have valid form patterns but no farm data provided.":
             lambda: (csv_values['filename_2'] and pattern_matches['filename_2']) \
-                and not any(values_not_used_for_covers)
+                and all(no_farm_details_provided)
     }
     
     errors = (msg for msg, check in rules.items() if not check())
@@ -189,8 +189,11 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
     """
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
-    images_are_for_document_which_is_not_cover = pattern_matches['filename_1'] and pattern_matches['filename_1']['image_number'] != "0001" and pattern_matches['filename_2']
-    
+    images_are_for_document_which_is_not_cover = \
+        pattern_matches['filename_1'] and \
+        pattern_matches['filename_1']['image_number'] != "0001" and \
+        pattern_matches['filename_2']
+
     if document_type_is_cover and not file_is_cover_image:
         warnings['Filename Warnings'].append(f"Row {csv_values['row_number']}: Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern or have image number 0001.")
         warnings['Type Warnings'].append(f"Row {csv_values['row_number']}: [see Filename Warnings]")
