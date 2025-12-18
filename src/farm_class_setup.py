@@ -4,7 +4,7 @@ import csv
 from typing import ClassVar
 from collections import OrderedDict
 
-from constants import DATA
+from src.constants import DATA
 
 
 def initialise_forms_mapping() -> OrderedDict:
