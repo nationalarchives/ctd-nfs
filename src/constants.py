@@ -5,13 +5,9 @@ module for defining constants and constant namespaces.
 from pathlib import Path
 import shelve
 
-from read_db_cache import LOOKUP_TABLE_DB
-
 
 EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
 DB_FILE = Path("MAF 32 Piece Lookup Table.db")
-
-
 
 
 class DataFolders():
