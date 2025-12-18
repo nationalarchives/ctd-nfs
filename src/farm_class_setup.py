@@ -3,7 +3,37 @@ import re
 import csv
 from typing import ClassVar
 
-from constants import DATA, FARM_SETUP
+from constants import DATA
+
+
+def initialise_forms_mapping() -> dict:
+    """Create a mapping of form codes to empty lists for storing filenames."""
+    return {
+        'C51/SSY': [],
+        'B496/EI': [],
+        'C 47/SSY': [],
+        'C 49/SSY': [],
+        'SF': [],
+        'SF C69/SSY': [],
+        'Other': [],
+        'Cover': []
+    }
+
+
+def initialise_warnings_mapping() -> dict:
+    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
+    return {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -78,7 +108,7 @@ class Farm:
     farm_reference: str
 
     def __init__(self, cleaned_csv_data: dict):
-        self.forms = FARM_SETUP.FORMS_MAP.copy()
+        self.forms = initialise_forms_mapping()
         self.assign_filenames_to_forms(cleaned_csv_data['document_type'], cleaned_csv_data['filename_1'], cleaned_csv_data['filename_2']),
         self.county = cleaned_csv_data['county']
         self.parish = cleaned_csv_data['parish']
@@ -107,7 +137,7 @@ class Farm:
         self.OS_map_sheet = cleaned_csv_data['OS_map_sheet']
         self.field_info_date = cleaned_csv_data['field_info_date']
         self.primary_record_date = cleaned_csv_data['primary_record_date']
-        self.warnings = FARM_SETUP.WARNINGS_MAP.copy()
+        self.warnings = initialise_warnings_mapping()
         self.set_references()
 
     def assign_filenames_to_forms(self, document_type, filename_1, filename_2=None):

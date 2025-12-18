@@ -4,7 +4,6 @@ module for defining constants and constant namespaces.
 
 from pathlib import Path
 import shelve
-from collections import OrderedDict
 
 from read_db_cache import LOOKUP_TABLE_DB
 
@@ -13,30 +12,6 @@ EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Proj
 DB_FILE = Path("MAF 32 Piece Lookup Table.db")
 
 
-class FarmSetup():
-    __slots__ = ()
-    FORMS_MAP = OrderedDict([
-        ('C 47/SSY', []),
-        ('C 49/SSY', []),
-        ('C51/SSY', []),
-        ('SF', []),
-        ('SF C69/SSY', []),
-        ('B496/EI', []),
-        ('Other', []),
-        ('Cover', []),
-    ])
-    WARNINGS_MAP = {
-        'Reference Warnings': [],
-		'Filename Warnings': [],
-		'Type Warnings': [],
-		'Farm Number Warnings': [],
-		'Farm Name Warnings': [],
-		'Landowner Warnings': [],
-		'Farmer Warnings': [],
-		'Acreage Warnings': [],
-		'Field Date Warnings': [],
-		'Primary Date Warnings': []
-    }
 
 
 class DataFolders():
@@ -54,5 +29,4 @@ class DataFolders():
 
 
 DATA = DataFolders()
-FARM_SETUP = FarmSetup()
 
