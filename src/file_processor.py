@@ -57,7 +57,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         row_prefix = f"Row {farm_data_row['row_number']}: "
 
-        if not validate_farm_reference_values(farm_data_row, pattern_matches):
+        if not validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix):
             continue
 
     
