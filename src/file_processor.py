@@ -3,6 +3,8 @@ from typing import Generator, Iterator
 import csv
 import re
 
+from constants import REGEX
+
 
 def split_list_values(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
@@ -46,5 +48,9 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
     for row_number, farm_data_row in enumerate(csv_data):
         print(f"\nProcessing row {row_number} ...")
         # Further processing logic would go here
-    pass
+        pattern_matches: dict[re.Match] = {
+            'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
+            'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
+            'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
+        }
     
