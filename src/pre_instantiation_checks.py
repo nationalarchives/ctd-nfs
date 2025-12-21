@@ -1,30 +1,3 @@
-"""
-Pre-instantiation checks to ensure that farm identifying values are consistent between filenames and spreadsheet data.
-1: invalid form type
-        can be ignored as we already check for these before running it through the merger so any that remain ought to be correct
-
-2: either filename is invalid
-        We would like warnings
-
-3: piece numbers or parish numbers don't match between filenames
-        We would like warnings
-
-4: parish number in filenames doesn't match number in parish name
-        We would like warnings
-
-5: images not consecutive
-        can be ignored as we already check for these before running it through the merger so any that remain ought to be correct
-
-6: form type is Cover but the filename_1 doesn't have a cover pattern (and vice versa)
-        We would like warnings
-
-7: form type is Cover but two filenames provided
-        we would like a warning if the form type is cover and there are two filenames paired with each other
-        
-8: valid filenames but form is Cover
-        this can probably also be ignored, my understanding is that covers will be ignored in the final upload, but probably best not to reject the row at this point
-"""
-
 import re
 
 from farm_class_setup import initialise_forms_mapping
