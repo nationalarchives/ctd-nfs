@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Iterator
 import csv
 import re
 
@@ -9,7 +9,7 @@ def split_list_values(field_value: str) -> list[str]:
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
-def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
+def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
     cleaned_data = []
     for row in raw_csv_data:
@@ -19,7 +19,7 @@ def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
             else:
                 row[key] = value.strip()
         cleaned_data.append(row)
-    return cleaned_data
+    return iter(cleaned_data)
 
 
 def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
