@@ -9,6 +9,19 @@ def split_list_values(field_value: str) -> list[str]:
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
+def clean_csv_data(raw_csv_data: csv.DictReader) -> list[dict]:
+    """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
+    cleaned_data = []
+    for row in raw_csv_data:
+        for key, value in row.items():
+            if ";" in value:
+                row[key] = split_list_values(value)
+            else:
+                row[key] = value.strip()
+        cleaned_data.append(row)
+    return cleaned_data
+
+
 def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
     """_summary_
 
