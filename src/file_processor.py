@@ -81,3 +81,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
             print(f"Catalogue reference {candidate_farm.catalogue_reference} already exists. Merging data ...")
 
 
+def process_file(csv_file: Path) -> None:
+    raw_farm_data: list[dict] = load_data_from_file(csv_file)
+    cleaned_farm_data = clean_csv_data(raw_farm_data)
+    process_csv_data(cleaned_farm_data)
