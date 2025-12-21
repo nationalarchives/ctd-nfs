@@ -4,7 +4,7 @@ import csv
 import re
 
 from constants import REGEX
-from pre_instantiation_checks import validate_farm_reference_values
+from pre_instantiation_checks import validate_farm_reference_values, confirm_row_is_not_cover
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -60,4 +60,5 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
         if not validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix):
             continue
 
-    
+        if not confirm_row_is_not_cover(farm_data_row, pattern_matches, row_prefix):
+            continue
