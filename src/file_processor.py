@@ -1,6 +1,12 @@
 from pathlib import Path
 from typing import Generator
 import csv
+import re
+
+
+def split_list_values(field_value: str) -> list[str]:
+    """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
+    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
 def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
@@ -21,4 +27,3 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
     
     except csv.Error as csv_error_message:
         print(f"!!! ERROR in data loading: {csv_error_message}")
-
