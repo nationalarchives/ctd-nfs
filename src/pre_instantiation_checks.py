@@ -228,4 +228,7 @@ def confirm_row_is_not_cover(csv_values: dict, pattern_matches: dict[re.Match], 
     ]
     if (document_type_is_cover or file_is_cover_image) and all(no_farm_details_provided):
         print(f"{row_prefix} skipped as Cover with no farm data provided.")
+        return False
+    
+    return True 
 
