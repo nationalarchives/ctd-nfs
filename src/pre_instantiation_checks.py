@@ -218,7 +218,7 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
     return warnings
 
 
-def confirm_row_is_not_cover(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict:
+def confirm_row_is_not_cover(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
     no_farm_details_provided = [
