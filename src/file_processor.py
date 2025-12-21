@@ -5,6 +5,7 @@ import re
 
 from constants import REGEX
 from pre_instantiation_checks import validate_farm_reference_values, confirm_row_is_not_cover
+from farm_class_setup import initialise_warnings_mapping
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -62,3 +63,5 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         if not confirm_row_is_not_cover(farm_data_row, pattern_matches, row_prefix):
             continue
+
+        warnings: dict = initialise_warnings_mapping()
