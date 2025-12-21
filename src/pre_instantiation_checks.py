@@ -66,16 +66,6 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
     if validate_farm_reference_values(csv_values, pattern_matches):
         raise ValueError(f"{row} rejected due to errors in data.")    
 
-    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
-    document_type_is_cover = csv_values['document_type'] == 'Cover'
-    no_farm_details_provided = [
-        item == ""
-        for key, item in csv_values.items() 
-        if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
-    ]
-    if (document_type_is_cover or file_is_cover_image) and all(no_farm_details_provided):
-        raise(ValueError(f"{row} skipped as Cover with no farm data provided."))
-
     
     warnings: dict = initialise_warnings_mapping()
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
@@ -87,7 +77,7 @@ def perform_pre_instantiation_checks(csv_values: dict) -> dict:
     return warnings
 
 
-def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match]) -> bool:
+def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
     Perform checks which will result in the row being rejected if they fail
     * invalid form type
@@ -124,8 +114,9 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
     
     errors = (msg for msg, check in rules.items() if check())
     if error_messaage := next(errors, None):
-        print(f"Row {csv_values['row_number']} will be rejected: {error_messaage}")
+        print(f"{row_prefix} will be rejected: {error_messaage}")
         return False
+    
     return True
 
 
@@ -225,3 +216,16 @@ def check_cover_image_consistency(csv_values: dict, pattern_matches: dict[re.Mat
         warnings['Type Warnings'].append(f"{row}[see Filename Warnings]")
     
     return warnings
+
+
+def confirm_row_is_not_cover(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict:
+    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
+    document_type_is_cover = csv_values['document_type'] == 'Cover'
+    no_farm_details_provided = [
+        item == ""
+        for key, item in csv_values.items() 
+        if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
+    ]
+    if (document_type_is_cover or file_is_cover_image) and all(no_farm_details_provided):
+        print(f"{row_prefix} skipped as Cover with no farm data provided.")
+
