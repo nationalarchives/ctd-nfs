@@ -125,8 +125,8 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
     errors = (msg for msg, check in rules.items() if check())
     if error_messaage := next(errors, None):
         print(f"Row {csv_values['row_number']} will be rejected: {error_messaage}")
-        return True
-    return False
+        return False
+    return True
 
 
 def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict) -> dict:
