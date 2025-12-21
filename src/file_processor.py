@@ -40,3 +40,11 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
     
     except csv.Error as csv_error_message:
         print(f"!!! ERROR in data loading: {csv_error_message}")
+
+
+def process_csv_data(csv_data: Iterator[dict]) -> None:
+    for row_number, farm_data_row in enumerate(csv_data):
+        print(f"\nProcessing row {row_number} ...")
+        # Further processing logic would go here
+    pass
+    
