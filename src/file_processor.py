@@ -5,6 +5,7 @@ import re
 
 from constants import REGEX
 from pre_instantiation_checks import validate_farm_reference_values, confirm_row_is_not_cover
+from pre_instantiation_checks import check_values_between_filenames, check_cover_image_consistency
 from farm_class_setup import initialise_warnings_mapping
 
 
@@ -65,3 +66,5 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
             continue
 
         warnings: dict = initialise_warnings_mapping()
+        if pattern_matches['filename_1'] and pattern_matches['filename_2']:
+            warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
