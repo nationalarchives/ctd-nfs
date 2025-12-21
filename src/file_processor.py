@@ -6,7 +6,7 @@ import re
 from constants import REGEX
 from pre_instantiation_checks import validate_farm_reference_values, confirm_row_is_not_cover
 from pre_instantiation_checks import check_values_between_filenames, report_cover_image_inconsistencies
-from farm_class_setup import initialise_warnings_mapping
+from farm_class_setup import Farm, initialise_warnings_mapping
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -72,3 +72,5 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
         if farm_data_row['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
             warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix) 
 
+        candidate_farm = Farm(**farm_data_row)
+        candidate_farm.warnings = warnings
