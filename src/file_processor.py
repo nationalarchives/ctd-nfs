@@ -4,8 +4,11 @@ import csv
 import re
 
 from constants import REGEX
-from pre_instantiation_checks import validate_farm_reference_values, check_document_is_form_and_row_contains_farm_details
-from pre_instantiation_checks import check_values_between_filenames, report_cover_image_inconsistencies
+from pre_instantiation_checks import \
+    validate_farm_reference_values, \
+    check_document_is_form_and_row_contains_farm_details, \
+    check_values_between_filenames, \
+    report_cover_image_inconsistencies
 from farm_class_setup import Farm, initialise_warnings_mapping
 
 
