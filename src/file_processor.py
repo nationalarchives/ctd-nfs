@@ -4,7 +4,7 @@ import csv
 import re
 
 from constants import REGEX
-from pre_instantiation_checks import validate_farm_reference_values, confirm_row_is_not_cover
+from pre_instantiation_checks import validate_farm_reference_values, check_document_is_form_and_row_contains_farm_details
 from pre_instantiation_checks import check_values_between_filenames, report_cover_image_inconsistencies
 from farm_class_setup import Farm, initialise_warnings_mapping
 
@@ -62,7 +62,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
         if not validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix):
             continue
 
-        if not confirm_row_is_not_cover(farm_data_row, pattern_matches, row_prefix):
+        if not check_document_is_form_and_row_contains_farm_details(farm_data_row, pattern_matches, row_prefix):
             continue
 
         warnings: dict = initialise_warnings_mapping()
