@@ -4,6 +4,7 @@ import csv
 import re
 
 from constants import REGEX
+from pre_instantiation_checks import perform_rejection_checks
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -53,4 +54,8 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
             'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
             'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
         }
+
+        if perform_rejection_checks(farm_data_row, pattern_matches):
+            continue
+
     
