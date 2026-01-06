@@ -82,7 +82,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
             Farm.all_farms[candidate_farm.catalogue_reference] = candidate_farm
             print(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
         else:
-            print(f"Catalogue reference {candidate_farm.catalogue_reference} already exists. Merging data ...")
+            print(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
 
 
 def process_file(csv_file: Path) -> None:
