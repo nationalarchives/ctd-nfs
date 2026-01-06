@@ -3,11 +3,19 @@ module for defining constants and constant namespaces.
 """
 
 from pathlib import Path
+import re
 import shelve
 
 
 EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
 DB_NAME = Path("MAF 32 Piece Lookup Table.db")
+
+
+class RegexPatterns():
+    __slots__ = ()
+
+    FORM_PATTERN = re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
+    COVER_PATTERN = re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
 
 
 class DataFolders():
@@ -25,4 +33,5 @@ class DataFolders():
 
 
 DATA = DataFolders()
+REGEX = RegexPatterns()
 
