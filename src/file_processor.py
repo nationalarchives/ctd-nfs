@@ -51,7 +51,8 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
 
 
 def process_csv_data(csv_data: Iterator[dict]) -> None:
-    for row_number, farm_data_row in enumerate(csv_data):
+    # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
+    for row_number, farm_data_row in enumerate(csv_data, start=2):
         print(f"\nProcessing row {row_number} ...")
         # Further processing logic would go here
         pattern_matches: dict[re.Match] = {
