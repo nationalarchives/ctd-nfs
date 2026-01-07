@@ -162,7 +162,6 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
     Returns:
         warnings (dict):
     """
-    row = f"Row {csv_values['row_number']}: "
 
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
