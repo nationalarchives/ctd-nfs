@@ -102,6 +102,7 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
+    source_data: list[dict]
 
     catalogue_reference: str = ""
     farm_reference: str = ""
