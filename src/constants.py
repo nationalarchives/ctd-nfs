@@ -14,8 +14,8 @@ DB_NAME = Path("MAF 32 Piece Lookup Table.db")
 class RegexPatterns():
     __slots__ = ()
 
-    FORM_PATTERN = re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
-    COVER_PATTERN = re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
+    FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
+    COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
 
 
 class DataFolders():
