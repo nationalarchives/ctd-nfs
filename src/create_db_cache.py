@@ -7,9 +7,9 @@ Returns:
 from pathlib import Path
 import shelve
 
-from xlreader import read_file
+from src._tools.xlreader import read_file
 
-from constants import DATA, EXCEL_LOOKUP_FILE
+from src._config.constants import DATA, EXCEL_LOOKUP_FILE
 
 
 def read_records_from_file(excel_file: Path) -> list[dict]:  
