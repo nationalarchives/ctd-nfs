@@ -36,6 +36,8 @@ def read_records_from_file(excel_file: Path) -> list[dict]:
 if __name__ == "__main__":
 
     lookup_table: list[dict] = read_records_from_file(EXCEL_LOOKUP_FILE)
-    with shelve.open(DATA.LOOKUP_TABLE) as shelf:
+    with shelve.open(DATA.PIECE_LOOKUP_TABLE) as shelf:
         shelf['pieces lookup table'] = lookup_table
+        shelf['County names'] = {item['County Name'] for item in lookup_table}  
+        pass
 
