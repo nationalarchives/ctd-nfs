@@ -1,5 +1,5 @@
 from src.farm_class_setup import Farm
-from src.pre_instantiation_checks import perform_pre_instantiation_checks
+# from src.pre_instantiation_checks import perform_pre_instantiation_checks
 
 
 def test_farm_dataclass_instantiation(farms):
