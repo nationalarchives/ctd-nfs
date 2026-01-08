@@ -102,12 +102,12 @@ class Farm:
     OS_map_sheet: list[str] | str
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
-    source_data: list[dict]
 
     catalogue_reference: str = ""
     farm_reference: str = ""
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
+    source_data: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.addressee = Details(
