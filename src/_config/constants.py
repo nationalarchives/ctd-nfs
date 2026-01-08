@@ -4,7 +4,6 @@ module for defining constants and constant namespaces.
 
 from pathlib import Path
 import re
-import shelve
 
 
 EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
@@ -23,11 +22,9 @@ class RegexPatterns():
 
 class DataFolders():
     __slots__ = ()
-
-    with shelve.open(Path.joinpath(_PIPELINE_ROOT, "0-DB", _PIECE_LOOKUP_DB), "c") as shelf:
-        PIECE_LOOKUP_TABLE = shelf['pieces lookup table']    
-    with shelve.open(Path.joinpath(_PIPELINE_ROOT, "0-DB", _FARMS_CACHE), "c") as shelf:
-        FARMS_DB = shelf['farms db']    
+    
+    PIECE_LOOKUP_TABLE = _PIPELINE_ROOT / "0-DB" / _PIECE_LOOKUP_DB
+    FARMS_DB = _PIPELINE_ROOT / "0-DB" / _FARMS_CACHE
     INPUT = _PIPELINE_ROOT / "1-INPUT"
     TRANSFORM = _PIPELINE_ROOT / "3-TRANSFORM"
     ARCHIVE = _PIPELINE_ROOT / "4-ARCHIVE"
