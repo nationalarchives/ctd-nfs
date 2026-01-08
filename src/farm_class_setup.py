@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 from collections import OrderedDict
+import shelve
 
 from src._config.constants import DATA
 
@@ -15,12 +16,13 @@ def get_references(county_code: str, parish_number: str) -> tuple:
 
     Returns:
         tuple: 
-    """    
-    all_references = (
-        reference
-        for reference in DATA.PIECE_LOOKUP_TABLE
-        if reference['County & Parish'] == f"{county_code}/{parish_number}"
-    )
+    """ 
+    with shelve.open(DATA.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+        all_references = (
+            reference
+            for reference in piece_lookup_db['pieces lookup table']
+            if reference['County & Parish'] == f"{county_code}/{parish_number}"
+        )
     reference_record = next(all_references, None)
     
     return (reference_record['Catalogue ref'], reference_record['County & Parish'])
