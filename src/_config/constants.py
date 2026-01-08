@@ -10,7 +10,6 @@ import shelve
 EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
 _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
 
-
 class RegexPatterns():
     __slots__ = ()
 
@@ -23,8 +22,7 @@ class DataFolders():
 
     _root = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\Pipeline")
     
-    _db = _root / "0-DB" / _PIECE_LOOKUP_DB
-    with shelve.open(_db, "c") as shelf:
+    with shelve.open(Path.joinpath(_root, "0-DB", _PIECE_LOOKUP_DB), "c") as shelf:
         PIECE_LOOKUP_TABLE = shelf['pieces lookup table']    
     INPUT = _root / "1-INPUT"
     TRANSFORM = _root / "3-TRANSFORM"
