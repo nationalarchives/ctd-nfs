@@ -3,7 +3,7 @@ from typing import Generator, Iterator
 import csv
 import re
 
-from src.constants import REGEX
+from src._config.constants import REGEX
 from src.pre_instantiation_checks import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 from collections import OrderedDict
 
-from src.constants import DATA
+from src._config.constants import DATA
 
 
 def get_references(county_code: str, parish_number: str) -> tuple:
