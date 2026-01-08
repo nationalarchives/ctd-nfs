@@ -10,6 +10,9 @@ from src.pre_instantiation_checks import \
     check_values_between_filenames, \
     report_cover_image_inconsistencies
 from src.farm_class_setup import Farm, initialise_warnings_mapping
+from src._tools.logging_setup import create_logger
+
+logger = create_logger("._config", "logging.yaml")
 
 
 def split_list_values(field_value: str) -> list[str]:
