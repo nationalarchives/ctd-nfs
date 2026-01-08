@@ -12,7 +12,7 @@ from src.pre_instantiation_checks import \
 from src.farm_class_setup import Farm, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
-logger = create_logger("._config", "logging.yaml")
+logger = create_logger("src._config", "logging.yaml")
 
 
 def split_list_values(field_value: str) -> list[str]:
@@ -44,20 +44,20 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
     """
 
     try:
-        print(f"Processing file: {csv_file.stem}")
+        logger.info(f"Processing file: {csv_file.stem}")
         with open(csv_file, newline='') as file_obj:
             raw_csv_data = csv.DictReader(file_obj, skipinitialspace=True)
             for row in raw_csv_data:
                 yield row
     
     except csv.Error as csv_error_message:
-        print(f"!!! ERROR in data loading: {csv_error_message}")
+        logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
 def process_csv_data(csv_data: Iterator[dict]) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-        print(f"\nProcessing row {row_number} ...")
+        logger.info(f"\nProcessing row {row_number} ...")
         # Further processing logic would go here
         pattern_matches: dict[re.Match] = {
             'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
@@ -84,9 +84,9 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
         candidate_farm.warnings = warnings
         if candidate_farm.catalogue_reference not in Farm.all_farms:
             Farm.all_farms[candidate_farm.catalogue_reference] = candidate_farm
-            print(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
+            logger.info(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
         else:
-            print(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
+            logger.info(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
 
 
 def process_file(csv_file: Path) -> None:
