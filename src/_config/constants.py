@@ -16,6 +16,7 @@ _FARMS_CACHE = Path("MAF 32 Farms.db")
 class RegexPatterns():
     __slots__ = ()
 
+    COUNTY_NAME = re.compile(r"""^(?P<county_name>[A-Z\s\(\)]+)+.*?$""")
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
 
