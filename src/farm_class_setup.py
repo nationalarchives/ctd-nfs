@@ -5,6 +5,48 @@ import shelve
 from src._config.constants import DATA
 
 
+def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
+    """Concatenate two values, ensuring no duplicates.
+
+    Args:
+        existing_value (list[str] | str): The existing value.
+        new_value (list[str] | str): The new value to be added.
+
+    Returns:
+        list[str] | str: The concatenated value with duplicates removed.
+    """
+    if existing_value == new_value:
+        return existing_value
+    
+    if new_value in ["", "*"]:
+        return existing_value
+    
+    if existing_value in ["", "*"]:
+        return new_value
+    
+    if type(existing_value) is str and type(new_value) is str:
+        return [existing_value, new_value]
+
+    if type(existing_value) is str and type(new_value) is list:
+        for item in new_value:
+            if item == existing_value:
+                return new_value
+        return [existing_value] + new_value
+
+    if type(existing_value) is list and type(new_value) is str:
+        for item in existing_value:
+            if item == new_value:
+                return existing_value
+        return existing_value + [new_value]
+    
+    if type(existing_value) is list and type(new_value) is list:
+        combined_list = existing_value.copy()
+        for item in new_value:
+            if item not in combined_list:
+                combined_list.append(item)
+        return combined_list
+
+
 def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     """Concatenate the forms, warnings, and source data of two Farm instances.
 
