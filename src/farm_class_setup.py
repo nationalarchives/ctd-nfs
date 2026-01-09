@@ -5,6 +5,29 @@ import shelve
 from src._config.constants import DATA
 
 
+def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
+    """Concatenate the forms, warnings, and source data of two Farm instances.
+
+    Args:
+        existing_farm (Farm): The existing Farm instance in the database.
+        new_farm (Farm): The new Farm instance to be merged.
+
+    Returns:
+        Farm: The updated existing Farm instance with merged data.
+    """
+    # Merge forms
+    for form_code, filenames in new_farm.forms.items():
+        existing_farm.forms[form_code].extend(filenames)
+
+    # Merge warnings
+    for warning_category, warnings in new_farm.warnings.items():
+        existing_farm.warnings[warning_category].extend(warnings)
+
+    # Merge source data
+    existing_farm.source_data.extend(new_farm.source_data)
+
+    return existing_farm
+
 def get_references(county_code: str, parish_number: str) -> tuple:
     """
     Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
