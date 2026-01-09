@@ -93,6 +93,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
             else:
                 logger.info(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
+        candidate_farm.source_data.append(farm_data_row)
 
 
 def process_file(csv_file: Path) -> None:
