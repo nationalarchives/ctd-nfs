@@ -55,27 +55,27 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def add_new_farm_to_db_or_return_existing_farm(farm: Farm) -> None | Farm:
+def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int) -> None | Farm:
     """_summary_
     """
+    row_info = f"Processed row {row_number}:"
     with shelve.open(DATA.FARMS_DB, writeback=True) as farm_db:
         if farm.county not in farm_db:
             farm_db[farm.county] = {}
 
         if farm.catalogue_reference not in farm_db[farm.county]:
             farm_db[farm.county][farm.catalogue_reference] = farm
-            logger.info(f"NEW FARM: {farm.catalogue_reference}")
+            logger.info(f"{row_info} NEW FARM: {farm.catalogue_reference}")
             return None
 
         else:
-            logger.info(f"--- Existing catalogue reference {farm.catalogue_reference} found.")
+            logger.info(f"{row_info} --- Existing catalogue reference {farm.catalogue_reference} found.")
             return farm_db[farm.county][farm.catalogue_reference]
 
 
 def process_csv_data(csv_data: Iterator[dict]) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-        logger.info(f"Processing row {row_number} ...")
         # Further processing logic would go here
         pattern_matches: dict[re.Match] = {
             'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
@@ -100,7 +100,7 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings
-        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm):
+        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number):
             existing_farm.source_data.append(farm_data_row)
             
 
