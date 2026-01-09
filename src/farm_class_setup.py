@@ -57,6 +57,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     Returns:
         Farm: The updated existing Farm instance with merged data.
     """
+    
     # Merge forms
     for form_code, filenames in new_farm.forms.items():
         existing_farm.forms[form_code].extend(filenames)
@@ -69,6 +70,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     existing_farm.source_data.extend(new_farm.source_data)
 
     return existing_farm
+
 
 def get_references(county_code: str, parish_number: str) -> tuple:
     """
