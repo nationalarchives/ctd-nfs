@@ -55,6 +55,23 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
+def add_new_farm_to_db_or_return_existing_farm(farm: Farm) -> None | Farm:
+    """_summary_
+    """
+    with shelve.open(DATA.FARMS_DB, writeback=True) as farm_db:
+        if farm.county not in farm_db:
+            farm_db[farm.county] = {}
+
+        if farm.catalogue_reference not in farm_db[farm.county]:
+            farm_db[farm.county][farm.catalogue_reference] = farm
+            logger.info(f"Successfully instantiated Farm: {farm.catalogue_reference}")
+            return None
+
+        else:
+            logger.info(f"Catalogue reference {farm.catalogue_reference} found. Merging data ...")
+            return farm_db[farm.county][farm.catalogue_reference]
+
+
 def process_csv_data(csv_data: Iterator[dict]) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
@@ -83,17 +100,9 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings
-        with shelve.open(DATA.FARMS_DB, writeback=True) as farm_db:
-            if candidate_farm.county not in farm_db:
-                farm_db[candidate_farm.county] = {}
-
-            if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
-                farm_db[candidate_farm.county][candidate_farm.catalogue_reference] = candidate_farm
-                logger.info(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
-
-            else:
-                logger.info(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
-        candidate_farm.source_data.append(farm_data_row)
+        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm):
+            existing_farm.source_data.append(farm_data_row)
+            
 
 
 def process_file(csv_file: Path) -> None:
