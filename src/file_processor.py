@@ -2,8 +2,9 @@ from pathlib import Path
 from typing import Generator, Iterator
 import csv
 import re
+import shelve
 
-from src._config.constants import REGEX
+from src._config.constants import REGEX, DATA
 from src.pre_instantiation_checks import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \
@@ -82,11 +83,16 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings
-        if candidate_farm.catalogue_reference not in Farm.all_farms:
-            Farm.all_farms[candidate_farm.catalogue_reference] = candidate_farm
-            logger.info(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
-        else:
-            logger.info(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
+        with shelve.open(DATA.FARMS_DB, writeback=True) as farm_db:
+            if candidate_farm.county not in farm_db:
+                farm_db[candidate_farm.county] = {}
+
+            if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
+                farm_db[candidate_farm.county][candidate_farm.catalogue_reference] = candidate_farm
+                logger.info(f"Successfully instantiated Farm: {candidate_farm.catalogue_reference}")
+
+            else:
+                logger.info(f"Catalogue reference {candidate_farm.catalogue_reference} found. Merging data ...")
 
 
 def process_file(csv_file: Path) -> None:
