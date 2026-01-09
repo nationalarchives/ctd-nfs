@@ -64,18 +64,18 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm) -> None | Farm:
 
         if farm.catalogue_reference not in farm_db[farm.county]:
             farm_db[farm.county][farm.catalogue_reference] = farm
-            logger.info(f"Successfully instantiated Farm: {farm.catalogue_reference}")
+            logger.info(f"NEW FARM: {farm.catalogue_reference}")
             return None
 
         else:
-            logger.info(f"Catalogue reference {farm.catalogue_reference} found. Merging data ...")
+            logger.info(f"--- Existing catalogue reference {farm.catalogue_reference} found.")
             return farm_db[farm.county][farm.catalogue_reference]
 
 
 def process_csv_data(csv_data: Iterator[dict]) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-        logger.info(f"\nProcessing row {row_number} ...")
+        logger.info(f"Processing row {row_number} ...")
         # Further processing logic would go here
         pattern_matches: dict[re.Match] = {
             'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
