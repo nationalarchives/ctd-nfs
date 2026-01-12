@@ -6,7 +6,35 @@ from pathlib import Path
 import re
 
 
+class DataNamespace():
+    __slots__ = ()
 
+    CSV_HEADERS = [
+        'filename_1',
+        'filename_2',
+        'document_type',
+        'county',
+        'parish',
+        'primary_farm_number',
+        'additional_farms',
+        'farm_name',
+        'addressee_title',
+        'addressee_individual_name',
+        'addressee_group_names',
+        'address',
+        'owner_title',
+        'owner_individual_name',
+        'owner_group_names',
+        'owner_address',
+        'farmer_title',
+        'farmer_individual_name',
+        'farmer_group_names',
+        'farmer_address',
+        'acreage',
+        'OS_map_sheet',
+        'field_info_date',
+        'primary_record_date',
+    ]
 
 class RegexNamespace():
     __slots__ = ()
