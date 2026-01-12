@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from collections import OrderedDict
 import shelve
 
-from src._config.constants import DATA
+from src._config.constants import PATH
 
 
 def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
@@ -47,17 +47,52 @@ def concatenate_values(existing_value: list[str] | str, new_value: list[str] | s
         return combined_list
 
 
+# def concatenate_attributes(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
+#     """Concatenate the attributes of two Farm instances, ensuring no duplicates.
+
+#     Args:
+#         existing_farm (Farm): The existing Farm instance in the database.
+#         new_farm (Farm): The new Farm instance to be merged.
+
+#     Returns:
+#         Farm: The updated existing Farm instance with merged attributes.
+#     """
+#     existing_value = getattr(existing_detail, detail_attribute)
+#     new_value = getattr(new_detail, detail_attribute)
+
+#     concatenated_value = concatenate_values(existing_value, new_value)
+#     setattr(existing_detail, detail_attribute, concatenated_value)
+
+
+def concatenate_attributes(existing_attribute, new_attribute, field_name):
+    existing_value = getattr(existing_attribute, field_name)
+    new_value = getattr(new_attribute, field_name)
+
+    concatenated_value = concatenate_values(existing_value, new_value)
+    setattr(existing_attribute, field_name, concatenated_value)
+
+
 def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
-    """Concatenate the forms, warnings, and source data of two Farm instances.
+    """
+    Concatenate the attributes of two Farm instances, ensuring no duplicates.
 
     Args:
-        existing_farm (Farm): The existing Farm instance in the database.
-        new_farm (Farm): The new Farm instance to be merged.
+        existing_farm (Farm): _description_
+        new_farm (Farm): _description_
 
     Returns:
-        Farm: The updated existing Farm instance with merged data.
-    """
-    
+        Farm: _description_
+    """        
+    for field_name in existing_farm.__dataclass_fields__:
+        if field_name in ['addressee', 'owner', 'farmer']:
+            existing_detail = getattr(existing_farm, field_name)
+            new_detail = getattr(new_farm, field_name)       
+            for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
+                concatenate_attributes(existing_detail, new_detail, detail_attribute)
+
+        if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
+            concatenate_attributes(existing_farm, new_farm, field_name)
+
     # Merge forms
     for form_code, filenames in new_farm.forms.items():
         existing_farm.forms[form_code].extend(filenames)
@@ -83,7 +118,7 @@ def get_references(county_code: str, parish_number: str) -> tuple:
     Returns:
         tuple: 
     """ 
-    with shelve.open(DATA.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
         all_references = (
             reference
             for reference in piece_lookup_db['pieces lookup table']

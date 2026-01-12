@@ -12,14 +12,15 @@ _PIPELINE_ROOT = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Project
 _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
 _FARMS_CACHE = Path("MAF 32 Farms.db")
 
-class RegexPatterns():
+
+class RegexNamespace():
     __slots__ = ()
 
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
 
 
-class DataFolders():
+class PathNamespace():
     __slots__ = ()
     
     PIECE_LOOKUP_TABLE = _PIPELINE_ROOT / "0-DB" / _PIECE_LOOKUP_DB
@@ -30,6 +31,6 @@ class DataFolders():
     OUTPUT = _PIPELINE_ROOT / "5-OUTPUT"
 
 
-DATA = DataFolders()
-REGEX = RegexPatterns()
+PATH = PathNamespace()
+REGEX = RegexNamespace()
 

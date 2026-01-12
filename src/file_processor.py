@@ -4,7 +4,7 @@ import csv
 import re
 import shelve
 
-from src._config.constants import REGEX, DATA
+from src._config.constants import REGEX, PATH
 from src.pre_instantiation_checks import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \
@@ -59,7 +59,7 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int) -> N
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
-    with shelve.open(DATA.FARMS_DB, writeback=True) as farm_db:
+    with shelve.open(PATH.FARMS_DB, writeback=True) as farm_db:
         if farm.county not in farm_db:
             farm_db[farm.county] = {}
 
