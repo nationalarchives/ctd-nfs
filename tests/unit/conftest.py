@@ -6,7 +6,7 @@ from src._config.constants import DATA
 @pytest.fixture()
 def farms():
 	values = [
-		{
+		[
 			"MAF32-194-1_59.tif",
 			"MAF32-194-1_60.tif",
 			"B496/EI",
@@ -31,8 +31,8 @@ def farms():
 			"26 NE",
 			"06-Feb-42",
 			"12-Feb-43",
-		},
-		{
+		],
+		[
 			"MAF32-194-1_59.tif",
 			"MAF32-194-1_60.tif",
 			"B496/EI",
@@ -57,8 +57,8 @@ def farms():
 			"26 NE",
 			"06-Feb-42",
 			"12-Feb-43",
-		},
-		{
+		],
+		[
 			"MAF32-194-1_75.tif",
 			"MAF32-194-1_76.tif",
 			"C 47/SSY",
@@ -83,8 +83,8 @@ def farms():
 			"",
 			"",
 			"",
-		},
-		{
+		],
+		[
 			"MAF32-228-1_23.tif",
 			"MAF32-228-1_24.tif",
 			"B496/EI",
@@ -109,8 +109,8 @@ def farms():
 			"XL NE 1898",
 			"*",
 			"19 April 1943",
-		},
-		{
+		],
+		[
 			"MAF32-247-23_75.tif",
 			"MAF32-247-23_76.tif",
 			"B496/EI",
@@ -135,10 +135,10 @@ def farms():
 			"9 NE1931 Edition",
 			"30 January 1942",
 			"*",
-		}
+		]
 	]
 
-	return [dict(zip(DATA.CSV_HEADERS, item)) for item in values]
+	return [dict(zip(DATA.CSV_HEADERS, value)) for value in values]
 	
 
 @pytest.fixture()
