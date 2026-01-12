@@ -6,7 +6,6 @@ from pathlib import Path
 import re
 
 
-EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
 
 
 class RegexNamespace():
@@ -23,6 +22,8 @@ class PathNamespace():
     _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
     _FARMS_CACHE = Path("MAF 32 Farms.db")
 
+    EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
+    
     PIECE_LOOKUP_TABLE = _PIPELINE_ROOT / "0-DB" / _PIECE_LOOKUP_DB
     FARMS_DB = _PIPELINE_ROOT / "0-DB" / _FARMS_CACHE
     INPUT = _PIPELINE_ROOT / "1-INPUT"

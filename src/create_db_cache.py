@@ -9,9 +9,7 @@ import shelve
 
 from src._tools.xlreader import read_file
 
-from src._config.constants import PATH, EXCEL_LOOKUP_FILE
-
-
+from src._config.constants import PATH
 def read_records_from_file(excel_file: Path) -> list[dict]:  
     """
     Reads data from file as a dictionary where each {key, value} refers to one sheet and its rows (a list of tuples) 
@@ -35,7 +33,7 @@ def read_records_from_file(excel_file: Path) -> list[dict]:
 
 if __name__ == "__main__":
 
-    lookup_table: list[dict] = read_records_from_file(EXCEL_LOOKUP_FILE)
+    lookup_table: list[dict] = read_records_from_file(PATH.EXCEL_LOOKUP_FILE)
     with shelve.open(PATH.PIECE_LOOKUP_TABLE) as shelf:
         shelf['pieces lookup table'] = lookup_table
         pass
