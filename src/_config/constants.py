@@ -62,4 +62,5 @@ class PathNamespace():
 
 PATH = PathNamespace()
 REGEX = RegexNamespace()
+DATA = DataNamespace()
 
