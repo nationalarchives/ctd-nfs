@@ -10,7 +10,7 @@ from src.pre_instantiation_checks import \
     check_document_is_form_and_row_contains_farm_details, \
     check_values_between_filenames, \
     report_cover_image_inconsistencies
-from src.farm_class_setup import Farm, initialise_warnings_mapping
+from src.farm_producer import Farm, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -103,7 +103,6 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
         if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number):
             existing_farm.source_data.append(farm_data_row)
             
-
 
 def process_file(csv_file: Path) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
