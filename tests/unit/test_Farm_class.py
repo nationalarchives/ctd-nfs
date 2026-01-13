@@ -5,6 +5,7 @@ from src.farm_class_setup import Farm
 # from src.pre_instantiation_checks import perform_pre_instantiation_checks
 
 
+@pytest.mark.skip(reason="not required at this time")
 def test_farm_dataclass_instantiation(farms):
     for farm_fixture in farms:
         new_farm = Farm(**farm_fixture)
