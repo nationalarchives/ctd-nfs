@@ -83,7 +83,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     Returns:
         Farm: _description_
     """        
-    for field_name in existing_farm.__dataclass_fields__:
+    for field_name in existing_farm.__dict__:
         if field_name in ['addressee', 'owner', 'farmer']:
             existing_detail = getattr(existing_farm, field_name)
             new_detail = getattr(new_farm, field_name)       
