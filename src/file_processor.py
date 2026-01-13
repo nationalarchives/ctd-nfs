@@ -55,11 +55,11 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int) -> None | Farm:
+def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test_mode: bool = False) -> None | Farm:
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
-    with shelve.open(PATH.FARMS_DB, writeback=True) as farm_db:
+    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, writeback=True) as farm_db:
         if farm.county not in farm_db:
             farm_db[farm.county] = {}
 
@@ -73,7 +73,7 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int) -> N
             return farm_db[farm.county][farm.catalogue_reference]
 
 
-def process_csv_data(csv_data: Iterator[dict]) -> None:
+def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
         # Further processing logic would go here
@@ -100,11 +100,11 @@ def process_csv_data(csv_data: Iterator[dict]) -> None:
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings
-        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number):
+        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number, test_mode=test_mode):
             existing_farm.source_data.append(farm_data_row)
             
 
-def process_file(csv_file: Path) -> None:
+def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
     cleaned_farm_data = clean_csv_data(raw_farm_data)
-    process_csv_data(cleaned_farm_data)
+    process_csv_data(cleaned_farm_data, test_mode=test_mode)
