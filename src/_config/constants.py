@@ -47,14 +47,19 @@ class PathNamespace():
     __slots__ = ()
     
     _PIPELINE_ROOT = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\Pipeline")
+  
     _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
-    _FARMS_CACHE = Path("MAF 32 Farms.db")
-
-    EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")
-    
+    EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")  
     PIECE_LOOKUP_TABLE = _PIPELINE_ROOT / "0-DB" / _PIECE_LOOKUP_DB
+
+    _FARMS_CACHE = Path("MAF 32 Farms.db")
+    _TEST_CACHE = Path("Test Farms.db")
     FARMS_DB = _PIPELINE_ROOT / "0-DB" / _FARMS_CACHE
+    TEST_DB = _PIPELINE_ROOT / "0-DB" / "TEST" / _TEST_CACHE
+
     INPUT = _PIPELINE_ROOT / "1-INPUT"
+    TEST_INPUT = _PIPELINE_ROOT / "1-INPUT" / "TEST"
+    
     TRANSFORM = _PIPELINE_ROOT / "3-TRANSFORM"
     ARCHIVE = _PIPELINE_ROOT / "4-ARCHIVE"
     OUTPUT = _PIPELINE_ROOT / "5-OUTPUT"
