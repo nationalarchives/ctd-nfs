@@ -5,7 +5,7 @@ import re
 import shelve
 
 from src._config.constants import REGEX, PATH
-from src.pre_instantiation_checks import \
+from src.pre_instantiation_checker import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \
     check_values_between_filenames, \
