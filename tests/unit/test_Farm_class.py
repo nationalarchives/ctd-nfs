@@ -16,6 +16,7 @@ def test_filename_pre_instantiation_checks_pass(bad_farm_initial_values):
 		_, warnings = perform_pre_instantiation_checks(test['data'])
 		assert test['warning'] == warnings['Filename Warnings'][0]
 
+
 @pytest.mark.skip(reason="test needs to be refactored to match new pre-instantiation check structure")
 def test_form_pre_instantiation_checks_pass(bad_form):
 	for test in bad_form:
