@@ -10,6 +10,7 @@ def test_farm_dataclass_instantiation(farms):
         new_farm = Farm(**farm_fixture)
         assert isinstance(new_farm, Farm)
 
+
 @pytest.mark.skip(reason="test needs to be refactored to match new pre-instantiation check structure")
 def test_filename_pre_instantiation_checks_pass(bad_farm_initial_values):
 	for test in bad_farm_initial_values:
