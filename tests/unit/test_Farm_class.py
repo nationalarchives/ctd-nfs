@@ -1,7 +1,6 @@
 import pytest
 
-from src.farm_class_setup import Farm
-
+from src.farm_class_setup import Farm, concatenate_farms
 # from src.pre_instantiation_checks import perform_pre_instantiation_checks
 
 
@@ -25,3 +24,21 @@ def test_form_pre_instantiation_checks_pass(bad_form):
 		_, warnings = perform_pre_instantiation_checks(test['data'])
 		assert test['warning'] == warnings['Type Warnings'][0]
             
+
+def test_farm_attribute_concatenation(concatenation_data):
+	for farm_name, test_data in concatenation_data.items():
+		existing_farm = Farm(**test_data['data'][0])
+		new_farm = Farm(**test_data['data'][1])
+		concatenated_farm = concatenate_farms(existing_farm, new_farm)
+		if farm_name == "10 Burley/7":
+			assert concatenated_farm.farm_name == test_data['result']
+		if farm_name == "49 Tickencote/6":
+			assert concatenated_farm.addressee.group_names == test_data['result']	
+		if farm_name == "96 Cockermouth/10":
+			assert concatenated_farm.addressee.group_names == test_data['result']
+		if farm_name == "97 Dean/47":
+			assert concatenated_farm.addressee.title == test_data['result']
+		if farm_name == "296 Farmborough/14":
+			assert concatenated_farm.farm_name == test_data['result']
+		if farm_name == "91 Dulverton/26":
+			assert concatenated_farm.owner.group_names == test_data['result']
