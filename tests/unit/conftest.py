@@ -144,47 +144,47 @@ def farms():
 @pytest.fixture()
 def concatenation_data():
 	return {
-		"10 Burley/7": {
-			"data": [
-				["MAF32-346-10_9.tif","MAF32-346-10_10.tif","C51/SSY","RD Rutland","10 Burley","7","","Glebe Farm","*","*","A Lane and C Lane","\"Burley, Oakham, Rutland\"","","","","","","","","","","","",],
+		'10 Burley/7': {
+			'data': [
+				["MAF32-346-10_9.tif","MAF32-346-10_10.tif","C51/SSY","RD Rutland","10 Burley","7","","Glebe Farm","*","*","A Lane and C Lane","\"Burley, Oakham, Rutland\"","","","","","","","","","","","","",],
 				["MAF32-346-10_27.tif","MAF32-346-10_28.tif","B496/EI","RD Rutland","10 Burley","7","","*","","","","","*","*","Burley Estate","*","*","*","A Lane and C Lane","\"Burley, Oakham, Rutland\"","168 ac","V 15","September 1942","*",],
 			],
-			"result": "Glebe Farm",
+			'result': "Glebe Farm",
 			},
-		"49 Tickencote/6": {
-			"data": [
+		'49 Tickencote/6': {
+			'data': [
 				["MAF32-348-49_23.tif","MAF32-348-49_24.tif","C 47/SSY","RD Rutland","49 Tickencote","6","","","*","*","Rutland WAEC","\"Lodge Farm, Tickencote, Stamford, Lincolnshire\"","","","","","","","","","","","",""],
 				["MAF32-348-49_25.tif","MAF32-348-49_26.tif","C 47/SSY","RD Rutland","49 Tickencote","6","","","*","*","The Rutland War Agricultural Committee","\"Lodge Farm, Tickencote, Stamford, Lincolnshire\"","","","","","","","","","","","",""],
 			],
-			"result": ["Rutland WAEC", "The Rutland War Agricultural Committee"],
+			'result': ["Rutland WAEC", "The Rutland War Agricultural Committee"],
 		},
-		"96 Cockermouth/10": {
-			"data": [
-				["MAF32-176-100_67.tif","MAF32-176-100_68.tif","C51/SSY","CU Cumberland","96 Cockermouth","10","","*","Mr","W Mitchell","*","\"Waste Lane, Cockermouth\"","","","","","","","","","","","","","","","","","","","",""],
-				["MAF32-176-100_221.tif","MAF32-176-100_222.tif","C 47/SSY","CU Cumberland","96 Cockermouth","10","","","Mr","Wm Mitchell","*","\"Dairyman, Cockermouth, Cumberland\"","","","","","","","","","","","","","","","","","","","","",""],
+		'96 Cockermouth/10': {
+			'data': [
+				["MAF32-176-100_67.tif","MAF32-176-100_68.tif","C51/SSY","CU Cumberland","96 Cockermouth","10","","*","Mr","W Mitchell","*","\"Waste Lane, Cockermouth\"","","","","","","","","","","","",""],
+				["MAF32-176-100_221.tif","MAF32-176-100_222.tif","C 47/SSY","CU Cumberland","96 Cockermouth","10","","","Mr","Wm Mitchell","*","\"Dairyman, Cockermouth, Cumberland\"","","","","","","","","","","","",""],
 			],
-			"result": "*"
+			'result': "*"
 	 	},
-		"97 Dean/47": {
-			"data": [
+		'97 Dean/47': {
+			'data': [
 				["MAF32-175-97_89.tif","MAF32-175-97_90.tif","C51/SSY","CU Cumberland","97 Dean","47","","\"Branthwaite Mill, North Workington\"","Mr","Wm West","*","\"Branthwaite Mill, North Workington\"","","","","","","","","","","","","","","","","","","","","",""],
 				["MAF32-175-97_237.tif","MAF32-175-97_238.tif","B496/EI","CU Cumberland","97 Dean","47","","Branthwaite Mill","","","","","*","*","*","*","*","Wm West","*","\"Branthwaite Mill, Branthwaite, Workington\"","35/-/35","XLII 1926","27 August 1941","*","","","","","","","","",""],
 			],
-			"result": "Mr",
+			'result': "Mr",
 		},
-		"296 Farmborough/14": {
-			"data": [
+		'296 Farmborough/14': {
+			'data': [
 				["MAF32-134-296_45.tif","MAF32-134-296_46.tif","C51/SSY","ST Somerset","296 Farmborough","14","","*","Mr","F Notley","*","\"Hillside Farm, Farmborough, Bath\"","","","","","","","","","","","","","","","","","","","","",""],
 				["MAF32-134-296_53.tif","MAF32-134-296_54.tif","B496/EI","ST Somerset","296 Farmborough","14","","Hillside Farm","","","","","*","*","F A C Notley; Mrs Bridges","\"Bloomfield, Timsbury; Timsbury, Near Bath\"","*","L Gregory","*","\"Hillside Farm, Farmborough, Near Bath\"","50","XIII SW 2nd Edition 1903","26/02/1944","23/05/1944","","","","","","","",""],
 			],
-			"result": "Hillside Farm",
+			'result': "Hillside Farm",
 		},
-		"91 Dulverton/26": {
-			"data": [
+		'91 Dulverton/26': {
+			'data': [
 				["MAF32-131-91_41.tif","MAF32-131-91_42.tif","C51/SSY","ST Somerset","91 Dulverton","26","","Beasley Farm","*","E I Kemp","*","\"High Street, Dulverton\"","","","","","","","","","","","","","","","","","","","","",""],
 				["MAF32-131-91_137.tif","MAF32-131-91_138.tif","B496/EI","ST Somerset","91 Dulverton","26","","High Street","","","","","*","*","The Hon Mrs Herbert Pixton; Hon Mrs Pixton; Mr Abbott; Mrs Surridge; Miss Dowey","\"Dulverton; Dulverton; The Cottage, Dulverton; Exter; Green Hotel, Dulverton\"","*","*","E S Kemp and Sons","\"High Street and Beasly Farm, Dulverton\"","","LXVII NW 2nd Edition 1905","","02/01/1944","","","","","","","",""],
 			],
-			"result": ["The Hon Mrs Herbert Pixton", "Hon Mrs Pixton", "Mr Abbott", "Mrs Surridge", "Miss Dowey"]
+			'result': ["The Hon Mrs Herbert Pixton", "Hon Mrs Pixton", "Mr Abbott", "Mrs Surridge", "Miss Dowey"]
 		},
 	}
 
