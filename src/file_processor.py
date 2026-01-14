@@ -59,7 +59,7 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
-    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, writeback=True) as farm_db:
+    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
         if farm.county not in farm_db:
             farm_db[farm.county] = {}
 
