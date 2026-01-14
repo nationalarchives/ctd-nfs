@@ -23,17 +23,17 @@ def split_list_values(field_value: str) -> list[str]:
 
 def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
-    cleaned_data = []
     for row in raw_csv_data:
+        cleaned_data_row = {}
         for key, value in row.items():
             if key not in DATA.CSV_HEADERS:
                 continue
             if ";" in value:
-                row[key] = split_list_values(value)
+                cleaned_data_row[key] = split_list_values(value)
             else:
-                row[key] = value.strip()
-        cleaned_data.append(row)
-    return iter(cleaned_data)
+                cleaned_data_row[key] = value.strip()
+        
+        yield cleaned_data_row
 
 
 def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
