@@ -4,7 +4,7 @@ import csv
 import re
 import shelve
 
-from src._config.constants import REGEX, PATH
+from src._config.constants import REGEX, PATH, DATA
 from src.pre_instantiation_checker import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \
@@ -26,6 +26,8 @@ def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     cleaned_data = []
     for row in raw_csv_data:
         for key, value in row.items():
+            if key not in DATA.CSV_HEADERS:
+                continue
             if ";" in value:
                 row[key] = split_list_values(value)
             else:
