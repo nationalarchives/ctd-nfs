@@ -113,6 +113,7 @@ def farms():
 
 @pytest.fixture()
 def concatenation_data():
+
 	return {
 		'10 Burley/7': {
 			'data': [
@@ -170,10 +171,16 @@ def concatenation_data():
 				},
 			],
 			'result': {
-				"farm_name": "Glebe Farm",
+				'farm_name': "Glebe Farm",
 				"forms": {
-					'C51/SSY': ['MAF32-346-10_9.tif', 'MAF32-346-10_10.tif'], 
-					'B496/EI': ['MAF32-346-10_27.tif', 'MAF32-346-10_28.tif']
+					'C 47/SSY': [],
+					'C 49/SSY': [],
+					'C51/SSY': ["MAF32-346-10_9.tif", "MAF32-346-10_10.tif"],
+					'SF': [],
+					'SF C69/SSY': [],
+					'B496/EI': ["MAF32-346-10_27.tif", "MAF32-346-10_28.tif"],
+					'Other': [],
+					'Cover': [],
 				},
 			},
 		},
@@ -235,8 +242,14 @@ def concatenation_data():
 			'result': {
 				'addressee_group_names': ["Rutland WAEC", "The Rutland War Agricultural Committee"],
                 'forms': {
-                    'C51/SSY': ['MAF32-346-10_9.tif', 'MAF32-346-10_10.tif'],
-                    'B496/EI': ['MAF32-346-10_27.tif', 'MAF32-346-10_28.tif']
+					'C 47/SSY': ["MAF32-348-49_23.tif", "MAF32-348-49_24.tif", "MAF32-348-49_25.tif", "MAF32-348-49_26.tif", ],
+					'C 49/SSY': [],
+                    'C51/SSY': [],
+					'SF': [],
+					'SF C69/SSY': [],
+                    'B496/EI': [],
+					'Other': [],
+					'Cover': [],
                 }
 			},
 		},
@@ -298,8 +311,14 @@ def concatenation_data():
 			'result': {
 				'addressee_group_names': "*",
 				'forms': {
-					'C51/SSY': ['MAF32-176-100_67.tif', 'MAF32-176-100_68.tif'],
-					'C47/SSY': ['MAF32-176-100_221.tif', 'MAF32-176-100_222.tif']
+					'C 47/SSY': ["MAF32-176-100_221.tif", "MAF32-176-100_222.tif"],
+					'C 49/SSY': [],
+					'C51/SSY': ["MAF32-176-100_67.tif", "MAF32-176-100_68.tif"],
+					'SF': [],
+					'SF C69/SSY': [],
+                    'B496/EI': [],
+					'Other': [],
+					'Cover': [],
 				},
 			},
 	 	},
@@ -361,8 +380,14 @@ def concatenation_data():
 			'result': {
 				'addressee_title': "Mr",
 				'forms': {
-					'C51/SSY': ['MAF32-175-97_89.tif', 'MAF32-175-97_90.tif'],
-					'B496/EI': ['MAF32-175-97_237.tif', 'MAF32-175-97_238.tif']
+					'C 47/SSY': [],
+					'C 49/SSY': [],
+					'C51/SSY': ["MAF32-175-97_89.tif", "MAF32-175-97_90.tif"],
+					'SF': [],
+					'SF C69/SSY': [],
+					'B496/EI': ["MAF32-175-97_237.tif", "MAF32-175-97_238.tif"],
+					'Other': [],
+					'Cover': [],
 				},
 			},
 		},
@@ -424,8 +449,14 @@ def concatenation_data():
 			'result': {
 				'farm_name': "Hillside Farm",
 				'forms': {
-					'C51/SSY': ['MAF32-134-296_45.tif', 'MAF32-134-296_46.tif'],
-					'B496/EI': ['MAF32-134-296_53.tif', 'MAF32-134-296_54.tif']
+					'C 47/SSY': [],
+					'C 49/SSY': [],
+					'C51/SSY': ["MAF32-134-296_45.tif", "MAF32-134-296_46.tif"],
+					'SF': [],
+					'SF C69/SSY': [],
+					'B496/EI': ["MAF32-134-296_53.tif", "MAF32-134-296_54.tif"],
+					'Other': [],
+					'Cover': [],
 				},
 			},
 		},
@@ -487,8 +518,14 @@ def concatenation_data():
 			'result': {
                 'owner_group_names': ["The Hon Mrs Herbert Pixton", "Hon Mrs Pixton", "Mr Abbott", "Mrs Surridge", "Miss Dowey"],
                 'forms': {
-					'C51/SSY': ['MAF32-131-91_41.tif', 'MAF32-131-91_42.tif'],
-					'B496/EI': ['MAF32-131-91_137.tif', 'MAF32-131-91_138.tif']
+					'C 47/SSY': [],
+					'C 49/SSY': [],
+					'C51/SSY': ["MAF32-131-91_41.tif", "MAF32-131-91_42.tif"],
+					'SF': [],
+					'SF C69/SSY': [],
+					'B496/EI': ["MAF32-131-91_137.tif", "MAF32-131-91_138.tif"],
+					'Other': [],
+					'Cover': [],
 				},
 			},
 		},
