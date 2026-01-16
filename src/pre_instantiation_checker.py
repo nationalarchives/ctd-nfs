@@ -1,3 +1,14 @@
+"""
+Verify that values which identify the farm (forms, parish, piece, farm number) are consistent between the two filenames and the data in the spreadsheet row.
+If inconsistencies are found, raise ValueError with appropriate message.
+Checks preformed:
+* that filename matches the expected format
+* if two filenames provided, that they are consecutive (i.e. filename_1 precedes filename_2)
+* that parish number in filename matches parish number in spreadsheet
+* that piece in filename matches form number in spreadsheet
+* confirm form type is valid for filename(s) provided
+"""
+    
 import re
 
 from src.farm_builder import initialise_forms_mapping
