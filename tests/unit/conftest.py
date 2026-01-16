@@ -113,7 +113,6 @@ def farms():
 
 @pytest.fixture()
 def concatenation_data():
-
 	return {
 		'10 Burley/7': {
 			'data': [
