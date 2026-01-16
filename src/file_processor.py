@@ -65,8 +65,11 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test
         if farm.county not in farm_db:
             farm_db.update({farm.county: {}})
 
+        county = farm_db[farm.county].copy()
+
         if farm.catalogue_reference not in farm_db[farm.county]:
-            farm_db.update({farm.county: {farm.catalogue_reference: farm}})
+            county.update({farm.catalogue_reference: farm})
+            farm_db[farm.county] = county
             logger.info(f"{row_info} NEW FARM: {farm.catalogue_reference}")
             return None
 
