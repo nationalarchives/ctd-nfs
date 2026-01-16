@@ -1,6 +1,6 @@
 import pytest
 
-from src.farm_producer import Farm, concatenate_farms
+from src.farm_class_setup import Farm, concatenate_farms
 # from src.pre_instantiation_checks import perform_pre_instantiation_checks
 
 
