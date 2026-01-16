@@ -3,53 +3,6 @@ import re
 from src.farm_builder import initialise_forms_mapping
 
 
-# def perform_pre_instantiation_checks(csv_values: dict) -> dict:
-#     """
-#     Verify that values which identify the farm (forms, parish, piece, farm number) are consistent between the two filenames and the data in the spreadsheet row.
-#     If inconsistencies are found, raise ValueError with appropriate message.
-#     Checks preformed:
-#     * that filename matches the expected format
-#     * if two filenames provided, that they are consecutive (i.e. filename_1 precedes filename_2)
-#     * that parish number in filename matches parish number in spreadsheet
-#     * that piece in filename matches form number in spreadsheet
-#     * confirm form type is valid for filename(s) provided
-    
-#     Args:
-#         csv_values (dict): dictionary with the following keys
-#             row_number (int): row number from original csv, used for reporting errors/warning
-#             document_type (str): form number from spreadsheet row
-#             parish (str): parish number and name e.g. "1 Alkington"
-#             filename_1 (str): front page of form
-#             filename_2 (str, optional): back page of form Defaults to None, not used if form is Cover 
-
-#     Returns:
-#         dict: the piece, parish number & document_type (for later use to generate the catalogue & farm references), and warning messages for any issues found
-#     """
-
-#     RGX_FILENAMEPATTERN_FORM: re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
-#     RGX_FILENAMEPATTERN_COVER: re.Pattern = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
-
-#     pattern_matches: dict[re.Match] = {
-#         'filename_1': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename_1']),
-#         'filename_2': RGX_FILENAMEPATTERN_FORM.match(csv_values['filename_2']),
-#         'cover': RGX_FILENAMEPATTERN_COVER.match(csv_values['filename_1']),
-#     }
-#     row = f"Row {csv_values['row_number']}: "
-    
-#     if validate_farm_reference_values(csv_values, pattern_matches):
-#         raise ValueError(f"{row} rejected due to errors in data.")    
-
-    
-#     warnings: dict = initialise_warnings_mapping()
-#     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
-#         warnings = check_values_between_filenames(csv_values, pattern_matches, warnings)
-
-#     if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-#         warnings = report_cover_image_inconsistencies(csv_values, pattern_matches, warnings) 
-
-#     return warnings
-
-
 def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
     Perform checks which will result in the row being rejected if they fail

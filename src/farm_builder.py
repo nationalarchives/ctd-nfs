@@ -47,23 +47,6 @@ def concatenate_values(existing_value: list[str] | str, new_value: list[str] | s
         return combined_list
 
 
-# def concatenate_attributes(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
-#     """Concatenate the attributes of two Farm instances, ensuring no duplicates.
-
-#     Args:
-#         existing_farm (Farm): The existing Farm instance in the database.
-#         new_farm (Farm): The new Farm instance to be merged.
-
-#     Returns:
-#         Farm: The updated existing Farm instance with merged attributes.
-#     """
-#     existing_value = getattr(existing_detail, detail_attribute)
-#     new_value = getattr(new_detail, detail_attribute)
-
-#     concatenated_value = concatenate_values(existing_value, new_value)
-#     setattr(existing_detail, detail_attribute, concatenated_value)
-
-
 def concatenate_attributes(existing_attribute, new_attribute, field_name):
     existing_value = getattr(existing_attribute, field_name)
     new_value = getattr(new_attribute, field_name)

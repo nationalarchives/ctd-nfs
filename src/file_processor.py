@@ -78,7 +78,7 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test
 def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-        # Further processing logic would go here
+
         pattern_matches: dict[re.Match] = {
             'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
             'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
