@@ -3,7 +3,7 @@ import os
 
 from src._config.constants import PATH
 from src.file_processor import process_file
-from src.farm_class_setup import Farm
+from src.farm_builder import Farm
 
 
 def test_nfs_checks_and_mergers():

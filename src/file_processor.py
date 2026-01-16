@@ -10,7 +10,7 @@ from src.pre_instantiation_checker import \
     check_document_is_form_and_row_contains_farm_details, \
     check_values_between_filenames, \
     report_cover_image_inconsistencies
-from src.farm_class_setup import Farm, initialise_warnings_mapping
+from src.farm_builder import Farm, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
