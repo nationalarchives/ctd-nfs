@@ -57,26 +57,26 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test_mode: bool = False) -> None | Farm:
+def add_new_farm_to_db_or_return_existing_farm(new_farm: Farm, row_number: int, test_mode: bool = False) -> None | Farm:
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
     with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
-        if farm.county not in farm_db:
-            farm_db.update({farm.county: {}})
+        if new_farm.county not in farm_db:
+            farm_db.update({new_farm.county: {}})
 
-        county = farm_db[farm.county].copy()
+        county = farm_db[new_farm.county].copy()
 
-        if farm.catalogue_reference not in farm_db[farm.county]:
-            county.update({farm.catalogue_reference: farm})
-            farm_db[farm.county] = county
-            logger.info(f"{row_info} NEW FARM: {farm.catalogue_reference}")
+        if new_farm.catalogue_reference not in farm_db[new_farm.county]:
+            county.update({new_farm.catalogue_reference: new_farm})
+            farm_db[new_farm.county] = county
+            logger.info(f"{row_info} NEW FARM: {new_farm.catalogue_reference}")
             return None
 
         else:
-            logger.info(f"{row_info} --- Existing catalogue reference {farm.catalogue_reference} found.")
-            existing_farm = farm_db[farm.county][farm.catalogue_reference]
-            farm_db[farm.county][farm.catalogue_reference] = concatenate_farms(existing_farm, farm)
+            logger.info(f"{row_info} --- Existing catalogue reference {new_farm.catalogue_reference} found.")
+            existing_farm = farm_db[new_farm.county][new_farm.catalogue_reference]
+            farm_db[new_farm.county][new_farm.catalogue_reference] = concatenate_farms(existing_farm, new_farm)
             return None
 
 
