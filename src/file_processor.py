@@ -106,6 +106,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix) 
 
         candidate_farm = Farm(**farm_data_row)
+        candidate_farm.source_data.append(farm_data_row)
         candidate_farm.warnings = warnings
         update_farms_db(candidate_farm, row_number, test_mode=test_mode)
             
