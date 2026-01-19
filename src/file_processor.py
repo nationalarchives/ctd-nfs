@@ -74,8 +74,10 @@ def update_farms_db(new_farm: Farm, row_number: int, test_mode: bool = False) ->
 
         else:
             logger.info(f"{row_info} --- Existing catalogue reference {new_farm.catalogue_reference} found.")
-            existing_farm = farm_db[new_farm.county][new_farm.catalogue_reference]
-            farm_db[new_farm.county][new_farm.catalogue_reference] = concatenate_farms(existing_farm, new_farm)
+            existing_farm = county[new_farm.catalogue_reference]
+            county.update({new_farm.catalogue_reference: concatenate_farms(existing_farm, new_farm)})
+            farm_db[new_farm.county] = county
+            logger.info(f"{row_info} >>> UPDATED FARM: {new_farm.catalogue_reference}")
 
 
 def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
