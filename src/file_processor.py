@@ -10,7 +10,7 @@ from src.pre_instantiation_checker import \
     check_document_is_form_and_row_contains_farm_details, \
     check_values_between_filenames, \
     report_cover_image_inconsistencies
-from src.farm_builder import Farm, initialise_warnings_mapping
+from src.farm_builder import Farm, initialise_warnings_mapping, concatenate_farms
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -75,7 +75,9 @@ def add_new_farm_to_db_or_return_existing_farm(farm: Farm, row_number: int, test
 
         else:
             logger.info(f"{row_info} --- Existing catalogue reference {farm.catalogue_reference} found.")
-            return farm_db[farm.county][farm.catalogue_reference]
+            existing_farm = farm_db[farm.county][farm.catalogue_reference]
+            farm_db[farm.county][farm.catalogue_reference] = concatenate_farms(existing_farm, farm)
+            return None
 
 
 def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
@@ -105,8 +107,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings
-        if existing_farm := add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number, test_mode=test_mode):
-            existing_farm.source_data.append(farm_data_row)
+        add_new_farm_to_db_or_return_existing_farm(candidate_farm, row_number, test_mode=test_mode)
             
 
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
