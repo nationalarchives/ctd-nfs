@@ -57,7 +57,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def add_new_farm_to_db_or_return_existing_farm(new_farm: Farm, row_number: int, test_mode: bool = False) -> None | Farm:
+def add_new_farm_to_db_or_return_existing_farm(new_farm: Farm, row_number: int, test_mode: bool = False) -> None:
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
@@ -71,13 +71,11 @@ def add_new_farm_to_db_or_return_existing_farm(new_farm: Farm, row_number: int, 
             county.update({new_farm.catalogue_reference: new_farm})
             farm_db[new_farm.county] = county
             logger.info(f"{row_info} NEW FARM: {new_farm.catalogue_reference}")
-            return None
 
         else:
             logger.info(f"{row_info} --- Existing catalogue reference {new_farm.catalogue_reference} found.")
             existing_farm = farm_db[new_farm.county][new_farm.catalogue_reference]
             farm_db[new_farm.county][new_farm.catalogue_reference] = concatenate_farms(existing_farm, new_farm)
-            return None
 
 
 def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
