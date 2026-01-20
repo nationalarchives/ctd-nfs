@@ -12,7 +12,7 @@ Checks preformed:
 import re
 
 from src.farm_builder import initialise_forms_mapping
-
+from src._config.custom_exceptions import FileNamePatternError, FormValidationError
 
 def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
@@ -41,7 +41,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
         f"{csv_values['filename_1']} does not match expected pattern for form images or cover.": 
             lambda: not (pattern_matches['filename_1'] or pattern_matches['cover']),
         
-        f"{csv_values['filename_2']} does not match expected pattern for form images. ":             
+        f"{csv_values['filename_2']} does not match expected pattern for form images.":             
             lambda: csv_values['filename_2'] and not pattern_matches['filename_2'],
 
         f"{csv_values['filename_1']} and {csv_values['filename_2']} have valid form patterns but no farm data provided.":
@@ -51,8 +51,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
     
     errors = (msg for msg, check in rules.items() if check())
     if error_messaage := next(errors, None):
-        print(f"{row_prefix} will be rejected: {error_messaage}")
-        return False
+        raise FileNamePatternError(f"{row_prefix} will be rejected: {error_messaage}")
     
     return True
 
@@ -163,8 +162,7 @@ def check_document_is_form_and_row_contains_farm_details(csv_values: dict, patte
         if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
     ]
     if (document_type_is_cover or file_is_cover_image) and all(no_farm_details_provided):
-        print(f"{row_prefix} skipped as Cover with no farm data provided.")
-        return False
+        raise FormValidationError(f"{row_prefix} skipped as Cover with no farm data provided.")
     
     return True 
 
