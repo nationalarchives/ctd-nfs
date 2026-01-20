@@ -1,7 +1,12 @@
 import pytest
 
 from src.farm_builder import Farm, concatenate_farms
-# from src.pre_instantiation_checks import perform_pre_instantiation_checks
+from src.pre_instantiation_checker import \
+	validate_farm_reference_values, \
+	check_values_between_filenames, \
+	report_cover_image_inconsistencies, \
+	check_document_is_form_and_row_contains_farm_details
+	
 
 
 @pytest.mark.skip(reason="not required at this time")
