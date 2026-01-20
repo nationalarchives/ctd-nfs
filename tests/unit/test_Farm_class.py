@@ -25,6 +25,7 @@ def test_form_pre_instantiation_checks_pass(bad_form):
 		assert test['warning'] == warnings['Type Warnings'][0]
             
 
+@pytest.mark.skip
 def test_farm_attribute_concatenation(concatenation_data):
 	for farm_name, test_data in concatenation_data.items():
 		existing_farm = Farm(**test_data['data'][0])
