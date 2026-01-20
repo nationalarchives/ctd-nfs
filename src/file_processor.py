@@ -5,6 +5,7 @@ import re
 import shelve
 
 from src._config.constants import REGEX, PATH, DATA
+from src._config.custom_exceptions import FileNamePatternError, FormValidationError
 from src.pre_instantiation_checker import \
     validate_farm_reference_values, \
     check_document_is_form_and_row_contains_farm_details, \
@@ -92,10 +93,11 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
         row_prefix = f"Row {row_number}: "
 
-        if not validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix):
-            continue
-
-        if not check_document_is_form_and_row_contains_farm_details(farm_data_row, pattern_matches, row_prefix):
+        try:
+            validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
+            check_document_is_form_and_row_contains_farm_details(farm_data_row, pattern_matches, row_prefix)
+        except (FormValidationError, FileNamePatternError) as e:
+            logger.info(f"{e}")
             continue
 
         warnings: dict = initialise_warnings_mapping()
