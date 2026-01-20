@@ -537,6 +537,92 @@ def bad_farm_initial_values():
 	return	[
 		{
 			'data':{
+				'row_num': '6666',
+				"filename_1": "MAF32-167-28_386.tif",
+				"filename_2": "MAF32-167-28_385.tif",
+				"document_type": "C 47/SSY",
+				"county": "CU Cumberland",
+				"parish": "28 Aikton",
+			},
+			'warning': "Row 6666: MAF32-167-28_386.tif and MAF32-167-28_385.tif are either not consecutive images or in the wrong order."
+		},
+	]
+
+
+@pytest.fixture()
+def farm_reference_values():
+	return	[
+		{
+			'data':{
+				'row_num': '10101',
+				"filename_1": "MAF32-51-285.tif",
+				"filename_2": "",
+				"document_type": "SF47/SSY",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'error': "Row 10101 will be rejected: Form type 'SF47/SSY' is not a recognised form."
+		},		
+		{
+			'data':{
+				'row_num': '10101',
+				"filename_1": "MAF32-51.tif",
+				"filename_2": "",
+				"document_type": "SF47/SSY",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'error': "Row 10101 will be rejected: MAF32-51.tif does not match expected pattern for form images or cover."
+		},		
+		{
+			'data':{
+				'row_num': '10101',
+				"filename_1": "MAF32-51-285.tif",
+				"filename_2": "MAF3251286.tif",
+				"document_type": "SF47/SSY",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'error': "Row 10101 will be rejected: MAF3251286.tif does not match expected pattern for form images."
+		},		
+		{
+			'data':{
+				'row_num': '10101',
+				"filename_1": "MAF32-194-1_59.tif",
+				"filename_2": "MAF32-194-1_60.tif",
+				"document_type": "B496/EI",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
+				"primary_farm_number": "",
+				"additional_farms": "",
+				"farm_name": "",
+				"addressee_title": "",
+				"addressee_individual_name": "",
+				"addressee_group_names": "",
+				"address": "",
+				"owner_title": "",
+				"owner_individual_name": "",
+				"owner_group_names": "",
+				"owner_address": "",
+				"farmer_title": "",
+				"farmer_individual_name": "",
+				"farmer_group_names": "",
+				"farmer_address": "",
+				"acreage": "",
+				"OS_map_sheet": "",
+				"field_info_date": "",
+				"primary_record_date": "",
+			},
+			'error': "Row 10101 will be rejected: MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
+		},		
+	]
+
+
+@pytest.fixture()
+def values_between_filenames():
+	return	[
+		{
+			'data':{
 				'row_num': '1111',
 				"filename_1": "MAF32-194-1_59.tif",
 				"filename_2": "MAF32-195-1_60.tif",
@@ -544,7 +630,7 @@ def bad_farm_initial_values():
 				"county": "WD Westmorland",
 				"parish": "1 Ambleside",
 			},
-			'warning': "Row 1111: MAF32-194-1_59.tif and MAF32-195-1_60.tif have different box numbers. Box number of MAF32-194-1_59.tif will be used in the catalogue reference."
+			'warning': "Row 1111: MAF32-194-1_59.tif and MAF32-195-1_60.tif have different pieces."
 		},
 		{
 			'data':{
@@ -555,18 +641,18 @@ def bad_farm_initial_values():
 				"county": "HF Herefordshire",
 				"parish": "98 Clehonger",
 			},
-			'warning': "Row 2222: MAF32-5-98_28.tif and MAF32-5-96_29.tif have different parish numbers. Parish number from full parish name '98 Clehonger' will be used in the catalogue reference."
+			'warning': "Row 2222: MAF32-5-98_28.tif and MAF32-5-96_29.tif have different parish numbers."
 		},
 		{
 			'data':{
 				'row_num': '3333',
-				"filename_1": "MAF32-194-1_59.tif",
-				"filename_2": "",
-				"document_type": "Cover",
-				"county": "WD Westmorland",
-				"parish": "1 Ambleside",
+				"filename_1": "MAF32-167-28_386.tif",
+				"filename_2": "MAF32-167-28_388.tif",
+				"document_type": "C 47/SSY",
+				"county": "CU Cumberland",
+				"parish": "28 Aikton",
 			},
-			'warning': "Row 3333: Form type is 'Cover' but MAF32-194-1_59.tif does not match expected cover pattern or have image number 0001."
+			'warning': "Row 3333: MAF32-167-28_386.tif and MAF32-167-28_388.tif are either not consecutive images or in the wrong order."
 		},
 		{
 			'data':{
@@ -577,29 +663,35 @@ def bad_farm_initial_values():
 				"county": "HF Herefordshire",
 				"parish": "98 Clehonger",
 			},
-			'warning': "Row 4444: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a diffeent parish number from parish name '98 Clehonger'. Parish number from full parish name will be used in the catalogue reference."
+			'warning': "Row 4444: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a diffeent parish number from parish name '98 Clehonger'."
 		},
+	]
+
+
+@pytest.fixture()
+def cover_image_inconsistencies():
+	return [
 		{
 			'data':{
 				'row_num': '5555',
-				"filename_1": "MAF32-167-28_386.tif",
-				"filename_2": "MAF32-167-28_388.tif",
-				"document_type": "C 47/SSY",
-				"county": "CU Cumberland",
-				"parish": "28 Aikton",
+				"filename_1": "MAF32-194-1_59.tif",
+				"filename_2": "",
+				"document_type": "Cover",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
 			},
-			'warning': "Row 5555: MAF32-167-28_386.tif and MAF32-167-28_388.tif are either not consecutive images or in the wrong order."
+			'warning': "Row 5555: Form type is 'Cover' but MAF32-194-1_59.tif does not match expected cover pattern or have image number 0001."
 		},
 		{
 			'data':{
 				'row_num': '6666',
-				"filename_1": "MAF32-167-28_386.tif",
-				"filename_2": "MAF32-167-28_385.tif",
-				"document_type": "C 47/SSY",
-				"county": "CU Cumberland",
-				"parish": "28 Aikton",
+				"filename_1": "MAF32-51-28.tif",
+				"filename_2": "MAF32-51-29.tif",
+				"document_type": "Cover",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
 			},
-			'warning': "Row 6666: MAF32-167-28_386.tif and MAF32-167-28_385.tif are either not consecutive images or in the wrong order."
+			'warning': "Row 6666: Form type is 'Cover' but two form images were provided: MAF32-51-28.tif and MAF32-51-29.tif."
 		},
 		{
 			'data':{
@@ -638,20 +730,9 @@ def bad_farm_initial_values():
 
 
 @pytest.fixture()
-def bad_form():
-	return	[
-				{
-			'data':{
-				'row_num': '10101',
-				"filename_1": "MAF32-51-285.tif",
-				"filename_2": "",
-				"document_type": "SF47/SSY",
-				"county": "WL Wiltshire",
-				"parish": "285 Zeals",
-			},
-			'warning': "Row 10101: Form type 'SF47/SSY' is not a recognised form."
-		},		
-	]
+def form_with_farm_details():
+	return[]
+
 
 @pytest.fixture()
 def names1():
