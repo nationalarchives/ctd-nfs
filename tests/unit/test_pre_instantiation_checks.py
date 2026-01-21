@@ -61,10 +61,11 @@ def test_farm_reference_values_no_farm_data(farm_reference_values_no_farm_data):
 
 
 def test_values_between_filenames_different_pieces(values_between_filenames_different_pieces):
-	pattern_matches, row_prefix = setup(
-		values_between_filenames_different_pieces['data'],
-		values_between_filenames_different_pieces['row_num']
-		)
+	data = values_between_filenames_different_pieces['data']
+	row_num = values_between_filenames_different_pieces['row_num']
+	warning_message = values_between_filenames_different_pieces['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {'Filename Warnings': [warning_message]}
 
-	warnings = {'Filename Warnings': [values_between_filenames_different_pieces['warning']]}
-	assert warnings == check_values_between_filenames(values_between_filenames_different_pieces['data'], pattern_matches, warnings, row_prefix)
+	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
