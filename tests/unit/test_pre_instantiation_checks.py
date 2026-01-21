@@ -102,3 +102,74 @@ def test_values_between_filenames_parish_number_mismatch(values_between_filename
 	warnings = {'Filename Warnings': [warning_message]}
 
 	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+
+
+def test_cover_image_inconsistencies_bad_cover_pattern(cover_image_inconsistencies_bad_cover_pattern):
+	data = cover_image_inconsistencies_bad_cover_pattern['data']
+	row_num = cover_image_inconsistencies_bad_cover_pattern['row_num']
+	warning_message = cover_image_inconsistencies_bad_cover_pattern['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {
+		'Filename Warnings': [warning_message],
+		'Type Warnings': []
+		}
+
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	assert warning_message == actual_warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_cover_with_two_images_1(cover_image_inconsistencies_cover_with_two_images_1):
+	data = cover_image_inconsistencies_cover_with_two_images_1['data']
+	row_num = cover_image_inconsistencies_cover_with_two_images_1['row_num']
+	warning_message = cover_image_inconsistencies_cover_with_two_images_1['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {
+		'Filename Warnings': [warning_message],
+		'Type Warnings': []
+		}
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	assert warning_message == actual_warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_cover_with_two_images_2(cover_image_inconsistencies_cover_with_two_images_2):
+	data = cover_image_inconsistencies_cover_with_two_images_2['data']
+	row_num = cover_image_inconsistencies_cover_with_two_images_2['row_num']
+	warning_message = cover_image_inconsistencies_cover_with_two_images_2['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {
+		'Filename Warnings': [warning_message],
+		'Type Warnings': []
+		}
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	assert warning_message == actual_warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_form_supplied_but_cover_image(cover_image_inconsistencies_form_supplied_but_cover_image):
+	data = cover_image_inconsistencies_form_supplied_but_cover_image['data']
+	row_num = cover_image_inconsistencies_form_supplied_but_cover_image['row_num']
+	warning_message = cover_image_inconsistencies_form_supplied_but_cover_image['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {
+		'Filename Warnings': [warning_message],
+		'Type Warnings': []
+		}
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	assert warning_message == actual_warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_form_supplied_but_cover_pattern(cover_image_inconsistencies_form_supplied_but_cover_pattern):
+	data = cover_image_inconsistencies_form_supplied_but_cover_pattern['data']
+	row_num = cover_image_inconsistencies_form_supplied_but_cover_pattern['row_num']
+	warning_message = cover_image_inconsistencies_form_supplied_but_cover_pattern['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {
+		'Filename Warnings': [warning_message],
+		'Type Warnings': []
+		}
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	assert warning_message == actual_warnings['Filename Warnings'][0]
