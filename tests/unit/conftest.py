@@ -552,8 +552,8 @@ def bad_farm_initial_values():
 @pytest.fixture()
 def farm_reference_values_bad_form():
 	return	{
+			'row_num': "10101",
 			'data':{
-				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
 				"filename_2": "",
 				"document_type": "SF47/SSY",
@@ -567,8 +567,8 @@ def farm_reference_values_bad_form():
 @pytest.fixture()
 def farm_reference_values_filename1_bad_pattern():
 	return	{
+			'row_num': "10101",
 			'data':{
-				'row_num': '10101',
 				"filename_1": "MAF32-51.tif",
 				"filename_2": "",
 				"document_type": "C 49/SSY",
@@ -582,8 +582,8 @@ def farm_reference_values_filename1_bad_pattern():
 @pytest.fixture()
 def farm_reference_values_filename2_bad_pattern():
 	return	{
+			'row_num': "10101",
 			'data':{
-				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
 				"filename_2": "MAF3251286.tif",
 				"document_type": "SF C69/SSY",
