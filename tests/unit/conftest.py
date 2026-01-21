@@ -560,7 +560,7 @@ def farm_reference_values_bad_form():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will be rejected: Form type 'SF47/SSY' is not a recognised form."
+			'error': "Row 10101 will not be processed: Form type 'SF47/SSY' is not a recognised form."
 		}	
 
 
