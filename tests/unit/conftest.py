@@ -688,13 +688,11 @@ def values_between_filenames_parish_number_mismatch():
 	}
 
 
-
 @pytest.fixture()
-def cover_image_inconsistencies():
-	return [
-		{
+def cover_image_inconsistencies_bad_cover_pattern():
+	return {
+			'row_num': '5555',
 			'data':{
-				'row_num': '5555',
 				"filename_1": "MAF32-194-1_59.tif",
 				"filename_2": "",
 				"document_type": "Cover",
@@ -702,10 +700,14 @@ def cover_image_inconsistencies():
 				"parish": "1 Ambleside",
 			},
 			'warning': "Row 5555: Form type is 'Cover' but MAF32-194-1_59.tif does not match expected cover pattern or have image number 0001."
-		},
-		{
+		}
+
+
+@pytest.fixture()
+def cover_image_inconsistencies_cover_with_two_images_1():
+	return {
+			'row_num': '6666',
 			'data':{
-				'row_num': '6666',
 				"filename_1": "MAF32-51-28.tif",
 				"filename_2": "MAF32-51-29.tif",
 				"document_type": "Cover",
@@ -713,21 +715,14 @@ def cover_image_inconsistencies():
 				"parish": "285 Zeals",
 			},
 			'warning': "Row 6666: Form type is 'Cover' but two form images were provided: MAF32-51-28.tif and MAF32-51-29.tif."
-		},
-		{
+		}
+
+
+@pytest.fixture()
+def cover_image_inconsistencies_cover_with_two_images_2():
+	return {
+			'row_num': '8888',
 			'data':{
-				'row_num': '7777',
-				"filename_1": "MAF32-51-285_0001.tif",
-				"filename_2": "",
-				"document_type": "SF",
-				"county": "WL Wiltshire",
-				"parish": "285 Zeals",
-			},
-			'warning': "Row 7777: MAF32-51-285_0001.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
-		},
-		{
-			'data':{
-				'row_num': '8888',
 				"filename_1": "MAF32-51-285_0001.tif",
 				"filename_2": "MAF32-51-285_0002.tif",
 				"document_type": "Cover",
@@ -735,10 +730,29 @@ def cover_image_inconsistencies():
 				"parish": "285 Zeals",
 			},
 			'warning': "Row 8888: Form type is 'Cover', and MAF32-51-285_0001.tif matches expected pattern for cover image but additional image MAF32-51-285_0002.tif was also provided."
-		},
-		{
+		}
+
+
+@pytest.fixture()
+def cover_image_inconsistencies_form_supplied_but_cover_image():
+	return {
+			'row_num': '7777',
 			'data':{
-				'row_num': '9999',
+				"filename_1": "MAF32-51-285_0001.tif",
+				"filename_2": "",
+				"document_type": "SF",
+				"county": "WL Wiltshire",
+				"parish": "285 Zeals",
+			},
+			'warning': "Row 7777: MAF32-51-285_0001.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
+		}
+
+
+@pytest.fixture()
+def cover_image_inconsistencies_form_supplied_but_cover_pattern():
+	return {
+			'row_num': '9999',
+			'data':{
 				"filename_1": "MAF32-51-285.tif",
 				"filename_2": "",
 				"document_type": "SF",
@@ -746,8 +760,7 @@ def cover_image_inconsistencies():
 				"parish": "285 Zeals",
 			},
 			'warning': "Row 9999: MAF32-51-285.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
-		},
-	]
+	}
 
 
 @pytest.fixture()
