@@ -45,7 +45,11 @@ def test_farm_reference_values_filename2_bad_pattern(farm_reference_values_filen
 		validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
 
 
-# def test_farm_reference_values_no_farm_data(farm_reference_values_no_farm_data):
-# 	for test in farm_reference_values_no_farm_data:
-# 		_, warnings = check_document_is_form_and_row_contains_farm_details(test['data'])
-# 		assert test['warning'] == warnings['Type Warnings'][0]
+def test_farm_reference_values_no_farm_data(farm_reference_values_no_farm_data):
+	pattern_matches, row_prefix = setup(
+		farm_reference_values_no_farm_data['data'],
+		farm_reference_values_no_farm_data['row_num']
+		)
+
+	with pytest.raises(FileNamePatternError, match=farm_reference_values_no_farm_data['error']):
+		validate_farm_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
