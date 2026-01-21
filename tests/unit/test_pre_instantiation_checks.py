@@ -21,7 +21,6 @@ def setup(test_data) -> tuple:
 	return pattern_matches, row_prefix
 
 
-# @pytest.mark.skip
 def test_farm_reference_values_bad_form(farm_reference_values_bad_form):
 	farm_data_row = farm_reference_values_bad_form['data']
 	pattern_matches, row_prefix = setup(farm_data_row)
@@ -30,16 +29,20 @@ def test_farm_reference_values_bad_form(farm_reference_values_bad_form):
 		validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
 
 
-# def test_farm_reference_values_filename1_bad_pattern(farm_reference_values_filename1_bad_pattern):
-# 	for test in farm_reference_values_filename1_bad_pattern:
-# 		_, warnings = check_values_between_filenames(test['data'])
-# 		assert test['warning'] == warnings['Type Warnings'][0]
+def test_farm_reference_values_filename1_bad_pattern(farm_reference_values_filename1_bad_pattern):
+	farm_data_row = farm_reference_values_filename1_bad_pattern['data']
+	pattern_matches, row_prefix = setup(farm_data_row)
+
+	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename1_bad_pattern['error']):
+		validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
 
 
-# def test_farm_reference_values_filename2_bad_pattern(farm_reference_values_filename2_bad_pattern):
-# 	for test in farm_reference_values_filename2_bad_pattern:
-# 		_, warnings = report_cover_image_inconsistencies(test['data'])
-# 		assert test['warning'] == warnings['Type Warnings'][0]
+def test_farm_reference_values_filename2_bad_pattern(farm_reference_values_filename2_bad_pattern):
+	farm_data_row = farm_reference_values_filename2_bad_pattern['data']
+	pattern_matches, row_prefix = setup(farm_data_row)
+
+	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename2_bad_pattern['error']):
+		validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
 
 
 # def test_farm_reference_values_no_farm_data(farm_reference_values_no_farm_data):
