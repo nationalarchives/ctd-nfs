@@ -31,7 +31,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
     no_farm_details_provided = [
         item == ""
         for key, item in csv_values.items() 
-        if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
+        if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
     ]
     
     checks = {
