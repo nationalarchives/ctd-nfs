@@ -571,11 +571,11 @@ def farm_reference_values_filename1_bad_pattern():
 				'row_num': '10101',
 				"filename_1": "MAF32-51.tif",
 				"filename_2": "",
-				"document_type": "SF47/SSY",
+				"document_type": "C 49/SSY",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will be rejected: MAF32-51.tif does not match expected pattern for form images or cover."
+			'error': "Row 10101 will not be processed: filename_1 MAF32-51.tif does not match expected pattern for form images or cover."
 		}		
 
 
@@ -586,11 +586,11 @@ def farm_reference_values_filename2_bad_pattern():
 				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
 				"filename_2": "MAF3251286.tif",
-				"document_type": "SF47/SSY",
+				"document_type": "SF C69/SSY",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will be rejected: MAF3251286.tif does not match expected pattern for form images."
+			'error': "Row 10101 will not be processed: filename_2 MAF3251286.tif does not match expected pattern for form images."
 		}	
 
 
@@ -624,7 +624,7 @@ def farm_reference_values_no_farm_data():
 				"field_info_date": "",
 				"primary_record_date": "",
 			},
-			'error': "Row 10101 will be rejected: MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
+			'error': "Row 10101 will not be processed: MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
 	}		
 
 
