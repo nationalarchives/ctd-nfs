@@ -1,12 +1,6 @@
 import pytest
 
 from src.farm_builder import Farm, concatenate_farms
-from src.pre_instantiation_checker import \
-	validate_farm_reference_values, \
-	check_values_between_filenames, \
-	report_cover_image_inconsistencies, \
-	check_document_is_form_and_row_contains_farm_details
-	
 
 
 @pytest.mark.skip(reason="not required at this time")
@@ -14,20 +8,6 @@ def test_farm_dataclass_instantiation(farms):
     for farm_fixture in farms:
         new_farm = Farm(**farm_fixture)
         assert isinstance(new_farm, Farm)
-
-
-@pytest.mark.skip(reason="test needs to be refactored to match new pre-instantiation check structure")
-def test_filename_pre_instantiation_checks_pass(bad_farm_initial_values):
-	for test in bad_farm_initial_values:
-		_, warnings = perform_pre_instantiation_checks(test['data'])
-		assert test['warning'] == warnings['Filename Warnings'][0]
-
-
-@pytest.mark.skip(reason="test needs to be refactored to match new pre-instantiation check structure")
-def test_form_pre_instantiation_checks_pass(bad_form):
-	for test in bad_form:
-		_, warnings = perform_pre_instantiation_checks(test['data'])
-		assert test['warning'] == warnings['Type Warnings'][0]
             
 
 @pytest.mark.skip
