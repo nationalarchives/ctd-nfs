@@ -58,3 +58,13 @@ def test_farm_reference_values_no_farm_data(farm_reference_values_no_farm_data):
 
 	with pytest.raises(FileNamePatternError, match=farm_reference_values_no_farm_data['error']):
 		validate_farm_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
+
+
+def test_values_between_filenames_different_pieces(values_between_filenames_different_pieces):
+	pattern_matches, row_prefix = setup(
+		values_between_filenames_different_pieces['data'],
+		values_between_filenames_different_pieces['row_num']
+		)
+
+	warnings = {'Filename Warnings': [values_between_filenames_different_pieces['warning']]}
+	assert warnings == check_values_between_filenames(values_between_filenames_different_pieces['data'], pattern_matches, warnings, row_prefix)
