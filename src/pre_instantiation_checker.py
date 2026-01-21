@@ -38,10 +38,10 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
         f"Form type '{csv_values['document_type']}' is not a recognised form.": 
             lambda: csv_values['document_type'] not in valid_forms,
         
-        f"{csv_values['filename_1']} does not match expected pattern for form images or cover.": 
+        f"filename_1 {csv_values['filename_1']} does not match expected pattern for form images or cover.": 
             lambda: not (pattern_matches['filename_1'] or pattern_matches['cover']),
         
-        f"{csv_values['filename_2']} does not match expected pattern for form images.":             
+        f"filename_2 {csv_values['filename_2']} does not match expected pattern for form images.":             
             lambda: csv_values['filename_2'] and not pattern_matches['filename_2'],
 
         f"{csv_values['filename_1']} and {csv_values['filename_2']} have valid form patterns but no farm data provided.":
