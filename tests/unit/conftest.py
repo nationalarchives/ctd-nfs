@@ -550,9 +550,8 @@ def bad_farm_initial_values():
 
 
 @pytest.fixture()
-def farm_reference_values():
-	return	[
-		{
+def farm_reference_values_bad_form():
+	return	{
 			'data':{
 				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
@@ -562,8 +561,12 @@ def farm_reference_values():
 				"parish": "285 Zeals",
 			},
 			'error': "Row 10101 will be rejected: Form type 'SF47/SSY' is not a recognised form."
-		},		
-		{
+		}	
+
+
+@pytest.fixture()
+def farm_reference_values_bad_filename1():
+	return	{
 			'data':{
 				'row_num': '10101',
 				"filename_1": "MAF32-51.tif",
@@ -573,8 +576,12 @@ def farm_reference_values():
 				"parish": "285 Zeals",
 			},
 			'error': "Row 10101 will be rejected: MAF32-51.tif does not match expected pattern for form images or cover."
-		},		
-		{
+		}		
+
+
+@pytest.fixture()
+def farm_reference_values_bad_filename2():
+	return	{
 			'data':{
 				'row_num': '10101',
 				"filename_1": "MAF32-51-285.tif",
@@ -584,8 +591,12 @@ def farm_reference_values():
 				"parish": "285 Zeals",
 			},
 			'error': "Row 10101 will be rejected: MAF3251286.tif does not match expected pattern for form images."
-		},		
-		{
+		}	
+
+
+@pytest.fixture()
+def farm_reference_values_no_farm_data():
+	return	{
 			'data':{
 				'row_num': '10101',
 				"filename_1": "MAF32-194-1_59.tif",
@@ -614,8 +625,7 @@ def farm_reference_values():
 				"primary_record_date": "",
 			},
 			'error': "Row 10101 will be rejected: MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
-		},		
-	]
+	}		
 
 
 @pytest.fixture()
