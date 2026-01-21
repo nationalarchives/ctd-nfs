@@ -597,8 +597,8 @@ def farm_reference_values_filename2_bad_pattern():
 @pytest.fixture()
 def farm_reference_values_no_farm_data():
 	return	{
+			'row_num': "10101",
 			'data':{
-				'row_num': '10101',
 				"filename_1": "MAF32-194-1_59.tif",
 				"filename_2": "MAF32-194-1_60.tif",
 				"document_type": "B496/EI",
