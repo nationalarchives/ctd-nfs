@@ -165,4 +165,3 @@ def check_document_is_form_and_row_contains_farm_details(csv_values: dict, patte
         raise FormValidationError(f"{row_prefix} skipped as Cover with no farm data provided.")
     
     return True 
-
