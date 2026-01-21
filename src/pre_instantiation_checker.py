@@ -34,7 +34,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
         if key not in ['row_number', 'document_type', 'parish', 'filename_1', 'filename_2']
     ]
     
-    rules = {
+    checks = {
         f"Form type '{csv_values['document_type']}' is not a recognised form.": 
             lambda: csv_values['document_type'] not in valid_forms,
         
@@ -49,7 +49,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
                 and all(no_farm_details_provided)
     }
     
-    errors = (msg for msg, check in rules.items() if check())
+    errors = (msg for msg, check in checks.items() if check())
     if error_message := next(errors, None):
         raise FileNamePatternError(f"{row_prefix} will not be processed: {error_message}")
 
