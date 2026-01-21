@@ -69,3 +69,36 @@ def test_values_between_filenames_different_pieces(values_between_filenames_diff
 	warnings = {'Filename Warnings': [warning_message]}
 
 	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+
+
+def test_values_between_filenames_different_parish_numbers(values_between_filenames_different_parish_numbers):
+	data = values_between_filenames_different_parish_numbers['data']
+	row_num = values_between_filenames_different_parish_numbers['row_num']
+	warning_message = values_between_filenames_different_parish_numbers['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {'Filename Warnings': [warning_message]}
+
+	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+
+
+def test_values_between_filenames_image_number_error(values_between_filenames_image_number_error):
+	data = values_between_filenames_image_number_error['data']
+	row_num = values_between_filenames_image_number_error['row_num']
+	warning_message = values_between_filenames_image_number_error['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {'Filename Warnings': [warning_message]}
+
+	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+
+
+def test_values_between_filenames_parish_number_mismatch(values_between_filenames_parish_number_mismatch):
+	data = values_between_filenames_parish_number_mismatch['data']
+	row_num = values_between_filenames_parish_number_mismatch['row_num']
+	warning_message = values_between_filenames_parish_number_mismatch['warning']
+	
+	pattern_matches, row_prefix = setup(data, row_num)
+	warnings = {'Filename Warnings': [warning_message]}
+
+	assert warnings == check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
