@@ -14,6 +14,7 @@ import datetime
 
 from src.farm_builder import initialise_forms_mapping
 from src._config.custom_exceptions import FileNamePatternError
+from src._config.constants import REGEX
 
 def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
@@ -183,16 +184,13 @@ def date_check(potential_date, row_num):
     warnings = set()
     potential_date = potential_date.strip()
 
-    MONTH_NAMES: list = "|".join(list(calendar.month_name)[1:])
-    RGX_DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
-    RGX_MONTHYEAR = re.compile(fr"""^(?P<month>{MONTH_NAMES}) +(?P<year>\d\d\d\d)$""")
     
-    if rgxmatch := RGX_DAYMONTHYEAR.search(potential_date) or RGX_MONTHYEAR.search(potential_date):
+    if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
         if rgxmatch['year'] not in ["1941", "1942", "1943"]:
             warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range.")
             return (potential_date, warnings)
 
-    if RGX_DAYMONTHYEAR.search(potential_date):
+    if REGEX.DAYMONTHYEAR.search(potential_date):
         try:
             return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
         except ValueError as ve:
@@ -202,7 +200,7 @@ def date_check(potential_date, row_num):
             # warnings.add(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
 
                     
-    if RGX_MONTHYEAR.search(potential_date):
+    if REGEX.MONTHYEAR.search(potential_date):
         return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
                     
     else:

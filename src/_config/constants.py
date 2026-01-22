@@ -4,6 +4,7 @@ module for defining constants and constant namespaces.
 
 from pathlib import Path
 import re
+import calendar
 
 
 class DataNamespace():
@@ -41,6 +42,10 @@ class RegexNamespace():
 
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
+    
+    _month_names: list = "|".join(list(calendar.month_name)[1:])
+    DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
+    MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
 
 
 class PathNamespace():
