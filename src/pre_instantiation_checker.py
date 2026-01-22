@@ -51,7 +51,7 @@ def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Ma
     
     errors = (msg for msg, check in checks.items() if check())
     if error_message := next(errors, None):
-        raise FileNamePatternError(f"{row_prefix} will not be processed: {error_message}")
+        raise FileNamePatternError(f"{row_prefix}not processed because {error_message}")
 
     return True
 
