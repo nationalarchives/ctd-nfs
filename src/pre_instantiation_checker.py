@@ -170,7 +170,7 @@ def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re
     return warnings 
     
 
-def date_check(potential_date, row_num):    
+def date_check(potential_date, warnings: dict, row_prefix: str) -> dict:    
     ''' Checks if the date, given as a string, is a valid date
     
         Key Arguments:
