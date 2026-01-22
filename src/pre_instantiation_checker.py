@@ -187,7 +187,6 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
         if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
             if rgxmatch['year'] not in ["1941", "1942", "1943"]:
                 warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
-                return (potential_date, warnings)
 
         if REGEX.DAYMONTHYEAR.search(potential_date):
             try:
@@ -204,4 +203,5 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
                         
         else:
             warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
-            return (potential_date, warnings)
+
+    return warnings
