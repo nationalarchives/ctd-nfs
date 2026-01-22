@@ -141,11 +141,11 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern or have image number 0001.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
-    if not document_type_is_cover and file_is_cover_image:
+    elif not document_type_is_cover and file_is_cover_image:
         warnings['Filename Warnings'].append(f"{row_prefix}{csv_values['filename_1']} matches expected cover pattern or has image number 0001 but form type is '{csv_values['document_type']}'.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
-    if document_type_is_cover and file_is_cover_image and csv_values['filename_2']:
+    elif document_type_is_cover and file_is_cover_image and csv_values['filename_2']:
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover', and {csv_values['filename_1']} matches expected pattern for cover image " \
                                              f"but additional image {csv_values['filename_2']} was also provided.")
         warnings['Type Warnings'].append(f"{row_prefix}document is listed as 'Cover' in data but two form images provided.")
