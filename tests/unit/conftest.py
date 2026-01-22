@@ -708,13 +708,13 @@ def cover_image_inconsistencies_cover_with_two_images_1():
 	return {
 			'row_num': '6666',
 			'data':{
-				"filename_1": "MAF32-51-28.tif",
-				"filename_2": "MAF32-51-29.tif",
+				"filename_1": "MAF32-193-203_97.tif",
+				"filename_2": "MAF32-193-203_98.tif",
 				"document_type": "Cover",
-				"county": "WL Wiltshire",
-				"parish": "285 Zeals",
+				"county": "CU Cumberland",
+				"parish": "203 Winscales",
 			},
-			'warning': "Row 6666: Form type is 'Cover' but two form images were provided: MAF32-51-28.tif and MAF32-51-29.tif."
+			'warning': "Row 6666: Form type is 'Cover' but two form images were provided: MAF32-193-203_97.tif and MAF32-193-203_98.tif."
 		}
 
 
