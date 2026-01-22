@@ -184,6 +184,12 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
     for key in ['field_info_date', 'primary_record_date']:
         potential_date = csv_values[key]
    
+        is_valid_date_format = \
+            REGEX.DAYMONTHYEAR.search(potential_date) or \
+            REGEX.MONTHYEAR.search(potential_date) or \
+            REGEX.YEARONLY.search(potential_date) or \
+            REGEX.DDMMYYYY.search(potential_date)
+        
         if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
             if rgxmatch['year'] not in ["1941", "1942", "1943"]:
                 warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
