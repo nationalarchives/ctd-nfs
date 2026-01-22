@@ -66,8 +66,8 @@ def test_values_between_filenames_different_pieces(values_between_filenames_diff
 	expected_message = values_between_filenames_different_pieces['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {'Filename Warnings': []}
-	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+	warnings_map = {'Filename Warnings': []}
+	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings_map, row_prefix)
 
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
@@ -78,8 +78,8 @@ def test_values_between_filenames_different_parish_numbers(values_between_filena
 	expected_message = values_between_filenames_different_parish_numbers['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {'Filename Warnings': []}
-	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+	warnings_map = {'Filename Warnings': []}
+	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings_map, row_prefix)
 
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
@@ -90,8 +90,8 @@ def test_values_between_filenames_image_number_error(values_between_filenames_im
 	expected_message = values_between_filenames_image_number_error['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {'Filename Warnings': []}
-	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+	warnings_map = {'Filename Warnings': []}
+	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings_map, row_prefix)
 
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
@@ -102,8 +102,8 @@ def test_values_between_filenames_parish_number_mismatch(values_between_filename
 	expected_message = values_between_filenames_parish_number_mismatch['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {'Filename Warnings': []}
-	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings, row_prefix)
+	warnings_map = {'Filename Warnings': []}
+	actual_warnings = check_values_between_filenames(data, pattern_matches, warnings_map, row_prefix)
 
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
@@ -114,12 +114,12 @@ def test_cover_image_inconsistencies_bad_cover_pattern(cover_image_inconsistenci
 	expected_message = cover_image_inconsistencies_bad_cover_pattern['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {
+	warnings_map = {
 		'Filename Warnings': [],
 		'Type Warnings': []
 		}
 
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
 
@@ -129,11 +129,11 @@ def test_cover_image_inconsistencies_cover_with_two_images_1(cover_image_inconsi
 	expected_message = cover_image_inconsistencies_cover_with_two_images_1['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {
+	warnings_map = {
 		'Filename Warnings': [],
 		'Type Warnings': []
 		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
 
@@ -143,11 +143,11 @@ def test_cover_image_inconsistencies_cover_with_two_images_2(cover_image_inconsi
 	expected_message = cover_image_inconsistencies_cover_with_two_images_2['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {
+	warnings_map = {
 		'Filename Warnings': [],
 		'Type Warnings': []
 		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
 
@@ -157,11 +157,11 @@ def test_cover_image_inconsistencies_form_supplied_but_cover_image(cover_image_i
 	expected_message = cover_image_inconsistencies_form_supplied_but_cover_image['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {
+	warnings_map = {
 		'Filename Warnings': [],
 		'Type Warnings': []
 		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
 	assert expected_message == actual_warnings['Filename Warnings'][0]
 
 
@@ -171,9 +171,9 @@ def test_cover_image_inconsistencies_form_supplied_but_cover_pattern(cover_image
 	expected_message = cover_image_inconsistencies_form_supplied_but_cover_pattern['warning']
 	
 	pattern_matches, row_prefix = setup(data, row_num)
-	warnings = {
+	warnings_map = {
 		'Filename Warnings': [],
 		'Type Warnings': []
 		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings, row_prefix)
+	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
 	assert expected_message == actual_warnings['Filename Warnings'][0]
