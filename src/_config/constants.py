@@ -46,6 +46,8 @@ class RegexNamespace():
     _month_names: list = "|".join(list(calendar.month_name)[1:])
     DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
+    YEARONLY = re.compile(r"""^(?P<year>\d\d\d\d)$""")
+    DDMMYYYY = re.compile(r"""^(?P<day>\d\d?)[/.-](?P<month>\d\d?)[/.-](?P<year>\d\d)$""")
 
 
 class PathNamespace():
