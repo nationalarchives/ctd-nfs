@@ -12,7 +12,7 @@ Checks preformed:
 import re
 
 from src.farm_builder import initialise_forms_mapping
-from src._config.custom_exceptions import FileNamePatternError, FormValidationError
+from src._config.custom_exceptions import FileNamePatternError
 
 def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
