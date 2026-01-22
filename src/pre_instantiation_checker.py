@@ -187,22 +187,22 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
     
     if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
         if rgxmatch['year'] not in ["1941", "1942", "1943"]:
-            warnings['Field Date Warnings'].append(f"Row {row_num}: Error: Date ({potential_date}) is not recognized as within the expected range.")
+            warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
             return (potential_date, warnings)
 
     if REGEX.DAYMONTHYEAR.search(potential_date):
         try:
             return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
         except ValueError as ve:
-            warnings['Field Date Warnings'].append(f'Row {row_num}: Error: Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+            warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
             # TODO: change error message
             # except ValueError as exception: (exception = "day is out of range for month")
-            # warnings['Field Date Warnings'].append(f"Row {row_num}: Error: Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
+            # warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
 
                     
     if REGEX.MONTHYEAR.search(potential_date):
         return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
                     
     else:
-        warnings['Field Date Warnings'].append(f'Row {row_num}: Error: Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+        warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
         return (potential_date, warnings)
