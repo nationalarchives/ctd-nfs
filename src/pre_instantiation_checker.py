@@ -153,7 +153,7 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
     return warnings
 
 
-def check_document_is_form_and_row_contains_farm_details(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
+def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
     no_farm_details_provided = [
