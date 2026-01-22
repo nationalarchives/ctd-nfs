@@ -684,7 +684,7 @@ def values_between_filenames_parish_number_mismatch():
 			"county": "HF Herefordshire",
 			"parish": "98 Clehonger",
 		},
-		'warning': "Row 4444: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a diffeent parish number from parish name '98 Clehonger'."
+		'warning': "Row 4444: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a different parish number from parish name '98 Clehonger'."
 	}
 
 
