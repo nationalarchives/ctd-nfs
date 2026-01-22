@@ -182,6 +182,7 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
     '''
     
     for key in ['field_info_date', 'primary_record_date']:
+        warning_key = 'Field Info Date Warnings' if key == 'field_info_date' else 'Primary Record Date Warnings'
         potential_date = csv_values[key]
    
         date_format: dict[re.Match] = {
