@@ -764,8 +764,70 @@ def cover_image_inconsistencies_form_supplied_but_cover_pattern():
 
 
 @pytest.fixture()
-def form_with_farm_details():
-	return[]
+def cover_with_farm_details():
+	return	[
+		{
+			'row_num': "10101",
+			'data':{
+				"filename_1": "MAF32-194-1.tif",
+				"filename_2": "",
+				"document_type": "Cover",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
+				"primary_farm_number": "18",
+				"additional_farms": "Outhouse, No 1",
+				"farm_name": "The Grove Farm",
+				"addressee_title": "",
+				"addressee_individual_name": "",
+				"addressee_group_names": "",
+				"address": "",
+				"owner_title": "Rev",
+				"owner_individual_name": "H R Fleming",
+				"owner_group_names": "*",
+				"owner_address": "Rayrigg Hall, Windermere, Westmorland",
+				"farmer_title": "*",
+				"farmer_individual_name": "R Nicholson",
+				"farmer_group_names": "*",
+				"farmer_address": "The Grove Farm, Ambleside",
+				"acreage": "162.5/886.5/1049",
+				"OS_map_sheet": "26 NE",
+				"field_info_date": "06-Feb-42",
+				"primary_record_date": "12-Feb-43",
+			},
+			'warning': "Row 10101: Form type is 'Cover' but row contains farm details."
+		},		
+		{
+			'row_num': "10101",
+			'data':{
+				"filename_1": "MAF32-194-1_0001.tif",
+				"filename_2": "",
+				"document_type": "Cover",
+				"county": "WD Westmorland",
+				"parish": "1 Ambleside",
+				"primary_farm_number": "18",
+				"additional_farms": "Outhouse, No 1",
+				"farm_name": "The Grove Farm",
+				"addressee_title": "",
+				"addressee_individual_name": "",
+				"addressee_group_names": "",
+				"address": "",
+				"owner_title": "Rev",
+				"owner_individual_name": "H R Fleming",
+				"owner_group_names": "*",
+				"owner_address": "Rayrigg Hall, Windermere, Westmorland",
+				"farmer_title": "*",
+				"farmer_individual_name": "R Nicholson",
+				"farmer_group_names": "*",
+				"farmer_address": "The Grove Farm, Ambleside",
+				"acreage": "162.5/886.5/1049",
+				"OS_map_sheet": "26 NE",
+				"field_info_date": "06-Feb-42",
+				"primary_record_date": "12-Feb-43",
+			},
+			'warning': "Row 10101: Form type is 'Cover' but row contains farm details."
+		}
+	]		
+
 
 
 @pytest.fixture()
