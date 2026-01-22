@@ -181,28 +181,27 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
             Tuple with either the date as a date object or the original string if it isn't a valid date and a set with any warnings
     '''
     
-    warnings = set()
-    potential_date = potential_date.strip()
+    for key in ['field_info_date', 'primary_record_date']:
+        potential_date = csv_values[key]
+   
+        if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
+            if rgxmatch['year'] not in ["1941", "1942", "1943"]:
+                warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
+                return (potential_date, warnings)
 
-    
-    if rgxmatch := REGEX.DAYMONTHYEAR.search(potential_date) or REGEX.MONTHYEAR.search(potential_date):
-        if rgxmatch['year'] not in ["1941", "1942", "1943"]:
-            warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
-            return (potential_date, warnings)
+        if REGEX.DAYMONTHYEAR.search(potential_date):
+            try:
+                return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
+            except ValueError as ve:
+                warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+                # TODO: change error message
+                # except ValueError as exception: (exception = "day is out of range for month")
+                # warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
 
-    if REGEX.DAYMONTHYEAR.search(potential_date):
-        try:
-            return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
-        except ValueError as ve:
+                        
+        if REGEX.MONTHYEAR.search(potential_date):
+            return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
+                        
+        else:
             warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
-            # TODO: change error message
-            # except ValueError as exception: (exception = "day is out of range for month")
-            # warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
-
-                    
-    if REGEX.MONTHYEAR.search(potential_date):
-        return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
-                    
-    else:
-        warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
-        return (potential_date, warnings)
+            return (potential_date, warnings)
