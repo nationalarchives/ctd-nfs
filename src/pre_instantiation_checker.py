@@ -133,7 +133,11 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
         pattern_matches['filename_1']['image_number'] != "0001" and \
         pattern_matches['filename_2']
 
-    if document_type_is_cover and not file_is_cover_image:
+    if images_are_for_document_which_is_not_cover and document_type_is_cover:
+        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but two form images were provided: {csv_values['filename_1']} and {csv_values['filename_2']}.")
+        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
+
+    elif document_type_is_cover and not file_is_cover_image:
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern or have image number 0001.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
@@ -145,10 +149,6 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover', and {csv_values['filename_1']} matches expected pattern for cover image " \
                                              f"but additional image {csv_values['filename_2']} was also provided.")
         warnings['Type Warnings'].append(f"{row_prefix}document is listed as 'Cover' in data but two form images provided.")
-
-    if images_are_for_document_which_is_not_cover and document_type_is_cover:
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but two form images were provided: {csv_values['filename_1']} and {csv_values['filename_2']}.")
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
     
     return warnings
 
