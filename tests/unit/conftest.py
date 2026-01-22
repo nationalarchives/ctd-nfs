@@ -560,7 +560,7 @@ def farm_reference_values_bad_form():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will not be processed: Form type 'SF47/SSY' is not a recognised form."
+			'error': "Row 10101: not processed because Form type 'SF47/SSY' is not a recognised form."
 		}	
 
 
@@ -575,7 +575,7 @@ def farm_reference_values_filename1_bad_pattern():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will not be processed: filename_1 MAF32-51.tif does not match expected pattern for form images or cover."
+			'error': "Row 10101: not processed because filename_1 MAF32-51.tif does not match expected pattern for form images or cover."
 		}		
 
 
@@ -590,7 +590,7 @@ def farm_reference_values_filename2_bad_pattern():
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
 			},
-			'error': "Row 10101 will not be processed: filename_2 MAF3251286.tif does not match expected pattern for form images."
+			'error': "Row 10101: not processed because filename_2 MAF3251286.tif does not match expected pattern for form images."
 		}	
 
 
@@ -624,7 +624,7 @@ def farm_reference_values_no_farm_data():
 				"field_info_date": "",
 				"primary_record_date": "",
 			},
-			'error': "Row 10101 will not be processed: MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
+			'error': "Row 10101: not processed because MAF32-194-1_59.tif and MAF32-194-1_60.tif have valid form patterns but no farm data provided."
 	}		
 
 
