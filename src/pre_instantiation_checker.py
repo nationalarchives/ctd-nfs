@@ -191,30 +191,9 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
             'yearonly': REGEX.YEARONLY.match(potential_date),
             'ddmmyyyy': REGEX.DDMMYYYY.match(potential_date),
         }
-        
-        is_valid_date_format = any(date_format.values())
-        if not is_valid_date_format:
-            warnings[warning_key].append(f'{row_prefix}{key} ({potential_date}) format not recognised so further date checks cannot be performed.')
-            continue
 
-        if is_valid_date_format:
-            if date_format['yearonly'] and date_format['yearonly']['year'] not in ["1941", "1942", "1943"]:
-                warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is not recognized as within the expected range.")
-
-        if REGEX.DAYMONTHYEAR.search(potential_date):
-            try:
-                return (datetime.datetime.strptime(potential_date, "%d %B %Y"), warnings)
-            except ValueError as ve:
-                warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
-                # TODO: change error message
-                # except ValueError as exception: (exception = "day is out of range for month")
-                # warnings['Field Date Warnings'].append(f"{row_prefix}Date ({potential_date}) is invalid ({exception}). Further date checks cannot be carried out.")
-
-                        
-        if REGEX.MONTHYEAR.search(potential_date):
-            return (datetime.datetime.strptime(potential_date, "%B %Y"), warnings)
-                        
-        else:
-            warnings['Field Date Warnings'].append(f'{row_prefix}Date ({potential_date}) is not in the expected format ("Date format not recognized"). Further date checks cannot be carried out.')
+        date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
+        if not (date_type := next(date_type, None)):
+            warnings[warning_key].append(f"{row_prefix}Error: '{potential_date}' is not a valid format. Further date checks cannot be performed.")
 
     return warnings
