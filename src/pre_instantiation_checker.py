@@ -196,4 +196,8 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
         if not (date_type := next(date_type, None)):
             warnings[warning_key].append(f"{row_prefix}Error: '{potential_date}' is not a valid format. Further date checks cannot be performed.")
 
+        valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
+        if not valid_year:
+            warnings[warning_key].append(f"{row_prefix}Warning: '{potential_date}' is outside the survey timespan.")
+
     return warnings
