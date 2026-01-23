@@ -47,7 +47,9 @@ class RegexNamespace():
     DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     YEARONLY = re.compile(r"""^(?P<year>\d\d\d\d)$""")
-    DDMMYYYY = re.compile(r"""^(?P<day>\d\d?)[/.-](?P<month>\d\d?)[/.-](?P<year>\d\d)$""")
+    DDMMYYYY = re.compile(r"""^(?P<day>\d\d?)[/.-](?P<month>\d\d?)[/.-](?P<year>\d\d(\d\d)?)$""")
+    SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
+
 
 
 class PathNamespace():
