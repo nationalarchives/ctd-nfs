@@ -185,11 +185,11 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
         warning_key = 'Field Info Date Warnings' if key == 'field_info_date' else 'Primary Record Date Warnings'
         potential_date = csv_values[key]
 
-        date_format: dict[re.Match] = {
+        date_match: dict[re.Match] = {
             'daymonthyear': REGEX.DAYMONTHYEAR.match(potential_date),
             'monthyear': REGEX.MONTHYEAR.match(potential_date),
             'yearonly': REGEX.YEARONLY.match(potential_date),
-            'ddmmyyyy': REGEX.DDMMYYYY.match(potential_date)
+            'ddmmyyyy': REGEX.DDMMYYYY.match(potential_date),
         }
         
         is_valid_date_format = any(date_format.values())
