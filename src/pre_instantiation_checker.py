@@ -214,4 +214,10 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
             'ddmmyyyy': "%d/%m/%Y",
         }
 
+        try:
+            datetime.strptime(potential_date, date_format[date_type])
+        except ValueError as ve:
+            # ve = "day is out of range for month":
+            warnings[warning_key].append(f"{row_prefix}Error: {ve}")
+
     return warnings
