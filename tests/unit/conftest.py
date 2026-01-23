@@ -828,6 +828,41 @@ def cover_with_farm_details():
 		}
 	]		
 
+@pytest.fixture()
+def valid_dates():
+    return {
+		'row_num': "1234",
+		'data': [
+			{
+				'field_info_date': "15 October 1941",
+				"primary_record_date": "16 October 1941"
+			},
+			{
+				'field_info_date': "January 1942",
+				"primary_record_date": ""
+			},
+			{
+				'field_info_date': "4 July 1942",
+				"primary_record_date": "5 October 1942"
+			},
+			{
+				'field_info_date': "1942",
+				"primary_record_date": "05 July 1943"
+			},
+			{
+				'field_info_date': "12.11.1943",
+				"primary_record_date": "13.12.1943"
+			},
+			{
+				'field_info_date': "1/2/42",
+				"primary_record_date": "3 March 1942"
+			},
+			{
+				'field_info_date': "6-6-1942",
+				"primary_record_date": "12.12.1943",
+			},
+		],
+	}
 
 
 @pytest.fixture()
