@@ -200,4 +200,11 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
         if not valid_year:
             warnings[warning_key].append(f"{row_prefix}Warning: '{potential_date}' is outside the survey timespan.")
 
+        if date_type == 'ddmmyyyy':
+            potential_date = re.sub(r'[-.]', '/', potential_date)
+            day = date_match[date_type]['day'].zfill(2)
+            month = date_match[date_type]['month'].zfill(2)
+            year = f"19{date_match[date_type]['year'][-2:]}"
+            potential_date = f"{day}/{month}/{year}"
+
     return warnings
