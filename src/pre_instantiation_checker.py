@@ -207,4 +207,11 @@ def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:
             year = f"19{date_match[date_type]['year'][-2:]}"
             potential_date = f"{day}/{month}/{year}"
 
+        date_format: dict[str] = {
+            'daymonthyear': "%d %B %Y",
+            'monthyear': "%B %Y",
+            'yearonly': "%Y",
+            'ddmmyyyy': "%d/%m/%Y",
+        }
+
     return warnings
