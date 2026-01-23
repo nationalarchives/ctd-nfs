@@ -6,7 +6,8 @@ from src.pre_instantiation_checker import \
 	validate_farm_reference_values, \
 	check_values_between_filenames, \
 	report_cover_image_inconsistencies, \
-	check_for_cover_with_farm_details
+	check_for_cover_with_farm_details, \
+	date_check
 from src._config.constants import REGEX	
 
 
@@ -192,3 +193,20 @@ def test_cover_with_farm_details(cover_with_farm_details):
 			}
 		actual_warnings = check_for_cover_with_farm_details(data, pattern_matches, warnings_map, row_prefix)
 		assert expected_message == actual_warnings['Filename Warnings'][0]
+
+
+def test_valid_dates(valid_dates):
+	row_prefix = f"Row {valid_dates['row_num']}: "
+	warnings_map = {
+		'Field Date Warnings': [],
+		'Primary Date Warnings': [],
+	}
+
+	for test_dates in valid_dates['data']:
+		expected_warnings = warnings_map.copy()	
+		actual_warnings = date_check(test_dates, warnings_map, row_prefix)
+
+		assert expected_warnings == actual_warnings
+
+
+	
