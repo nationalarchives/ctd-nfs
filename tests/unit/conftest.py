@@ -831,33 +831,37 @@ def cover_with_farm_details():
 # TODO: restructure to same format used in date_checks module
 @pytest.fixture()
 def valid_dates():
-    return [
-        "15 October 1941",
-        "January 1942",
-        "4 July 1942",
-        "05 July 1942",
-        "July 1941",
-        "1943",
-        "01/05/1942",
-        "6-6-1942",
-        "12.12.1943",
-        "1/1/42",
-    ]
+	return {
+		'row_num': "1234",
+		'data': [
+			"15 October 1941",
+			"January 1942",
+			"4 July 1942",
+			"05 July 1942",
+			"July 1941",
+			"1943",
+			"01/05/1942",
+			"6-6-1942",
+			"12.12.1943",
+			"1/1/42",
+		],
+	}
 	
 
 @pytest.fixture()
 def dates_with_invalid_format():
-	return [
-        "6 June",
-        "10 1942",
-        "4th July 1942",
-        "5th 1943",
-	]
-
+	return {
+		'data': [
+	        "6 June",
+			"10 1942",
+			"4th July 1942",
+			"5th 1943",
+		],
+		'warning': " is not a valid format. Further date checks cannot be performed.",
+	}
 
 def test_dates_outside_survey_range():
 	return {
-		'row_num': "1234",
 		'data': [
 			"September 1945",	
 			"31 October 1940",
@@ -868,7 +872,6 @@ def test_dates_outside_survey_range():
 
 def test_invalid_calendar_dates():
 	return {
-		'row_num': "1234",
 		'data': [
 			"31 February 1942",
 			"29 February 1943",
