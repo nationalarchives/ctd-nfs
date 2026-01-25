@@ -5,113 +5,6 @@ import shelve
 from src._config.constants import PATH
 
 
-def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
-    """Concatenate two values, ensuring no duplicates.
-
-    Args:
-        existing_value (list[str] | str): The existing value.
-        new_value (list[str] | str): The new value to be added.
-
-    Returns:
-        list[str] | str: The concatenated value with duplicates removed.
-    """
-    if existing_value == new_value:
-        return existing_value
-    
-    if new_value in ["", "*"]:
-        return existing_value
-    
-    if existing_value in ["", "*"]:
-        return new_value
-    
-    if type(existing_value) is str and type(new_value) is str:
-        return [existing_value, new_value]
-
-    if type(existing_value) is str and type(new_value) is list:
-        for item in new_value:
-            if item == existing_value:
-                return new_value
-        return [existing_value] + new_value
-
-    if type(existing_value) is list and type(new_value) is str:
-        for item in existing_value:
-            if item == new_value:
-                return existing_value
-        return existing_value + [new_value]
-    
-    if type(existing_value) is list and type(new_value) is list:
-        combined_list = existing_value.copy()
-        for item in new_value:
-            if item not in combined_list:
-                combined_list.append(item)
-        return combined_list
-
-
-def concatenate_attributes(existing_attribute, new_attribute, field_name):
-    existing_value = getattr(existing_attribute, field_name)
-    new_value = getattr(new_attribute, field_name)
-
-    concatenated_value = concatenate_values(existing_value, new_value)
-    setattr(existing_attribute, field_name, concatenated_value)
-
-
-def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
-    """
-    Concatenate the attributes of two Farm instances, ensuring no duplicates.
-
-    Args:
-        existing_farm (Farm): _description_
-        new_farm (Farm): _description_
-
-    Returns:
-        Farm: _description_
-    """        
-    for field_name in existing_farm.__dict__:
-        if field_name in ['addressee', 'owner', 'farmer']:
-            existing_detail = getattr(existing_farm, field_name)
-            new_detail = getattr(new_farm, field_name)       
-            for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
-                concatenate_attributes(existing_detail, new_detail, detail_attribute)
-
-        if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-            concatenate_attributes(existing_farm, new_farm, field_name)
-
-    # Merge forms
-    for form_code, filenames in new_farm.forms.items():
-        existing_farm.forms[form_code].extend(filenames)
-
-    # Merge warnings
-    for warning_category, warnings in new_farm.warnings.items():
-        existing_farm.warnings[warning_category].extend(warnings)
-
-    # Merge source data
-    existing_farm.source_data.extend(new_farm.source_data)
-
-    return existing_farm
-
-
-def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
-    """
-    Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
-
-    Args:
-        county_code (str):  
-        parish_number (str): 
-
-    Returns:
-        str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
-    """ 
-    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
-        all_references = (
-            reference
-            for reference in piece_lookup_db['pieces lookup table']
-            if reference['County & Parish'] == f"{county_code}/{parish_number}"
-        )
-    reference_record = next(all_references, None)
-    
-    return reference_record['Catalogue ref']
-
-
 def initialise_forms_mapping() -> OrderedDict:
     """Create a mapping of form codes to empty lists for storing filenames.
         An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
@@ -145,6 +38,28 @@ def initialise_warnings_mapping() -> dict:
 		'Field Date Warnings': [],
 		'Primary Date Warnings': []
     }
+
+
+def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
+    """
+    Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
+
+    Args:
+        county_code (str):  
+        parish_number (str): 
+
+    Returns:
+        str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
+    """ 
+    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+        all_references = (
+            reference
+            for reference in piece_lookup_db['pieces lookup table']
+            if reference['County & Parish'] == f"{county_code}/{parish_number}"
+        )
+    reference_record = next(all_references, None)
+    
+    return reference_record['Catalogue ref']
 
 
 @dataclass
@@ -243,3 +158,87 @@ class Farm:
         if self.filename_2:
             self.forms[self.document_type].append(self.filename_2)
 
+
+def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
+    """Concatenate two values, ensuring no duplicates.
+
+    Args:
+        existing_value (list[str] | str): The existing value.
+        new_value (list[str] | str): The new value to be added.
+
+    Returns:
+        list[str] | str: The concatenated value with duplicates removed.
+    """
+    if existing_value == new_value:
+        return existing_value
+    
+    if new_value in ["", "*"]:
+        return existing_value
+    
+    if existing_value in ["", "*"]:
+        return new_value
+    
+    if type(existing_value) is str and type(new_value) is str:
+        return [existing_value, new_value]
+
+    if type(existing_value) is str and type(new_value) is list:
+        for item in new_value:
+            if item == existing_value:
+                return new_value
+        return [existing_value] + new_value
+
+    if type(existing_value) is list and type(new_value) is str:
+        for item in existing_value:
+            if item == new_value:
+                return existing_value
+        return existing_value + [new_value]
+    
+    if type(existing_value) is list and type(new_value) is list:
+        combined_list = existing_value.copy()
+        for item in new_value:
+            if item not in combined_list:
+                combined_list.append(item)
+        return combined_list
+
+
+def concatenate_attributes(existing_attribute, new_attribute, field_name):
+    existing_value = getattr(existing_attribute, field_name)
+    new_value = getattr(new_attribute, field_name)
+
+    concatenated_value = concatenate_values(existing_value, new_value)
+    setattr(existing_attribute, field_name, concatenated_value)
+
+
+def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
+    """
+    Concatenate the attributes of two Farm instances, ensuring no duplicates.
+
+    Args:
+        existing_farm (Farm): _description_
+        new_farm (Farm): _description_
+
+    Returns:
+        Farm: _description_
+    """        
+    for field_name in existing_farm.__dict__:
+        if field_name in ['addressee', 'owner', 'farmer']:
+            existing_detail = getattr(existing_farm, field_name)
+            new_detail = getattr(new_farm, field_name)       
+            for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
+                concatenate_attributes(existing_detail, new_detail, detail_attribute)
+
+        if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
+            concatenate_attributes(existing_farm, new_farm, field_name)
+
+    # Merge forms
+    for form_code, filenames in new_farm.forms.items():
+        existing_farm.forms[form_code].extend(filenames)
+
+    # Merge warnings
+    for warning_category, warnings in new_farm.warnings.items():
+        existing_farm.warnings[warning_category].extend(warnings)
+
+    # Merge source data
+    existing_farm.source_data.extend(new_farm.source_data)
+
+    return existing_farm
