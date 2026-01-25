@@ -168,6 +168,8 @@ class Farm:
         )
 
         self.assign_filenames_to_forms()
+        self.field_info_date = normalize_date(self.field_info_date)
+        self.primary_record_date = normalize_date(self.primary_record_date)
 
     @property
     def catalogue_reference(self) -> str:
