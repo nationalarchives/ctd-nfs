@@ -188,7 +188,6 @@ class Farm:
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
 
-    farm_reference: str = ""
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
     source_data: list[dict] = field(default_factory=list)
@@ -222,6 +221,10 @@ class Farm:
         _catalogue_reference = get_catalogue_reference_stem(self._county_code, self._parish_number)
         return f"{_catalogue_reference}/{self.primary_farm_number}"
 
+    @property
+    def farm_reference(self) -> str:
+        return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
+    
     def create_references(self) -> None:
         """ 
         The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
