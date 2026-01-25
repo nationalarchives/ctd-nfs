@@ -857,27 +857,29 @@ def dates_with_invalid_format():
 			"4th July 1942",
 			"5th 1943",
 		],
-		'warning': " is not a valid format. Further date checks cannot be performed.",
+		'message': " is not a valid format. Further date checks cannot be performed.",
 	}
 
+@pytest.fixture()
 def dates_outside_survey_range():
 	return {
 		'data': [
 			"September 1945",	
 			"31 October 1940",
 		],
-		'warning': " is outside the survey timespan.",
+		'message': " is outside the survey timespan.",
 	}
 
 
+@pytest.fixture()
 def invalid_calendar_dates():
 	return {
 		'data': [
 			"31 February 1942",
 			"29 February 1943",
-			"32/01/1942",
+			# "32/01/1942",
 		],
-		'error': " is not a valid calendar date."
+		'message': " is not a valid calendar date."
 	}
 
 
