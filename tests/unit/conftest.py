@@ -860,7 +860,7 @@ def dates_with_invalid_format():
 		'warning': " is not a valid format. Further date checks cannot be performed.",
 	}
 
-def test_dates_outside_survey_range():
+def dates_outside_survey_range():
 	return {
 		'data': [
 			"September 1945",	
@@ -870,7 +870,7 @@ def test_dates_outside_survey_range():
 	}
 
 
-def test_invalid_calendar_dates():
+def invalid_calendar_dates():
 	return {
 		'data': [
 			"31 February 1942",
