@@ -90,7 +90,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     return existing_farm
 
 
-def get_catalogue_reference_stem(county_code: str, parish_number: str) -> tuple:
+def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
     """
     Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
 
@@ -99,7 +99,7 @@ def get_catalogue_reference_stem(county_code: str, parish_number: str) -> tuple:
         parish_number (str): 
 
     Returns:
-        tuple: 
+        str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
     """ 
     with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
         all_references = (
@@ -109,7 +109,7 @@ def get_catalogue_reference_stem(county_code: str, parish_number: str) -> tuple:
         )
     reference_record = next(all_references, None)
     
-    return (reference_record['Catalogue ref'], reference_record['County & Parish'])
+    return reference_record['Catalogue ref']
 
 
 def initialise_forms_mapping() -> OrderedDict:
