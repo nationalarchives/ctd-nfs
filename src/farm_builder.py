@@ -90,7 +90,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     return existing_farm
 
 
-def get_references(county_code: str, parish_number: str) -> tuple:
+def get_catalogue_reference_stem(county_code: str, parish_number: str) -> tuple:
     """
     Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
 
@@ -227,7 +227,7 @@ class Farm:
         county_code, _ = self.county.split()
         parish_number, *_ = self.parish.split()
 
-        catalogue_reference, county_and_parish = get_references(county_code, parish_number)
+        catalogue_reference, county_and_parish = get_catalogue_reference_stem(county_code, parish_number)
 
         self.catalogue_reference = \
             f"{catalogue_reference}/" \
