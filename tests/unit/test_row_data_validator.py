@@ -225,4 +225,4 @@ def test_invalid_calendar_dates(invalid_calendar_dates):
 		actual_message = date_check(test_date)
 
 		assert expected_message == actual_message
-	
+
