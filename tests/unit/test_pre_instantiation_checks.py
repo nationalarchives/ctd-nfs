@@ -217,3 +217,12 @@ def test_dates_outside_survey_range(dates_outside_survey_range):
 		actual_message = date_check(test_date)
 
 		assert expected_message == actual_message
+
+
+def test_invalid_calendar_dates(invalid_calendar_dates):
+	for test_date in invalid_calendar_dates['data']:
+		expected_message = f"[ERROR] '{test_date}' is not a valid calendar date."
+		actual_message = date_check(test_date)
+
+		assert expected_message == actual_message
+	
