@@ -202,4 +202,11 @@ def test_valid_dates(valid_dates):
 
 		assert expected_result == actual_result
 
+
+def test_dates_with_invalid_format(dates_with_invalid_format):
+	for test_date in dates_with_invalid_format['data']:
+		expected_message = f"[ERROR] '{test_date}' is not a valid format. Further date checks cannot be performed."
+		actual_message = date_check(test_date)
+
+		assert expected_message == actual_message
 	
