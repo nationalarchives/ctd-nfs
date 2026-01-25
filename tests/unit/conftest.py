@@ -846,6 +846,22 @@ def valid_dates():
 			"1/1/42",
 		],
 	}
+
+
+@pytest.fixture()
+def normalized_dates():
+	return [
+		"15 October 1941",
+		"January 1942",
+		"4 July 1942",
+		"5 July 1942",
+		"July 1941",
+		"1943",
+		"1 May 1942",
+		"6 June 1942",
+		"12 December 1943",
+		"1 January 1942",
+	]
 	
 
 @pytest.fixture()
