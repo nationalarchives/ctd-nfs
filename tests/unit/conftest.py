@@ -828,40 +828,53 @@ def cover_with_farm_details():
 		}
 	]		
 
+# TODO: restructure to same format used in date_checks module
 @pytest.fixture()
 def valid_dates():
-    return {
+    return [
+        "15 October 1941",
+        "January 1942",
+        "4 July 1942",
+        "05 July 1942",
+        "July 1941",
+        "1943",
+        "01/05/1942",
+        "6-6-1942",
+        "12.12.1943",
+        "1/1/42",
+    ]
+	
+
+@pytest.fixture()
+def dates_with_invalid_format():
+	return [
+        "6 June",
+        "10 1942",
+        "4th July 1942",
+        "5th 1943",
+	]
+
+
+def test_dates_outside_survey_range():
+	return {
 		'row_num': "1234",
 		'data': [
-			{
-				'field_info_date': "15 October 1941",
-				"primary_record_date": "16 October 1941"
-			},
-			{
-				'field_info_date': "January 1942",
-				"primary_record_date": ""
-			},
-			{
-				'field_info_date': "4 July 1942",
-				"primary_record_date": "5 October 1942"
-			},
-			{
-				'field_info_date': "1942",
-				"primary_record_date": "05 July 1943"
-			},
-			{
-				'field_info_date': "12.11.1943",
-				"primary_record_date": "13.12.1943"
-			},
-			{
-				'field_info_date': "1/2/42",
-				"primary_record_date": "3 March 1942"
-			},
-			{
-				'field_info_date': "6-6-1942",
-				"primary_record_date": "12.12.1943",
-			},
+			"September 1945",	
+			"31 October 1940",
 		],
+		'warning': " is outside the survey timespan.",
+	}
+
+
+def test_invalid_calendar_dates():
+	return {
+		'row_num': "1234",
+		'data': [
+			"31 February 1942",
+			"29 February 1943",
+			"32/01/1942",
+		],
+		'error': " is not a valid calendar date."
 	}
 
 
