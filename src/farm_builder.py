@@ -211,8 +211,6 @@ class Farm:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
-        # _county_code, _ = self.county.split()
-        # _parish_number, *_ = self.parish.split()
 
         self.assign_filenames_to_forms(),
 
@@ -228,27 +226,6 @@ class Farm:
         _county_code, _ = self.county.split()
         _parish_number, *_ = self.parish.split()
         return f"{_county_code}/{_parish_number}/{self.primary_farm_number}"
-    
-    # def create_references(self) -> None:
-    #     """ 
-    #     The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
-    #     Each farm must have a unique catalogue reference.
-    #     Create both the catalogue reference and farm reference for the farm using values from the lookup table and primary farm number
-    #     The catalogue reference is made up of the catalogue reference from the lookup table and the primary farm number
-    #     The farm reference is made up of the county code, parish number and primary farm number
-    #     """        
-    #     county_code, _ = self.county.split()
-    #     parish_number, *_ = self.parish.split()
-
-    #     catalogue_reference, county_and_parish = get_catalogue_reference_stem(county_code, parish_number)
-
-    #     self.catalogue_reference = \
-    #         f"{catalogue_reference}/" \
-    #         f"{self.primary_farm_number}"
-
-    #     self.farm_reference = \
-    #         f"{county_and_parish}/" \
-    #         f"{self.primary_farm_number}"
 
     def assign_filenames_to_forms(self):
         """_summary_
