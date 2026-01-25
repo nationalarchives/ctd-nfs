@@ -196,17 +196,10 @@ def test_cover_with_farm_details(cover_with_farm_details):
 
 
 def test_valid_dates(valid_dates):
-	row_prefix = f"Row {valid_dates['row_num']}: "
-	warnings_map = {
-		'Field Date Warnings': [],
-		'Primary Date Warnings': [],
-	}
+	for test_date in valid_dates['data']:
+		expected_result = None	
+		actual_result = date_check(test_date)
 
-	for test_dates in valid_dates['data']:
-		expected_warnings = warnings_map.copy()	
-		actual_warnings = date_check(test_dates, warnings_map, row_prefix)
-
-		assert expected_warnings == actual_warnings
-
+		assert expected_result == actual_result
 
 	
