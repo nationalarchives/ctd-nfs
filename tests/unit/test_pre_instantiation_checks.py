@@ -209,4 +209,11 @@ def test_dates_with_invalid_format(dates_with_invalid_format):
 		actual_message = date_check(test_date)
 
 		assert expected_message == actual_message
-	
+
+
+def test_dates_outside_survey_range(dates_outside_survey_range):
+	for test_date in dates_outside_survey_range['data']:
+		expected_message = f"[ERROR] '{test_date}' is outside the survey timespan."
+		actual_message = date_check(test_date)
+
+		assert expected_message == actual_message
