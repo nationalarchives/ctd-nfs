@@ -4,14 +4,9 @@ import csv
 import re
 import shelve
 
-from src._config.constants import REGEX, PATH, DATA
-from src._config.custom_exceptions import FileNamePatternError, FormValidationError
-from src.pre_instantiation_checker import \
-    validate_farm_reference_values, \
-    check_for_cover_with_farm_details, \
-    check_values_between_filenames, \
-    report_cover_image_inconsistencies
-from src.farm_builder import Farm, initialise_warnings_mapping, concatenate_farms
+from row_data_validator import validate_data
+from src._config.constants import PATH, DATA
+from src.farm_builder import Farm, concatenate_farms
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -85,31 +80,11 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
 
-        pattern_matches: dict[re.Match] = {
-            'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
-            'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
-            'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
-        }
-
-        row_prefix = f"Row {row_number}: "
-
-        try:
-            validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
-            check_for_cover_with_farm_details(farm_data_row, pattern_matches, row_prefix)
-        except (FormValidationError, FileNamePatternError) as e:
-            logger.info(f"{e}")
-            continue
-
-        warnings: dict = initialise_warnings_mapping()
-        if pattern_matches['filename_1'] and pattern_matches['filename_2']:
-            warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
-
-        if farm_data_row['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-            warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix) 
+        warnings = validate_data(row_number, farm_data_row)
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.source_data.append(farm_data_row)
-        candidate_farm.warnings = warnings
+        candidate_farm.warnings = warnings  
         update_farms_db(candidate_farm, row_number, test_mode=test_mode)
             
 
