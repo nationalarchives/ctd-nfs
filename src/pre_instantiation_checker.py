@@ -170,54 +170,49 @@ def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re
     return warnings 
     
 
-def date_check(csv_values: dict, warnings: dict, row_prefix: str) -> dict:    
+def date_check(candi_date: str) -> str | None:    
     ''' Checks if the date, given as a string, is a valid date
     
         Key Arguments:
             potential_date - string containing the date value for checking
-            row_num - string with the number of the row in the source spreadsheet
             
         Returns:
-            Tuple with either the date as a date object or the original string if it isn't a valid date and a set with any warnings
+            warning/error message string if issues found, else None
     '''
-    
-    for key in ['field_info_date', 'primary_record_date']:
-        warning_key = 'Field Info Date Warnings' if key == 'field_info_date' else 'Primary Record Date Warnings'
-        potential_date = csv_values[key]
 
-        date_match: dict[re.Match] = {
-            'daymonthyear': REGEX.DAYMONTHYEAR.match(potential_date),
-            'monthyear': REGEX.MONTHYEAR.match(potential_date),
-            'yearonly': REGEX.YEARONLY.match(potential_date),
-            'ddmmyyyy': REGEX.DDMMYYYY.match(potential_date),
-        }
+    date_match: dict[re.Match] = {
+        'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
+        'monthyear': REGEX.MONTHYEAR.match(candi_date),
+        'yearonly': REGEX.YEARONLY.match(candi_date),
+        'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
+    }
 
-        date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
-        if not (date_type := next(date_type, None)):
-            warnings[warning_key].append(f"{row_prefix}Error: '{potential_date}' is not a valid format. Further date checks cannot be performed.")
+    date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
+    if not (date_type := next(date_type, None)):
+        return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
 
-        valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
-        if not valid_year:
-            warnings[warning_key].append(f"{row_prefix}Warning: '{potential_date}' is outside the survey timespan.")
+    valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
+    if not valid_year:
+        return f"'{candi_date}' is outside the survey timespan."
 
-        if date_type == 'ddmmyyyy':
-            potential_date = re.sub(r'[-.]', '/', potential_date)
-            day = date_match[date_type]['day'].zfill(2)
-            month = date_match[date_type]['month'].zfill(2)
-            year = f"19{date_match[date_type]['year'][-2:]}"
-            potential_date = f"{day}/{month}/{year}"
+    if date_type == 'ddmmyyyy':
+        candi_date = re.sub(r'[-.]', '/', candi_date)
+        day = date_match[date_type]['day'].zfill(2)
+        month = date_match[date_type]['month'].zfill(2)
+        year = f"19{date_match[date_type]['year'][-2:]}"
+        candi_date = f"{day}/{month}/{year}"
 
-        date_format: dict[str] = {
-            'daymonthyear': "%d %B %Y",
-            'monthyear': "%B %Y",
-            'yearonly': "%Y",
-            'ddmmyyyy': "%d/%m/%Y",
-        }
+    date_format: dict[str] = {
+        'daymonthyear': "%d %B %Y",
+        'monthyear': "%B %Y",
+        'yearonly': "%Y",
+        'ddmmyyyy': "%d/%m/%Y",
+    }
 
-        try:
-            datetime.strptime(potential_date, date_format[date_type])
-        except ValueError as ve:
-            if "day is out of range for month" in str(ve):
-                warnings[warning_key].append(f"{row_prefix}Error: '{potential_date}' is not a valid calendar date.")
-
-    return warnings
+    try:
+        datetime.strptime(candi_date, date_format[date_type])
+    except ValueError as ve:
+        if "day is out of range for month" in str(ve):
+            return f"[ERROR] '{candi_date}' is not a valid calendar date."
+        else:
+            return f"[ERROR] {ve}."
