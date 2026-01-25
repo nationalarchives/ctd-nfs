@@ -188,7 +188,6 @@ class Farm:
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
 
-    catalogue_reference: str = ""
     farm_reference: str = ""
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
@@ -213,8 +212,15 @@ class Farm:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
-        self.create_references()
+        _county_code, _ = self.county.split()
+        _parish_number, *_ = self.parish.split()
+
         self.assign_filenames_to_forms(),
+
+    @property
+    def catalogue_reference(self) -> str:
+        _catalogue_reference = get_catalogue_reference_stem(self._county_code, self._parish_number)
+        return f"{_catalogue_reference}/{self.primary_farm_number}"
 
     def create_references(self) -> None:
         """ 
