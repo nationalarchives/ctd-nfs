@@ -14,7 +14,7 @@ from datetime import datetime
 
 from src.farm_builder import initialise_forms_mapping, initialise_warnings_mapping
 from src._config.custom_exceptions import FileNamePatternError
-from src._config.constants import REGEX
+from src._config.constants import REGEX, DATA
 
 def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
@@ -202,15 +202,8 @@ def date_check(candi_date: str) -> str | None:
         year = f"19{date_match[date_type]['year'][-2:]}"
         candi_date = f"{day}/{month}/{year}"
 
-    date_format: dict[str] = {
-        'daymonthyear': "%d %B %Y",
-        'monthyear': "%B %Y",
-        'yearonly': "%Y",
-        'ddmmyyyy': "%d/%m/%Y",
-    }
-
     try:
-        datetime.strptime(candi_date, date_format[date_type])
+        datetime.strptime(candi_date, DATA.DATE_FORMATS[date_type])
     except ValueError as ve:
         if "day is out of range for month" in str(ve):
             return f"[ERROR] '{candi_date}' is not a valid calendar date."

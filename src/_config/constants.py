@@ -36,6 +36,12 @@ class DataNamespace():
         'field_info_date',
         'primary_record_date',
     ]
+    DATE_FORMATS: dict[str] = {
+        'daymonthyear': "%d %B %Y",
+        'monthyear': "%B %Y",
+        'yearonly': "%Y",
+        'ddmmyyyy': "%d/%m/%Y",
+    }
 
 class RegexNamespace():
     __slots__ = ()
