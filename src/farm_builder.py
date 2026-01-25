@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 from collections import OrderedDict
 import shelve
+import re
+from datetime import datetime
 
-from src._config.constants import PATH
+from src._config.constants import PATH, REGEX
 
 
 def initialise_forms_mapping() -> OrderedDict:
@@ -61,6 +63,44 @@ def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
     
     return reference_record['Catalogue ref']
 
+
+def normalize_date(candi_date: str) -> str:
+    """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
+    Note: day must not have leading zeros.
+
+    Args:
+        date_str (str): The date string to normalize.
+
+    Returns:
+        str: The normalized date string.
+    """
+
+    date_match: dict[re.Match] = {
+        'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
+        'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
+    }
+    if not (date_match['daymonthyear'] or date_match['ddmmyyyy']):
+        return candi_date
+    
+    # Try common date formats
+    date_formats = [
+        "%d %B %Y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d.%m.%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d.%m.%y",
+    ]
+
+    for fmt in date_formats:
+        try:
+            parsed_date = datetime.strptime(candi_date, fmt)
+            day, month, year = parsed_date.strftime("%d %B %Y").split()
+        except ValueError:
+            continue
+
+    return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
 @dataclass
 class Details:
