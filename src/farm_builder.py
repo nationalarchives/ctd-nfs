@@ -216,6 +216,12 @@ class Farm:
 
     @property
     def catalogue_reference(self) -> str:
+        """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
+       Each farm must have a unique catalogue reference.
+
+        Returns:
+            str: catalogue reference for the farm
+        """
         _county_code, _ = self.county.split()
         _parish_number, *_ = self.parish.split()
         _catalogue_reference = get_catalogue_reference_stem(_county_code, _parish_number)
