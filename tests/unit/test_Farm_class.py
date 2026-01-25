@@ -1,6 +1,7 @@
 import pytest
 
 from src.farm_builder import Farm, concatenate_farms
+from src.farm_builder import normalize_date
 
 
 @pytest.mark.skip(reason="not required at this time")
@@ -34,3 +35,10 @@ def test_farm_attribute_concatenation(concatenation_data):
 		if farm_name == "91 Dulverton/26":
 			assert concatenated_farm.owner.group_names == test_data['result']['owner_group_names']
 			assert dict(concatenated_farm.forms) == test_data['result']['forms']
+
+
+def test_normalize_date(valid_dates, normalized_dates):
+	for index, test_date in enumerate(valid_dates['data']):
+		expected_result = normalized_dates[index]
+
+		assert expected_result == normalize_date(test_date)
