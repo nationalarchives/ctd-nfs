@@ -828,7 +828,7 @@ def cover_with_farm_details():
 		}
 	]		
 
-# TODO: restructure to same format used in date_checks module
+
 @pytest.fixture()
 def valid_dates():
 	return {
