@@ -212,7 +212,7 @@ class Farm:
             address=self.farmer_address,
         )
 
-        self.assign_filenames_to_forms(),
+        self.assign_filenames_to_forms()
 
     @property
     def catalogue_reference(self) -> str:
