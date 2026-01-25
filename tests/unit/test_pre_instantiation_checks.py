@@ -2,13 +2,13 @@ import re
 import pytest
 
 from src._config.custom_exceptions import FileNamePatternError
-from src.pre_instantiation_checker import \
+from row_data_validator import \
 	validate_farm_reference_values, \
 	check_values_between_filenames, \
 	report_cover_image_inconsistencies, \
 	check_for_cover_with_farm_details, \
 	date_check
-from src._config.constants import REGEX	
+from src._config.constants import REGEX
 
 
 def setup(test_data, row_num) -> tuple:
