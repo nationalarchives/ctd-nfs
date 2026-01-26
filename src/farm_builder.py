@@ -184,9 +184,17 @@ class Farm:
         Args:
             csv_data (dict): _description_
         """
-        self.forms[self.document_type].append(self.filename_1)
-        if self.filename_2:
-            self.forms[self.document_type].append(self.filename_2)
+        new_images = [
+            Image(filename=file_name)
+            for file_name in [self.filename_1, self.filename_2] 
+            if file_name
+        ]
+        new_form = Form(
+            images=new_images,
+            field_info_date=normalize_date(self.field_info_date),
+            primary_record_date=normalize_date(self.primary_record_date),
+        )
+        self.forms[self.document_type].append(new_form)
 
     def __post_init__(self):
         self.addressee = Details(
