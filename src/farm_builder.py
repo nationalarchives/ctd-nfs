@@ -3,6 +3,7 @@ from collections import OrderedDict
 import shelve
 import re
 from datetime import datetime
+import uuid
 
 from src._config.constants import PATH, REGEX
 
