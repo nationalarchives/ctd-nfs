@@ -147,30 +147,6 @@ class Farm:
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
     source_data: list[dict] = field(default_factory=list)
 
-    def __post_init__(self):
-        self.addressee = Details(
-            title=self.addressee_title,
-            individual_name=self.addressee_individual_name,
-            group_names=self.addressee_group_names,
-            address=self.address,
-        )
-        self.owner = Details(
-            title=self.owner_title,
-            individual_name=self.owner_individual_name,
-            group_names=self.owner_group_names,
-            address=self.owner_address,
-        )
-        self.farmer = Details(
-            title=self.farmer_title,
-            individual_name=self.farmer_individual_name,
-            group_names=self.farmer_group_names,
-            address=self.farmer_address,
-        )
-
-        self.assign_filenames_to_forms()
-        self.field_info_date = normalize_date(self.field_info_date)
-        self.primary_record_date = normalize_date(self.primary_record_date)
-
     @property
     def catalogue_reference(self) -> str:
         """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
@@ -199,6 +175,30 @@ class Farm:
         self.forms[self.document_type].append(self.filename_1)
         if self.filename_2:
             self.forms[self.document_type].append(self.filename_2)
+
+    def __post_init__(self):
+        self.addressee = Details(
+            title=self.addressee_title,
+            individual_name=self.addressee_individual_name,
+            group_names=self.addressee_group_names,
+            address=self.address,
+        )
+        self.owner = Details(
+            title=self.owner_title,
+            individual_name=self.owner_individual_name,
+            group_names=self.owner_group_names,
+            address=self.owner_address,
+        )
+        self.farmer = Details(
+            title=self.farmer_title,
+            individual_name=self.farmer_individual_name,
+            group_names=self.farmer_group_names,
+            address=self.farmer_address,
+        )
+
+        self.assign_filenames_to_forms()
+        self.field_info_date = normalize_date(self.field_info_date)
+        self.primary_record_date = normalize_date(self.primary_record_date)
 
 
 def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
