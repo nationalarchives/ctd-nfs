@@ -217,8 +217,6 @@ class Farm:
         )
 
         self.assign_filenames_to_forms()
-        self.field_info_date = normalize_date(self.field_info_date)
-        self.primary_record_date = normalize_date(self.primary_record_date)
 
 
 def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
