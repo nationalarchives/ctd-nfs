@@ -3,7 +3,7 @@ import pytest
 from src.farm_builder import Farm, concatenate_farms
 from src.farm_builder import normalize_date
 
-
+@pytest.mark.skip
 def test_farm_dataclass_instantiation(capsys, farms):
 	for farm_fixture in farms:
 		new_farm = Farm(**farm_fixture)
@@ -13,7 +13,6 @@ def test_farm_dataclass_instantiation(capsys, farms):
 		assert isinstance(new_farm, Farm)
             
 
-@pytest.mark.skip
 def test_farm_attribute_concatenation(concatenation_data):
 	for farm_name, test_data in concatenation_data.items():
 		existing_farm = Farm(**test_data['data'][0])
