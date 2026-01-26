@@ -111,6 +111,17 @@ class Details:
 
 
 @dataclass
+class Image:
+    filename: str
+    id: uuid.UUID = field(default_factory=uuid.uuid4)
+
+@dataclass
+class Form:
+    images: list[Image]
+    field_info_date: list[str] | str
+    primary_record_date: list[str] | str
+
+@dataclass
 class Farm:
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
