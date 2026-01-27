@@ -7,7 +7,7 @@ from row_data_validator import \
 	check_values_between_filenames, \
 	report_cover_image_inconsistencies, \
 	check_for_cover_with_farm_details, \
-	date_check
+	vali_dates
 from src._config.constants import REGEX
 
 
@@ -198,7 +198,7 @@ def test_cover_with_farm_details(cover_with_farm_details):
 def test_valid_dates(valid_dates):
 	for test_date in valid_dates['data']:
 		expected_result = None	
-		actual_result = date_check(test_date)
+		actual_result = vali_dates(test_date)
 
 		assert expected_result == actual_result
 
@@ -206,7 +206,7 @@ def test_valid_dates(valid_dates):
 def test_dates_with_invalid_format(dates_with_invalid_format):
 	for test_date in dates_with_invalid_format['data']:
 		expected_message = f"[ERROR] '{test_date}'{dates_with_invalid_format['message']}"
-		actual_message = date_check(test_date)
+		actual_message = vali_dates(test_date)
 
 		assert expected_message == actual_message
 
@@ -214,7 +214,7 @@ def test_dates_with_invalid_format(dates_with_invalid_format):
 def test_dates_outside_survey_range(dates_outside_survey_range):
 	for test_date in dates_outside_survey_range['data']:
 		expected_message = f"[ERROR] '{test_date}'{dates_outside_survey_range['message']}"
-		actual_message = date_check(test_date)
+		actual_message = vali_dates(test_date)
 
 		assert expected_message == actual_message
 
@@ -222,7 +222,7 @@ def test_dates_outside_survey_range(dates_outside_survey_range):
 def test_invalid_calendar_dates(invalid_calendar_dates):
 	for test_date in invalid_calendar_dates['data']:
 		expected_message = f"[ERROR] '{test_date}'{invalid_calendar_dates['message']}"
-		actual_message = date_check(test_date)
+		actual_message = vali_dates(test_date)
 
 		assert expected_message == actual_message
 
