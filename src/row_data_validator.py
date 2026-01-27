@@ -207,6 +207,9 @@ def date_check(candi_date: str) -> str | None:
         year = f"19{date_match[date_type]['year'][-2:]}"
         candi_date = f"{day}/{month}/{year}"
 
+    if int(day) > 31:
+        return f"[ERROR] '{candi_date}' is not a valid calendar date."
+    
     try:
         datetime.strptime(candi_date, DATA.DATE_FORMATS[date_type])
     except ValueError as ve:
