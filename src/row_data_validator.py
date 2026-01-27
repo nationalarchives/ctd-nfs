@@ -186,6 +186,7 @@ def date_check(candi_date: str) -> str | None:
         'monthyear': REGEX.MONTHYEAR.match(candi_date),
         'yearonly': REGEX.YEARONLY.match(candi_date),
         'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
+        'ddmonyyyy': REGEX.DDMONYEAR.match(candi_date),
     }
 
     date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
