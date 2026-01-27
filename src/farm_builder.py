@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 import uuid
 
-from src._config.constants import PATH, REGEX
+from src._config.constants import PATH, REGEX, DATA
 
 
 def initialise_forms_mapping() -> OrderedDict:
@@ -84,18 +84,7 @@ def normalize_date(candi_date: str) -> str:
     if not (date_match['daymonthyear'] or date_match['ddmmyyyy']):
         return candi_date
     
-    # Try common date formats
-    date_formats = [
-        "%d %B %Y",
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%d.%m.%Y",
-        "%d/%m/%y",
-        "%d-%m-%y",
-        "%d.%m.%y",
-    ]
-
-    for fmt in date_formats:
+    for fmt in DATA.DATE_FORMATS:
         try:
             parsed_date = datetime.strptime(candi_date, fmt)
             day, month, year = parsed_date.strftime("%d %B %Y").split()
