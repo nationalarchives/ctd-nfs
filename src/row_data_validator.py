@@ -210,13 +210,14 @@ def date_check(candi_date: str) -> str | None:
 
         candi_date = f"{day}/{month}/{year}"
 
-    try:
-        datetime.strptime(candi_date, DATA.DATE_FORMATS[date_type])
-    except ValueError as ve:
-        if "day is out of range for month" in str(ve):
-            return f"[ERROR] '{candi_date}' is not a valid calendar date."
-        else:
-            return f"[ERROR] {ve}."
+    for fmt in DATA.DATE_FORMATS:
+        try:
+            datetime.strptime(candi_date, fmt)
+        except ValueError as ve:
+            if "day is out of range for month" in str(ve):
+                return f"[ERROR] '{candi_date}' is not a valid calendar date."
+            else:
+                continue
 
 
 def validate_data(row_number, farm_data_row):
