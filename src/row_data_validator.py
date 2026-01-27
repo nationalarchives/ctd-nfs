@@ -247,7 +247,7 @@ def validate_data(row_number, farm_data_row):
         if not farm_data_row[key]:
             continue
         warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
-        if check_result := date_check(farm_data_row[key]):
+        if check_result := vali_dates(farm_data_row[key]):
             warnings[warning_key].append(f"{row_prefix}{check_result}")
 
     return warnings
