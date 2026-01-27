@@ -16,3 +16,10 @@ dependencies = [
 dev = [
     "pytest>=9.0.2",
 ]
+# pyproject.toml
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-ra", "-q"]
+testpaths = [
+    "tests",
+]
