@@ -180,6 +180,7 @@ def date_check(candi_date: str) -> str | None:
             warning/error message string if issues found, else None
     '''
 
+    candi_date = re.sub(r'[/-. ]+', ' ', candi_date)
     date_match: dict[re.Match] = {
         'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
         'monthyear': REGEX.MONTHYEAR.match(candi_date),
@@ -196,7 +197,6 @@ def date_check(candi_date: str) -> str | None:
         return f"[ERROR] '{candi_date}' is outside the survey timespan."
 
     if date_type == 'ddmmyyyy':
-        candi_date = re.sub(r'[-.]', '/', candi_date)
         day = date_match[date_type]['day'].zfill(2)
         month = date_match[date_type]['month'].zfill(2)
         year = f"19{date_match[date_type]['year'][-2:]}"
