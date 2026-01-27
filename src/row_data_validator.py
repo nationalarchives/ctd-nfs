@@ -202,6 +202,10 @@ def date_check(candi_date: str) -> str | None:
         month = date_match[date_type]['month'].zfill(2)
         year = f"19{date_match[date_type]['year'][-2:]}"
         candi_date = f"{day}/{month}/{year}"
+    elif date_type == 'ddmonyyyy':
+        day = date_match[date_type]['day'].zfill(2)
+        year = f"19{date_match[date_type]['year'][-2:]}"
+        candi_date = f"{day}/{month}/{year}"
 
     try:
         datetime.strptime(candi_date, DATA.DATE_FORMATS[date_type])
