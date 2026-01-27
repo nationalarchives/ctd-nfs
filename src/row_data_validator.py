@@ -180,7 +180,6 @@ def date_check(candi_date: str) -> str | None:
             warning/error message string if issues found, else None
     '''
 
-    candi_date = re.sub(r'[/-. ]+', ' ', candi_date)
     date_match: dict[re.Match] = {
         'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
         'monthyear': REGEX.MONTHYEAR.match(candi_date),
