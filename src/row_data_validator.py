@@ -208,7 +208,7 @@ def vali_dates(candi_date: str) -> str | None:
 
         year = f"19{date_match[date_type]['year'][-2:]}"
 
-        candi_date = f"{day}/{month}/{year}"
+        candi_date = f"{day} {month} {year}"
 
     for fmt in DATA.DATE_FORMATS:
         try:
