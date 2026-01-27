@@ -196,19 +196,20 @@ def date_check(candi_date: str) -> str | None:
     if not valid_year:
         return f"[ERROR] '{candi_date}' is outside the survey timespan."
 
-    if date_type == 'ddmmyyyy':
+    candi_date = re.sub(r'[\/\-\. ]+', ' ', candi_date)
+    if date_type in ['ddmmyyyy', 'ddmonyyyy']:
         day = date_match[date_type]['day'].zfill(2)
-        month = date_match[date_type]['month'].zfill(2)
+        if int(day) > 31:
+            return f"[ERROR] '{candi_date}' is not a valid calendar date."
+
+        month = date_match[date_type]['month']
+        if date_type == 'ddmmyyyy':
+            month = month.zfill(2)
+
         year = f"19{date_match[date_type]['year'][-2:]}"
-        candi_date = f"{day}/{month}/{year}"
-    elif date_type == 'ddmonyyyy':
-        day = date_match[date_type]['day'].zfill(2)
-        year = f"19{date_match[date_type]['year'][-2:]}"
+
         candi_date = f"{day}/{month}/{year}"
 
-    if int(day) > 31:
-        return f"[ERROR] '{candi_date}' is not a valid calendar date."
-    
     try:
         datetime.strptime(candi_date, DATA.DATE_FORMATS[date_type])
     except ValueError as ve:
