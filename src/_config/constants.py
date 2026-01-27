@@ -52,10 +52,10 @@ class RegexNamespace():
     _month_names: list = "|".join(list(calendar.month_name)[1:])
     _abbr_month_names: list = "|".join(list(calendar.month_abbr)[1:])
     DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
-    DDMONYEAR = re.compile(fr"""^(?P<day>\d\d?)[/.- ]+(?P<month>{_abbr_month_names})[/.- ]+(?P<year>(\d\d)?\d\d)$""")
+    DDMONYEAR = re.compile(fr"""^(?P<day>\d\d?)[\/\.\- ]+(?P<month>{_abbr_month_names})[\/\.\- ]+(?P<year>(\d\d)?\d\d)$""")
     MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     YEARONLY = re.compile(r"""^(?P<year>\d\d\d\d)$""")
-    DDMMYYYY = re.compile(r"""^(?P<day>\d\d?)[/.-](?P<month>\d\d?)[/.-](?P<year>\d\d(\d\d)?)$""")
+    DDMMYYYY = re.compile(r"""^(?P<day>\d\d?)[/\.-](?P<month>\d\d?)[/\.-](?P<year>\d\d(\d\d)?)$""")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
 
 
