@@ -259,6 +259,34 @@ def concatenate_attributes(existing_attribute, new_attribute, field_name):
     setattr(existing_attribute, field_name, concatenated_value)
 
 
+def is_consecutive_image(last_image: Image, candidate_image: Image) -> bool:
+    image_number = int(REGEX.FORM_PATTERN.match(last_image.filename)['image_number'])
+    new_image_number = int(REGEX.FORM_PATTERN.match(candidate_image.filename)['image_number'])
+    return new_image_number == image_number + 1
+           
+
+def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form]) -> dict[str, Form]:
+    for key in new_forms.keys():
+        if not new_forms[key]:
+            continue
+
+        if not existing_forms[key]:
+            existing_forms[key] = new_forms[key]
+            continue
+
+        current_last_image = existing_forms[key][0].images[-1]
+        new_image = new_forms[key][0].images[0]
+        if len(new_forms[key][0].images) == 1 and is_consecutive_image(current_last_image, new_image):
+            existing_forms[key][0].images.append(new_image)
+            concatenate_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')
+            concatenate_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
+        
+        else:
+            existing_forms[key].append(new_forms[key])
+
+    return existing_forms 
+
+
 def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     """
     Concatenate the attributes of two Farm instances, ensuring no duplicates.
@@ -280,9 +308,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
         if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
             concatenate_attributes(existing_farm, new_farm, field_name)
 
-    # Merge forms
-    for form_code, filenames in new_farm.forms.items():
-        existing_farm.forms[form_code].extend(filenames)
+    existing_farm.forms = concatenate_forms(existing_farm.forms, new_farm.forms)
 
     # Merge warnings
     for warning_category, warnings in new_farm.warnings.items():
