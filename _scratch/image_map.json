@@ -1,0 +1,45 @@
+{
+    "IAID": "8220d4be-d393-4307-8a80-8c29e2c75764",
+    "images": [
+        {
+            "file_name": "MAF32-247-23_1.tif",
+            "file_id": "1be0d0dd-ac76-407e-b70b-f82d700a2b9f",
+            "sequence_no": 1
+        },
+        {
+            "file_name": "MAF32-247-23_2.tif",
+            "file_id": "6ba9bd2a-e45a-45b9-a1c9-870f04b4e75e",
+            "sequence_no": 2
+        },
+        {
+            "file_name": "MAF32-247-23_3.tif",
+            "file_id": "33b07741-9917-4802-8586-833ee318769a",
+            "sequence_no": 3
+        },
+        {
+            "file_name": "MAF32-247-23_4.tif",
+            "file_id": "f86d39e3-dc6a-42ed-867a-59f2c3694ebe",
+            "sequence_no": 4
+        },
+        {
+            "file_name": "MAF32-247-23_5.tif",
+            "file_id": "1e6a7fe2-ff16-4d8c-9e40-f85566152406",
+            "sequence_no": 5
+        },
+        {
+            "file_name": "MAF32-247-23_6.tif",
+            "file_id": "de1d6dab-a4ec-4cda-a1b8-194efc34306b",
+            "sequence_no": 6
+        },
+        {
+            "file_name": "MAF32-247-23_7.tif",
+            "file_id": "b93dca4d-108f-4a28-941c-8d8217b60716",
+            "sequence_no": 7
+        },
+        {
+            "file_name": "MAF32-247-23_8.tif",
+            "file_id": "be7c62dd-7634-4c81-a5ab-b5f3d3669a98",
+            "sequence_no": 8
+        }
+    ]
+}
