@@ -3,7 +3,6 @@ import pytest
 from src.farm_builder import Farm, concatenate_farms, concatenate_forms
 from src.farm_builder import normalize_date
 
-@pytest.mark.skip
 def test_farm_dataclass_instantiation(capsys, farms):
 	for farm_fixture in farms:
 		new_farm = Farm(**farm_fixture)
@@ -45,7 +44,6 @@ def test_concatenate_forms(concatenate_forms_fixture):
 			assert len(existing_farm['B496/EI'][0].images) == 3
 			continue
 
-@pytest.mark.skip
 def test_normalize_date(valid_dates, normalized_dates):
 	for index, test_date in enumerate(valid_dates['data']):
 		expected_result = normalized_dates[index]
