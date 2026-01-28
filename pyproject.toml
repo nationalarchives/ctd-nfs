@@ -19,7 +19,7 @@ dev = [
 # pyproject.toml
 [tool.pytest]
 minversion = "9.0"
-addopts = ["-ra", "-q"]
+# addopts = ["-ra", "-q"]
 testpaths = [
     "tests",
 ]
