@@ -76,7 +76,7 @@ def normalize_date(candi_date: str) -> str:
         str: The normalized date string.
     """
 
-    candi_date = re.sub(r'[/-. ]+', ' ', candi_date)
+    candi_date = REGEX.REMOVE_DELIMITERS.sub(' ', candi_date)
     date_match: dict[re.Match] = {
         'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
         'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
