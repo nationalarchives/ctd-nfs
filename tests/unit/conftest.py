@@ -1,5 +1,7 @@
 import pytest
 
+from src.farm_builder import Form, Image, initialise_forms_mapping
+
 
 @pytest.fixture()
 def farms():
@@ -530,6 +532,44 @@ def concatenation_data():
 		},
 	}
 
+
+@pytest.fixture()
+def concatenate_forms_fixture():
+	fields = ["filename_1", "filename_2", "document_type", "field_info_date", "primary_record_date",]
+	farms = [
+		[
+			["MAF32-171-115_1.tif", "MAF32-171-115_2.tif", "C51/SSY", "", "",],
+			["MAF32-171-115_89.tif", "MAF32-171-115_90.tif", "B496/EI", "18 August 1941", "*",],
+			["MAF32-171-115_91.tif", "MAF32-171-115_92.tif", "B496/EI", "*", "*",],
+			["MAF32-171-115_253.tif", "MAF32-171-115_254.tif", "C 47/SSY", "", "",],
+			["MAF32-171-115_343.tif", "MAF32-171-115_344.tif", "SF C69/SSY", "", "",],
+			["MAF32-171-115_345.tif", "MAF32-171-115_346.tif", "SF", "", "",],
+		],
+		[
+			["MAF32-167-29_1.tif","MAF32-167-29_2.tif", "C51/SSY", "", "",],
+			["MAF32-167-29_23.tif", "MAF32-167-29_24.tif", "B496/EI", "November 1942", "December 1943",],
+			["MAF32-167-29_25.tif", "", "B496/EI", "*", "*",],
+			["MAF32-167-29_56.tif", "MAF32-167-29_57.tif", "C 47/SSY", "", "",],
+			["MAF32-167-29_82.tif", "MAF32-167-29_83.tif", "SF", "", "",],
+		]
+	]
+
+	fixture_data = []
+	for document_set in farms:
+		farm = []
+		for form_data in document_set:
+			set_of_forms = initialise_forms_mapping()
+			item = dict(zip(fields, form_data))
+			pics = [Image(item[key])
+				for key in ["filename_1", "filename_2"]
+				if item[key]
+			]
+			set_of_forms[item['document_type']].append(Form(images=pics, field_info_date=item['field_info_date'], primary_record_date=item['primary_record_date']))
+			farm.append(set_of_forms)
+
+		fixture_data.append(farm)
+
+	return fixture_data
 
 
 @pytest.fixture()
