@@ -64,6 +64,7 @@ class RegexNamespace():
     DDMONYEAR = re.compile(fr"""^(?P<day>\d\d?){_date_delimiters}(?P<month>{_abbr_month_names}){_date_delimiters}(?P<year>(\d\d)?\d\d)$""")
     DDMMYYYY = re.compile(fr"""^(?P<day>\d\d?){_date_delimiters}(?P<month>\d\d?){_date_delimiters}(?P<year>(\d\d)?\d\d)$""")
     
+    REMOVE_DELIMITERS = re.compile(fr"{_date_delimiters}+")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
 
 
