@@ -11,7 +11,6 @@ def test_farm_dataclass_instantiation(capsys, farms):
 			print(new_farm.forms)
 		assert isinstance(new_farm, Farm)
             
-
 def test_farm_attribute_concatenation(concatenation_data):
 	for farm_name, test_data in concatenation_data.items():
 		existing_farm = Farm(**test_data['data'][0])
@@ -49,3 +48,5 @@ def test_normalize_date(valid_dates, normalized_dates):
 		expected_result = normalized_dates[index]
 
 		assert expected_result == normalize_date(test_date)
+
+
