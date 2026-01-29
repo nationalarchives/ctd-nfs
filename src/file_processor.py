@@ -4,7 +4,7 @@ import csv
 import re
 import shelve
 
-from src.row_data_validator import validate_data, has_valid_reference_values
+from src.row_data_validator import validate_data, has_valid_reference_values, has_cover_issues
 from src._config.constants import PATH, DATA, REGEX
 from src.farm_builder import Farm, concatenate_farms
 from src._tools.logging_setup import create_logger
@@ -89,7 +89,10 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
         if not has_valid_reference_values(farm_data_row, pattern_matches, row_prefix):
             continue
-            
+        
+        if (warnings := has_cover_issues(farm_data_row, pattern_matches, row_prefix)) is False:
+            continue
+        
         warnings = validate_data(row_number, farm_data_row)
 
         candidate_farm = Farm(**farm_data_row)
