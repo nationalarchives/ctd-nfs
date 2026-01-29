@@ -1,9 +1,5 @@
-from src._config.custom_exceptions import FileNamePatternError
 from src.row_data_validator import has_valid_reference_values
 from tests.unit.conftest import setup
-
-
-import pytest
 
 
 def test_reference_values_bad_form(farm_reference_values_bad_form):
