@@ -1,5 +1,5 @@
 from src._config.custom_exceptions import FileNamePatternError
-from src.row_data_validator import validate_farm_reference_values
+from src.row_data_validator import has_valid_reference_values
 from tests.unit.conftest import setup
 
 
@@ -13,7 +13,7 @@ def test_reference_values_bad_form(farm_reference_values_bad_form):
 		)
 
 	with pytest.raises(FileNamePatternError, match=farm_reference_values_bad_form['error']):
-		validate_farm_reference_values(farm_reference_values_bad_form['data'], pattern_matches, row_prefix)
+		has_valid_reference_values(farm_reference_values_bad_form['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_filename1_bad_pattern(farm_reference_values_filename1_bad_pattern):
@@ -23,7 +23,7 @@ def test_reference_values_filename1_bad_pattern(farm_reference_values_filename1_
 		)
 
 	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename1_bad_pattern['error']):
-		validate_farm_reference_values(farm_reference_values_filename1_bad_pattern['data'], pattern_matches, row_prefix)
+		has_valid_reference_values(farm_reference_values_filename1_bad_pattern['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_filename2_bad_pattern(farm_reference_values_filename2_bad_pattern):
@@ -33,7 +33,7 @@ def test_reference_values_filename2_bad_pattern(farm_reference_values_filename2_
 		)
 
 	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename2_bad_pattern['error']):
-		validate_farm_reference_values(farm_reference_values_filename2_bad_pattern['data'], pattern_matches, row_prefix)
+		has_valid_reference_values(farm_reference_values_filename2_bad_pattern['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_no_farm_data(farm_reference_values_no_farm_data):
@@ -43,4 +43,4 @@ def test_reference_values_no_farm_data(farm_reference_values_no_farm_data):
 		)
 
 	with pytest.raises(FileNamePatternError, match=farm_reference_values_no_farm_data['error']):
-		validate_farm_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
+		has_valid_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
