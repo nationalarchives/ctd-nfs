@@ -4,8 +4,8 @@ import csv
 import re
 import shelve
 
-from row_data_validator import validate_data
-from src._config.constants import PATH, DATA
+from row_data_validator import validate_data, has_valid_reference_values
+from src._config.constants import PATH, DATA, REGEX
 from src.farm_builder import Farm, concatenate_farms
 from src._tools.logging_setup import create_logger
 
@@ -80,13 +80,24 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
 
+        pattern_matches: dict[re.Match] = {
+                'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
+                'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
+                'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
+            }
+        row_prefix = f"Row {row_number}: "
+
+        if not has_valid_reference_values(farm_data_row, pattern_matches, row_prefix):
+            logger.info(f"Skipping row {row_number} due to invalid reference values.")
+            continue
+            
         warnings = validate_data(row_number, farm_data_row)
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.source_data.append(farm_data_row)
         candidate_farm.warnings = warnings  
         update_farms_db(candidate_farm, row_number, test_mode=test_mode)
-            
+        
 
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
