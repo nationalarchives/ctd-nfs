@@ -87,7 +87,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             }
         row_prefix = f"Row {row_number}: "
 
-        if not has_valid_reference_values(farm_data_row, pattern_matches, row_prefix):
+        if has_valid_reference_values(farm_data_row, pattern_matches, row_prefix) is False:
             continue
         
         if (warnings := has_cover_issues(farm_data_row, pattern_matches, row_prefix)) is False:
