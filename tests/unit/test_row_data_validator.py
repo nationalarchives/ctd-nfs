@@ -1,4 +1,4 @@
-from row_data_validator import \
+from src.row_data_validator import \
 	check_values_between_filenames, \
 	report_cover_image_inconsistencies, \
 	check_for_cover_with_farm_details, \

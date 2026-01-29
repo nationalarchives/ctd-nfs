@@ -4,7 +4,7 @@ import csv
 import re
 import shelve
 
-from row_data_validator import validate_data, has_valid_reference_values
+from src.row_data_validator import validate_data, has_valid_reference_values
 from src._config.constants import PATH, DATA, REGEX
 from src.farm_builder import Farm, concatenate_farms
 from src._tools.logging_setup import create_logger

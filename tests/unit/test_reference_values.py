@@ -1,5 +1,5 @@
-from _config.custom_exceptions import FileNamePatternError
-from row_data_validator import validate_farm_reference_values
+from src._config.custom_exceptions import FileNamePatternError
+from src.row_data_validator import validate_farm_reference_values
 from tests.unit.conftest import setup
 
 
