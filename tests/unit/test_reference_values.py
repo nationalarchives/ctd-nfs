@@ -12,8 +12,7 @@ def test_reference_values_bad_form(farm_reference_values_bad_form):
 		farm_reference_values_bad_form['row_num']
 		)
 
-	with pytest.raises(FileNamePatternError, match=farm_reference_values_bad_form['error']):
-		has_valid_reference_values(farm_reference_values_bad_form['data'], pattern_matches, row_prefix)
+	assert not has_valid_reference_values(farm_reference_values_bad_form['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_filename1_bad_pattern(farm_reference_values_filename1_bad_pattern):
@@ -22,8 +21,7 @@ def test_reference_values_filename1_bad_pattern(farm_reference_values_filename1_
 		farm_reference_values_filename1_bad_pattern['row_num']
 		)
 
-	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename1_bad_pattern['error']):
-		has_valid_reference_values(farm_reference_values_filename1_bad_pattern['data'], pattern_matches, row_prefix)
+	assert not has_valid_reference_values(farm_reference_values_filename1_bad_pattern['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_filename2_bad_pattern(farm_reference_values_filename2_bad_pattern):
@@ -32,8 +30,7 @@ def test_reference_values_filename2_bad_pattern(farm_reference_values_filename2_
 		farm_reference_values_filename2_bad_pattern['row_num']
 		)
 
-	with pytest.raises(FileNamePatternError, match=farm_reference_values_filename2_bad_pattern['error']):
-		has_valid_reference_values(farm_reference_values_filename2_bad_pattern['data'], pattern_matches, row_prefix)
+	assert not has_valid_reference_values(farm_reference_values_filename2_bad_pattern['data'], pattern_matches, row_prefix)
 
 
 def test_reference_values_no_farm_data(farm_reference_values_no_farm_data):
@@ -42,5 +39,4 @@ def test_reference_values_no_farm_data(farm_reference_values_no_farm_data):
 		farm_reference_values_no_farm_data['row_num']
 		)
 
-	with pytest.raises(FileNamePatternError, match=farm_reference_values_no_farm_data['error']):
-		has_valid_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
+	assert not has_valid_reference_values(farm_reference_values_no_farm_data['data'], pattern_matches, row_prefix)
