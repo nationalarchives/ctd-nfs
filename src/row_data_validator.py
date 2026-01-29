@@ -16,7 +16,7 @@ from src.farm_builder import initialise_forms_mapping, initialise_warnings_mappi
 from src._config.custom_exceptions import FileNamePatternError
 from src._config.constants import REGEX, DATA
 
-def validate_farm_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
+def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
     Perform checks which will result in the row being rejected if they fail
     * invalid form type
