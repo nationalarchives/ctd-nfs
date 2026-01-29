@@ -88,7 +88,6 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         row_prefix = f"Row {row_number}: "
 
         if not has_valid_reference_values(farm_data_row, pattern_matches, row_prefix):
-            logger.info(f"Skipping row {row_number} due to invalid reference values.")
             continue
             
         warnings = validate_data(row_number, farm_data_row)

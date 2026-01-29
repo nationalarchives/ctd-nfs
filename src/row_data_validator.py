@@ -52,7 +52,8 @@ def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match]
     }
     
     errors = (msg for msg, check in checks.items() if check())
-    if next(errors, None):
+    if error_message := next(errors, None):
+        print(f"{row_prefix}not processed because {error_message}")
         return False
 
     return True
