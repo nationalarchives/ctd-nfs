@@ -231,7 +231,7 @@ def validate_data(row_number, farm_data_row):
     warnings: dict = initialise_warnings_mapping()
 
     try:
-        validate_farm_reference_values(farm_data_row, pattern_matches, row_prefix)
+        has_valid_reference_values(farm_data_row, pattern_matches, row_prefix)
         check_for_cover_with_farm_details(farm_data_row, pattern_matches, warnings, row_prefix)
     except FileNamePatternError as e:
         # logger.info(f"{e}")
