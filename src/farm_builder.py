@@ -305,7 +305,7 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
             for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
                 concatenate_attributes(existing_detail, new_detail, detail_attribute)
 
-        if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
+        if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet']:
             concatenate_attributes(existing_farm, new_farm, field_name)
 
     existing_farm.forms = concatenate_forms(existing_farm.forms, new_farm.forms)
