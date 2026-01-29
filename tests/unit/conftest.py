@@ -543,7 +543,7 @@ def bad_farm_initial_values():
 
 
 @pytest.fixture()
-def farm_reference_values_bad_form():
+def reference_values_bad_form():
 	return	{
 			'row_num': "10101",
 			'data':{
@@ -558,7 +558,7 @@ def farm_reference_values_bad_form():
 
 
 @pytest.fixture()
-def farm_reference_values_filename1_bad_pattern():
+def reference_values_filename1_bad_pattern():
 	return	{
 			'row_num': "10101",
 			'data':{
@@ -573,7 +573,7 @@ def farm_reference_values_filename1_bad_pattern():
 
 
 @pytest.fixture()
-def farm_reference_values_filename2_bad_pattern():
+def reference_values_filename2_bad_pattern():
 	return	{
 			'row_num': "10101",
 			'data':{
@@ -588,7 +588,7 @@ def farm_reference_values_filename2_bad_pattern():
 
 
 @pytest.fixture()
-def farm_reference_values_no_farm_data():
+def reference_values_no_farm_data():
 	return	{
 			'row_num': "10101",
 			'data':{
