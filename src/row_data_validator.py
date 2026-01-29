@@ -171,6 +171,18 @@ def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re
     return warnings 
     
 
+def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict | None:
+    no_cover_warnings = initialise_warnings_mapping()
+
+    warnings = check_for_cover_with_farm_details(csv_values, pattern_matches, no_cover_warnings, row_prefix)
+
+    if csv_values['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
+        warnings = report_cover_image_inconsistencies(csv_values, pattern_matches, warnings, row_prefix)
+
+    if warnings != no_cover_warnings:
+        return warnings
+
+
 def vali_dates(candi_date: str) -> str | None:    
     ''' Checks if the date, given as a string, is a valid date
     
@@ -231,18 +243,18 @@ def validate_data(row_number, farm_data_row):
     row_prefix = f"Row {row_number}: "
     warnings: dict = initialise_warnings_mapping()
 
-    try:
-        # has_valid_reference_values(farm_data_row, pattern_matches, row_prefix)
-        check_for_cover_with_farm_details(farm_data_row, pattern_matches, warnings, row_prefix)
-    except FileNamePatternError as e:
-        # logger.info(f"{e}")
-        raise
+    # try:
+    #     has_valid_reference_values(farm_data_row, pattern_matches, row_prefix)
+    #     check_for_cover_with_farm_details(farm_data_row, pattern_matches, warnings, row_prefix)
+    # except FileNamePatternError as e:
+    #     logger.info(f"{e}")
+    #     raise
 
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
 
-    if farm_data_row['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-        warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix)
+    # if farm_data_row['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
+    #     warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix)
 
     for key in ['field_info_date', 'primary_record_date']:
         if not farm_data_row[key]:
