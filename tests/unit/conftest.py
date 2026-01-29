@@ -1,6 +1,19 @@
 import pytest
+import re
 
+from _config.constants import REGEX
 from src.farm_builder import Form, Image, initialise_forms_mapping
+
+
+def setup(test_data, row_num) -> tuple:
+	pattern_matches: dict[re.Match] = {
+		'filename_1': REGEX.FORM_PATTERN.match(test_data['filename_1']),
+		'filename_2': REGEX.FORM_PATTERN.match(test_data['filename_2']),
+		'cover': REGEX.COVER_PATTERN.match(test_data['filename_1']),
+	}
+	row_prefix = f"Row {row_num}: "
+
+	return pattern_matches, row_prefix
 
 
 @pytest.fixture()

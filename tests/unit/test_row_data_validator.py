@@ -1,21 +1,10 @@
-import re
 from row_data_validator import \
 	check_values_between_filenames, \
 	report_cover_image_inconsistencies, \
 	check_for_cover_with_farm_details, \
 	vali_dates
-from src._config.constants import REGEX
+from tests.unit.conftest import setup
 
-
-def setup(test_data, row_num) -> tuple:
-	pattern_matches: dict[re.Match] = {
-		'filename_1': REGEX.FORM_PATTERN.match(test_data['filename_1']),
-		'filename_2': REGEX.FORM_PATTERN.match(test_data['filename_2']),
-		'cover': REGEX.COVER_PATTERN.match(test_data['filename_1']),
-	}
-	row_prefix = f"Row {row_num}: "
-
-	return pattern_matches, row_prefix
 
 def test_values_between_filenames_different_pieces(values_between_filenames_different_pieces):
 	data = values_between_filenames_different_pieces['data']
