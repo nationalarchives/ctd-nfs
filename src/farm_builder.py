@@ -181,8 +181,8 @@ class Farm:
         ]
         new_form = Form(
             images=new_images,
-            field_info_date=normalize_date(self.field_info_date),
-            primary_record_date=normalize_date(self.primary_record_date),
+            field_info_date=self.field_info_date,
+            primary_record_date=self.primary_record_date,
         )
         self.forms[self.document_type].append(new_form)
 
@@ -205,7 +205,8 @@ class Farm:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
-
+        self.field_info_date=normalize_date(self.field_info_date)
+        self.primary_record_date=normalize_date(self.primary_record_date)
         self.assign_filenames_to_forms()
 
 
