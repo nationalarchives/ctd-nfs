@@ -189,7 +189,8 @@ def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_pref
     if warnings != no_cover_warnings:
         return warnings
     else:
-        logger.INFO(f"{row_prefix}is a cover so will not be processed.")
+        msg = f"{row_prefix}is a cover so will not be processed."
+        logger.info(f" {msg:->80}")
         return None
 
 
