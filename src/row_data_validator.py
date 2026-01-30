@@ -13,7 +13,6 @@ import re
 from datetime import datetime
 
 from src.farm_builder import initialise_forms_mapping, initialise_warnings_mapping
-from src._config.custom_exceptions import FileNamePatternError
 from src._config.constants import REGEX, DATA
 
 def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:

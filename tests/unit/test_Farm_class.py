@@ -1,5 +1,3 @@
-import pytest
-
 from src.farm_builder import Farm, concatenate_farms, concatenate_forms
 from src.farm_builder import normalize_date
 
