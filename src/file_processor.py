@@ -76,7 +76,7 @@ def update_farms_db(new_farm: Farm, row_number: int, test_mode: bool = False) ->
             logger.info(f"{row_info} ---     Updated     ---")
 
 
-def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
+def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
     for row_number, farm_data_row in enumerate(csv_data, start=2):
 
@@ -107,7 +107,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
     cleaned_farm_data = clean_csv_data(raw_farm_data)
-    process_csv_data(cleaned_farm_data, test_mode=test_mode)
+    create_farms(cleaned_farm_data, test_mode=test_mode)
 
 
 if __name__ == "__main__":
