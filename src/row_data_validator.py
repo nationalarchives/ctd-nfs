@@ -11,9 +11,14 @@ Checks preformed:
     
 import re
 from datetime import datetime
+import logging
 
 from src.farm_builder import initialise_forms_mapping, initialise_warnings_mapping
 from src._config.constants import REGEX, DATA
+
+
+logger = logging.getLogger(__name__)
+
 
 def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
     """
@@ -184,7 +189,7 @@ def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_pref
     if warnings != no_cover_warnings:
         return warnings
     else:
-        print(f"{row_prefix}is a cover so will not be processed.")
+        logger.INFO(f"{row_prefix}is a cover so will not be processed.")
         return None
 
 
