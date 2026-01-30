@@ -239,27 +239,8 @@ def vali_dates(candi_date: str) -> str | None:
 
 
 def validate_data(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re.Match], warnings: dict):
-    pattern_matches: dict[re.Match] = {
-            'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
-            'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
-            'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
-        }
-
-    row_prefix = f"Row {row_number}: "
-    warnings: dict = initialise_warnings_mapping()
-
-    # try:
-    #     has_valid_reference_values(farm_data_row, pattern_matches, row_prefix)
-    #     check_for_cover_with_farm_details(farm_data_row, pattern_matches, warnings, row_prefix)
-    # except FileNamePatternError as e:
-    #     logger.info(f"{e}")
-    #     raise
-
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
-
-    # if farm_data_row['document_type'] == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-    #     warnings = report_cover_image_inconsistencies(farm_data_row, pattern_matches, warnings, row_prefix)
 
     for key in ['field_info_date', 'primary_record_date']:
         if not farm_data_row[key]:
