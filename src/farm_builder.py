@@ -88,6 +88,7 @@ def normalize_date(candi_date: str) -> str:
         try:
             parsed_date = datetime.strptime(candi_date, fmt)
             day, month, year = parsed_date.strftime("%d %B %Y").split()
+            break
         except ValueError:
             continue
 
