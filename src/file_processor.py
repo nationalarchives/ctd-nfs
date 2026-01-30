@@ -108,3 +108,9 @@ def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
     cleaned_farm_data = clean_csv_data(raw_farm_data)
     process_csv_data(cleaned_farm_data, test_mode=test_mode)
+
+
+if __name__ == "__main__":
+    for csv_file in PATH.INPUT.glob("*.csv"):
+        process_file(csv_file)
+
