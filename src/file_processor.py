@@ -91,8 +91,10 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         if has_valid_reference_values(farm_data_row, pattern_matches, row_prefix) is False:
             continue
         
-        if (warnings := has_cover_issues(farm_data_row, pattern_matches, row_prefix)) is False:
-            continue
+        if row_is_cover_form(farm_data_row['document_type'], pattern_matches): 
+            warnings = has_cover_issues(farm_data_row, pattern_matches, row_prefix)
+            if warnings is False:
+                continue
         
         warnings = validate_data(row_number, farm_data_row)
 
