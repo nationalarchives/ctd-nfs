@@ -96,7 +96,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             if warnings is False:
                 continue
         
-        warnings = validate_data(row_number, farm_data_row)
+        warnings = validate_data(farm_data_row, row_prefix, pattern_matches, warnings)
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.source_data.append(farm_data_row)

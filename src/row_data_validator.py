@@ -238,7 +238,7 @@ def vali_dates(candi_date: str) -> str | None:
                 continue
 
 
-def validate_data(row_number, farm_data_row):
+def validate_data(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re.Match], warnings: dict):
     pattern_matches: dict[re.Match] = {
             'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
             'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
