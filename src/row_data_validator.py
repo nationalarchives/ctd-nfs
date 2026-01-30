@@ -171,6 +171,11 @@ def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re
     return warnings 
 
 
+def row_is_cover_form(document_type: str, pattern_matches: dict[re.Match]):
+    if document_type == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
+        return True
+
+
 def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict | None:
     no_cover_warnings = initialise_warnings_mapping()
 
