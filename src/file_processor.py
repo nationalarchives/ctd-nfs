@@ -93,7 +93,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         
         if row_is_cover_form(farm_data_row['document_type'], pattern_matches): 
             warnings = has_cover_issues(farm_data_row, pattern_matches, row_prefix)
-            if warnings is False:
+            if warnings is None:
                 continue
         
         warnings = validate_data(farm_data_row, row_prefix, pattern_matches, warnings)

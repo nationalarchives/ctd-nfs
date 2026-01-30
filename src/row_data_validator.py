@@ -186,6 +186,7 @@ def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_pref
         return warnings
     else:
         print(f"{row_prefix}is a cover so will not be processed.")
+        return None
 
 
 def vali_dates(candi_date: str) -> str | None:    
