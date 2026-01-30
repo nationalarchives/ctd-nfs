@@ -251,3 +251,4 @@ def validate_data(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re
             warnings[warning_key].append(f"{row_prefix}{check_result}")
 
     return warnings
+
