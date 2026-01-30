@@ -86,6 +86,7 @@ def process_csv_data(csv_data: Iterator[dict], test_mode: bool = False) -> None:
                 'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
             }
         row_prefix = f"Row {row_number}: "
+        warnings = initialise_warnings_mapping()
 
         if has_valid_reference_values(farm_data_row, pattern_matches, row_prefix) is False:
             continue
