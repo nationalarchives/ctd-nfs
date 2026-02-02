@@ -9,10 +9,6 @@ import calendar
 
 class CSVandExcelNamespace():
     __slots__ = ()
-    pass
-
-class DataNamespace():
-    __slots__ = ()
 
     CSV_HEADERS = [
         'filename_1',
@@ -40,6 +36,9 @@ class DataNamespace():
         'field_info_date',
         'primary_record_date',
     ]
+
+class DataNamespace():
+    __slots__ = ()
     DATE_FORMATS = [
         "%d %B %Y",
         "%d %B %y",
