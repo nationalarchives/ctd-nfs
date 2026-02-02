@@ -5,7 +5,7 @@ import re
 import shelve
 
 from src.row_data_validator import validate_data, has_valid_reference_values, row_is_cover_form, has_cover_issues
-from src._config.constants import PATH, DATA, REGEX
+from src._config.constants import PATH, REGEX, CSVEXCEL
 from src.farm_builder import Farm, concatenate_farms, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
@@ -22,7 +22,7 @@ def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     for row in raw_csv_data:
         cleaned_data_row = {}
         for key, value in row.items():
-            if key not in DATA.CSV_HEADERS:
+            if key not in CSVEXCEL.CSV_HEADERS:
                 continue
             if ";" in value:
                 cleaned_data_row[key] = split_list_values(value)
@@ -66,14 +66,14 @@ def update_farms_db(new_farm: Farm, row_number: int, test_mode: bool = False) ->
         if new_farm.catalogue_reference not in farm_db[new_farm.county]:
             county.update({new_farm.catalogue_reference: new_farm})
             farm_db[new_farm.county] = county
-            logger.info(f"{row_info} NEW FARM: {new_farm.catalogue_reference}")
+            logger.info(f"{row_info} NEW FARM: '{new_farm.catalogue_reference}' created from '{new_farm.document_type}'")
 
         else:
-            logger.info(f"{row_info}{' '*11}EXISTING CATALOGUE REFERENCE {new_farm.catalogue_reference} found.")
+            # logger.info(f"{row_info}{' '*11}EXISTING CATALOGUE REFERENCE {new_farm.catalogue_reference} found.", end="")
             existing_farm = county[new_farm.catalogue_reference]
             county.update({new_farm.catalogue_reference: concatenate_farms(existing_farm, new_farm)})
             farm_db[new_farm.county] = county
-            logger.info(f"{row_info}{' '*11}{'Updated':.^35}")
+            logger.info(f"{row_info}{' '*50} '{new_farm.catalogue_reference}' {'.'*10} updated from '{new_farm.document_type}'")
 
 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
