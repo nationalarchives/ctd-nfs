@@ -48,6 +48,7 @@ class DataNamespace():
         "%Y",
     ]
 
+
 class RegexNamespace():
     __slots__ = ()
 
@@ -66,7 +67,6 @@ class RegexNamespace():
     
     REMOVE_DELIMITERS = re.compile(fr"{_date_delimiters}+")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
-
 
 
 class PathNamespace():
