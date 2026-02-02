@@ -36,6 +36,30 @@ class CSVandExcelNamespace():
         'field_info_date',
         'primary_record_date',
     ]
+    OUTPUT_COLUMNS = [
+        ("Catalogue Reference", 20),
+        ("Reference Warnings", 20),
+        ("Filenames", 30),
+        ("Filename Warnings", 20),
+        ("Form Type", 15),
+        ("Type Warnings", 20),
+        ("Farm Number", 15),
+        ("Farm Number Warnings", 20),
+        ("Farm Name", 30),
+        ("Farm Name Warnings", 20),
+        ("Landowner", 30),
+        ("Landowner Warnings", 20),
+        ("Farmer/Occupier", 30),
+        ("Farmer Warnings", 20),
+        ("Acreage", 15),
+        ("Acreage Warnings", 20),
+        ("OS Sheet Number", 15),
+        ("Field Date", 15),
+        ("Field Date Warnings", 20),
+        ("Primary Date", 15),
+        ("Primary Date Warnings", 20)
+    ]
+
 
 class DataNamespace():
     __slots__ = ()
