@@ -7,6 +7,10 @@ import re
 import calendar
 
 
+class CSVandExcelNamespace():
+    __slots__ = ()
+    pass
+
 class DataNamespace():
     __slots__ = ()
 
@@ -94,4 +98,5 @@ class PathNamespace():
 PATH = PathNamespace()
 REGEX = RegexNamespace()
 DATA = DataNamespace()
+CSVEXCEL = CSVandExcelNamespace()
 
