@@ -64,15 +64,15 @@ def update_farms_db(new_farm: Farm, row_number: int, test_mode: bool = False) ->
         county = farm_db[new_farm.county].copy()
 
         if new_farm.catalogue_reference not in farm_db[new_farm.county]:
-            county.update({new_farm.catalogue_reference: new_farm})
-            farm_db[new_farm.county] = county
+            county[new_farm.catalogue_reference] = {'Farm': new_farm}
+            farm_db[new_farm.county] = county.copy()
             logger.info(f"{row_info} NEW FARM: '{new_farm.catalogue_reference}' created from '{new_farm.document_type}'")
 
         else:
             # logger.info(f"{row_info}{' '*11}EXISTING CATALOGUE REFERENCE {new_farm.catalogue_reference} found.", end="")
-            existing_farm = county[new_farm.catalogue_reference]
-            county.update({new_farm.catalogue_reference: concatenate_farms(existing_farm, new_farm)})
-            farm_db[new_farm.county] = county
+            existing_farm = county[new_farm.catalogue_reference]['Farm']
+            county[new_farm.catalogue_reference]['Farm'] = concatenate_farms(existing_farm, new_farm)
+            farm_db[new_farm.county] = county.copy()
             logger.info(f"{row_info}{' '*50} '{new_farm.catalogue_reference}' {'.'*10} updated from '{new_farm.document_type}'")
 
 
