@@ -69,7 +69,6 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
             logger.info(f"{row_info} NEW FARM: '{new_farm.catalogue_reference}' created from '{new_farm.document_type}'")
 
         else:
-            # logger.info(f"{row_info}{' '*11}EXISTING CATALOGUE REFERENCE {new_farm.catalogue_reference} found.", end="")
             existing_farm = county[new_farm.catalogue_reference]['Farm']
             county[new_farm.catalogue_reference]['Farm'] = concatenate_farms(existing_farm, new_farm)
             county[new_farm.catalogue_reference]['source'].append(row_data)
@@ -100,7 +99,6 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         warnings = validate_data(farm_data_row, row_prefix, pattern_matches, warnings)
 
         candidate_farm = Farm(**farm_data_row)
-        # candidate_farm.source_data.append(farm_data_row)
         candidate_farm.warnings = warnings  
         update_farms_db(candidate_farm, farm_data_row, row_number, test_mode=test_mode)
         
