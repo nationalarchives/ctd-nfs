@@ -53,7 +53,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def update_farms_db(new_farm: Farm, row_number: int, test_mode: bool = False) -> None:
+def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: bool = False) -> None:
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
@@ -101,7 +101,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.source_data.append(farm_data_row)
         candidate_farm.warnings = warnings  
-        update_farms_db(candidate_farm, row_number, test_mode=test_mode)
+        update_farms_db(candidate_farm, farm_data_row, row_number, test_mode=test_mode)
         
 
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
