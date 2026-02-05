@@ -1,4 +1,4 @@
-from src.farm_builder import Farm, concatenate_farms, concatenate_forms
+from src.farm_builder import Farm, concatenate_instance, concatenate_forms
 from src.farm_builder import normalize_date
 
 def test_farm_dataclass_instantiation(capsys, farms):
@@ -13,7 +13,7 @@ def test_farm_attribute_concatenation(concatenation_data):
 	for farm_name, test_data in concatenation_data.items():
 		existing_farm = Farm(**test_data['data'][0])
 		new_farm = Farm(**test_data['data'][1])
-		concatenated_farm = concatenate_farms(existing_farm, new_farm)
+		concatenated_farm = concatenate_instance(existing_farm, new_farm)
 		if farm_name == "10 Burley/7":
 			assert concatenated_farm.farm_name == test_data['result']['farm_name']
 		if farm_name == "49 Tickencote/6":
