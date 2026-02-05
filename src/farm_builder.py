@@ -210,7 +210,7 @@ class Farm:
         self.assign_filenames_to_forms()
 
 
-def concatenate_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
+def concatenate_attribute_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
     """Concatenate two values, ensuring no duplicates.
 
     Args:
@@ -252,11 +252,11 @@ def concatenate_values(existing_value: list[str] | str, new_value: list[str] | s
         return combined_list
 
 
-def concatenate_attributes(existing_attribute, new_attribute, field_name):
+def concatenate_instance_attributes(existing_attribute, new_attribute, field_name):
     existing_value = getattr(existing_attribute, field_name)
     new_value = getattr(new_attribute, field_name)
 
-    concatenated_value = concatenate_values(existing_value, new_value)
+    concatenated_value = concatenate_attribute_values(existing_value, new_value)
     setattr(existing_attribute, field_name, concatenated_value)
 
 
@@ -279,8 +279,8 @@ def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form
         new_image = new_forms[key][0].images[0]
         if len(new_forms[key][0].images) == 1 and is_consecutive_image(current_last_image, new_image):
             existing_forms[key][0].images.append(new_image)
-            concatenate_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')
-            concatenate_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
+            concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')
+            concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
         
         else:
             existing_forms[key].append(new_forms[key])
@@ -288,7 +288,7 @@ def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form
     return existing_forms 
 
 
-def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
+def concatenate_instance(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     """
     Concatenate the attributes of two Farm instances, ensuring no duplicates.
 
@@ -304,10 +304,10 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
             existing_detail = getattr(existing_farm, field_name)
             new_detail = getattr(new_farm, field_name)       
             for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
-                concatenate_attributes(existing_detail, new_detail, detail_attribute)
+                concatenate_instance_attributes(existing_detail, new_detail, detail_attribute)
 
         if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet']:
-            concatenate_attributes(existing_farm, new_farm, field_name)
+            concatenate_instance_attributes(existing_farm, new_farm, field_name)
 
     existing_farm.forms = concatenate_forms(existing_farm.forms, new_farm.forms)
 
