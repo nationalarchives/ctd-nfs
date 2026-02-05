@@ -77,7 +77,7 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
         farm_db[new_farm.county] = county.copy()
 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
-    # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
+    """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
     for row_number, farm_data_row in enumerate(csv_data, start=2):
 
         pattern_matches: dict[re.Match] = {
