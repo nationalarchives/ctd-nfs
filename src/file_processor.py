@@ -6,7 +6,7 @@ import shelve
 
 from src.row_data_validator import validate_data, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
-from src.farm_builder import Farm, concatenate_farms, initialise_warnings_mapping
+from src.farm_builder import Farm, concatenate_instance, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -70,7 +70,7 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
 
         else:
             existing_farm = county[new_farm.catalogue_reference]['Farm']
-            county[new_farm.catalogue_reference]['Farm'] = concatenate_farms(existing_farm, new_farm)
+            county[new_farm.catalogue_reference]['Farm'] = concatenate_instance(existing_farm, new_farm)
             county[new_farm.catalogue_reference]['source'].append(row_data)
             logger.info(f"{row_info}{' '*50} '{new_farm.catalogue_reference}' {'.'*10} updated from '{new_farm.document_type}'")
 
