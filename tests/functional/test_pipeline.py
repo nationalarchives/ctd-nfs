@@ -1,5 +1,6 @@
 import shelve
 import os
+from pathlib import Path
 
 from src._config.constants import PATH
 from src.file_processor import process_file
