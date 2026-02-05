@@ -3,7 +3,6 @@ from collections import OrderedDict
 import shelve
 import re
 from datetime import datetime
-import uuid
 
 from src._config.constants import PATH, REGEX, DATA
 
@@ -101,15 +100,9 @@ class Details:
     group_names: list[str] | str
     address: list[str] | str
 
-
-@dataclass
-class Image:
-    filename: str
-    id: uuid.UUID = field(default_factory=uuid.uuid4)
-
 @dataclass
 class Form:
-    images: list[Image]
+    images: list[str]
     field_info_date: list[str] | str
     primary_record_date: list[str] | str
 
@@ -175,7 +168,7 @@ class Farm:
             csv_data (dict): _description_
         """
         new_images = [
-            Image(filename=file_name)
+            file_name
             for file_name in [self.filename_1, self.filename_2] 
             if file_name
         ]
@@ -260,9 +253,9 @@ def concatenate_instance_attributes(existing_attribute, new_attribute, field_nam
     setattr(existing_attribute, field_name, concatenated_value)
 
 
-def is_consecutive_image(last_image: Image, candidate_image: Image) -> bool:
-    image_number = int(REGEX.FORM_PATTERN.match(last_image.filename)['image_number'])
-    new_image_number = int(REGEX.FORM_PATTERN.match(candidate_image.filename)['image_number'])
+def is_consecutive_image(last_image: str, candidate_image: str) -> bool:
+    image_number = int(REGEX.FORM_PATTERN.match(last_image)['image_number'])
+    new_image_number = int(REGEX.FORM_PATTERN.match(candidate_image)['image_number'])
     return new_image_number == image_number + 1
            
 
