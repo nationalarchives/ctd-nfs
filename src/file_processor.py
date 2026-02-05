@@ -66,7 +66,6 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
         if new_farm.catalogue_reference not in farm_db[new_farm.county]:
             county[new_farm.catalogue_reference] = {'Farm': new_farm}
             county[new_farm.catalogue_reference]['source'] = [row_data,]
-            farm_db[new_farm.county] = county.copy()
             logger.info(f"{row_info} NEW FARM: '{new_farm.catalogue_reference}' created from '{new_farm.document_type}'")
 
         else:
@@ -74,9 +73,9 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
             existing_farm = county[new_farm.catalogue_reference]['Farm']
             county[new_farm.catalogue_reference]['Farm'] = concatenate_farms(existing_farm, new_farm)
             county[new_farm.catalogue_reference]['source'].append(row_data)
-            farm_db[new_farm.county] = county.copy()
             logger.info(f"{row_info}{' '*50} '{new_farm.catalogue_reference}' {'.'*10} updated from '{new_farm.document_type}'")
 
+        farm_db[new_farm.county] = county.copy()
 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     # rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row
