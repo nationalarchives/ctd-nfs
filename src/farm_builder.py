@@ -148,7 +148,6 @@ class Farm:
 
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
-    source_data: list[dict] = field(default_factory=list)
 
     @property
     def catalogue_reference(self) -> str:
@@ -315,8 +314,5 @@ def concatenate_farms(existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
     # Merge warnings
     for warning_category, warnings in new_farm.warnings.items():
         existing_farm.warnings[warning_category].extend(warnings)
-
-    # Merge source data
-    existing_farm.source_data.extend(new_farm.source_data)
 
     return existing_farm
