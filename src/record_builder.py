@@ -1,8 +1,18 @@
 """
 Dataclasses and factories used to create Discovery JSON records
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
+
+def held_by():
+    """ constant for Record.heldBy attribute """
+    return [
+        {
+            "xReferenceId": "A13530124",
+            "xReferenceCode": "66",
+            "xReferenceName": "The National Archives, Kew",
+        }
+    ]
 
 @dataclass
 class Record:
@@ -17,7 +27,7 @@ class Record:
     coveringDates: str
     closureStatus: str
     digitised: bool
-    heldBy: list
+    heldBy: list = field(default_factory=held_by)
     legalStatus: str
     referencePart: str
     scopeContent: dict
