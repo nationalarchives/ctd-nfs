@@ -2,6 +2,7 @@
 Dataclasses and factories used to create Discovery JSON records
 """
 from dataclasses import dataclass, field
+import uuid
 
 
 def description():
@@ -17,12 +18,16 @@ def held_by():
         }
     ]
 
+def create_uuid_str():
+    return str(uuid.uuid4())
+
 @dataclass
 class Record:
     citableReference: str
     parentId: str
-    iaid: str
-    replicaId: str
+    """ generated at instantiation """
+    iaid: str = field(default_factory=create_uuid_str)
+    replicaId: str = field(default_factory=create_uuid_str)
     """ constants """
     catalogueLevel: int =  8
     coveringFromDate: int = 19410101
