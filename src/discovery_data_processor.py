@@ -16,3 +16,7 @@ def load_excel_data() -> list[dict]:
         if row_data[0]
     ]
 
+
+if __name__ == "__main__":
+    excel_data = load_excel_data()
+
