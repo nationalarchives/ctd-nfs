@@ -9,6 +9,7 @@ data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
 
 def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     discovery_data = []
+    non_breaking_space = "\xa0"
     for row in raw_csv_data:
         cleaned_data_row = {}
         for key, value in row.items():
@@ -16,6 +17,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
                 cleaned_data_row[key] = value
                 continue
             value = value.strip()
+            value = value.replace(f"{non_breaking_space}", " ")
             value = value.replace("\n", "")
             cleaned_data_row[key] = value
         discovery_data.append(cleaned_data_row)
