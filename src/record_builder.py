@@ -47,9 +47,15 @@ class Record:
     title: str = "title"
 
 @dataclass
+class Image:
+    file_name: str
+    sequence_no: int
+    file_id: str = field(default_factory=create_uuid_str)
+
+@dataclass
 class Replica:
     IAID: str
     replicaId: str
-    images: list
+    images: list[Image]
 
 
