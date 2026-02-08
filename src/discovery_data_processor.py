@@ -1,14 +1,18 @@
 """
-
 """
-import os
-
 from src._config.constants import PATH
+from src._tools.xlreader import read_file
 
 
-data_file = PATH.TEST_INPUT / "Rutland - Interrim to Final.xlsx"
-records_folder = PATH.TEST_OUTPUT / "Records"
-os.makedirs(records_folder, exist_ok=True)
-replica_folder = PATH.TEST_OUTPUT / "Replicas"
-os.makedirs(replica_folder, exist_ok=True)
+data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
+
+
+def load_excel_data() -> list[dict]:
+    excel_data = read_file(data_file)
+    column_names = excel_data['Sheet'][0]
+    return [
+        dict(zip(column_names, row_data))
+        for row_data in excel_data["Sheet"][1:]
+        if row_data[0]
+    ]
 
