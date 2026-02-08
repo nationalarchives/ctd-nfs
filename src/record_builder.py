@@ -23,11 +23,14 @@ def create_uuid_str():
 
 @dataclass
 class Record:
-    citableReference: str
-    parentId: str
+    """ must be provided at instantiation """
+    citableReference: str # catalogue reference e.g. "MAF 32/348/56/12"
+    parentId: str # str(uuid) e.g. "8b2a43dd-752d-44a7-8163-2b64bb6e6cd0"
+
     """ generated at instantiation """
     iaid: str = field(default_factory=create_uuid_str)
     replicaId: str = field(default_factory=create_uuid_str)
+
     """ constants """
     catalogueLevel: int =  8
     coveringFromDate: int = 19410101
