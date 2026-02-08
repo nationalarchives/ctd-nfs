@@ -46,3 +46,10 @@ class Record:
     source: str =  "FS"
     title: str = "title"
 
+@dataclass
+class Replica:
+    IAID: str
+    replicaId: str
+    images: list
+
+
