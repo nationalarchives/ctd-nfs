@@ -4,6 +4,9 @@ Dataclasses and factories used to create Discovery JSON records
 from dataclasses import dataclass, field
 
 
+def description():
+    return {'description': ""}
+
 def held_by():
     """ constant for Record.heldBy attribute """
     return [
@@ -30,7 +33,7 @@ class Record:
     heldBy: list = field(default_factory=held_by)
     legalStatus: str
     referencePart: str
-    scopeContent: dict
+    scopeContent: dict = field(default_factory=description)
     source: str
     title: str
 
