@@ -63,10 +63,10 @@ def create_description(row_data: dict) -> str:
     return "".join(scope_and_content)
 
 
-def create_replica_set(filenames: list) -> Replica:
+def create_replica_set(filenames: str) -> Replica:
     image_data = [
         Image(file_name=filename.strip(",;"), sequence_no=index)
-        for index, filename in enumerate(row['Filenames'].split(), start=1)
+        for index, filename in enumerate(filenames.split(), start=1)
     ]
     return Replica(
         record.iaid, 
