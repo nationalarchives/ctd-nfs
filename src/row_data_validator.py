@@ -63,49 +63,24 @@ def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match]
     return True
 
 
-def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
-    """
+def row_is_cover_form(document_type: str, pattern_matches: dict[re.Match]):
+    if document_type == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
+        return True
 
-    Performs checks on the piece, parish number and image number of the two file names
-    * piece must be the same in the both file name
-    * parish number must be the same in the both file name, and also match the number in the full parish name
-    * image numbers must be consecutive
 
-    Args:
-        csv_values (dict): dictionary with the following keys
-            'row_number' (int): row number from original csv, used for reporting errors/warning
-            'document_type' (str): form number from spreadsheet row
-            'parish' (str): parish number and name e.g. "1 Alkington"
-            'filename_1' (str): front page of form
-            'filename_2' (str, optional): back page of form Defaults to None, not used if form is Cover 
-
-        pattern_matches
-            'filename_1' (re.Match): match for filename_1 against form pattern
-            'filename_2' (re.Match): match for filename_2 against form pattern
-            'cover' (re.Match): match for filename_1 against cover pattern
-
-        warnings (dict): warning messages for any issues found
-
-    Returns:
-        warnings (dict):
-    """
+def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
+    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
+    document_type_is_cover = csv_values['document_type'] == 'Cover'
+    farm_details_provided = [
+        item
+        for key, item in csv_values.items() 
+        if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
+    ]
+    if (document_type_is_cover or file_is_cover_image) and any(farm_details_provided):
+        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
+        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
     
-    filenames = f"{csv_values['filename_1']} and {csv_values['filename_2']}"
-    if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different pieces.")
-
-    parish_number = csv_values['parish'].split()[0]
-    if pattern_matches['filename_1']['parish_number'] != pattern_matches['filename_2']['parish_number']:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different parish numbers.")
-    elif pattern_matches['filename_1']['parish_number'] != parish_number:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have a different parish number from parish name '{csv_values['parish']}'.")
-       
-    image1 = int(pattern_matches['filename_1']['image_number'])
-    image2 = int(pattern_matches['filename_2']['image_number'])
-    if image2 != image1 + 1:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} are either not consecutive images or in the wrong order.")
-    
-    return warnings
+    return warnings 
 
 
 def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
@@ -160,26 +135,6 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
     return warnings
 
 
-def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
-    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
-    document_type_is_cover = csv_values['document_type'] == 'Cover'
-    farm_details_provided = [
-        item
-        for key, item in csv_values.items() 
-        if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
-    ]
-    if (document_type_is_cover or file_is_cover_image) and any(farm_details_provided):
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
-    
-    return warnings 
-
-
-def row_is_cover_form(document_type: str, pattern_matches: dict[re.Match]):
-    if document_type == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-        return True
-
-
 def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict | None:
     no_cover_warnings = initialise_warnings_mapping()
 
@@ -192,6 +147,51 @@ def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_pref
         msg = f"{row_prefix}is a cover so will not be processed."
         logger.info(f" {msg:->80}")
         return None
+
+
+def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
+    """
+
+    Performs checks on the piece, parish number and image number of the two file names
+    * piece must be the same in the both file name
+    * parish number must be the same in the both file name, and also match the number in the full parish name
+    * image numbers must be consecutive
+
+    Args:
+        csv_values (dict): dictionary with the following keys
+            'row_number' (int): row number from original csv, used for reporting errors/warning
+            'document_type' (str): form number from spreadsheet row
+            'parish' (str): parish number and name e.g. "1 Alkington"
+            'filename_1' (str): front page of form
+            'filename_2' (str, optional): back page of form Defaults to None, not used if form is Cover 
+
+        pattern_matches
+            'filename_1' (re.Match): match for filename_1 against form pattern
+            'filename_2' (re.Match): match for filename_2 against form pattern
+            'cover' (re.Match): match for filename_1 against cover pattern
+
+        warnings (dict): warning messages for any issues found
+
+    Returns:
+        warnings (dict):
+    """
+    
+    filenames = f"{csv_values['filename_1']} and {csv_values['filename_2']}"
+    if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
+        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different pieces.")
+
+    parish_number = csv_values['parish'].split()[0]
+    if pattern_matches['filename_1']['parish_number'] != pattern_matches['filename_2']['parish_number']:
+        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different parish numbers.")
+    elif pattern_matches['filename_1']['parish_number'] != parish_number:
+        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have a different parish number from parish name '{csv_values['parish']}'.")
+       
+    image1 = int(pattern_matches['filename_1']['image_number'])
+    image2 = int(pattern_matches['filename_2']['image_number'])
+    if image2 != image1 + 1:
+        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} are either not consecutive images or in the wrong order.")
+    
+    return warnings
 
 
 def vali_dates(candi_date: str) -> str | None:    

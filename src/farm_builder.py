@@ -93,6 +93,14 @@ def normalize_date(candi_date: str) -> str:
 
     return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
+
+@dataclass
+class Form:
+    images: list[str]
+    field_info_date: list[str] | str
+    primary_record_date: list[str] | str
+
+
 @dataclass
 class Details:
     title: list[str] | str
@@ -100,11 +108,6 @@ class Details:
     group_names: list[str] | str
     address: list[str] | str
 
-@dataclass
-class Form:
-    images: list[str]
-    field_info_date: list[str] | str
-    primary_record_date: list[str] | str
 
 @dataclass
 class Farm:
