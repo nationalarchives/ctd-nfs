@@ -75,7 +75,7 @@ class DataNamespace():
         "%Y",
     ]
     DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
-    SCOPE_AND_CONTENT_FIELDS = [
+    DESCRIPTION_FIELDS = [
         'Farm Number',
         'Farm or holding',
         'Addressee(s)',
