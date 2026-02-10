@@ -81,8 +81,8 @@ def output_json_files(record: Record, replica: Replica) -> None:
     os.makedirs(records_folder, exist_ok=True)
     os.makedirs(replica_folder, exist_ok=True)
 
-    record_file = records_folder / f"{record.iaid}.json"
-    replica_file = replica_folder / f"{record.iaid}.json"
+    record_file = records_folder / f"{record.iaid}_record.json"
+    replica_file = replica_folder / f"{record.iaid}_replica_manifest.json"
 
     with open(record_file, 'w') as file_rec, open(replica_file, 'w') as file_rep:
         print(f"{record_file=}")
