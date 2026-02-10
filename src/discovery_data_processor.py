@@ -31,10 +31,12 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
             if not value or type(value) is not str:
                 cleaned_data_row[key] = value
                 continue
+
             value = value.strip()
             value = value.replace(f"{non_breaking_space}", " ")
             value = value.replace("\n", "")
             cleaned_data_row[key] = value
+
         discovery_data.append(cleaned_data_row)
     
     return discovery_data
