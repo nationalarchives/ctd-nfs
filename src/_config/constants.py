@@ -130,6 +130,7 @@ class PathNamespace():
     TRANSFORM = _PIPELINE_ROOT / "3-TRANSFORM"
     ARCHIVE = _PIPELINE_ROOT / "4-ARCHIVE"
     OUTPUT = _PIPELINE_ROOT / "5-OUTPUT"
+    TEST_OUTPUT = OUTPUT / "TEST"
 
 
 PATH = PathNamespace()
