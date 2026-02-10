@@ -75,17 +75,13 @@ def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
         
 
 def output_json_files(record: Record, replica: Replica) -> None:
-    records_folder = PATH.TEST_OUTPUT / "Records"
-    replica_folder = PATH.TEST_OUTPUT / "Replicas"
+    os.makedirs(PATH.TEST_OUTPUT, exist_ok=True)
 
-    os.makedirs(records_folder, exist_ok=True)
-    os.makedirs(replica_folder, exist_ok=True)
-
-    record_file = records_folder / f"{record.iaid}_record.json"
-    replica_file = replica_folder / f"{record.iaid}_replica_manifest.json"
+    record_file = PATH.TEST_OUTPUT / f"{record.iaid}_record.json"
+    replica_file = PATH.TEST_OUTPUT / f"{record.iaid}_replica_manifest.json"
 
     with open(record_file, 'w') as file_rec, open(replica_file, 'w') as file_rep:
-        print(f"{record_file=}")
+        print(f"{record_file.name=}, {replica_file.name=}")
         json.dump(asdict(record), file_rec, indent=4)
         json.dump(asdict(replica), file_rep, indent=4)
             
