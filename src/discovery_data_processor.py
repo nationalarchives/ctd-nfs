@@ -2,6 +2,9 @@
 """
 from urllib import parse
 import requests
+import os
+import json
+from dataclasses import asdict
 
 from src._config.constants import PATH, DATA
 from src._tools.xlreader import read_file
@@ -72,6 +75,22 @@ def create_replica_set(filenames: list) -> Replica:
     )
         
 
+def output_json_files(record: Record, replica: Replica) -> None:
+    records_folder = PATH.TEST_OUTPUT / "Records"
+    replica_folder = PATH.TEST_OUTPUT / "Replicas"
+
+    os.makedirs(records_folder, exist_ok=True)
+    os.makedirs(replica_folder, exist_ok=True)
+
+    record_file = records_folder / f"{record.iaid}.json"
+    replica_file = replica_folder / f"{record.iaid}.json"
+
+    with open(record_file, 'w') as file_rec, open(replica_file, 'w') as file_rep:
+        print(f"{record_file=}")
+        json.dump(asdict(record), file_rec, indent=4)
+        json.dump(asdict(replica), file_rep, indent=4)
+            
+            
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
@@ -79,11 +98,13 @@ if __name__ == "__main__":
     for row in cleaned_data:
         parent_id = get_parent_id(row['Reference'])
         description = create_description(row)
-
         record = Record(
             citableReference=row['Reference'],
             parentId=parent_id,
             scopeContent={'description': description},
             title=row['Farm Number'],
         )
+
         replica = create_replica_set(row['Filenames'])
+
+        output_json_files(record, replica)
