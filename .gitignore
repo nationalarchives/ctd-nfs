@@ -168,4 +168,4 @@ processing
 *.txt
 difflib_experiment.py
 *.txt
-_scratch.py
+_scratch/*.*
