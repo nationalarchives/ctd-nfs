@@ -5,7 +5,7 @@ import requests
 
 from src._config.constants import PATH, DATA
 from src._tools.xlreader import read_file
-from src.record_builder import Record
+from src.record_builder import Record, Replica, Image
 
 
 data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
@@ -58,6 +58,18 @@ def create_description(row_data: dict) -> str:
     return "".join(scope_and_content)
 
 
+def create_replica_set(filenames: list) -> Replica:
+    image_data = [
+        Image(file_name=filename.strip(",;"), sequence_no=index)
+        for index, filename in enumerate(row['Filenames'].split(), start=1)
+    ]
+    return Replica(
+        record.iaid, 
+        record.replicaId, 
+        images=image_data
+    )
+        
+
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
@@ -72,4 +84,4 @@ if __name__ == "__main__":
             scopeContent={'description': description},
             title=row['Farm Number'],
         )
-
+        replica = create_replica_set(row['Filenames'])
