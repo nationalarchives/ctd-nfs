@@ -9,6 +9,7 @@ dependencies = [
     "pyinstaller>=6.17.0",
     "pyyaml>=6.0.3",
     "rapidfuzz>=3.14.3",
+    "requests>=2.32.5",
     "xlutils>=2.0.0",
 ]
 
