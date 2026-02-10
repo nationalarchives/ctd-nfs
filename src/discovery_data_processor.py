@@ -63,14 +63,14 @@ def create_description(row_data: dict) -> str:
     return "".join(scope_and_content)
 
 
-def create_replica_set(filenames: str) -> Replica:
+def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
     image_data = [
         Image(file_name=filename.strip(",;"), sequence_no=index)
         for index, filename in enumerate(filenames.split(), start=1)
     ]
     return Replica(
-        record.iaid, 
-        record.replicaId, 
+        iaid, 
+        replica_id, 
         images=image_data
     )
         
@@ -105,6 +105,6 @@ if __name__ == "__main__":
             title=row['Farm Number'],
         )
 
-        replica = create_replica_set(row['Filenames'])
+        replica = create_replica_set(row['Filenames'], record.iaid, record.replicaId)
 
         output_json_files(record, replica)
