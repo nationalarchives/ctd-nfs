@@ -5,6 +5,7 @@ import requests
 
 from src._config.constants import PATH, DATA
 from src._tools.xlreader import read_file
+from src.record_builder import Record
 
 
 data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
@@ -64,4 +65,11 @@ if __name__ == "__main__":
     for row in cleaned_data:
         parent_id = get_parent_id(row['Reference'])
         description = create_description(row)
+
+        record = Record(
+            citableReference=row['Reference'],
+            parentId=parent_id,
+            scopeContent={'description': description},
+            title=row['Farm Number'],
+        )
 
