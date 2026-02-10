@@ -75,7 +75,18 @@ class DataNamespace():
         "%Y",
     ]
     DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
-
+    SCOPE_AND_CONTENT_FIELDS = [
+        'Farm Number',
+        'Farm or holding',
+        'Addressee(s)',
+        'Farmer(s) or occupier(s)',
+        'Landowner(s)',
+        'Acreage',
+        'Appears on Ordnance Survey sheet(s)',
+        'Field information date',
+        'Primary farm record date',
+        'Record consists of',
+    ]
 
 
 class RegexNamespace():
