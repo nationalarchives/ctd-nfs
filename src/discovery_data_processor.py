@@ -11,15 +11,16 @@ from src._tools.xlreader import read_file
 from src.record_builder import Record, Replica, Image
 
 
-def get_parent_id(raw_reference: str) -> str:
-    ref = raw_reference.rsplit("/", maxsplit=1)[0]
-    ref_url_safe = parse.quote(ref)
+def load_excel_data() -> list[dict]:
+    data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
+    excel_data = read_file(data_file)
 
-    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-    result = requests.get(api_query)
-
-    parent_record = result.json()
-    return parent_record['records'][0]['id']
+    column_names = excel_data['Sheet'][0]
+    return [
+        dict(zip(column_names, row_data))
+        for row_data in excel_data["Sheet"][1:]
+        if row_data[0]
+    ]
 
 
 def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
@@ -42,16 +43,15 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     return discovery_data
 
 
-def load_excel_data() -> list[dict]:
-    data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
-    excel_data = read_file(data_file)
+def get_parent_id(raw_reference: str) -> str:
+    ref = raw_reference.rsplit("/", maxsplit=1)[0]
+    ref_url_safe = parse.quote(ref)
 
-    column_names = excel_data['Sheet'][0]
-    return [
-        dict(zip(column_names, row_data))
-        for row_data in excel_data["Sheet"][1:]
-        if row_data[0]
-    ]
+    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    result = requests.get(api_query)
+
+    parent_record = result.json()
+    return parent_record['records'][0]['id']
 
 
 def create_description(row_data: dict) -> str:
