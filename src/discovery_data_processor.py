@@ -11,9 +11,6 @@ from src._tools.xlreader import read_file
 from src.record_builder import Record, Replica, Image
 
 
-data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
-
-
 def get_parent_id(raw_reference: str) -> str:
     ref = raw_reference.rsplit("/", maxsplit=1)[0]
     ref_url_safe = parse.quote(ref)
@@ -46,7 +43,9 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 
 def load_excel_data() -> list[dict]:
+    data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
     excel_data = read_file(data_file)
+
     column_names = excel_data['Sheet'][0]
     return [
         dict(zip(column_names, row_data))
