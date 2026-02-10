@@ -49,10 +49,19 @@ def load_excel_data() -> list[dict]:
     ]
 
 
+def create_description(row_data: dict) -> str:
+    scope_and_content = [
+    f"{key}: {row_data[key]}<p>"
+    for key in DATA.DESCRIPTION_FIELDS
+    ]
+    return "".join(scope_and_content)
+
+
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
 
     for row in cleaned_data:
         parent_id = get_parent_id(row['Reference'])
+        description = create_description(row)
 
