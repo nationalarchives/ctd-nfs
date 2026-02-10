@@ -1,10 +1,24 @@
 """
 """
-from src._config.constants import PATH
+from urllib import parse
+import requests
+
+from src._config.constants import PATH, DATA
 from src._tools.xlreader import read_file
 
 
 data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
+
+
+def get_parent_id(raw_reference: str) -> str:
+    ref = raw_reference.rsplit("/", maxsplit=1)[0]
+    ref_url_safe = parse.quote(ref)
+
+    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    result = requests.get(api_query)
+
+    parent_record = result.json()
+    return parent_record['records'][0]['id']
 
 
 def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
@@ -38,4 +52,7 @@ def load_excel_data() -> list[dict]:
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
+
+    for row in cleaned_data:
+        parent_id = get_parent_id(row['Reference'])
 
