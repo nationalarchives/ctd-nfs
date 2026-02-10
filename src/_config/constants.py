@@ -74,6 +74,8 @@ class DataNamespace():
         "%b %Y",
         "%Y",
     ]
+    DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
+
 
 
 class RegexNamespace():
