@@ -3,6 +3,7 @@ from collections import OrderedDict
 import shelve
 import re
 from datetime import datetime
+import calendar
 
 from src._config.constants import PATH, REGEX, DATA
 
@@ -74,6 +75,19 @@ def normalize_date(candi_date: str) -> str:
     Returns:
         str: The normalized date string.
     """
+
+    if REGEX.MONTH.match(candi_date) or REGEX.MON.match(candi_date):
+        if REGEX.MON.match(candi_date):
+            index = DATA.ABBR_MONTH_NAMES.index(candi_date)
+            candi_date = DATA.MONTH_NAMES[index]
+        return f"{candi_date}"
+
+    if REGEX.DAYMONTH.match(candi_date) or REGEX.DAYMON.match(candi_date):
+        day, month = candi_date.split()
+        if REGEX.DAYMON.match(candi_date):
+            index = DATA.ABBR_MONTH_NAMES.index(month)
+            month = DATA.MONTH_NAMES[index]
+        return f"{int(day)} {month}"
 
     candi_date = REGEX.REMOVE_DELIMITERS.sub(' ', candi_date)
     date_match: dict[re.Match] = {
