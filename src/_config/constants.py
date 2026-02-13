@@ -78,6 +78,8 @@ class DataNamespace():
         "%b",
         "%B",
     ]
+    MONTH_NAMES: list = list(calendar.month_name)
+    ABBR_MONTH_NAMES: list = list(calendar.month_abbr)
     DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
     DESCRIPTION_FIELDS = [
         'Farm Number',
