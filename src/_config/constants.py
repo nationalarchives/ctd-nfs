@@ -101,8 +101,6 @@ class RegexNamespace():
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)_+(?P<image_number>\d+)\.tif$""")
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)\.tif$""")
     
-    _month_names: list = "|".join(list(calendar.month_name)[1:])
-    _abbr_month_names: list = "|".join(list(calendar.month_abbr)[1:])
     _date_delimiters: str = r"""[\/\.\-\s]+"""
     _month_names: list = "|".join(DataNamespace.MONTH_NAMES[1:])
     _abbr_month_names: list = "|".join(DataNamespace.ABBR_MONTH_NAMES[1:])
