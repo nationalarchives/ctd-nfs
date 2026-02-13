@@ -104,6 +104,8 @@ class RegexNamespace():
     _month_names: list = "|".join(list(calendar.month_name)[1:])
     _abbr_month_names: list = "|".join(list(calendar.month_abbr)[1:])
     _date_delimiters: str = r"""[\/\.\-\s]+"""
+    _month_names: list = "|".join(DataNamespace.MONTH_NAMES[1:])
+    _abbr_month_names: list = "|".join(DataNamespace.ABBR_MONTH_NAMES[1:])
 
     DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
