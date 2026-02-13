@@ -73,6 +73,10 @@ class DataNamespace():
         "%B %Y",
         "%b %Y",
         "%Y",
+        "%d %B",
+        "%d %b",
+        "%b",
+        "%B",
     ]
     DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
     DESCRIPTION_FIELDS = [
