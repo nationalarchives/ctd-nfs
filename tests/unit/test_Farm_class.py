@@ -42,7 +42,7 @@ def test_concatenate_forms(concatenate_forms_fixture):
 			continue
 
 def test_normalize_date(valid_dates, normalized_dates):
-	for index, test_date in enumerate(valid_dates['data']):
+	for index, test_date in enumerate(valid_dates):
 		expected_result = normalized_dates[index]
 
 		assert expected_result == normalize_date(test_date)

@@ -53,7 +53,7 @@ def test_values_between_filenames_parish_number_mismatch(values_between_filename
 
 
 def test_valid_dates(valid_dates):
-	for test_date in valid_dates['data']:
+	for test_date in valid_dates:
 		expected_result = None	
 		actual_result = vali_dates(test_date)
 
