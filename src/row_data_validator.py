@@ -210,18 +210,33 @@ def vali_dates(candi_date: str) -> str | None:
         'yearonly': REGEX.YEARONLY.match(candi_date),
         'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
         'ddmonyyyy': REGEX.DDMONYEAR.match(candi_date),
+        'daymonth': REGEX.DAYMONTH.match(candi_date),
+        'daymon': REGEX.DAYMON.match(candi_date),
+        'month': REGEX.MONTH.match(candi_date),
+        'mon': REGEX.MON.match(candi_date),
     }
 
     date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
     if not (date_type := next(date_type, None)):
         return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
 
+    if date_match['month'] or date_match['mon']:
+        return
+
+    if date_type in ['daymonth', 'daymon']:
+        day = date_match[date_type]['day'].zfill(2)
+        month = date_match[date_type]['month']
+        if (int(day) > 29 and month in ["February", "Feb"]) or int(day) > 31:
+            return f"[ERROR] '{candi_date}' is not a valid calendar date."
+        else:
+            return
+
     valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
     if not valid_year:
         return f"[ERROR] '{candi_date}' is outside the survey timespan."
 
     candi_date = re.sub(r'[\/\-\. ]+', ' ', candi_date)
-    if date_type in ['ddmmyyyy', 'ddmonyyyy']:
+    if date_type in ['daymonthyear', 'ddmmyyyy', 'ddmonyyyy']:
         day = date_match[date_type]['day'].zfill(2)
         if int(day) > 31:
             return f"[ERROR] '{candi_date}' is not a valid calendar date."
