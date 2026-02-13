@@ -112,6 +112,10 @@ class RegexNamespace():
     YEARONLY = re.compile(r"""^(?P<year>\d\d\d\d)$""")
     DDMONYEAR = re.compile(fr"""^(?P<day>\d\d?){_date_delimiters}(?P<month>{_abbr_month_names}){_date_delimiters}(?P<year>(\d\d)?\d\d)$""")
     DDMMYYYY = re.compile(fr"""^(?P<day>\d\d?){_date_delimiters}(?P<month>\d\d?){_date_delimiters}(?P<year>(\d\d)?\d\d)$""")
+    DAYMONTH = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names})$""")
+    DAYMON = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_abbr_month_names})$""")
+    MONTH = re.compile(fr"""^(?P<month>{_month_names}|)$""")
+    MON = re.compile(fr"""^(?P<month>{_abbr_month_names})$""")
     
     REMOVE_DELIMITERS = re.compile(fr"{_date_delimiters}+")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
