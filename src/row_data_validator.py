@@ -244,7 +244,7 @@ def vali_dates(candi_date: str) -> str | None:
                 continue
 
 
-def validate_data(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re.Match], warnings: dict):
+def check_for_other_row_data_issues(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re.Match], warnings: dict):
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
         warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
 

@@ -4,7 +4,7 @@ import csv
 import re
 import shelve
 
-from src.row_data_validator import validate_data, has_valid_reference_values, row_is_cover_form, has_cover_issues
+from src.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
 from src.farm_builder import Farm, concatenate_instance, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
@@ -98,7 +98,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             if warnings is None:
                 continue
         
-        warnings = validate_data(farm_data_row, row_prefix, pattern_matches, warnings)
+        warnings = check_for_other_row_data_issues(farm_data_row, row_prefix, pattern_matches, warnings)
 
         candidate_farm = Farm(**farm_data_row)
         candidate_farm.warnings = warnings  
