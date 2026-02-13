@@ -820,21 +820,23 @@ def cover_with_farm_details():
 
 @pytest.fixture()
 def valid_dates():
-	return {
-		'row_num': "1234",
-		'data': [
-			"15 October 1941",
-			"January 1942",
-			"4 July 1942",
-			"05 July 1942",
-			"July 1941",
-			"1943",
-			"01/05/1942",
-			"6-6-1942",
-			"12.12.1943",
-			"1/1/42",
-		],
-	}
+	return [
+		"15 October 1941",
+		"January 1942",
+		"4 July 1942",
+		"05 July 1942",
+		"July 1941",
+		"1943",
+		"01/05/1942",
+		"6-6-1942",
+		"12.12.1943",
+		"1/1/42",
+		"6 Jun",
+		"03 February",
+		"Sep",
+		"November",
+	]
+	
 
 
 @pytest.fixture()
@@ -850,6 +852,10 @@ def normalized_dates():
 		"6 June 1942",
 		"12 December 1943",
 		"1 January 1942",
+		"6 June",
+		"3 February",
+		"September",
+		"November",
 	]
 	
 
@@ -857,7 +863,6 @@ def normalized_dates():
 def dates_with_invalid_format():
 	return {
 		'data': [
-	        "6 June",
 			"10 1942",
 			"4th July 1942",
 			"5th 1943",
@@ -880,9 +885,9 @@ def dates_outside_survey_range():
 def invalid_calendar_dates():
 	return {
 		'data': [
-			"31 February 1942",
+			"32 March 1942",
 			"29 February 1943",
-			# "32/01/1942",
+			"30 February",
 		],
 		'message': " is not a valid calendar date."
 	}
