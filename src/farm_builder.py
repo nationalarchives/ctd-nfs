@@ -7,6 +7,9 @@ from datetime import datetime
 from src._config.constants import PATH, REGEX, DATA
 
 
+type ListOrStr = list[str] | str
+
+
 def initialise_forms_mapping() -> OrderedDict:
     """Create a mapping of form codes to empty lists for storing filenames.
         An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
