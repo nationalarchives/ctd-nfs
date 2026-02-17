@@ -657,16 +657,17 @@ def initials_replace(phrase_to_be_processed: str, phrase_for_comparison: str) ->
 
 
 def get_match_ratios(phrase1: list, phrase2=False) -> tuple[float, dict]:
-    ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
-    
-        Key Arguments:
-            phrase1 - list of phrase sections for comparison
-            phrase2 - list of phrase sections for comparison
-            
-        Returns:
-            Tuple with float ratio of best match between phrase chunks and dictionary with tuple containing the section of phrase2 being compared as "phrase2 start position: 
-            phrase2 end position" and the similarity ration of the phrase1 phrase chunk to the section of phrase2 with the position of the phrase1 word chunk as the key
-    '''
+    """Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. 
+    Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
+
+    Args:
+        phrase1 (list): list of phrase sections for comparison
+        phrase2 (bool, optional): list of phrase sections for comparison. Defaults to False.
+
+    Returns:
+        tuple[float, dict]: ratio of best match between phrase chunks and dictionary with tuple containing the section of phrase2 being compared as "phrase2 start position: 
+        phrase2 end position" and the similarity ration of the phrase1 phrase chunk to the section of phrase2 with the position of the phrase1 word chunk as the key
+    """    
 
     match_matrix = {}
     anchor_ratio = 0
