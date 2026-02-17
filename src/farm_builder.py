@@ -230,7 +230,7 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
         new_value (ListOrStr): The new value to be added.
 
     Returns:
-        list[str] | str: The concatenated value with duplicates removed.
+        The concatenated value with duplicates removed.
     """
     if existing_value == new_value:
         return existing_value
