@@ -507,13 +507,13 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
                                 print("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
                                 warnings.add("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
                                 
-                                print("Cleaned section: '" + cleaned_section + "'")
-                                print("Section: '" + section + "'")
-                                print("Contexts: " + str(contexts))
-                                print("Component1: " + component1)
-                                print("Component2: " + component2)
-                                print("Substr count: " + str(substr_count))
-                                print("Generated String List: " + str(generated_string_list))
+                                print(f"{cleaned_section=}")
+                                print(f"{section=}")
+                                print(f"{contexts=}")
+                                print(f"{component1=}")
+                                print(f"{component2=}")
+                                print(f"{substr_count=}")
+                                print(f"{generated_string_list=}")
 
             else:            
                 comp_list = [component1, component2]
@@ -769,12 +769,12 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                             
                                 anchored_list.append(f"({phrase2_token}?)")
                         except Exception as e:
-                            print("Exception thrown when trying to deal with anchored list: " + str(e))
-                            print("Length of Anchored List: " + str(len(anchored_list)))
-                            print("Anchored List: " + str(anchored_list))
-                            print("Last section of Anchored List: " + str(anchored_list[-1]))
-                            print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
-                            print("New token: " + str(phrase2_token))
+                            print(f"Exception thrown when trying to deal with anchored list: {e}")
+                            print(f"{len(anchored_list)=}")
+                            print(f"{anchored_list=}")
+                            print(f"Last section of Anchored List: {anchored_list[-1]}")
+                            print(f"Previous token: {phrase2[phrase2_pointer - 1]}")
+                            print(f"New token: {phrase2_token}")
                            
                     phrase2_pointer = phrase2_start
                         
