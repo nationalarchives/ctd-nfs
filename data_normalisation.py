@@ -143,7 +143,6 @@ def reduce_multiple_variations(component_list: list, component_set: set) -> tupl
         
         Returns    
             Tuple containing string with the combined value and a set of warnings
-
     '''
     
     warnings = set()
