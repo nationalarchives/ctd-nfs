@@ -3,7 +3,6 @@ from collections import OrderedDict
 import shelve
 import re
 from datetime import datetime
-import calendar
 
 from src._config.constants import PATH, REGEX, DATA
 
