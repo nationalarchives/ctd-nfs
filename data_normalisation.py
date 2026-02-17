@@ -782,7 +782,7 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                     phrase1_token = phrase1[phrase1_pointer]
                     
                     if len(anchored_list) > 0 and phrase1_pointer > 0:
-                        if str(anchored_list[-1])[-1] == "," and str(phrase1[phrase1_pointer - 1])[-1] != "," and phrase1_token[-1] == ",":
+                        if (str(anchored_list[-1])[-1] == ",") and (str(phrase1[phrase1_pointer - 1])[-1] != ",") and (phrase1_token[-1] == ","):
                             anchored_list[-1] = str(anchored_list[-1])[:-1]
                             phrase1_token = phrase1_token[:-1]
                             anchored_list.append(f"({phrase1_token}?)")
