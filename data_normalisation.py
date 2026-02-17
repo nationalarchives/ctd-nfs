@@ -197,47 +197,6 @@ def reduce_multiple_variations(component_list: list, component_set: set) -> tupl
         return (combined_phrases, warnings)
 
 
-def punctuated_title(to_convert: str) -> str:
-    ''' Converts string to punctuated title case
-    
-        Key argument:
-            to_convert - string to be converted
-        
-        Returns:
-            Converted string   
-    '''
-    
-    lower_to_upper = re.sub(r'(\s|^)([a-z])', to_upper, to_convert)
-    converted = re.sub(r'([^\s])([A-Z])', to_lower, lower_to_upper)
-    return converted
-
-
-def to_upper(match: re.Match) -> str:
-    ''' Convert text in the second group of a regex match object to uppercase
-    
-        Key Arguments:
-            match - a regex match with two groups expected. The first group matches whitespace or the start of a line. The second group is subsequent lowercase text.
-            
-        Returns:
-            String with value of first group followed by value of second group converted to uppercase.
-    '''
-    
-    return match.group(1) + match.group(2).upper()  
-
-
-def to_lower(match: re.Match) -> str:
-    ''' Convert text in the second group of a regex match object to lowercase
-    
-        Key Arguments:
-            match - a regex match with two groups expected. The first group matches something that is not whitespace. The second group is subsequent uppercase text.
-            
-        Returns:
-            String with value of first group followed by value of second group converted to lowercase.
-    '''
-    
-    return match.group(1) + match.group(2).lower()                            
-
-
 def ratio_check(length: int, ratio: float) -> bool:
     ''' Checks similarity ratio with a sliding scale based on length of the phrase
     
