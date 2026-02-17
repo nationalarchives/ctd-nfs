@@ -798,7 +798,6 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                     
                     if phrase2_token != phrase1_token:
                         token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token])
-                        #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
                         
                         combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio)
                         match_warnings.update(combination_warnings)
