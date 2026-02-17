@@ -467,7 +467,7 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
                                    
                 generated_string_list = [s.strip() if s[0] == ' ' else '(' + s[-1] + '?)' for s in diff]
                 
-                section_split = chunk_punctuated_string(component1 + component2, False)
+                section_split = chunk_punctuated_string(f"{component1}{component2}", False)
                 
                 for section in section_split:
                     if section not in generated_string_list:
@@ -517,7 +517,7 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
 
             else:            
                 comp_list = [component1, component2]
-                generated_string_list = "/".join(sorted(comp_list, key=str.lower)) + "(?)"        
+                generated_string_list = f"{'/'.join(sorted(comp_list, key=str.lower))}(?)"
     
     generated_string_list1 = combine_connected_letters(generated_string_list, component1)
     generated_string_list = combine_connected_letters(generated_string_list1, component2)
@@ -650,7 +650,7 @@ def initials_replace(phrase_to_be_processed: str, phrase_for_comparison: str) ->
             for comparison_part in phrase_for_comparison.split(' '):
                 if comparison_part != '' and initial_no_punc == comparison_part[0]:
                     try:                        
-                        phrase_to_be_processed = re.sub(r'^' + re.escape(initial) + r'(\s|$)', comparison_part, phrase_to_be_processed)
+                        phrase_to_be_processed = re.sub(fr"""^({re.escape(initial)})\s""", f"{comparison_part} ", phrase_to_be_processed)
                     except Exception as e:
                         print(f"Error with phrase_to_be_processed. Values - initial: {re.escape(initial)}, comparison_part: {comparison_part}, phrase_to_be_processed: {phrase_for_comparison}")
                         print(e)
