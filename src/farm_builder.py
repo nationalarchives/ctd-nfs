@@ -241,7 +241,7 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
     if existing_value in ["", "*"]:
         return new_value
     
-    if type(existing_value) is str and type(new_value) is str:
+    if (type(existing_value) and type(new_value)) is str:
         return [existing_value, new_value]
 
     if type(existing_value) is str and type(new_value) is list:
@@ -256,7 +256,7 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
                 return existing_value
         return existing_value + [new_value]
     
-    if type(existing_value) is list and type(new_value) is list:
+    if (type(existing_value) and type(new_value)) is list:
         combined_list = existing_value.copy()
         for item in new_value:
             if item not in combined_list:
