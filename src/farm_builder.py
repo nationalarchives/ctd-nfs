@@ -113,16 +113,16 @@ def normalize_date(candi_date: str) -> str:
 @dataclass
 class Form:
     images: list[str]
-    field_info_date: list[str] | str
-    primary_record_date: list[str] | str
+    field_info_date: ListOrStr
+    primary_record_date: ListOrStr
 
 
 @dataclass
 class Details:
-    title: list[str] | str
-    individual_name: list[str] | str
-    group_names: list[str] | str
-    address: list[str] | str
+    title: ListOrStr
+    individual_name: ListOrStr
+    group_names: ListOrStr
+    address: ListOrStr
 
 
 @dataclass
@@ -141,22 +141,22 @@ class Farm:
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
-    addressee_title: list[str] | str
-    addressee_individual_name: list[str] | str
-    addressee_group_names: list[str] | str
-    address: list[str] | str
-    owner_title: list[str] | str
-    owner_individual_name: list[str] | str
-    owner_group_names: list[str] | str
-    owner_address: list[str] | str
-    farmer_title: list[str] | str
-    farmer_individual_name: list[str] | str
-    farmer_group_names: list[str] | str
-    farmer_address: list[str] | str
-    acreage: list[str] | str
-    OS_map_sheet: list[str] | str
-    field_info_date: list[str] | str
-    primary_record_date: list[str] | str
+    addressee_title: ListOrStr
+    addressee_individual_name: ListOrStr
+    addressee_group_names: ListOrStr
+    address: ListOrStr
+    owner_title: ListOrStr
+    owner_individual_name: ListOrStr
+    owner_group_names: ListOrStr
+    owner_address: ListOrStr
+    farmer_title: ListOrStr
+    farmer_individual_name: ListOrStr
+    farmer_group_names: ListOrStr
+    farmer_address: ListOrStr
+    acreage: ListOrStr
+    OS_map_sheet: ListOrStr
+    field_info_date: ListOrStr
+    primary_record_date: ListOrStr
 
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
@@ -222,12 +222,12 @@ class Farm:
         self.assign_filenames_to_forms()
 
 
-def concatenate_attribute_values(existing_value: list[str] | str, new_value: list[str] | str) -> list[str] | str:
+def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr) -> ListOrStr:
     """Concatenate two values, ensuring no duplicates.
 
     Args:
-        existing_value (list[str] | str): The existing value.
-        new_value (list[str] | str): The new value to be added.
+        existing_value (ListOrStr): The existing value.
+        new_value (ListOrStr): The new value to be added.
 
     Returns:
         list[str] | str: The concatenated value with duplicates removed.
