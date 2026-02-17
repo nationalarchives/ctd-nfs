@@ -71,7 +71,7 @@ def component_compare (values_to_check: dict) -> tuple[dict, dict]:
             if len(component_set) != len(component_set_caseless) and len(alt_component_set) == len(component_set_caseless):
                 
                 #Assumption: Case mismatch - convert to title case.
-                component_set = {punctuated_title(item) for item in component_set}
+                component_set = {item.title() for item in component_set}
                 
             else:
                 if len(component_set_caseless) == 2:
@@ -431,9 +431,9 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
     if ratio_caseless_no_punc == 100:
         
         if len(component1) > len(component2):
-            return (punctuated_title(component1), warnings) 
+            return (component1.title(), warnings) 
         else:
-            return (punctuated_title(component2), warnings)
+            return (component2.title(), warnings)
     else:
         component1_count = 0
         component2_count = 0
