@@ -9,27 +9,27 @@
 #
 
 # Functions:
-#   component_compare (values_to_check, debug=False)
-#   reduce_multiple_variations(component_list, component_set, debug=False)
+#   component_compare (values_to_check)
+#   reduce_multiple_variations(component_list, component_set)
 #   punctuated_title(to_convert)
 #   to_upper(match)
 #   to_lower(match)
 #   ratio_check(length, ratio)
 #   split_distribution (component_list)
 #   split_part_distribution (component_list)
-#   token_distribution (component_list, tokens, debug=False)
+#   token_distribution (component_list, tokens)
 #   get_tokens (component_set)
 #   combine_connected_letters(list_to_test, string_to_compare)
 #   chunk_punctuated_string(string_to_process, all=True)
-#   combine_two_phrases(component_set, component_list, debug=False)
-#   combine_two_words (component1, component2, word_ratio, debug=False)
+#   combine_two_phrases(component_set, component_list)
+#   combine_two_words (component1, component2, word_ratio)
 #   get_context(letter_group, phrase_string)
-#   align_two_phrases(string1, string2, component_list, debug=False)
+#   align_two_phrases(string1, string2, component_list)
 #   clean_string(string_to_clean)
 #   clean_brackets(string_to_clean)
-#   initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False)
-#   get_match_ratios(phrase1, phrase2, debug = False)
-#   get_match_matrix(first_phrase, second_phrase, component_list, debug=False)
+#   initials_replace(phrase_to_be_processed, phrase_for_comparison)
+#   get_match_ratios(phrase1, phrase2 = False)
+#   get_match_matrix(first_phrase, second_phrase, component_list)
 
 #####################
 #   To Do:
@@ -44,12 +44,11 @@ import difflib, re
 import itertools
 
 
-def component_compare (values_to_check, debug=False):
+def component_compare (values_to_check):
     ''' Function to compare the components
     
         Keyword arguments:
         values_to_check - a dictionary of values made up of a key and a list of components
-        debug - boolean, False by default, if True print out debug
         
         Returns
             Dictionary with key references taken from the input and a string value with the combined values of the related components
@@ -76,17 +75,6 @@ def component_compare (values_to_check, debug=False):
                 component_set = {punctuated_title(item) for item in component_set}
                 
             else:
-                
-                if debug:
-                    print("Default (" + str(len(component_set)) + ") :")
-                    print(component_set)
-            
-                    print("No cases or spaces (" + str(len(alt_component_set)) + "):")
-                    print(alt_component_set)
-                    
-                    print("No cases (" + str(len(component_set_caseless)) + "):")
-                    print(component_set_caseless)
-                
                 if len(component_set_caseless) == 2:
                 
                     case_variation_alignment = {}
@@ -116,14 +104,14 @@ def component_compare (values_to_check, debug=False):
                         longest = string2.split(' ')
                         shortest = string1.split(' ')                         
                     
-                    matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list, debug)
+                    matched_value, matched_warnings = get_match_matrix(longest, shortest, component_list)
                     matched_value = clean_brackets(matched_value)
                     component_set = set([matched_value])
                     warnings[key].update(matched_warnings)
                     
                 elif len(component_set_caseless) > 2:
                     # 2025-03-14: Not implemented yet
-                    reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set_caseless, debug)
+                    reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set_caseless)
                     combined_values[key] = reduced_values
                     
                     for reduced_warning in reduced_warnings:
@@ -131,19 +119,13 @@ def component_compare (values_to_check, debug=False):
                     
         if len(component_set) < 2:  # One version
             basic_join = "".join([component for component in component_set])
-            if debug:
-                print("Basic join - " + key + ": " + basic_join)
             combined_values[key] = basic_join
         elif len(component_set) == 2:   # Two variations
-            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list, debug)
+            two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list)
             warnings[key].update(two_phrase_join_warnings)
-            if debug:
-                print("Two part join - " + str(key) + ": " + two_phrase_join)
-                print("Component set: " + str(component_set))
-                print("Component list: " + str(component_list))
             combined_values[key] = two_phrase_join
         else:   # More than two variations
-            reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set, debug)
+            reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set)
             combined_values[key] = reduced_values
             for reduced_warning in reduced_warnings:
                 warnings[key].add(reduced_warning)
@@ -151,13 +133,12 @@ def component_compare (values_to_check, debug=False):
     return (combined_values, warnings)
 
 
-def reduce_multiple_variations(component_list, component_set, debug=False):
+def reduce_multiple_variations(component_list, component_set):
     ''' Function to deal with combine the best matches and reduce the variations down to a final string
     
         Keyword arguments:
         component_list - a list of variations original values
         component_set - a set of the variations, these may have been processed to remove case
-        debug - boolean, False by default, if True print out debug
         
         Returns    
             Tuple containing string with the combined value and a set of warnings
@@ -184,10 +165,6 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
     modified_best_similar_list = []
 
     while len(similar) > 1:
-        if debug:
-            print("reduce_multiple_variations: Option E")
-            print(similar)              
-
         best_match = 0
         best_similar = {}
 
@@ -203,7 +180,7 @@ def reduce_multiple_variations(component_list, component_set, debug=False):
             best_similar = component_set
             best_similar_list = component_list
 
-        part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list, debug)   
+        part_combined_phrases, part_sub_set_warnings = combine_two_phrases(best_similar, best_similar_list)   
         warnings.update(part_sub_set_warnings)
         
         for i in range (0, len(best_similar_list)):
@@ -322,7 +299,7 @@ def split_part_distribution (component_list):
     return component_distribution
 
 
-def token_distribution (component_list, tokens, debug=False):
+def token_distribution (component_list, tokens):
     ''' Calculates the distribution of variation tokens
         
         Keyword arguments:
@@ -332,10 +309,6 @@ def token_distribution (component_list, tokens, debug=False):
         return a dictionary with the counts for each token in the components
     '''
     component_distribution = {}
-    if debug:
-        print("List: " + str(component_list))
-        print("Tokens: " + str(tokens))
-    
     for component in component_list:
         for token in tokens:
             if token.lower() in component.lower() and token in component_distribution.keys():
@@ -423,39 +396,30 @@ def chunk_punctuated_string(string_to_process, all=True):
     return chunked_list     
 
 
-def combine_two_phrases(component_set, component_list, debug=False):
+def combine_two_phrases(component_set, component_list):
     ''' Combine two string phrases
     
         Key Arguments:
             component_set - Set of the component values
             component_list - List of the component values
-            debug - Boolean. False by default. If True the extra debug is printed out
             
         Returns:
             A tuple with the combined phrase as a string and a set of warnings        
     '''
     
-    split_components, count_of_component_lengths = get_tokens(component_set)
-    distribution = split_part_distribution(component_list)
-    if debug:
-        print("Combine_two_phrases called")
-        print(f"{split_components=}")
-        print(f"{count_of_component_lengths=}")
-        print(len(count_of_component_lengths))
-        print("distribution: " + str(distribution))    
-        
-    aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list, debug)
+    split_components, count_of_component_lengths = get_tokens(component_set)       
+    aligned_phrases, phrase_warnings = align_two_phrases(split_components[0], split_components[1], component_list)
+
     return (aligned_phrases, phrase_warnings) 
 
 
-def combine_two_words (component1, component2, word_ratio, debug=False):
+def combine_two_words (component1, component2, word_ratio):
     ''' Combine two text chunks into a single chunk
     
         Keyword arguments:
         component1 - string treated as discrete chunk of text
         component2 - string treated as discrete chunk of text
         word_ratio - dictionary of variation ratio
-        debug - boolean, False by default, if True print out debug
         
         returns string with combined values
     '''
@@ -465,14 +429,6 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     ratio_caseless_no_punc = fuzz.ratio(clean_string(component1.lower()), clean_string(component2.lower()))
     warnings = set()
        
-    if debug:
-        print("component1: " + component1)
-        print("component2: " + component2)
-        print("distribution: " + str(word_ratio))
-        print("ratio: " + str(ratio))
-        print("ratio (caseless): " + str(ratio_caseless))
-        print("ratio (caseless, no punc): " + str(ratio_caseless_no_punc))
-        
     if ratio_caseless_no_punc == 100:
         
         if len(component1) > len(component2):
@@ -571,11 +527,6 @@ def combine_two_words (component1, component2, word_ratio, debug=False):
     if ratio_caseless > ratio:
         generated_string = punctuated_title(generated_string)
         
-    if debug:
-        print("Generated string list: " + str(generated_string_list))
-        print("Generated string 1 (compared to " + component1 + "): " + str(generated_string_list1))
-        print("Generated string 2 (compared to " + component2 + "): " + str(generated_string_list))
-        
     return (generated_string, warnings)
 
 
@@ -623,23 +574,17 @@ def get_context(letter_group, phrase_string):
     return context
 
 
-def align_two_phrases(string1, string2, component_list, debug=False):
+def align_two_phrases(string1, string2, component_list):
     ''' Checks if two strings align and return a combined version
 
         Key Arguments:
             string 1 - the first phrase
             string 2 - the second phrase
             component_list - list of components
-            debug - boolean, False by default, if True print out debug
         
         Returns:
             tuple with string with combined values and warnings
     '''
-    if debug:
-        print("align_two_phrases called with '" + str(string1) + "' & '" + str(string2) + "'" )
-    
-    combined = ""
-    
     warnings = {"Note: Combining multi-length or offset variations."}
     
     if len(string1) > len(string2):
@@ -648,17 +593,10 @@ def align_two_phrases(string1, string2, component_list, debug=False):
     else:
         longest = string2
         shortest = string1       
-
-    if debug:
-        print("phrase1: " + str(longest))
-        print("phrase2: " + str(shortest))
    
-    aligned_phrase, phrase_warnings = get_match_matrix(longest, shortest, component_list, debug)
+    aligned_phrase, phrase_warnings = get_match_matrix(longest, shortest, component_list)
     
     warnings.update(phrase_warnings)
-    
-    if debug:
-        print(aligned_phrase)
         
     return (aligned_phrase, warnings)
 
@@ -693,57 +631,39 @@ def clean_brackets(string_to_clean):
     return string_to_clean
 
 
-def initials_replace(phrase_to_be_processed, phrase_for_comparison, debug=False):
+def initials_replace(phrase_to_be_processed, phrase_for_comparison):
     ''' Compare two phrases. If there are any initials (single letter word when punctuation removed) in the phrase to be processed then check if they match with the first letter of the phrase for comparison then expand the initial to the matching word.
     
         Key Argument:
             phrase_to_be_processed - string to be processed
             phrase_for_comparison - string to use for comparison
-            debug - boolean, False by default, if True print out debug
             
         Returns:
             Processed string
     '''
     
-    if debug: 
-        print("phrase_to_be_processed: " + phrase_to_be_processed)
-        print("phrase_for_comparison: " + phrase_for_comparison)
-    
     if True in [True for part in phrase_to_be_processed.split(' ') if len(clean_string(part)) < 2]:
         
         initials = [part for part in phrase_to_be_processed.split(' ') if len(clean_string(part)) < 2]
-        
-        if debug:        
-            print("\nInitials: " + str(initials))
-            print("Split phrase for comparison: " + str(phrase_for_comparison.split(' ')))
-        
         for initial in initials:
             initial_no_punc = clean_string(initial)
             for comparison_part in phrase_for_comparison.split(' '):
-                if debug: 
-                    print("Comparison part: " + comparison_part)
-                    
                 if comparison_part != '' and initial_no_punc == comparison_part[0]:
-                    try:
-                        
+                    try:                        
                         phrase_to_be_processed = re.sub(r'^' + re.escape(initial) + r'(\s|$)', comparison_part, phrase_to_be_processed)
                     except Exception as e:
                         print("Error with phrase_to_be_processed. Values - initial: " + re.escape(initial) + ", comparison_part: " + comparison_part + ", phrase_to_be_processed: " + phrase_for_comparison)
                         print(e)
                     
-                    if debug: 
-                        print("Processed phrase: " + phrase_to_be_processed + "\n")   
-                    
     return phrase_to_be_processed
 
 
-def get_match_ratios(phrase1, phrase2, debug = False):
+def get_match_ratios(phrase1, phrase2 = False):
     ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
     
         Key Arguments:
             phrase1 - list of phrase sections for comparison
             phrase2 - list of phrase sections for comparison
-            debug - boolean, False by default, if True print out debug
             
         Returns:
             Tuple with float ratio of best match between phrase chunks and dictionary with tuple containing the section of phrase2 being compared as "phrase2 start position: 
@@ -752,9 +672,6 @@ def get_match_ratios(phrase1, phrase2, debug = False):
 
     match_matrix = {}
     anchor_ratio = 0
-    
-    if debug:
-        print("get_match_ratios called with phrase1: " + str(phrase1) + ", phrase2: " + str(phrase2))
     
     for i in range(0, len(phrase1)):
         max_ratio = 0
@@ -766,15 +683,7 @@ def get_match_ratios(phrase1, phrase2, debug = False):
                 combined_string_no_punc = clean_string(combined_string)
                 phrase2_no_punc = clean_string(phrase1[i])
                 
-                if debug:
-                    print(combined_string_no_punc)
-                    print(phrase2_no_punc)
-                
                 ratio = fuzz.ratio(phrase2_no_punc.lower(), combined_string_no_punc.lower())
-                
-                if debug: 
-                    combo = "A" + str(i) + "-B" + ": " + str(j1) + "-" + str(j2) + " (" + phrase2[i].lower() + "-" + combined_string.lower() +  ") = " + str(ratio)
-                    print(combo)
                     
                 if ratio > max_ratio:
                     match_matrix[i] = (key, ratio)
@@ -786,19 +695,16 @@ def get_match_ratios(phrase1, phrase2, debug = False):
     return (anchor_ratio, match_matrix)
 
 
-def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
+def get_match_matrix(first_phrase, second_phrase, component_list):
     ''' get the comparison matrix
     
         keyword arguments:
         phrase1 - the first list
         phrase2 - the second list
         word_ratio - dictionary of variation ratio
-        debug - boolean, False by default, if True print out debug
         
         return tuple with string containing combined values and warnings
     '''
-    if debug:
-        print("Match matrix called with " + str(first_phrase) + " and " + str(second_phrase))
     match_warnings = set()
     
     match_matrix_by_phrase1 = {}
@@ -811,13 +717,7 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         phrase1 = first_phrase
         phrase2 = second_phrase     
     
-    anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2, debug)    
-
-    if debug:
-        print("For each in phrase1 (" + str(phrase1) + "):")        
-        print(match_matrix_by_phrase1)
-        #print("For each in phrase2:")        
-        #print(match_matrix_by_phrase2)
+    anchor_ratio, match_matrix_by_phrase1 = get_match_ratios(phrase1, phrase2)    
     
     best_anchor_points = []
     
@@ -828,12 +728,6 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
         phrase2_position, best_ratio = phrase2_details
         phrase2_start = int(phrase2_position.split(":")[0])
         phrase2_end = int(phrase2_position.split(":")[1])  
-        if debug:
-            print("phrase1 position: " + str(phrase1_position))
-            print("phrase2 position: " + str(phrase2_position))
-            print("phrase2 start: " + str(phrase2_start))
-            print("phrase2 end: " + str(phrase2_end))
-            print("best ratio: " + str(best_ratio))
 
         # make list of anchor points (points with highest match ratio)
         if best_ratio == anchor_ratio:
@@ -841,13 +735,6 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 last_position_phrase1 = phrase1_position
                 last_position_phrase2 = phrase2_end                
                 best_anchor_points.append((phrase1_position, phrase2_position))
-                
-    if debug:
-        for anchor_points in best_anchor_points:
-            phrase1_start, phrase2_range = anchor_points
-            phrase2_start = int(phrase2_range.split(":")[0])
-            phrase2_end = int(phrase2_range.split(":")[1])   
-            print("Anchor point - " + str(phrase1_start) + ": " + str(phrase1[phrase1_start]) + "/" + str(phrase2_start) + "-" + str(phrase2_end) + ": " + ' '.join(phrase2[int(phrase2_start):int(phrase2_end)])) 
     
     #check if passes the ratio check given the length of the string
     if ratio_check(len("".join(phrase1)), anchor_ratio):
@@ -866,20 +753,12 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
             
             # while Phrase1 pointer is pointing at or before the phrase1 start and the Phrase2 pointer has not reached the end of the phrase2 values
             while phrase1_pointer <= phrase1_start and phrase2_pointer <= phrase2_end:
-                if debug:
-                    print("Before - Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start)) 
-                    print("Before - Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start)) 
                 
                 # if phrase1 is at start but phrase2 is before the first start point
                 if phrase1_pointer == phrase1_start and phrase2_pointer < phrase2_start:
                     phrase2_token = ' '.join(phrase2[phrase2_pointer:phrase2_start])
                     
-                    if len(anchored_list) > 0 and phrase2_pointer > 0:
-                        if debug: 
-                            print("Anchored List: " + str(anchored_list[-1]))
-                            print("Previous token: " + str(phrase2[phrase2_pointer - 1]))
-                            print("New token: " + str(phrase2_token))
-                        
+                    if len(anchored_list) > 0 and phrase2_pointer > 0:                       
                         # if the end of the last thing added to the anchored list is a comma, the end of the previous phrase2 section wasn't a comma and the end of the current section is a comma
                         try:
                             if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
@@ -897,22 +776,12 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                             print("New token: " + str(phrase2_token))
                            
                     phrase2_pointer = phrase2_start
-                    
-                    if debug:
-                        print("Added 'phrase2' string to bring into alignment")
-                        print("Adding (phrase2): " + phrase2_token + " from " + str(phrase2))
-                        print("Phrase2 pointer: " + str(phrase2_pointer))
                         
                 # if pointer is before phrase1 start but phrase2 is at start point        
                 elif phrase1_pointer < phrase1_start and phrase2_start == phrase2_pointer:
                     phrase1_token = phrase1[phrase1_pointer]
                     
                     if len(anchored_list) > 0 and phrase1_pointer > 0:
-                        if debug: 
-                            print("Anchored List: " + str(anchored_list[-1]))
-                            print("Previous token: " + str(phrase1[phrase1_pointer - 1]))
-                            print("New token: " + str(phrase1_token))
-                        
                         if str(anchored_list[-1])[-1] == "," and str(phrase1[phrase1_pointer - 1])[-1] != "," and phrase1_token[-1] == ",":
                             anchored_list[-1] = str(anchored_list[-1])[:-1]
                             phrase1_token = phrase1_token[:-1]
@@ -921,11 +790,6 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                            anchored_list.append("(" + phrase1_token + "?)")                    
 
                     phrase1_pointer += 1
-                    
-                    if debug:
-                        print("Added 'phrase1' string to bring into alignment")
-                        print("Adding (phrase1): " + phrase1_token + " from " + str(phrase1))
-                        print("Phrase1 pointer: " + str(phrase1_pointer))
                 
                 # if pointers for both phrase1 and phrase2 are at their respective start points        
                 elif phrase2_start == phrase2_pointer and phrase1_start == phrase1_pointer:
@@ -933,18 +797,11 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     phrase2_token = ' '.join(phrase2[int(phrase2_start):int(phrase2_end)])                        
                     
                     if phrase2_token != phrase1_token:
-                        token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token], debug)
+                        token_ratio = token_distribution(component_list, [phrase1_token, phrase2_token])
                         #print("Combine two words called from match_matrix_by_phrase2 (pointers matched) with " + phrase1_token + " and " + phrase2_token)
                         
-                        combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                        combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio)
                         match_warnings.update(combination_warnings)
-
-                        if debug:
-                            print("Added combined section")
-                            print("phrase1 token: " + phrase1_token)
-                            print("phrase2 token: " + phrase2_token)
-                            print("Token ratio: " + str(token_ratio))
-                            print("Adding (combined match): " + combined_token)
                     else:
                         combined_token = phrase1_token
                     
@@ -961,46 +818,26 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                     phrase1_pointer = phrase1_start
                     phrase2_pointer = phrase2_start
                     
-                    phrase2_token = initials_replace(phrase2_token.strip(), phrase1_token.strip(), debug) 
-                    phrase1_token = initials_replace(phrase1_token.strip(), phrase2_token.strip(), debug)                                     
+                    phrase2_token = initials_replace(phrase2_token.strip(), phrase1_token.strip()) 
+                    phrase1_token = initials_replace(phrase1_token.strip(), phrase2_token.strip())                                     
                     
-                    token_ratio = token_distribution(component_list, [phrase2_token, phrase1_token], debug)
-                    combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio, debug)
+                    token_ratio = token_distribution(component_list, [phrase2_token, phrase1_token])
+                    combined_token, combination_warnings = combine_two_words(phrase1_token, phrase2_token, token_ratio)
                     match_warnings.update(combination_warnings)
                     
                     if combined_token.strip() != '':  
                         anchored_list.append(combined_token)
-                    
-                    if debug:
-                        print("Adding combined starting string")
-                        print("phrase2 token: " + phrase2_token)
-                        print("phrase1 token: " + phrase1_token)
-                        print("Token ratio: " + str(token_ratio))
-                        print("Adding (combined gap): " + combined_token)
-                                    
-                if debug:
-                    print("After - phrase1: " + phrase1_token + ", phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 start: " + str(phrase1_start) + ", phrase1 length: " + str(len(phrase1)))
-                    print("After - phrase2: " + phrase2_token + ", phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 start: " + str(phrase2_start) + ", phrase2 last anchor: " + str(last_phrase2_anchored_point))
-                                     
         
         if len(phrase2) > last_phrase2_anchored_point or len(phrase1) > phrase1_pointer:
             phrase1_end_token = ' '.join(phrase1[phrase1_pointer:])
             phrase2_end_token = ' '.join(phrase2[int(phrase2_end):])  
             
-            phrase2_end_token = initials_replace(phrase2_end_token.strip(), phrase1_end_token.strip(), debug) 
-            phrase1_end_token = initials_replace(phrase1_end_token.strip(), phrase2_end_token.strip(), debug)  
+            phrase2_end_token = initials_replace(phrase2_end_token.strip(), phrase1_end_token.strip()) 
+            phrase1_end_token = initials_replace(phrase1_end_token.strip(), phrase2_end_token.strip())  
             
             component_list = [phrase2_end_token, phrase1_end_token]                              
                     
-            end_token_ratio = token_distribution(component_list, [phrase2_end_token, phrase1_end_token], debug)
-            
-            if debug:
-                print("Adding end section")
-                print("Phrase2 pointer: " + str(phrase2_pointer) + ", phrase2 end: " + str(len(phrase2))) 
-                print("Phrase1 pointer: " + str(phrase1_pointer) + ", phrase1 end: " + str(len(phrase1))) 
-                print("component list: " + str(component_list))
-                print("End token (phrase1): " + phrase1_end_token)
-                print("End token (phrase2): " + phrase2_end_token)
+            end_token_ratio = token_distribution(component_list, [phrase2_end_token, phrase1_end_token])
             
             if phrase2_pointer == len(phrase2):
                 anchored_list.append("(" + phrase1_end_token + "?)")
@@ -1008,18 +845,15 @@ def get_match_matrix(first_phrase, second_phrase, component_list, debug=False):
                 anchored_list.append("(" + phrase2_end_token + "?)")
             else:
                 if " " in phrase1_end_token or " " in phrase2_end_token:
-                    end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list, debug)
+                    end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list)
                     match_warnings.update(end_phrase_join_warnings)
                     if end_phrase_join.strip() != '':  
                         anchored_list.append(end_phrase_join)
                 else:
-                    combined_token, combination_warnings = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio, debug)
+                    combined_token, combination_warnings = combine_two_words(phrase1_end_token, phrase2_end_token, end_token_ratio)
                     if combined_token.strip() != '': 
                         anchored_list.append(combined_token)
                     match_warnings.update(combination_warnings)
-        
-        if debug:
-            print(anchored_list)        
         
     else:
         match_warnings.add("Could not find any strong anchor points. '" + " ".join(phrase2) + "' and '" + " ".join(phrase1) + "' appear to be distinct values.")
