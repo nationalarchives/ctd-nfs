@@ -44,7 +44,7 @@ import difflib, re
 import itertools
 
 
-def component_compare (values_to_check):
+def component_compare (values_to_check: dict) -> tuple[dict, dict]:
     ''' Function to compare the components
     
         Keyword arguments:
@@ -133,7 +133,7 @@ def component_compare (values_to_check):
     return (combined_values, warnings)
 
 
-def reduce_multiple_variations(component_list, component_set):
+def reduce_multiple_variations(component_list: list, component_set: set) -> tuple[str, set]:
     ''' Function to deal with combine the best matches and reduce the variations down to a final string
     
         Keyword arguments:
@@ -197,7 +197,7 @@ def reduce_multiple_variations(component_list, component_set):
         return (combined_phrases, warnings)
 
 
-def punctuated_title(to_convert):
+def punctuated_title(to_convert: str) -> str:
     ''' Converts string to punctuated title case
     
         Key argument:
@@ -212,7 +212,7 @@ def punctuated_title(to_convert):
     return converted
 
 
-def to_upper(match):
+def to_upper(match: re.Match) -> str:
     ''' Convert text in the second group of a regex match object to uppercase
     
         Key Arguments:
@@ -225,7 +225,7 @@ def to_upper(match):
     return match.group(1) + match.group(2).upper()  
 
 
-def to_lower(match):
+def to_lower(match: re.Match) -> str:
     ''' Convert text in the second group of a regex match object to lowercase
     
         Key Arguments:
@@ -238,7 +238,7 @@ def to_lower(match):
     return match.group(1) + match.group(2).lower()                            
 
 
-def ratio_check(length, ratio):
+def ratio_check(length: int, ratio: float) -> bool:
     ''' Checks similarity ratio with a sliding scale based on length of the phrase
     
         Keyword arguments:
@@ -258,7 +258,7 @@ def ratio_check(length, ratio):
         return False                  
 
 
-def split_distribution (component_list):
+def split_distribution (component_list: list) -> dict:
     ''' Calculates the distribution of a pair of variations. (Note - not currently used. Superseded by split_part_distribution)
         
         Keyword arguments:
@@ -278,7 +278,7 @@ def split_distribution (component_list):
     return component_distribution
 
 
-def split_part_distribution (component_list):
+def split_part_distribution (component_list: list) -> dict:
     ''' Calculates the distribution of variation parts
         
         Keyword arguments:
@@ -299,7 +299,7 @@ def split_part_distribution (component_list):
     return component_distribution
 
 
-def token_distribution (component_list, tokens):
+def token_distribution (component_list: list, tokens: list) -> dict:
     ''' Calculates the distribution of variation tokens
         
         Keyword arguments:
@@ -319,7 +319,7 @@ def token_distribution (component_list, tokens):
     return component_distribution        
 
 
-def get_tokens (component_set):
+def get_tokens (component_set: set) -> tuple[list, list]:
     ''' split the components in the set into substrings and return  
     
         Keyword arguments:
@@ -337,7 +337,7 @@ def get_tokens (component_set):
     return (tokens, list(count_set))   
 
 
-def combine_connected_letters(list_to_test, string_to_compare):
+def combine_connected_letters(list_to_test: list, string_to_compare: str) -> list:
     ''' Checks for multiple corrections from the same source string next to each other and combines them
     
         Keyword arguments:
@@ -373,7 +373,7 @@ def combine_connected_letters(list_to_test, string_to_compare):
     return list_to_test                         
 
 
-def chunk_punctuated_string(string_to_process, all=True):
+def chunk_punctuated_string(string_to_process: str, all=True) -> list:
     ''' Split the given string up on "(?)" and bracketed phrases ending in "?)" 
     
         Key Arguments:
@@ -396,7 +396,7 @@ def chunk_punctuated_string(string_to_process, all=True):
     return chunked_list     
 
 
-def combine_two_phrases(component_set, component_list):
+def combine_two_phrases(component_set: set, component_list: list) -> tuple[str, set]:
     ''' Combine two string phrases
     
         Key Arguments:
@@ -413,7 +413,7 @@ def combine_two_phrases(component_set, component_list):
     return (aligned_phrases, phrase_warnings) 
 
 
-def combine_two_words (component1, component2, word_ratio):
+def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tuple[str, set]:
     ''' Combine two text chunks into a single chunk
     
         Keyword arguments:
@@ -530,7 +530,7 @@ def combine_two_words (component1, component2, word_ratio):
     return (generated_string, warnings)
 
 
-def get_context(letter_group, phrase_string):
+def get_context(letter_group: str, phrase_string: str) -> list:
     ''' Finds the substring within the phrase and returns it with the immediately surrounding letters for every place it is found in the parent phrase
     
         Keyword Arguments:
@@ -574,7 +574,7 @@ def get_context(letter_group, phrase_string):
     return context
 
 
-def align_two_phrases(string1, string2, component_list):
+def align_two_phrases(string1: str, string2: str, component_list: list) -> tuple[str, set]:
     ''' Checks if two strings align and return a combined version
 
         Key Arguments:
@@ -601,7 +601,7 @@ def align_two_phrases(string1, string2, component_list):
     return (aligned_phrase, warnings)
 
 
-def clean_string(string_to_clean):
+def clean_string(string_to_clean: str) -> str:
     ''' Remove everything except spaces and word characters
     
         Key arguments:
@@ -614,7 +614,7 @@ def clean_string(string_to_clean):
     return re.sub(r'[^\w\s]', '', string_to_clean)
 
 
-def clean_brackets(string_to_clean):
+def clean_brackets(string_to_clean: str) -> str:
     ''' Tidy up brackets by removing doubled additions
     
         Key Arguments:
@@ -631,7 +631,7 @@ def clean_brackets(string_to_clean):
     return string_to_clean
 
 
-def initials_replace(phrase_to_be_processed, phrase_for_comparison):
+def initials_replace(phrase_to_be_processed: str, phrase_for_comparison: str) -> str:
     ''' Compare two phrases. If there are any initials (single letter word when punctuation removed) in the phrase to be processed then check if they match with the first letter of the phrase for comparison then expand the initial to the matching word.
     
         Key Argument:
@@ -658,7 +658,7 @@ def initials_replace(phrase_to_be_processed, phrase_for_comparison):
     return phrase_to_be_processed
 
 
-def get_match_ratios(phrase1, phrase2 = False):
+def get_match_ratios(phrase1: list, phrase2=False) -> tuple[float, dict]:
     ''' Loops over the chunks of phrase sections of phrase1 and compares with the incrementally combined sections from phrase2 and gets the similarity ratios for each comparison. Returns the ratio for the best match (or matches) and the details of what was compared and the ratio for each comparison
     
         Key Arguments:
@@ -695,7 +695,7 @@ def get_match_ratios(phrase1, phrase2 = False):
     return (anchor_ratio, match_matrix)
 
 
-def get_match_matrix(first_phrase, second_phrase, component_list):
+def get_match_matrix(first_phrase: list, second_phrase: list, component_list: list) -> tuple[str, set]:
     ''' get the comparison matrix
     
         keyword arguments:
