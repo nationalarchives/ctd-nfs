@@ -264,7 +264,7 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
         return combined_list
 
 
-def concatenate_instance_attributes(existing_attribute, new_attribute, field_name):
+def concatenate_instance_attributes(existing_attribute: ListOrStr, new_attribute: ListOrStr, field_name: str) -> None:
     existing_value = getattr(existing_attribute, field_name)
     new_value = getattr(new_attribute, field_name)
 
