@@ -192,7 +192,7 @@ def reduce_multiple_variations(component_list: list, component_set: set) -> tupl
     combined_phrases = clean_brackets("".join(list(similar)))
     
     if len(distinct) > 0:
-        return (combined_phrases + "/(" + "?/ ".join(distinct) + "?)", warnings)
+        return (f"{combined_phrases}/({'?/ '.join(distinct)}?)", warnings)
     else:
         return (combined_phrases, warnings)
 
@@ -366,7 +366,7 @@ def combine_connected_letters(list_to_test: list, string_to_compare: str) -> lis
                             
             if len(longest_match_group) > 1:
                 longest_match_group_split = re.sub(r'(\w)', r'\\(\1\\?\\)', longest_match_group)
-                result = re.sub(longest_match_group_split, r'(' + longest_match_group + '?)', string_to_test)
+                result = re.sub(longest_match_group_split, fr"'('{longest_match_group}'?)'", string_to_test)
 
                 return chunk_punctuated_string(result)                   
     
@@ -447,9 +447,9 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
                 component2_count = word_ratio[key]
                     
         if component1_count > component2_count:
-            generated_string_list =  component1 + " (" + component2 + "?)"
+            generated_string_list =  f"{component1} ({component2}?)"
         elif component2_count > component1_count:
-            generated_string_list =  component2 + " (" + component1 + "?)"
+            generated_string_list =  f"{component2} ({component1}?)"
         else:
             if ratio_check(len(component1), ratio): # if the variations are similar
                 component1_to_test = component1
@@ -482,7 +482,7 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
                         if len(cleaned_section) > 0: 
                             if substr_count < 2:
                                 
-                                contexts = get_context(section, component1 + "|" + component2)
+                                contexts = get_context(section, f"{component1}|{component2}")
                                 
                                 for context in contexts:
                                     if section in context:
@@ -501,7 +501,7 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
                                 generated_string_list = chunk_punctuated_string(current_generated_string)
                                 
                             else:
-                                contexts = get_context(section, component1 + "|" + component2)
+                                contexts = get_context(section, f"{component1}|{component2}")
                                 
                                 # 2025-03-13: Not implemented yet
                                 print("2. WARNING! - substr_count is > 1 in combine_two_words. This code hasn't been implemented yet!")
@@ -652,7 +652,7 @@ def initials_replace(phrase_to_be_processed: str, phrase_for_comparison: str) ->
                     try:                        
                         phrase_to_be_processed = re.sub(r'^' + re.escape(initial) + r'(\s|$)', comparison_part, phrase_to_be_processed)
                     except Exception as e:
-                        print("Error with phrase_to_be_processed. Values - initial: " + re.escape(initial) + ", comparison_part: " + comparison_part + ", phrase_to_be_processed: " + phrase_for_comparison)
+                        print(f"Error with phrase_to_be_processed. Values - initial: {re.escape(initial)}, comparison_part: {comparison_part}, phrase_to_be_processed: {phrase_for_comparison}")
                         print(e)
                     
     return phrase_to_be_processed
@@ -678,7 +678,7 @@ def get_match_ratios(phrase1: list, phrase2=False) -> tuple[float, dict]:
         for j1 in range(0, len(phrase2)):
             for j2 in range (j1, len(phrase2)):
                 combined_string = ''.join(phrase2[j1:j2+1])
-                key = str(j1) + ":" + str(j2+1)
+                key = f"{str(j1)}:{str(j2+1)}"
                 
                 combined_string_no_punc = clean_string(combined_string)
                 phrase2_no_punc = clean_string(phrase1[i])
@@ -764,9 +764,10 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                             if str(anchored_list[-1])[-1] == "," and str(phrase2[phrase2_pointer - 1])[-1] != "," and phrase2_token[-1] == ",":
                                 anchored_list[-1] = str(anchored_list[-1])[:-1]
                                 phrase2_token = phrase2_token[:-1]
-                                anchored_list.append("(" + phrase2_token + "?),")
+                                anchored_list.append(f"({phrase2_token}?)")
                             else:
-                                anchored_list.append("(" + phrase2_token + "?)")
+                            
+                                anchored_list.append(f"({phrase2_token}?)")
                         except Exception as e:
                             print("Exception thrown when trying to deal with anchored list: " + str(e))
                             print("Length of Anchored List: " + str(len(anchored_list)))
@@ -785,9 +786,9 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                         if str(anchored_list[-1])[-1] == "," and str(phrase1[phrase1_pointer - 1])[-1] != "," and phrase1_token[-1] == ",":
                             anchored_list[-1] = str(anchored_list[-1])[:-1]
                             phrase1_token = phrase1_token[:-1]
-                            anchored_list.append("(" + phrase1_token + "?),")
+                            anchored_list.append(f"({phrase1_token}?)")
                         else:
-                           anchored_list.append("(" + phrase1_token + "?)")                    
+                           anchored_list.append(f"({phrase1_token}?)")                    
 
                     phrase1_pointer += 1
                 
@@ -840,9 +841,9 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
             end_token_ratio = token_distribution(component_list, [phrase2_end_token, phrase1_end_token])
             
             if phrase2_pointer == len(phrase2):
-                anchored_list.append("(" + phrase1_end_token + "?)")
+                anchored_list.append(f"({phrase1_end_token}?)")
             elif phrase1_pointer == len(phrase1):
-                anchored_list.append("(" + phrase2_end_token + "?)")
+                anchored_list.append(f"({phrase2_end_token}?)")
             else:
                 if " " in phrase1_end_token or " " in phrase2_end_token:
                     end_phrase_join, end_phrase_join_warnings = combine_two_phrases(set(component_list), component_list)
@@ -856,7 +857,7 @@ def get_match_matrix(first_phrase: list, second_phrase: list, component_list: li
                     match_warnings.update(combination_warnings)
         
     else:
-        match_warnings.add("Could not find any strong anchor points. '" + " ".join(phrase2) + "' and '" + " ".join(phrase1) + "' appear to be distinct values.")
+        match_warnings.add(f"Could not find any strong anchor points. '{' '.join(phrase2)}' and '{' '.join(phrase1)}' appear to be distinct values.")
         anchored_list = phrase2 + ["/"] + phrase1 
         
     return (' '.join(anchored_list), match_warnings)
