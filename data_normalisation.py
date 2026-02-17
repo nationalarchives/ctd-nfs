@@ -120,10 +120,12 @@ def component_compare (values_to_check: dict) -> tuple[dict, dict]:
         if len(component_set) < 2:  # One version
             basic_join = "".join([component for component in component_set])
             combined_values[key] = basic_join
+
         elif len(component_set) == 2:   # Two variations
             two_phrase_join, two_phrase_join_warnings = combine_two_phrases(component_set, component_list)
             warnings[key].update(two_phrase_join_warnings)
             combined_values[key] = two_phrase_join
+
         else:   # More than two variations
             reduced_values, reduced_warnings = reduce_multiple_variations(component_list, component_set)
             combined_values[key] = reduced_values
@@ -266,8 +268,7 @@ def split_distribution (component_list: list) -> dict:
         
         return a dictionary with the counts for each version
     '''
-    component_distribution = {}
-    
+    component_distribution = {}   
     
     for component in component_list:
         if component in component_distribution.keys():
@@ -286,8 +287,7 @@ def split_part_distribution (component_list: list) -> dict:
         
         return a dictionary with the counts for each part in the components
     '''
-    component_distribution = {}
-    
+    component_distribution = {}    
     
     for component in component_list:
         for part in component.split(" "):
