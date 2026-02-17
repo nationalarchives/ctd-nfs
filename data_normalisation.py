@@ -91,7 +91,7 @@ def component_compare (values_to_check: dict) -> tuple[dict, dict]:
                         if len(grouped_list) == 1:
                             processed_list.append(grouped_list[0])
                         else:
-                            processed_list.append(punctuated_title(grouped_list[0]))                       
+                            processed_list.append(grouped_list[0].title())
                     
                     string1 = list(processed_list)[0]
                     string2 = list(processed_list)[1]
@@ -523,7 +523,7 @@ def combine_two_words (component1: str, component2: str, word_ratio: dict) -> tu
     generated_string = ''.join(generated_string_list)
     
     if ratio_caseless > ratio:
-        generated_string = punctuated_title(generated_string)
+        generated_string = generated_string.title()
         
     return (generated_string, warnings)
 
