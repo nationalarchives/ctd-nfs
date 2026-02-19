@@ -245,23 +245,13 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
         return [existing_value, new_value]
 
     if type(existing_value) is str and type(new_value) is list:
-        for item in new_value:
-            if item == existing_value:
-                return new_value
         return [existing_value] + new_value
 
     if type(existing_value) is list and type(new_value) is str:
-        for item in existing_value:
-            if item == new_value:
-                return existing_value
         return existing_value + [new_value]
     
     if (type(existing_value) and type(new_value)) is list:
-        combined_list = existing_value.copy()
-        for item in new_value:
-            if item not in combined_list:
-                combined_list.append(item)
-        return combined_list
+        return existing_value + new_value
 
 
 def concatenate_instance_attributes(existing_attribute: ListOrStr, new_attribute: ListOrStr, field_name: str) -> None:
