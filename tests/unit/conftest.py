@@ -483,6 +483,65 @@ def concatenation_data():
                 'owner_group_names': ["The Hon Mrs Herbert Pixton", "Hon Mrs Pixton", "Mr Abbott", "Mrs Surridge", "Miss Dowey"],
 			},
 		},
+		'1 Ashwell/4': {
+			'data': [
+				{
+					'filename_1': "MAF32-346-1_7.tif",
+					'filename_2': "MAF32-346-1_8.tif",
+					'document_type': "C51/SSY",
+					'county': "RD Rutland",
+					'parish': "1 Ashwell",
+					'primary_farm_number': "4",
+					'additional_farms': "",
+					'farm_name': "*",
+					'addressee_title': "Capt Hon",
+					'addressee_individual_name': "L E Lowther",
+					'addressee_group_names': "*",
+					'address': "Ashwell Hill, Ashwell, Oakham, Rutland",
+					'owner_title': "",
+					'owner_individual_name': "",
+					'owner_group_names': "",
+					'owner_address': "",
+					'farmer_title': "",
+					'farmer_individual_name': "",
+					'farmer_group_names': "",
+					'farmer_address': "",
+					'acreage': "",
+					'OS_map_sheet': "",
+					'field_info_date': "",
+					'primary_record_date': ""
+				},
+				{
+					'filename_1': "MAF32-346-1_89.tif",
+					'filename_2': "MAF32-346-1_90.tif",
+					'document_type': "C 47/SSY",
+					'county': "RD Rutland",
+					'parish': "1 Ashwell",
+					'primary_farm_number': "4",
+					'additional_farms': "",
+					'farm_name': "",
+					'addressee_title': "Capt Hon",
+					'addressee_individual_name': "L E Lowther",
+					'addressee_group_names': "*",
+					'address': "Ashwell Hill, Ashwell, Oakham, Rutland",
+					'owner_title': "",
+					'owner_individual_name': "",
+					'owner_group_names': "",
+					'owner_address': "",
+					'farmer_title': "",
+					'farmer_individual_name': "",
+					'farmer_group_names': "",
+					'farmer_address': "",
+					'acreage': "",
+					'OS_map_sheet': "",
+					'field_info_date': "",
+					'primary_record_date': ""
+				}
+			],
+			'result': {
+                'address': ["Ashwell Hill, Ashwell, Oakham, Rutland", "Ashwell Hill, Ashwell, Oakham, Rutland"],
+			}
+		}
 	}
 
 
