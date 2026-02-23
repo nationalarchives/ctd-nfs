@@ -24,20 +24,24 @@ counts = Counter(list_of_addresses)
 
 unique_addresses = list(set(list_of_addresses))
 sorted_addresses = sorted(unique_addresses, key=len)
-working_addresses = []
 
 
-for idx, address in enumerate(sorted_addresses):
-    print(f"{idx=}\t{address=}")
-    if address == sorted_addresses[-1]:
-        working_addresses.append(address)
-        continue
+def filter_addresses(unique_addresses_sorted_by_length: list) -> list:
+    working_addresses = []
+    for idx, address in enumerate(unique_addresses_sorted_by_length):
+        print(f"{idx=}\t{address=}")
+        if address == unique_addresses_sorted_by_length[-1]:
+            working_addresses.append(address)
+            continue
 
-    other_addresses = sorted_addresses[idx + 1:]
-    if not any([(address in target_address) for target_address in other_addresses]):
-        working_addresses.append(address)
+        other_addresses = unique_addresses_sorted_by_length[idx + 1:]
+        if not any([(address in target_address) for target_address in other_addresses]):
+            working_addresses.append(address)
    
+    return working_addresses
 
+
+working_addresses = filter_addresses(sorted_addresses)
 s2nd_working_group = working_addresses.copy()
 for idx, address in enumerate(working_addresses):
     if address == working_addresses[-1]:
