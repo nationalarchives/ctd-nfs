@@ -22,8 +22,10 @@ list_of_addresses = [
 ]
 counts = Counter(list_of_addresses)
 
-unique_addresses = list(set(list_of_addresses))
-sorted_addresses = sorted(unique_addresses, key=len)
+
+def prepare_addresses_for_filtration(harvested_addresses: list) -> list:
+    unique_addresses = list(set(list_of_addresses))
+    return sorted(unique_addresses, key=len)
 
 
 def filter_addresses(unique_addresses_sorted_by_length: list) -> list:
