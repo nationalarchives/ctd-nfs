@@ -42,10 +42,13 @@ def filter_addresses(unique_addresses_sorted_by_length: list) -> list:
 
 
 working_addresses = filter_addresses(sorted_addresses)
-s2nd_working_group = working_addresses.copy()
-for idx, address in enumerate(working_addresses):
-    if address == working_addresses[-1]:
-        continue
+
+
+def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
+    filtered_addresses = addresses_after_first_filer.copy()
+    for idx, address in enumerate(addresses_after_first_filer):
+        if address == addresses_after_first_filer[-1]:
+            continue
 
     other_addresses = working_addresses[idx + 1:]
     for target_address in other_addresses:
