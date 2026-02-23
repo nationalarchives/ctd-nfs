@@ -43,9 +43,6 @@ def filter_addresses(unique_addresses_sorted_by_length: list) -> list:
     return working_addresses
 
 
-working_addresses = filter_addresses(sorted_addresses)
-
-
 def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
     filtered_addresses = addresses_after_first_filer.copy()
     for idx, address in enumerate(addresses_after_first_filer):
@@ -60,4 +57,8 @@ def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
     
     return filtered_addresses
 
-print(s2nd_working_group)
+
+sorted_addresses = prepare_addresses_for_filtration(list_of_addresses)
+working_addresses = filter_addresses(sorted_addresses)
+filtered_addresses = filter_addresses_by_line(working_addresses)
+print(filtered_addresses)
