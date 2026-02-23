@@ -9,10 +9,16 @@ import pprint
 pretty = pprint.PrettyPrinter(indent=4)
 
 list_of_addresses = [
-	"The Hall, Edith Weston",
-	"The Hall, Ashburton, Edith Weston",
-	"The Hall, Ashburton, Rutland",
-	"The Hall, Ashburton, Edith Weston, Rutland",
+	# "The Hall, Edith Weston",
+	# "The Hall, Ashburton, Edith Weston",
+	# "The Hall, Ashburton, Rutland",
+	# "The Hall, Ashburton, Edith Weston, Rutland",
+    # "Ashwell, Oakham, Rutland",
+    # "Baines Farm, Ashwell, Oakham, Rutland",
+    # "Baines Farm, Ashwell, Oakham, Rutland",
+    "Westfield Cottage, Ashwell, Grange, Oakham",
+    "c/o Capt Hornsby, Westfield Cottage, Ashwell, Oakham, Rutland",
+    "c/o Capt Hornsby, Westfield Cottage, Ashwell, Oakham, Rutland",
 ]
 counts = Counter(list_of_addresses)
 
