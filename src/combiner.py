@@ -2,13 +2,13 @@
 Merge list of names and address strings into one final version that will be visible in Discovery.
 """
 
-from collections import Counter
+# from collections import Counter
 import pprint
 
 
 pretty = pprint.PrettyPrinter(indent=4)
 
-counts = Counter(list_of_addresses)
+# counts = Counter(list_of_addresses)
 
 
 def prepare_addresses_for_filtration(harvested_addresses: list) -> list:
