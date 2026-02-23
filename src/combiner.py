@@ -12,7 +12,7 @@ counts = Counter(list_of_addresses)
 
 
 def prepare_addresses_for_filtration(harvested_addresses: list) -> list:
-    unique_addresses = list(set(list_of_addresses))
+    unique_addresses = list(set(harvested_addresses))
     return sorted(unique_addresses, key=len)
 
 
