@@ -8,7 +8,6 @@ import pprint
 
 pretty = pprint.PrettyPrinter(indent=4)
 
-
 list_of_addresses = [
 	"The Hall, Edith Weston",
 	"The Hall, Ashburton, Edith Weston",
