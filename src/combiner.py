@@ -58,7 +58,10 @@ def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
     return filtered_addresses
 
 
-sorted_addresses = prepare_addresses_for_filtration(list_of_addresses)
-working_addresses = filter_addresses(sorted_addresses)
-filtered_addresses = filter_addresses_by_line(working_addresses)
-print(filtered_addresses)
+def distill_addresses(list_of_addresses: list) -> list:
+    sorted_addresses = prepare_addresses_for_filtration(list_of_addresses)
+    working_addresses = filter_addresses(sorted_addresses)
+    distilled_addresses = filter_addresses_by_line(working_addresses)
+    print(distilled_addresses)
+
+    return distilled_addresses
