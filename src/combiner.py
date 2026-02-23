@@ -35,5 +35,17 @@ for idx, address in enumerate(sorted_addresses):
     other_addresses = sorted_addresses[idx + 1:]
     if not any([(address in target_address) for target_address in other_addresses]):
         working_addresses.append(address)
+   
 
-pretty.pprint(working_addresses)
+s2nd_working_group = working_addresses.copy()
+for idx, address in enumerate(working_addresses):
+    if address == working_addresses[-1]:
+        continue
+
+    other_addresses = working_addresses[idx + 1:]
+    for target_address in other_addresses:
+        if all([(line in target_address) for line in address.split(", ")]):
+            s2nd_working_group.remove(address)
+            continue
+
+print(s2nd_working_group)
