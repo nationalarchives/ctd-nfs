@@ -26,6 +26,7 @@ unique_addresses = list(set(list_of_addresses))
 sorted_addresses = sorted(unique_addresses, key=len)
 working_addresses = []
 
+
 for idx, address in enumerate(sorted_addresses):
     print(f"{idx=}\t{address=}")
     if address == sorted_addresses[-1]:
