@@ -28,7 +28,7 @@ working_addresses = []
 
 for idx, address in enumerate(sorted_addresses):
     print(f"{idx=}\t{address=}")
-    if address == sorted_addresses[-1:][0]:
+    if address == sorted_addresses[-1]:
         working_addresses.append(address)
         continue
 
