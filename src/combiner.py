@@ -50,10 +50,12 @@ def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
         if address == addresses_after_first_filer[-1]:
             continue
 
-    other_addresses = working_addresses[idx + 1:]
-    for target_address in other_addresses:
-        if all([(line in target_address) for line in address.split(", ")]):
-            s2nd_working_group.remove(address)
-            continue
+        other_addresses = addresses_after_first_filer[idx + 1:]
+        for target_address in other_addresses:
+            if all([(line in target_address) for line in address.split(", ")]):
+                filtered_addresses.remove(address)
+                continue
+    
+    return filtered_addresses
 
 print(s2nd_working_group)
