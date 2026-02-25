@@ -21,6 +21,13 @@ def held_by():
 def create_uuid_str():
     return str(uuid.uuid4())
 
+closure_status = {
+	'Closed Or Retained Document, Closed Description': "C",
+	'Closed Or Retained Document, Open Description': "D",
+	'Open Document, Open Description': "O",
+	'Partially Closed… not currently used': "P",
+}
+
 @dataclass
 class Record:
     """ must be provided at instantiation """
@@ -37,7 +44,7 @@ class Record:
     coveringToDate: int = 19431231
     chargeType: int =  1
     coveringDates: str =  "1941-1943"
-    closureStatus: str =  "Open Document, Open Description"
+    closureStatus: str =  closure_status['Open Document, Open Description']
     digitised: bool =  True
     heldBy: list = field(default_factory=held_by)
     legalStatus: str = "Public Record(s)"
