@@ -90,7 +90,7 @@ def output_json_files(record: Record, replica: Replica) -> None:
         json.dump(asdict(replica), file_rep, indent=4)
             
             
-if __name__ == "__main__":
+def create_discovery_sub_documents() -> None:
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
 
@@ -107,3 +107,8 @@ if __name__ == "__main__":
         replica = create_replica_set(row['Filenames'], record.iaid, record.replicaId)
 
         output_json_files(record, replica)
+
+
+if __name__ == "__main__":
+    create_discovery_sub_documents()
+
