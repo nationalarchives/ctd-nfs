@@ -26,6 +26,8 @@ def test_farm_attribute_concatenation(concatenation_data):
 			assert concatenated_farm.farm_name == test_data['result']['farm_name']
 		if farm_name == "91 Dulverton/26":
 			assert concatenated_farm.owner.group_names == test_data['result']['owner_group_names']
+		if farm_name == "1 Ashwell/4":
+			assert concatenated_farm.addressee.address == test_data['result']['address']
 
 
 def test_concatenate_forms(concatenate_forms_fixture):
