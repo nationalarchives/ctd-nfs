@@ -7,49 +7,56 @@ def addresses():
 		{
 			'final': "The Old Hall, Ashwell, Oakham, Rutland",
 			'original': [
-				"The Old Hall, Ashwell, Oakham, Rutland","Old Hall, Ashwell, Oakham, Rutland",
+				"The Old Hall, Ashwell, Oakham, Rutland",
+				"Old Hall, Ashwell, Oakham, Rutland",
 				"Old Hall, Ashwell, Oakham, Rutland",
 			],
 		},
 		{
 			'final': "Honington, Grantham, Ashwell, Oakham, Rutland",
 			'original': [
-				"Honington, Grantham, Ashwell, Oakham, Rutland","Honington, Grantham",
+				"Honington, Grantham, Ashwell, Oakham, Rutland",
+				"Honington, Grantham",
 				"Honington, Grantham",
 			],
 		},
 		{
 			'final': "South View, Ashwell, Oakham, Rutland",
 			'original': [
-				"South View, Ashwell, Oakham, Rutland","Ashwell, Oakham, Rutland",
+				"South View, Ashwell, Oakham, Rutland",
+				"Ashwell, Oakham, Rutland",
 				"Ashwell, Oakham, Rutland",
 			],
 		},
 		{
 			'final': "Woodside, Ashwell, Near Oakham, Rutland",
 			'original': [
-				"Woodside, Ashwell, Near Oakham, Rutland","Woodside, Ashwell, Oakham, Rutland",
+				"Woodside, Ashwell, Near Oakham, Rutland",
+				"Woodside, Ashwell, Oakham, Rutland",
 				"Woodside, Ashwell, Oakham, Rutland",
 			],
 		},
 		{
 			'final': "Maycroft Farm, Ashwell, Oakham, Rutland",
 			'original': [
-				"Maycroft Farm, Ashwell, Oakham, Rutland","Ashwell, Oakham, Rutland",
+				"Maycroft Farm, Ashwell, Oakham, Rutland",
+				"Ashwell, Oakham, Rutland",
 				"Maycroft Farm, Ashwell, Oakham, Rutland",
 			],
 		},
 		{
 			'final': "Baines Farm, Ashwell, Oakham, Rutland",
 			'original': [
-				"Ashwell, Oakham, Rutland","Baines Farm, Ashwell, Oakham, Rutland",
+				"Ashwell, Oakham, Rutland",
+				"Baines Farm, Ashwell, Oakham, Rutland",
 				"Baines Farm, Ashwell, Oakham, Rutland",
 			],
 		},
 		{
 			'final': "Butcher, Vergette Street, Peterborough, Northamptonshire",
 			'original': [
-				"Vergette Street, Peterborough","Vergette Street, Peterborough, Northamptonshire",
+				"Vergette Street, Peterborough",
+				"Vergette Street, Peterborough, Northamptonshire",
 				"Butcher, Vergette Street, Peterborough, Northamptonshire",
 				"Butcher, Vergette Street, Peterborough, Northamptonshire",
 			],
