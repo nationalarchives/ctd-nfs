@@ -16,6 +16,7 @@ def load_excel_data() -> list[dict]:
     excel_data = read_file(data_file)
 
     column_names = excel_data['Sheet'][0]
+
     return [
         dict(zip(column_names, row_data))
         for row_data in excel_data["Sheet"][1:]
@@ -51,6 +52,7 @@ def get_parent_id(raw_reference: str) -> str:
     result = requests.get(api_query)
 
     parent_record = result.json()
+
     return parent_record['records'][0]['id']
 
 
@@ -59,6 +61,7 @@ def create_description(row_data: dict) -> str:
     f"{key}: {row_data[key]}<p>"
     for key in DATA.DESCRIPTION_FIELDS
     ]
+
     return "".join(scope_and_content)
 
 
@@ -67,6 +70,7 @@ def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
         Image(file_name=filename.strip(",;"), sequence_no=index)
         for index, filename in enumerate(filenames.split(), start=1)
     ]
+
     return Replica(
         iaid, 
         replica_id, 
