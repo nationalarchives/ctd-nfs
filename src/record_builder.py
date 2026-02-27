@@ -61,8 +61,8 @@ class Image:
 
 @dataclass
 class Replica:
-    IAID: str
     replicaId: str
-    images: list[Image]
+    files: list[Image]
+    origination: str = "DigitalSurrogate"
 
 
