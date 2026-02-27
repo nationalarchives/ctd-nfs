@@ -18,6 +18,9 @@ def held_by():
         }
     ]
 
+def _create_uuid_str():
+    return f"{uuid.uuid4()}"
+
 def _create_uuid_filename():
     return f"66/MAF/32/{uuid.uuid4()}.jpg"
 
@@ -35,8 +38,8 @@ class Record:
     parentId: str # str(uuid) e.g. "8b2a43dd-752d-44a7-8163-2b64bb6e6cd0"
 
     """ generated at instantiation """
-    iaid: str = field(default_factory=_create_uuid_filename)
-    replicaId: str = field(default_factory=_create_uuid_filename)
+    iaid: str = field(default_factory=_create_uuid_str)
+    replicaId: str = field(default_factory=_create_uuid_str)
 
     """ constants """
     catalogueLevel: int =  8
