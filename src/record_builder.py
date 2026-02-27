@@ -56,7 +56,7 @@ class Record:
 @dataclass
 class Image:
     originalName: str
-    sequence_no: int
+    format: str = "jpg"
     name: str = field(default_factory=_create_uuid_filename)
 
 @dataclass
