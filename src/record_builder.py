@@ -18,8 +18,8 @@ def held_by():
         }
     ]
 
-def create_uuid_str():
-    return str(uuid.uuid4())
+def _create_uuid_filename():
+    return f"66/MAF/32/{uuid.uuid4()}.jpg"
 
 closure_status = {
 	'Closed Or Retained Document, Closed Description': "C",
@@ -35,8 +35,8 @@ class Record:
     parentId: str # str(uuid) e.g. "8b2a43dd-752d-44a7-8163-2b64bb6e6cd0"
 
     """ generated at instantiation """
-    iaid: str = field(default_factory=create_uuid_str)
-    replicaId: str = field(default_factory=create_uuid_str)
+    iaid: str = field(default_factory=_create_uuid_filename)
+    replicaId: str = field(default_factory=_create_uuid_filename)
 
     """ constants """
     catalogueLevel: int =  8
@@ -55,9 +55,9 @@ class Record:
 
 @dataclass
 class Image:
-    file_name: str
+    originalName: str
     sequence_no: int
-    file_id: str = field(default_factory=create_uuid_str)
+    name: str = field(default_factory=_create_uuid_filename)
 
 @dataclass
 class Replica:
