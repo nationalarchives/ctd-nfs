@@ -43,8 +43,6 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     return discovery_data
 
 
-
-
 def output_json_files(record: Record, replica: Replica) -> None:
     os.makedirs(PATH.TEST_OUTPUT, exist_ok=True)
 
@@ -57,25 +55,8 @@ def output_json_files(record: Record, replica: Replica) -> None:
         json.dump(asdict(replica), file_rep, indent=4)
             
             
-def create_discovery_sub_documents() -> None:
+if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
-
-    for row in cleaned_data:
-        parent_id = get_parent_id(row['Reference'])
-        description = create_description(row)
-        record = Record(
-            citableReference=row['Reference'],
-            parentId=parent_id,
-            scopeContent={'description': description},
-            title=row['Farm Number'],
-        )
-
-        replica = create_replica_set(row['Filenames'], record.iaid, record.replicaId)
-
-        output_json_files(record, replica)
-
-
-if __name__ == "__main__":
     create_discovery_sub_documents()
 
