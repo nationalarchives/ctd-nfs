@@ -60,18 +60,22 @@ def get_parent_id(raw_reference: str) -> str:
 
 def create_discovery_sub_documents(cleaned_data: list[dict]) -> None:
     for row in cleaned_data:
-        parent_id = get_parent_id(row['Reference'])
-        description = create_description(row)
-        record = Record(
+        record = build_record_subdocument(row)
+
+        replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
+
+        output_json_files(record, replica)
+
+
+def build_record_subdocument(row: dict) -> Record:
+    parent_id = get_parent_id(row['Reference'])
+    description = create_description(row)
+    return Record(
             citableReference=row['Reference'],
             parentId=parent_id,
             scopeContent={'description': description},
             title=row['Farm Number'],
         )
-
-        replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
-
-        output_json_files(record, replica)
 
 
 if __name__ == "__main__":
