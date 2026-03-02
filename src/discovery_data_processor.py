@@ -50,5 +50,5 @@ def write_catalogue_documents(documents: list[dict]) -> None:
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
-    final_documents = build_catalogue_documents()
+    final_documents = build_catalogue_documents(cleaned_data)
     write_catalogue_documents(final_documents)
