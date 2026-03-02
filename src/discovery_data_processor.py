@@ -2,12 +2,11 @@
 """
 import os
 import json
-from dataclasses import asdict
 
 from discovery_document_maker import create_discovery_sub_documents
 from src._config.constants import PATH
 from src._tools.xlreader import read_file
-from src.record_builder import Record, Replica
+from discovery_document_maker import build_catalogue_documents
 
 
 def load_excel_data() -> list[dict]:
