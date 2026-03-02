@@ -33,7 +33,7 @@ def create_description(row_data: dict) -> str:
     return "".join(scope_and_content)
 
 
-def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
+def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Replica:
     image_data = [
         Image(file_name=filename.strip(",;"), sequence_no=index)
         for index, filename in enumerate(filenames.split(), start=1)
@@ -69,7 +69,7 @@ def create_discovery_sub_documents(cleaned_data: list[dict]) -> None:
             title=row['Farm Number'],
         )
 
-        replica = create_replica_set(row['Filenames'], record.iaid, record.replicaId)
+        replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
 
         output_json_files(record, replica)
 
