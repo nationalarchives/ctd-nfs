@@ -1,4 +1,5 @@
 from urllib import parse
+from dataclasses import asdict
 import json
 
 import requests
