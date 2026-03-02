@@ -69,13 +69,14 @@ def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Rep
     )
 
 
-def build_catalogue_documents(cleaned_data: list[dict]) -> None:
+def build_catalogue_documents(cleaned_data: list[dict]) -> list[dict]:
+    documents = []
     for row in cleaned_data:
         record = build_record_subdocument(row)
-
         replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
+        documents.append({'record': asdict(record), 'replica': asdict(replica)})
 
-        output_json_files(record, replica)
+    return documents
 
 
 if __name__ == "__main__":
