@@ -41,9 +41,10 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 
 def write_catalogue_documents(documents: list[dict]) -> None:
-    for record in documents:
-        with open(PATH.TEST_OUTPUT / f"{record.iaid}.json", 'w') as final_file:
-            json.dump(record, final_file)
+    for document in documents:
+        with open(PATH.TEST_OUTPUT / f"{document['record']['iaid']}.json", 'w') as final_file:
+            print(f"{final_file.name}")
+            json.dump(document, final_file)
            
             
 if __name__ == "__main__":
