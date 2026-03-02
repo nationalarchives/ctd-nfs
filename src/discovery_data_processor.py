@@ -42,20 +42,14 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     return discovery_data
 
 
-def output_json_files(record: Record, replica: Replica) -> None:
-    os.makedirs(PATH.TEST_OUTPUT, exist_ok=True)
-
-    record_file = PATH.TEST_OUTPUT / f"parts/{record.iaid}_record.json"
-    replica_file = PATH.TEST_OUTPUT / f"parts/replica_manifests/{record.iaid}_replica_manifest.json"
-
-    with open(record_file, 'w') as file_rec, open(replica_file, 'w') as file_rep:
-        print(f"{record_file.name=}, {replica_file.name=}")
-        json.dump(asdict(record), file_rec, indent=4)
-        json.dump(asdict(replica), file_rep, indent=4)
-            
+def write_catalogue_documents(documents: list[dict]) -> None:
+    for record in documents:
+        with open(PATH.TEST_OUTPUT / f"{record.iaid}.json", 'w') as final_file:
+            json.dump(record, final_file)
+           
             
 if __name__ == "__main__":
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
-    create_discovery_sub_documents()
-
+    final_documents = build_catalogue_documents()
+    write_catalogue_documents(final_documents)
