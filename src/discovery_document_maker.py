@@ -58,7 +58,7 @@ def get_parent_id(raw_reference: str) -> str:
     return parent_record['records'][0]['id']
 
 
-def create_discovery_sub_documents(cleaned_data: list[dict]) -> None:
+def build_catalogue_documents(cleaned_data: list[dict]) -> None:
     for row in cleaned_data:
         record = build_record_subdocument(row)
 
