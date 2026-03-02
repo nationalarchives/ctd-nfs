@@ -76,5 +76,3 @@ def create_discovery_sub_documents(cleaned_data: list[dict]) -> None:
 
 if __name__ == "__main__":
     create_discovery_final_documents()
-
-
