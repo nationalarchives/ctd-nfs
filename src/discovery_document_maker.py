@@ -1,28 +1,10 @@
 from urllib import parse
 from dataclasses import asdict
-import json
 
 import requests
 
-from _config.constants import DATA, PATH
-from discovery_data_processor import output_json_files
+from _config.constants import DATA
 from record_builder import Image, Record, Replica
-
-
-def create_discovery_final_documents() -> None:
-    for record_file in PATH.TEST_OUTPUT.glob("parts/*_record.json"):
-        iaid = str(record_file.stem).split("_")[0]
-        replica_file = PATH.TEST_OUTPUT / f"parts/{iaid}_replica.json"
-
-        with open(record_file, 'r') as rec_file, \
-            open(replica_file, 'r') as rep_file, \
-            open(PATH.TEST_OUTPUT / f"{iaid}.json", 'w') as final_file:
-
-            record_document = json.load(rec_file)
-            replica_document = json.load(rep_file)
-
-            output_record = {'record': record_document, 'replica': replica_document}
-            json.dump(output_record, final_file)
 
 
 def get_parent_id(raw_reference: str) -> str:
@@ -78,6 +60,3 @@ def build_catalogue_documents(cleaned_data: list[dict]) -> list[dict]:
 
     return documents
 
-
-if __name__ == "__main__":
-    create_discovery_final_documents()
