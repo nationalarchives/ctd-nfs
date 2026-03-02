@@ -1,9 +1,7 @@
 """
 """
-import os
 import json
 
-from discovery_document_maker import create_discovery_sub_documents
 from src._config.constants import PATH
 from src._tools.xlreader import read_file
 from discovery_document_maker import build_catalogue_documents
