@@ -24,6 +24,18 @@ def create_discovery_final_documents() -> None:
             json.dump(output_record, final_file)
 
 
+def get_parent_id(raw_reference: str) -> str:
+    ref = raw_reference.rsplit("/", maxsplit=1)[0]
+    ref_url_safe = parse.quote(ref)
+
+    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    result = requests.get(api_query)
+
+    parent_record = result.json()
+
+    return parent_record['records'][0]['id']
+
+
 def create_description(row_data: dict) -> str:
     scope_and_content = [
     f"{key}: {row_data[key]}<p>"
@@ -31,6 +43,17 @@ def create_description(row_data: dict) -> str:
     ]
 
     return "".join(scope_and_content)
+
+
+def build_record_subdocument(row: dict) -> Record:
+    parent_id = get_parent_id(row['Reference'])
+    description = create_description(row)
+    return Record(
+            citableReference=row['Reference'],
+            parentId=parent_id,
+            scopeContent={'description': description},
+            title=row['Farm Number'],
+        )
 
 
 def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Replica:
@@ -46,18 +69,6 @@ def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Rep
     )
 
 
-def get_parent_id(raw_reference: str) -> str:
-    ref = raw_reference.rsplit("/", maxsplit=1)[0]
-    ref_url_safe = parse.quote(ref)
-
-    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-    result = requests.get(api_query)
-
-    parent_record = result.json()
-
-    return parent_record['records'][0]['id']
-
-
 def build_catalogue_documents(cleaned_data: list[dict]) -> None:
     for row in cleaned_data:
         record = build_record_subdocument(row)
@@ -65,17 +76,6 @@ def build_catalogue_documents(cleaned_data: list[dict]) -> None:
         replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
 
         output_json_files(record, replica)
-
-
-def build_record_subdocument(row: dict) -> Record:
-    parent_id = get_parent_id(row['Reference'])
-    description = create_description(row)
-    return Record(
-            citableReference=row['Reference'],
-            parentId=parent_id,
-            scopeContent={'description': description},
-            title=row['Farm Number'],
-        )
 
 
 if __name__ == "__main__":
