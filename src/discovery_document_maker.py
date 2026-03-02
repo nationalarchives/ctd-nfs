@@ -1,6 +1,11 @@
-from _config.constants import PATH
-
+from urllib import parse
 import json
+
+import requests
+
+from _config.constants import DATA, PATH
+from discovery_data_processor import output_json_files
+from record_builder import Image, Record, Replica
 
 
 def create_discovery_final_documents() -> None:
@@ -17,6 +22,56 @@ def create_discovery_final_documents() -> None:
 
             output_record = {'record': record_document, 'replica': replica_document}
             json.dump(output_record, final_file)
+
+
+def create_description(row_data: dict) -> str:
+    scope_and_content = [
+    f"{key}: {row_data[key]}<p>"
+    for key in DATA.DESCRIPTION_FIELDS
+    ]
+
+    return "".join(scope_and_content)
+
+
+def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
+    image_data = [
+        Image(file_name=filename.strip(",;"), sequence_no=index)
+        for index, filename in enumerate(filenames.split(), start=1)
+    ]
+
+    return Replica(
+        iaid,
+        replica_id,
+        images=image_data
+    )
+
+
+def get_parent_id(raw_reference: str) -> str:
+    ref = raw_reference.rsplit("/", maxsplit=1)[0]
+    ref_url_safe = parse.quote(ref)
+
+    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    result = requests.get(api_query)
+
+    parent_record = result.json()
+
+    return parent_record['records'][0]['id']
+
+
+def create_discovery_sub_documents(cleaned_data: list[dict]) -> None:
+    for row in cleaned_data:
+        parent_id = get_parent_id(row['Reference'])
+        description = create_description(row)
+        record = Record(
+            citableReference=row['Reference'],
+            parentId=parent_id,
+            scopeContent={'description': description},
+            title=row['Farm Number'],
+        )
+
+        replica = create_replica_set(row['Filenames'], record.iaid, record.replicaId)
+
+        output_json_files(record, replica)
 
 
 if __name__ == "__main__":

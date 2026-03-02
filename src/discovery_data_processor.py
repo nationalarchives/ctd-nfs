@@ -1,14 +1,13 @@
 """
 """
-from urllib import parse
-import requests
 import os
 import json
 from dataclasses import asdict
 
-from src._config.constants import PATH, DATA
+from discovery_document_maker import create_discovery_sub_documents
+from src._config.constants import PATH
 from src._tools.xlreader import read_file
-from src.record_builder import Record, Replica, Image
+from src.record_builder import Record, Replica
 
 
 def load_excel_data() -> list[dict]:
@@ -44,39 +43,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     return discovery_data
 
 
-def get_parent_id(raw_reference: str) -> str:
-    ref = raw_reference.rsplit("/", maxsplit=1)[0]
-    ref_url_safe = parse.quote(ref)
 
-    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-    result = requests.get(api_query)
-
-    parent_record = result.json()
-
-    return parent_record['records'][0]['id']
-
-
-def create_description(row_data: dict) -> str:
-    scope_and_content = [
-    f"{key}: {row_data[key]}<p>"
-    for key in DATA.DESCRIPTION_FIELDS
-    ]
-
-    return "".join(scope_and_content)
-
-
-def create_replica_set(filenames: str, iaid: str, replica_id: str) -> Replica:
-    image_data = [
-        Image(file_name=filename.strip(",;"), sequence_no=index)
-        for index, filename in enumerate(filenames.split(), start=1)
-    ]
-
-    return Replica(
-        iaid, 
-        replica_id, 
-        images=image_data
-    )
-        
 
 def output_json_files(record: Record, replica: Replica) -> None:
     os.makedirs(PATH.TEST_OUTPUT, exist_ok=True)
