@@ -58,15 +58,14 @@ def build_record_subdocument(row: dict) -> Record:
 
 
 def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Replica:
-    image_data = [
-        Image(file_name=filename.strip(",;"), sequence_no=index)
-        for index, filename in enumerate(filenames.split(), start=1)
+    files_data = [
+        Image(originalName=filename.strip(",;"))
+        for filename in filenames.split()
     ]
 
     return Replica(
-        iaid,
-        replica_id,
-        images=image_data
+        replicaId=replica_id,
+        files=files_data
     )
 
 
