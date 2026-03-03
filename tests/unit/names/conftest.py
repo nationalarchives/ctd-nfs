@@ -1,8 +1,6 @@
 import pytest
 
 
-
-
 @pytest.fixture()
 def names():
 	return [
