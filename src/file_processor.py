@@ -6,7 +6,7 @@ import shelve
 
 from src.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
-from src.farm_builder import Farm, concatenate_instance, initialise_warnings_mapping
+from src.farm_setup import Farm, concatenate_instance, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
 
