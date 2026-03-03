@@ -1,12 +1,12 @@
 """"""
 from pathlib import Path
 
-from src.farm_builder import Farm
+from src.farm_setup import Farm
 from src._tools.xlwriter import ExcelWriter
 from src._config.constants import PATH, CSVEXCEL
 
 
-def create_interim_data(farm: Farm):
+def create_proofs_data(farm: Farm):
     filenames = []
     
     for forms in farm.forms.values():
@@ -36,10 +36,10 @@ def create_interim_data(farm: Farm):
 
 
 
-def create_interim_data(_delivery_file: Path) -> dict:
+def create_proofs_data(_delivery_file: Path) -> dict:
     sheet_name = _delivery_file.name
     row_data = [
-            create_interim_item(concept)
+            create_proofs_item(concept)
             for concept in concepts
         ]
     return {
@@ -49,12 +49,12 @@ def create_interim_data(_delivery_file: Path) -> dict:
     }
 
 
-def make_interim_file(_delivery_files: list) -> str:
-    interim_data = [
-        create_interim_data(each_file)
+def make_proofs_file(_delivery_files: list) -> str:
+    proofs_data = [
+        create_proofs_data(each_file)
         for each_file in _delivery_files
     ]
-    interim_file_name = PATH.ARCHIVE / f"{county} Stage 2.xlsx"
+    proofs_file_name = PATH.ARCHIVE / f"{county} Stage 2.xlsx"
     xlwriter = ExcelWriter()
-    xlwriter.write_excel(interim_data, interim_file_name)
-    return f"{interim_file_name}"
+    xlwriter.write_excel(proofs_data, proofs_file_name)
+    return f"{proofs_file_name}"

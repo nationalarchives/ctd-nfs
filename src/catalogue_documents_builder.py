@@ -3,8 +3,8 @@ from dataclasses import asdict
 
 import requests
 
-from _config.constants import DATA
-from record_builder import Image, Record, Replica
+from src._config.constants import DATA
+from src.record_setup import Image, Record, Replica
 
 
 def get_parent_id(raw_reference: str) -> str:

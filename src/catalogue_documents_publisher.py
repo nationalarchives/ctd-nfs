@@ -4,7 +4,7 @@ import json
 
 from src._config.constants import PATH
 from src._tools.xlreader import read_file
-from catalogue_builder import build_catalogue_documents
+from src.catalogue_documents_builder import build_catalogue_documents
 
 
 def load_excel_data() -> list[dict]:
