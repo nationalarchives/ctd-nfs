@@ -170,3 +170,4 @@ processing
 difflib_experiment.py
 *.txt
 _scratch/*.*
+*/*.bak
