@@ -203,7 +203,9 @@ def vali_dates(candi_date: str) -> str | None:
         Returns:
             warning/error message string if issues found, else None
     '''
-
+    if candi_date == "[not specified]":
+        return
+    
     date_match: dict[re.Match] = {
         'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
         'monthyear': REGEX.MONTHYEAR.match(candi_date),
