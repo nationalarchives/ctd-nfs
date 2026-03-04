@@ -35,7 +35,7 @@ def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match]
     """
     valid_forms = list(initialise_forms_mapping().keys())
     no_farm_details_provided = [
-        item == ""
+        item == "[not specified]"
         for key, item in csv_values.items() 
         if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
     ]
