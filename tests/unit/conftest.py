@@ -442,7 +442,7 @@ def concatenation_data():
 					'owner_title': "[not specified]",
 					'owner_individual_name': "[not specified]",
 					'owner_group_names': "[not specified]",
-					'owner_address': "[not specified]",
+					'owner_address': ["Dulverton, West Somerset", "The Cottage, Dulverton, Somerset", "Green Hotel, Dulverton"],
 					'farmer_title': "[not specified]",
 					'farmer_individual_name': "[not specified]",
 					'farmer_group_names': "[not specified]",
@@ -480,7 +480,7 @@ def concatenation_data():
 				},
 			],
 			'result': {
-                'owner_group_names': ["The Hon Mrs Herbert Pixton", "Hon Mrs Pixton", "Mr Abbott", "Mrs Surridge", "Miss Dowey"],
+                'owner_address': ["Dulverton, West Somerset", "The Cottage, Dulverton, Somerset", "Green Hotel, Dulverton", "Dulverton", "Dulverton", "The Cottage, Dulverton", "Exter", "Green Hotel, Dulverton"],
 			},
 		},
 		'1 Ashwell/4': {
