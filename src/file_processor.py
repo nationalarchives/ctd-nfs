@@ -46,7 +46,11 @@ def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
         for key, value in row.items():
             if key not in CSVEXCEL.CSV_HEADERS:
                 continue
-            if ";" in value:
+            if key == "filename_2" and value == "":
+                cleaned_data_row[key] = ""
+            elif value in ["", "*"]:
+                cleaned_data_row[key] = "[not specified]"
+            elif ";" in value:
                 cleaned_data_row[key] = split_list_values(value)
             else:
                 cleaned_data_row[key] = value.strip()
