@@ -1,6 +1,6 @@
-from src.combiner import distill_addresses
+from src.details_still import distill_details
 
 
 def test_distill_address(addresses):
     for fixture in addresses:
-        assert distill_addresses(fixture['original']) == fixture['final']
+        assert distill_details(fixture['original']) == fixture['final']
