@@ -18,6 +18,19 @@ def process_forms(forms: dict) -> dict:
     }
     
 
+def _transform_farm_to_proof(farm: Farm) -> list:
+    forms_and_files = process_forms(farm.forms)
+    return [
+        farm.catalogue_reference,
+        farm.warnings['Reference Warnings'],
+        forms_and_files['files'],
+        farm.warnings['Filename Warnings'],
+        forms_and_files['forms'],
+        farm.warnings['Type Warnings'],
+        farm.primary_farm_number,
+    ]
+
+
 with shelve.open(PATH.TEST_DB, 'r') as farms_db:
     for county, references in farms_db.items():
         for catalogue_reference in references.keys():
