@@ -23,12 +23,12 @@ def _transform_farm_to_proof(farm: Farm) -> list:
     forms_and_files = process_forms(farm.forms)
     return [
         farm.catalogue_reference,
-        farm.warnings['Reference Warnings'],
+        ";\n".join(farm.warnings['Reference Warnings']) or "",
         forms_and_files['files'],
-        farm.warnings['Filename Warnings'],
+        ";\n".join(farm.warnings['Filename Warnings']) or "",
         forms_and_files['forms'],
-        farm.warnings['Type Warnings'],
-        farm.primary_farm_number,
+        ";\n".join(farm.warnings['Type Warnings']) or "",
+        farm.farm_reference,
     ]
 
 
