@@ -47,7 +47,7 @@ def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
             if key not in CSVEXCEL.CSV_HEADERS:
                 continue
             if key == "filename_2" and value == "":
-                cleaned_data_row[key] = ""
+                cleaned_data_row[key] = None
             elif value in ["", "*"]:
                 cleaned_data_row[key] = "[not specified]"
             elif ";" in value:
