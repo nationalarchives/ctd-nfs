@@ -36,7 +36,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
 
 def split_list_values(field_value: str) -> list[str]:
     """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
-    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
+    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value) if item != "*"]
 
 
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
