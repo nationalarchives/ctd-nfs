@@ -3,9 +3,24 @@ import shelve
 from src._config.constants import PATH
 
 
+def process_forms(forms: dict) -> dict:
+    output_forms = []
+    output_files = []
+
+    for form_type in forms.keys():
+        if forms[form_type]:
+            output_forms.append(form_type)
+            for form in forms[form_type]:
+                output_files.append(", ".join(form.images))
+    return {
+        'forms': ";\n".join(output_forms),
+        'files': ";\n".join(output_files)
+    }
+    
+
 with shelve.open(PATH.TEST_DB, 'r') as farms_db:
     for county, references in farms_db.items():
         for catalogue_reference in references.keys():
             farm = references[catalogue_reference]['Farm']
-            
+            forms_and_files = process_forms(farm.forms)
             pass
