@@ -1,7 +1,7 @@
 import shelve
 
 from src._config.constants import PATH, CSVEXCEL
-from src.farm_setup import Farm
+from src.farm_setup import Farm, ListOrStr
 from src.details_still import distill_details
 from src._tools.xlwriter import ExcelWriter
 
@@ -21,9 +21,12 @@ def process_forms(forms: dict) -> dict:
     }
     
 
+def process_detail(detail: ListOrStr) -> str:
+    return detail if type(detail) is str else distill_details(detail)    
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     forms_and_files = process_forms(farm.forms)
-    farm_name = farm.farm_name if type(farm.farm_name) is str else distill_details(farm.farm_name)
 
     return [
         farm.catalogue_reference,
@@ -33,7 +36,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         forms_and_files['forms'],
         ";\n".join(farm.warnings['Type Warnings']) or "",
         farm.farm_reference,
-        farm_name,
+        process_detail(farm.farm_name),
     ]
 
 
