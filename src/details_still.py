@@ -46,12 +46,12 @@ def filter_details_by_line(details_after_first_filer: list) -> list:
     return filtered_details
     
 
-def distill_details(list_of_details: list) -> list | str:
+def distill_details(list_of_details: list) -> str:
     sorted_details = prepare_details_for_filtration(list_of_details)
     working_details = filter_details(sorted_details)
     distilled_details = filter_details_by_line(working_details)
     print(distilled_details)
 
-    return distilled_details[0] if len(distilled_details) == 1 else distilled_details
+    return distilled_details[0] if len(distilled_details) == 1 else " / ".join(distilled_details)
 
 
