@@ -19,7 +19,6 @@ def prepare_details_for_filtration(harvested_details: list) -> list:
 def filter_details(unique_details_sorted_by_length: list) -> list:
     working_details = []
     for idx, detail in enumerate(unique_details_sorted_by_length):
-        print(f"{idx=}\t{detail=}")
         if detail == unique_details_sorted_by_length[-1]:
             working_details.append(detail)
             continue
