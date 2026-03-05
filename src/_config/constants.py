@@ -36,7 +36,7 @@ class CSVandExcelNamespace():
         'field_info_date',
         'primary_record_date',
     ]
-    REPORT_COLUMNS = [   
+    PROOF_COLUMNS = [   
         ('Reference', 20),
         ('Reference Warnings', 20),
         ('Filenames', 60),
