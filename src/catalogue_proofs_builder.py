@@ -37,6 +37,9 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         ";\n".join(farm.warnings['Type Warnings']) or "",
         farm.farm_reference,
         process_detail(farm.farm_name),
+        process_detail(farm.addressee.address),
+        process_detail(farm.farmer.address),
+        process_detail(farm.owner.address),
     ]
 
 
