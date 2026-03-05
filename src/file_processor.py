@@ -55,7 +55,7 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
                 normalised_data_row[key] = "[not specified]"
             
             elif ";" in value:
-                normalised_data_row[key] = split_list_values(value)
+                normalised_data_row[key] = split_list_values(value) or "[not specified]"
             
             else:
                 normalised_data_row[key] = value.strip()
