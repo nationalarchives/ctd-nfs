@@ -88,7 +88,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
         pattern_matches: dict[re.Match] = {
                 'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
-                'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']),
+                'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']) if farm_data_row['filename_2'] else REGEX.FORM_PATTERN.match(""),
                 'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
             }
         row_prefix = f"Row {row_number}: "
