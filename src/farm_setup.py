@@ -282,7 +282,7 @@ def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form
             concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
         
         else:
-            existing_forms[key].append(new_forms[key])
+            existing_forms[key].append(new_forms[key][0])
 
     return existing_forms 
 
