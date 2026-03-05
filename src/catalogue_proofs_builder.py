@@ -1,6 +1,7 @@
 import shelve
 
-from src._config.constants import PATH
+from src._config.constants import PATH, CSVEXCEL
+from src.farm_setup import Farm
 
 
 def process_forms(forms: dict) -> dict:
@@ -37,5 +38,10 @@ with shelve.open(PATH.TEST_DB, 'r') as farms_db:
             _transform_farm_to_proof(references[catalogue_reference]['Farm'])
             for catalogue_reference in references.keys()
         ]
-
+        
+        manifest_data = {
+            'sheet_name': "_COUNTY_ Proof data",
+            'row_data': proof_data,
+            'column_settings': CSVEXCEL.PROOF_COLUMNS,
+        }
 
