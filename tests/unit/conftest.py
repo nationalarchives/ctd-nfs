@@ -560,7 +560,7 @@ def concatenate_forms_fixture():
 		[
 			["MAF32-167-29_1.tif","MAF32-167-29_2.tif", "C51/SSY", "[not specified]", "[not specified]",],
 			["MAF32-167-29_23.tif", "MAF32-167-29_24.tif", "B496/EI", "November 1942", "December 1943",],
-			["MAF32-167-29_25.tif", "", "B496/EI", "[not specified]", "[not specified]",],
+			["MAF32-167-29_25.tif", None, "B496/EI", "[not specified]", "[not specified]",],
 			["MAF32-167-29_56.tif", "MAF32-167-29_57.tif", "C 47/SSY", "[not specified]", "[not specified]",],
 			["MAF32-167-29_82.tif", "MAF32-167-29_83.tif", "SF", "[not specified]", "[not specified]",],
 		]
@@ -607,7 +607,7 @@ def reference_values_bad_form():
 			'row_num': "10101",
 			'data':{
 				"filename_1": "MAF32-51-285.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "SF47/SSY",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
@@ -621,7 +621,7 @@ def reference_values_filename1_bad_pattern():
 			'row_num': "10101",
 			'data':{
 				"filename_1": "MAF32-51.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "C 49/SSY",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
@@ -742,7 +742,7 @@ def cover_image_inconsistencies_bad_cover_pattern():
 			'row_num': '5555',
 			'data':{
 				"filename_1": "MAF32-194-1_59.tif",
-				"filename_2": "",
+				"filename_2": None,
 				"document_type": "Cover",
 				"county": "WD Westmorland",
 				"parish": "1 Ambleside",
@@ -787,7 +787,7 @@ def cover_image_inconsistencies_form_supplied_but_cover_image():
 			'row_num': '7777',
 			'data':{
 				"filename_1": "MAF32-51-285_0001.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "SF",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
@@ -802,7 +802,7 @@ def cover_image_inconsistencies_form_supplied_but_cover_pattern():
 			'row_num': '9999',
 			'data':{
 				"filename_1": "MAF32-51-285.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "SF",
 				"county": "WL Wiltshire",
 				"parish": "285 Zeals",
@@ -818,7 +818,7 @@ def cover_with_farm_details():
 			'row_num': "10101",
 			'data':{
 				"filename_1": "MAF32-194-1.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "Cover",
 				"county": "WD Westmorland",
 				"parish": "1 Ambleside",
@@ -848,7 +848,7 @@ def cover_with_farm_details():
 			'row_num': "10101",
 			'data':{
 				"filename_1": "MAF32-194-1_0001.tif",
-				"filename_2": "",
+				'filename_2': None,
 				"document_type": "Cover",
 				"county": "WD Westmorland",
 				"parish": "1 Ambleside",
