@@ -39,8 +39,8 @@ def split_list_values(field_value: str) -> list[str]:
     return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value)]
 
 
-def clean_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
-    """Utility method to clean raw csv data by splitting fields with multiple entries and stripping whitespace."""
+def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
+    """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
     for row in raw_csv_data:
         cleaned_data_row = {}
         for key, value in row.items():
@@ -115,7 +115,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
-    cleaned_farm_data = clean_csv_data(raw_farm_data)
+    cleaned_farm_data = normalise_csv_data(raw_farm_data)
     create_farms(cleaned_farm_data, test_mode=test_mode)
 
 
