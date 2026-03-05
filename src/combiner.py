@@ -11,45 +11,47 @@ pretty = pprint.PrettyPrinter(indent=4)
 # counts = Counter(list_of_addresses)
 
 
-def prepare_addresses_for_filtration(harvested_addresses: list) -> list:
-    unique_addresses = list(set(harvested_addresses))
-    return sorted(unique_addresses, key=len)
+def prepare_details_for_filtration(harvested_details: list) -> list:
+    unique_details = list(set(harvested_details))
+    return sorted(unique_details, key=len)
 
 
-def filter_addresses(unique_addresses_sorted_by_length: list) -> list:
-    working_addresses = []
-    for idx, address in enumerate(unique_addresses_sorted_by_length):
-        print(f"{idx=}\t{address=}")
-        if address == unique_addresses_sorted_by_length[-1]:
-            working_addresses.append(address)
+def filter_details(unique_details_sorted_by_length: list) -> list:
+    working_details = []
+    for idx, detail in enumerate(unique_details_sorted_by_length):
+        print(f"{idx=}\t{detail=}")
+        if detail == unique_details_sorted_by_length[-1]:
+            working_details.append(detail)
             continue
 
-        other_addresses = unique_addresses_sorted_by_length[idx + 1:]
-        if not any([(address in target_address) for target_address in other_addresses]):
-            working_addresses.append(address)
+        other_addresses = unique_details_sorted_by_length[idx + 1:]
+        if not any([(detail in target_address) for target_address in other_addresses]):
+            working_details.append(detail)
    
-    return working_addresses
+    return working_details
 
 
-def filter_addresses_by_line(addresses_after_first_filer: list) -> list:
-    filtered_addresses = addresses_after_first_filer.copy()
-    for idx, address in enumerate(addresses_after_first_filer):
-        if address == addresses_after_first_filer[-1]:
+def filter_details_by_line(details_after_first_filer: list) -> list:
+    filtered_details = details_after_first_filer.copy()
+    for idx, detail in enumerate(details_after_first_filer):
+        if detail == details_after_first_filer[-1]:
             continue
 
-        other_addresses = addresses_after_first_filer[idx + 1:]
-        for target_address in other_addresses:
-            if all([(line in target_address) for line in address.split(", ")]):
-                filtered_addresses.remove(address)
+        other_details = details_after_first_filer[idx + 1:]
+        for target_detail in other_details:
+            if all([(line in target_detail) for line in detail.split(", ")]):
+                filtered_details.remove(detail)
                 continue
     
-    return filtered_addresses
+    return filtered_details
+    
+
+def distill_details(list_of_details: list) -> list | str:
+    sorted_details = prepare_details_for_filtration(list_of_details)
+    working_details = filter_details(sorted_details)
+    distilled_details = filter_details_by_line(working_details)
+    print(distilled_details)
+
+    return distilled_details[0] if len(distilled_details) == 1 else distilled_details
 
 
-def distill_addresses(list_of_addresses: list) -> list | str:
-    sorted_addresses = prepare_addresses_for_filtration(list_of_addresses)
-    working_addresses = filter_addresses(sorted_addresses)
-    distilled_addresses = filter_addresses_by_line(working_addresses)
-    print(distilled_addresses)
-
-    return distilled_addresses[0] if len(distilled_addresses) == 1 else distilled_addresses
