@@ -42,24 +42,24 @@ def split_list_values(field_value: str) -> list[str]:
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
     for row in raw_csv_data:
-        cleaned_data_row = {}
+        normalised_data_row = {}
         for key, value in row.items():
             if key not in CSVEXCEL.CSV_HEADERS:
                 continue
             
             if key == "filename_2" and value == "":
-                cleaned_data_row[key] = None
+                normalised_data_row[key] = None
             
             elif value in ["", "*"]:
-                cleaned_data_row[key] = "[not specified]"
+                normalised_data_row[key] = "[not specified]"
             
             elif ";" in value:
-                cleaned_data_row[key] = split_list_values(value)
+                normalised_data_row[key] = split_list_values(value)
             
             else:
-                cleaned_data_row[key] = value.strip()
+                normalised_data_row[key] = value.strip()
         
-        yield cleaned_data_row
+        yield normalised_data_row
 
 
 def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: bool = False) -> None:
@@ -115,8 +115,8 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
 def process_file(csv_file: Path, test_mode: bool = False) -> None:
     raw_farm_data: list[dict] = load_data_from_file(csv_file)
-    cleaned_farm_data = normalise_csv_data(raw_farm_data)
-    create_farms(cleaned_farm_data, test_mode=test_mode)
+    normalised_farm_data = normalise_csv_data(raw_farm_data)
+    create_farms(normalised_farm_data, test_mode=test_mode)
 
 
 if __name__ == "__main__":
