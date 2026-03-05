@@ -39,9 +39,8 @@ with shelve.open(PATH.TEST_DB, 'r') as farms_db:
             for catalogue_reference in references.keys()
         ]
         
-        manifest_data = {
-            'sheet_name': "_COUNTY_ Proof data",
+        excel_data = [{
+            'sheet_name': f"{county} Proof data",
             'row_data': proof_data,
             'column_settings': CSVEXCEL.PROOF_COLUMNS,
-        }
-
+        }]
