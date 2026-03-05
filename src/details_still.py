@@ -2,7 +2,7 @@
 Merge list of names and address strings into one final version that will be visible in Discovery.
 """
 
-# from collections import Counter
+from collections import Counter
 import pprint
 
 
