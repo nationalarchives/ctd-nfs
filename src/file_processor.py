@@ -49,6 +49,7 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
             
             if key == "filename_2" and value == "":
                 normalised_data_row[key] = None
+                continue
             
             elif value in ["", "*"]:
                 normalised_data_row[key] = "[not specified]"
