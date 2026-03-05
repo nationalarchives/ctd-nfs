@@ -26,6 +26,7 @@ def process_detail(detail: ListOrStr) -> str:
 
 
 def _transform_farm_to_proof(farm: Farm) -> list:
+    print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
 
     return [
@@ -45,6 +46,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
 
 with shelve.open(PATH.TEST_DB, 'r') as farms_db:
     for county, references in farms_db.items():
+        print(f"{county=}")
         proof_data = [
             _transform_farm_to_proof(references[catalogue_reference]['Farm'])
             for catalogue_reference in references.keys()
