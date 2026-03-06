@@ -38,11 +38,11 @@ class CSVandExcelNamespace():
     ]
     PROOF_COLUMNS = [   
         ('Reference', 20),
-        ('Reference Warnings', 20),
+        ('Reference Warnings', 40),
         ('Filenames', 60),
-        ('Filename Warnings', 20),
+        ('Filename Warnings', 60),
         ('Record consists of', 15),
-        ('Type Warnings', 20),
+        ('Type Warnings', 40),
         ('Farm Number', 15),
         ('Farm or holding', 20),
         # ('Addressee name', 30),
