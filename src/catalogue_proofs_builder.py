@@ -52,7 +52,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         process_warnings(farm.warnings['Type Warnings']),
         farm.farm_reference,
         process_detail(farm.farm_name),
-        process_full_address(farm.addressee.individual_name, farm.addressee.title, farm.addressee.group_names),
+        # process_full_address(farm.addressee.individual_name, farm.addressee.title, farm.addressee.group_names),
         process_detail(farm.addressee.address),
         process_detail(farm.farmer.address),
         process_detail(farm.owner.address),
