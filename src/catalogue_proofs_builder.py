@@ -29,6 +29,16 @@ def process_warnings(warnings: list) -> str:
     return ";\n".join(warnings) or ""
 
 
+def process_full_address(individual_name: ListOrStr, title: ListOrStr, group_names: ListOrStr):
+    if individual_name and group_names == "[not specified]":
+        distilled_title = process_detail(title)
+        distilled_name = process_detail(individual_name)
+        return f"{distilled_title} {distilled_name}" if distilled_title else f"{distilled_name}"
+
+    elif group_names and individual_name == "[not specified]":
+        return process_detail(group_names)
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
@@ -42,6 +52,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         process_warnings(farm.warnings['Type Warnings']),
         farm.farm_reference,
         process_detail(farm.farm_name),
+        process_full_address(farm.addressee.individual_name, farm.addressee.title, farm.addressee.group_names),
         process_detail(farm.addressee.address),
         process_warnings(farm.warnings['Addressee Warnings']),
         process_detail(farm.farmer.address),
