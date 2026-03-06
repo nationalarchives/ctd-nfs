@@ -54,11 +54,8 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         process_detail(farm.farm_name),
         process_full_address(farm.addressee.individual_name, farm.addressee.title, farm.addressee.group_names),
         process_detail(farm.addressee.address),
-        process_warnings(farm.warnings['Addressee Warnings']),
         process_detail(farm.farmer.address),
-        process_warnings(farm.warnings['Farmer Warnings']),
         process_detail(farm.owner.address),
-        process_warnings(farm.warnings['Landowner Warnings']),
     ]
 
 
