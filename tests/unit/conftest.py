@@ -185,7 +185,7 @@ def concatenation_data():
 				},
 			],
 			'result': {
-				'farm_name': "Glebe Farm",
+				'farm_name': ["Glebe Farm", "[not specified]"],
 			},
 		},
 		'49 Tickencote/6': {
@@ -303,7 +303,7 @@ def concatenation_data():
 				},
 			],
 			'result': {
-				'addressee_group_names': "[not specified]",
+				'addressee_group_names': ["[not specified]", "[not specified]"],
 			},
 	 	},
 		'97 Dean/47': {
@@ -362,7 +362,7 @@ def concatenation_data():
 				},
 			],
 			'result': {
-				'addressee_title': "Mr",
+				'addressee_title': ["Mr", "[not specified]"],
 			},
 		},
 		'296 Farmborough/14': {
@@ -421,7 +421,7 @@ def concatenation_data():
 				},
 			],
 			'result': {
-				'farm_name': "Hillside Farm",
+				'farm_name': ["[not specified]", "Hillside Farm"],
 			},
 		},
 		'91 Dulverton/26': {
