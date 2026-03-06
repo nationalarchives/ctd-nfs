@@ -25,6 +25,10 @@ def process_detail(detail: ListOrStr) -> str:
     return detail if type(detail) is str else distill_details(detail)    
 
 
+def process_warnings(warnings: list) -> str:
+    return ";\n".join(warnings) or ""
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
