@@ -1,7 +1,8 @@
 import shelve
+import re
 
 from src._config.constants import PATH, CSVEXCEL
-from src.farm_setup import Farm, ListOrStr
+from src.farm_setup import Farm, Details, ListOrStr
 from src.details_still import distill_details
 from src._tools.xlwriter import ExcelWriter
 
@@ -72,14 +73,25 @@ def process_names(title: ListOrStr, individual_name: ListOrStr, group_names: Lis
             }
 
 
+def create_full_name_and_address(Detail: Details) -> dict:
+    full_name = process_names(Detail.title, Detail.individual_name, Detail.group_names)
+    distilled_address = process_detail(Detail.address)
+    
+    name_is_single_value: bool = full_name['name'] != "[not specified]" and not re.search(r"""(;\n| \/ )""", full_name['name'])
+    address_is_single_value: bool = distilled_address != "[not specified]" and not re.search(r"""(;\n| \/ )""", distilled_address)
+    full_detail = f"{full_name['name']}, {distilled_address}" if name_is_single_value and address_is_single_value else ""
+    
+    return full_name | {'address': distilled_address, 'detail': full_detail}
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
 
-    addressee_full_name = process_names(farm.addressee.title, farm.addressee.individual_name, farm.addressee.group_names)
-    farmer_full_name = process_names(farm.farmer.title, farm.farmer.individual_name, farm.farmer.group_names)
-    owner_full_name = process_names(farm.owner.title, farm.owner.individual_name, farm.owner.group_names)
-
+    addressee = create_full_name_and_address(farm.addressee)
+    farmer = create_full_name_and_address(farm.farmer)
+    owner = create_full_name_and_address(farm.owner)
+ 
     return [
         farm.catalogue_reference,
         process_warnings(farm.warnings['Reference Warnings']),
@@ -89,15 +101,18 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         process_warnings(farm.warnings['Type Warnings']),
         farm.farm_reference,
         process_detail(farm.farm_name),
-        addressee_full_name['name'],
-        addressee_full_name['warning'],
-        process_detail(farm.addressee.address),
-        farmer_full_name['name'],
-        farmer_full_name['warning'],
-        process_detail(farm.farmer.address),
-        owner_full_name['name'],
-        owner_full_name['warning'],
-        process_detail(farm.owner.address),
+        addressee['name'],
+        addressee['warning'],
+        addressee['address'],
+        addressee['detail'],
+        farmer['name'],
+        farmer['warning'],
+        farmer['address'],
+        farmer['detail'],
+        owner['name'],
+        owner['warning'],
+        owner['address'],
+        owner['detail'],
     ]
 
 
