@@ -29,14 +29,15 @@ def process_warnings(warnings: list) -> str:
     return ";\n".join(warnings) or ""
 
 
-def process_full_individual_name(individual_name: ListOrStr, title: ListOrStr) -> str:
-    if individual_name and group_names == "[not specified]":
-        distilled_title = process_detail(title)
-        distilled_name = process_detail(individual_name)
-        return f"{distilled_title} {distilled_name}" if distilled_title else f"{distilled_name}"
+def join_title_and_name(title: str, name: str) -> str:
+    if "[not specified]" in [title, name]:
+        return name
 
-    elif group_names and individual_name == "[not specified]":
-        return process_detail(group_names)
+    elif title.startswith("Esq"):
+        return f"{name} {title}"
+
+    else:
+        return f"{title} {name}"
 
 
 def _transform_farm_to_proof(farm: Farm) -> list:
