@@ -52,6 +52,26 @@ def process_full_individual_name(titles: ListOrStr, individual_names: ListOrStr)
     return distill_details(full_names)
 
 
+def process_names(title: ListOrStr, individual_name: ListOrStr, group_names: ListOrStr) -> dict:
+    individual_name = process_full_individual_name(title, individual_name)
+    group_names = process_detail(group_names)
+
+    if individual_name != "[not specified]" and group_names == "[not specified]":
+        return {'name': individual_name, 'warning': ""}
+    
+    if individual_name == "[not specified]" and group_names != "[not specified]":
+        return {'name': group_names, 'warning': ""}
+
+    if individual_name == "[not specified]" and group_names == "[not specified]":
+        return {'name': "[not specified]", 'warning': ""}
+    
+    if individual_name != "[not specified]" and group_names != "[not specified]":
+        return {
+            'name': f"{individual_name};\n{group_names}",
+            'warning': "ERROR: farm contains both individual & group names - both names have been returned for inspection"
+            }
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
@@ -66,8 +86,13 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         farm.farm_reference,
         process_detail(farm.farm_name),
         process_full_individual_name(farm.addressee.title, farm.addressee.individual_name),
+        process_detail(farm.addressee.group_names),
         process_detail(farm.addressee.address),
+        process_full_individual_name(farm.farmer.title, farm.farmer.individual_name),
+        process_detail(farm.farmer.group_names),
         process_detail(farm.farmer.address),
+        process_full_individual_name(farm.owner.title, farm.owner.individual_name),
+        process_detail(farm.farmer.group_names),
         process_detail(farm.owner.address),
     ]
 
