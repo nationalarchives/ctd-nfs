@@ -29,7 +29,7 @@ def process_warnings(warnings: list) -> str:
     return ";\n".join(warnings) or ""
 
 
-def process_full_address(individual_name: ListOrStr, title: ListOrStr, group_names: ListOrStr):
+def process_full_individual_name(individual_name: ListOrStr, title: ListOrStr) -> str:
     if individual_name and group_names == "[not specified]":
         distilled_title = process_detail(title)
         distilled_name = process_detail(individual_name)
