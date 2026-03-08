@@ -51,6 +51,12 @@ def distill_details(list_of_details: list) -> str:
     working_details = filter_details(sorted_details)
     distilled_details = filter_details_by_line(working_details)
 
-    return distilled_details[0] if len(distilled_details) == 1 else " / ".join(sorted(distilled_details))
+    if len(distilled_details) > 1:
+        return " / ".join(sorted(distilled_details))
+
+    if distilled_details == []:
+        return "[not specified]"
+
+    return distilled_details[0] 
 
 
