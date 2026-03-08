@@ -40,6 +40,18 @@ def join_title_and_name(title: str, name: str) -> str:
         return f"{title} {name}"
 
 
+def process_full_individual_name(titles: ListOrStr, individual_names: ListOrStr) -> str:
+    if type(titles) is str and type(individual_names) is str:
+        return join_title_and_name(titles, individual_names)
+
+    full_names = []
+    for index, title in enumerate(titles):
+        name = individual_names[index]
+        full_names.append(join_title_and_name(title, name))
+    
+    return distill_details(full_names)
+
+
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
@@ -53,7 +65,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         process_warnings(farm.warnings['Type Warnings']),
         farm.farm_reference,
         process_detail(farm.farm_name),
-        # process_full_address(farm.addressee.individual_name, farm.addressee.title, farm.addressee.group_names),
+        process_full_individual_name(farm.addressee.title, farm.addressee.individual_name),
         process_detail(farm.addressee.address),
         process_detail(farm.farmer.address),
         process_detail(farm.owner.address),
