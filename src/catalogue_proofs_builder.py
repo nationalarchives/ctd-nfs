@@ -10,15 +10,22 @@ from src._tools.xlwriter import ExcelWriter
 def process_forms(forms: dict) -> dict:
     output_forms = []
     output_files = []
+    dates = {'field_info_date': [], 'primary_record_date': []}
 
     for form_type in forms.keys():
-        if forms[form_type]:
-            output_forms.append(form_type)
-            for form in forms[form_type]:
-                output_files.append(", ".join(form.images))
+        if not forms[form_type]:
+            continue
+        output_forms.append(form_type)
+        for form in forms[form_type]:
+            output_files.append(", ".join(form.images))
+            dates['field_info_date'].append(form.field_info_date)
+            dates['primary_record_date'].append(form.primary_record_date)
+
+
     return {
         'forms': ";\n".join(output_forms),
-        'files': ";\n".join(output_files)
+        'files': ";\n".join(output_files),
+        'dates': dates,
     }
     
 
@@ -113,6 +120,8 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         owner['warning'],
         owner['address'],
         owner['detail'],
+        process_detail(farm.acreage),
+        process_detail(farm.OS_map_sheet),
     ]
 
 
