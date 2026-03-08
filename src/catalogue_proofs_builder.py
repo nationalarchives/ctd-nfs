@@ -76,6 +76,10 @@ def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
     forms_and_files = process_forms(farm.forms)
 
+    addressee_full_name = process_names(farm.addressee.title, farm.addressee.individual_name, farm.addressee.group_names)
+    farmer_full_name = process_names(farm.farmer.title, farm.farmer.individual_name, farm.farmer.group_names)
+    owner_full_name = process_names(farm.owner.title, farm.owner.individual_name, farm.owner.group_names)
+
     return [
         farm.catalogue_reference,
         process_warnings(farm.warnings['Reference Warnings']),
