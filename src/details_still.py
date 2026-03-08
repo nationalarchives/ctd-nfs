@@ -12,7 +12,8 @@ pretty = pprint.PrettyPrinter(indent=4)
 
 
 def prepare_details_for_filtration(harvested_details: list) -> list:
-    unique_details = list(set(harvested_details))
+    cleaned_details = [item for item in harvested_details if item != "[not specified]"]
+    unique_details = list(set(cleaned_details))
     return sorted(unique_details, key=len)
 
 
