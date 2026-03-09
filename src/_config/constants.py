@@ -57,11 +57,11 @@ class CSVandExcelNamespace():
         ('Landowner name warnings', 40),
         ('Landowner address', 60),
         ('Landowner(s)', 75),
-        # ('Acreage', 20),
-        # ('Appears on Ordnance Survey sheet(s)', 20),
-        # ('Field information date', 15),
+        ('Acreage', 30),
+        ('Appears on Ordnance Survey sheet(s)', 30),
+        ('Field information date', 25),
         # ('Field Date Warnings', 20),
-        # ('Primary farm record date', 15),
+        ('Primary farm record date', 25),
         # ('Primary Date Warnings', 20)
     ]
 
