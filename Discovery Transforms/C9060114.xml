@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<emph altrender=\"doctype\">AP</emph>
-    <emph altrender=\"petitioners\">William de Wasthulle (Wast Hills).</emph>
-        <emph altrender=\"name\">
-            <persname>
-                <emph altrender=\"surname\">de Wasthulle ; Wast Hills</emph>
-                    <emph altrender=\"forenames\">William</emph>
-            </persname>
-        </emph>
-        <emph altrender=\"addressees\">King and council.</emph>
-            <emph altrender=\"request\">Wasthulle complains that he and his children are destitute and disseised from 2 messuages and 3 carucates of land which they had in Worcestershire in Alvechurch and Tredington by Matthew Cheker, who was of the king's household, Wasthulle taking nothing from him, and Cheker having no right except by a false fine which he levied in deceipt of the king's court, and has given the messuages to Godfrey bishop of Worcester who now holds them. Because Cheker is of the king's council, he is unable to accuse him of menace and disinheritance which he has made in his fee. Wasthulle prays that Cheker be attached by his body to be before the king on a certain day to prove on this treason in all things which the king's court wishes to consider.</emph>
-                <emph altrender=\"endorsement\">Patet in rotulo.</emph>
-                    <emph altrender=\"placesmentioned\">
-                        <geogname>Alvechyrche (Alvechurch), Worcestershire</geogname>
-                        <geogname>Tredington, Worcestershire</geogname>
-                    </emph>
-                    <emph altrender=\"people\">
-                        <persname>Matthew Cheker [of the Exchequer] of the king's household.</persname>
-                    </emph>
+<?xml-stylesheet type="text/css" href="AncientPetitions_DetailScope_inc.xsl"?>
+<emph altrender="doctype">AP</emph>
+<emph altrender="petitioners">William de Wasthulle (Wast Hills).</emph>
+<emph altrender="name">
+    <persname>
+        <emph altrender="surname">de Wasthulle ; Wast Hills</emph>
+        <emph altrender="forenames">William</emph>
+    </persname>
+</emph>
+<emph altrender="addressees">King and council.</emph>
+<emph altrender="request">Wasthulle complains that he and his children are destitute and disseised from 2 messuages and 3 carucates of land which they had in Worcestershire in Alvechurch and Tredington by Matthew Cheker, who was of the king's household, Wasthulle taking nothing from him, and Cheker having no right except by a false fine which he levied in deceipt of the king's court, and has given the messuages to Godfrey bishop of Worcester who now holds them. Because Cheker is of the king's council, he is unable to accuse him of menace and disinheritance which he has made in his fee. Wasthulle prays that Cheker be attached by his body to be before the king on a certain day to prove on this treason in all things which the king's court wishes to consider.</emph>
+<emph altrender="endorsement">Patet in rotulo.</emph>
+<emph altrender="placesmentioned">
+    <geogname>Alvechyrche (Alvechurch), Worcestershire</geogname>
+    <geogname>Tredington, Worcestershire</geogname>
+</emph>
+<emph altrender="people">
+    <persname>Matthew Cheker [of the Exchequer] of the king's household.</persname>
+</emph>
