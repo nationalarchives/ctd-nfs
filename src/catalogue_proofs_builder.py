@@ -137,6 +137,7 @@ with shelve.open(PATH.TEST_DB, 'r') as farms_db:
             _transform_farm_to_proof(references[catalogue_reference]['Farm'])
             for catalogue_reference in references.keys()
         ]
+        print(f"\tTotal farms = {len(proof_data)}")
         
         excel_data = [{
             'sheet_name': f"{county} Proof data",
