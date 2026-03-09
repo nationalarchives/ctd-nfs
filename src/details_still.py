@@ -52,7 +52,7 @@ def distill_details(list_of_details: list) -> str:
     distilled_details = filter_details_by_line(working_details)
 
     if len(distilled_details) > 1:
-        return " / ".join(sorted(distilled_details))
+        return " | ".join(sorted(distilled_details))
 
     if distilled_details == []:
         return "[not specified]"

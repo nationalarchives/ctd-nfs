@@ -84,8 +84,8 @@ def create_full_name_and_address(Detail: Details) -> dict:
     full_name = process_names(Detail.title, Detail.individual_name, Detail.group_names)
     distilled_address = process_detail(Detail.address)
     
-    name_is_single_value: bool = full_name['name'] != "[not specified]" and not re.search(r"""(;\n| \/ )""", full_name['name'])
-    address_is_single_value: bool = distilled_address != "[not specified]" and not re.search(r"""(;\n| \/ )""", distilled_address)
+    name_is_single_value: bool = full_name['name'] != "[not specified]" and not re.search(r"""(;\n| \| )""", full_name['name'])
+    address_is_single_value: bool = distilled_address != "[not specified]" and not re.search(r"""(;\n| \| )""", distilled_address)
     full_detail = f"{full_name['name']}, {distilled_address}" if name_is_single_value and address_is_single_value else ""
     
     return full_name | {'address': distilled_address, 'detail': full_detail}
