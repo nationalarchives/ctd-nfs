@@ -130,6 +130,9 @@ def _transform_farm_to_proof(farm: Farm) -> list:
 with shelve.open(PATH.TEST_DB, 'r') as farms_db:
     for county, references in farms_db.items():
         print(f"{county=}")
+        if county == 'RD Rutland':
+            continue
+
         proof_data = [
             _transform_farm_to_proof(references[catalogue_reference]['Farm'])
             for catalogue_reference in references.keys()
