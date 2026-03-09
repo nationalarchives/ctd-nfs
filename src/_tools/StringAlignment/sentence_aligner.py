@@ -1,5 +1,9 @@
 from src._tools.StringAlignment.local_align import local_align, all_alignment
 from collections import defaultdict
+import pprint
+
+
+pretty = pprint.PrettyPrinter(indent=4)
 
 class SentenceAligner:
     def __init__(self):
@@ -114,8 +118,11 @@ if __name__ == '__main__':
     A1 = SA.border_align("and estates here after limitted from being defeated or", "and estates hereinafter limited from being defeated or")
     A2 = SA.border_align("and estates here after limitted from being defeated or", "and estates hereinafter limited from being defeated or")
     A3 = SA.border_align("and estates here after limitted from being defeated or", "and estates hereinafter limi ted from being defeated or")
-    MA = SA.multi_align(A1, A2, A3)
-    print(MA)
+
+    pretty.pprint(A3)
+    # MA = SA.multi_align(A1, A2, A3)
+
+    # pretty.pprint(MA)
 
     #SA.border_align("iguana par banana", "iguna apple pear banana")
     #SA.border_align("iguana apple par banana", "iguna applepear banana")

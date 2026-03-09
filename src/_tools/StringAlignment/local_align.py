@@ -230,10 +230,12 @@ if __name__ == "__main__":
     # X = "Herbert Edward Jones"
     # Y = "H.E. Jones"
 
-    X = "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"
-    Y = "Slade Mill, Boddington, Cheltenham"
-    Y = "Slate Mill, Boddington"
+    # X = "Slate Mill, Boddington, Near Cheltenham, Gloucestershire"
+    # Y = "Slade Mill, Boddington, Cheltenham"
+    # Y = "Slate Mill, Boddington"
 
+    X = "Green Cottage, Langham, Oakham"
+    Y = "Langham, Oakham, Rutland"
     print("X len:",len(X))
     print("Y len:",len(Y))
     A = local_align(X,Y)
