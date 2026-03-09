@@ -110,7 +110,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         warnings = check_for_other_row_data_issues(farm_data_row, row_prefix, pattern_matches, warnings)
 
         candidate_farm = Farm(**farm_data_row)
-        candidate_farm.warnings = warnings  
+        candidate_farm.warnings = warnings
         update_farms_db(candidate_farm, farm_data_row, row_number, test_mode=test_mode)
         
 
