@@ -41,7 +41,7 @@ def filter_details_by_line(details_after_first_filer: list) -> list:
         for target_detail in other_details:
             if all([(line in target_detail) for line in detail.split(", ")]):
                 filtered_details.remove(detail)
-                continue
+                break
     
     return filtered_details
     
