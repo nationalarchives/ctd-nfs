@@ -19,7 +19,7 @@ class ExcelWriter:
         """
         for row_idx, record in enumerate(_records, start=1):
             self._sheet.append(record)
-            for col_idx in list(range(0, 21)):
+            for col_idx in list(range(0, 25)):
                 column = ExcelWriter.column_letters[col_idx]            
                 self._sheet[f"{column}{row_idx + 1}"].alignment = Alignment(wrap_text=True, vertical='top')
 
