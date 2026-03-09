@@ -122,6 +122,8 @@ def _transform_farm_to_proof(farm: Farm) -> list:
         owner['detail'],
         process_detail(farm.acreage),
         process_detail(farm.OS_map_sheet),
+        process_detail(forms_and_files_and_dates['dates']['field_info_date']),
+        process_detail(forms_and_files_and_dates['dates']['primary_record_date']),
     ]
 
 
