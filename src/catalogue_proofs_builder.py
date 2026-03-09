@@ -93,7 +93,7 @@ def create_full_name_and_address(Detail: Details) -> dict:
 
 def _transform_farm_to_proof(farm: Farm) -> list:
     print(f"\t{farm.catalogue_reference=}")
-    forms_and_files = process_forms(farm.forms)
+    forms_and_files_and_dates = process_forms(farm.forms)
 
     addressee = create_full_name_and_address(farm.addressee)
     farmer = create_full_name_and_address(farm.farmer)
@@ -102,9 +102,9 @@ def _transform_farm_to_proof(farm: Farm) -> list:
     return [
         farm.catalogue_reference,
         process_warnings(farm.warnings['Reference Warnings']),
-        forms_and_files['files'],
+        forms_and_files_and_dates['files'],
         process_warnings(farm.warnings['Filename Warnings']),
-        forms_and_files['forms'],
+        forms_and_files_and_dates['forms'],
         process_warnings(farm.warnings['Type Warnings']),
         farm.farm_reference,
         process_detail(farm.farm_name),
