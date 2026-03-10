@@ -131,21 +131,23 @@ class PathNamespace():
   
     _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
     EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")  
-    PIECE_LOOKUP_TABLE = _PIPELINE_ROOT / "0-DB" / _PIECE_LOOKUP_DB
 
     _FARMS_CACHE = Path("MAF 32 Farms.db")
     _TEST_CACHE = Path("Test Farms.db")
-    DB = _PIPELINE_ROOT / "0-DB"
+    
+    DB = _PIPELINE_ROOT / "#ADMIN" / "DB"
+    PIECE_LOOKUP_TABLE = DB / _PIECE_LOOKUP_DB
     FARMS_DB = DB / _FARMS_CACHE
     TEST_DB = DB / "TEST" / _TEST_CACHE
 
     INPUT = _PIPELINE_ROOT / "1-INPUT"
     TEST_INPUT = INPUT / "TEST"
     
-    TRANSFORM = _PIPELINE_ROOT / "3-TRANSFORM"
-    ARCHIVE = _PIPELINE_ROOT / "4-ARCHIVE"
-    OUTPUT = _PIPELINE_ROOT / "5-OUTPUT"
-    TEST_OUTPUT = OUTPUT / "TEST"
+    HARVEST = _PIPELINE_ROOT / "2-HARVEST"
+    TEST_OUTPUT = HARVEST / "TEST"
+    
+    PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
+    ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
 
 PATH = PathNamespace()
