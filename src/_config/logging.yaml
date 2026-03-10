@@ -20,7 +20,7 @@ handlers:
   info_file_handler:
     class: logging.handlers.RotatingFileHandler
     formatter: standard
-    filename: Pipeline//#ADMIN//LOGS//farm_creation_and_merging.log
+    filename: Pipeline//#ADMIN//LOGS//harvester_pipeline.log
     maxBytes: 10485760 # 10MB
     backupCount: 20
     encoding: utf8
@@ -29,7 +29,7 @@ handlers:
     class: logging.FileHandler
     level: WARNING
     formatter: violation
-    filename: Pipeline//#ADMIN//LOGS//farm_creation_and_merging_error.log
+    filename: Pipeline//#ADMIN//LOGS//harvester_pipeline_error.log
     mode: w
     encoding: utf8
 
