@@ -7,6 +7,7 @@ import shelve
 from src.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
 from src.farm_setup import Farm, concatenate_instance, initialise_warnings_mapping
+from src.catalogue_proofs_builder import create_proof_files
 from src._tools.logging_setup import create_logger
 
 
@@ -123,3 +124,5 @@ def process_file(csv_file: Path, test_mode: bool = False) -> None:
 if __name__ == "__main__":
     for csv_file in PATH.INPUT.glob("*.csv"):
         process_file(csv_file)
+
+    create_proof_files()
