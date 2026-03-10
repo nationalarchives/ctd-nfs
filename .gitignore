@@ -171,3 +171,4 @@ difflib_experiment.py
 *.txt
 _scratch/*.*
 */*.bak
+Pipeline
