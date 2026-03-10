@@ -96,7 +96,7 @@ def create_full_name_and_address(Detail: Details) -> dict:
 
 
 def _transform_farm_to_proof(farm: Farm) -> list:
-    print(f"\t{farm.catalogue_reference=}")
+    logger.info(f"\tCatalogue Reference: {farm.catalogue_reference}")
     forms_and_files_and_dates = process_forms(farm.forms)
 
     addressee = create_full_name_and_address(farm.addressee)
@@ -134,7 +134,7 @@ def _transform_farm_to_proof(farm: Farm) -> list:
 def create_proof_files():
     with shelve.open(PATH.TEST_DB, 'r') as farms_db:
         for county, references in farms_db.items():
-            print(f"{county=}")
+            logger.info(f"County: {county}")
             if county == 'RD Rutland':
                 continue
 
@@ -142,7 +142,7 @@ def create_proof_files():
                 _transform_farm_to_proof(references[catalogue_reference]['Farm'])
                 for catalogue_reference in references.keys()
             ]
-            print(f"\tTotal farms = {len(proof_data)}")
+            logger.info(f" --- Total farms created for {county}: {len(proof_data)}")
             
             excel_data = [{
                 'sheet_name': f"{county} Proof data",
