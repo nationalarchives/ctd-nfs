@@ -127,25 +127,29 @@ def _transform_farm_to_proof(farm: Farm) -> list:
     ]
 
 
-with shelve.open(PATH.TEST_DB, 'r') as farms_db:
-    for county, references in farms_db.items():
-        print(f"{county=}")
-        if county == 'RD Rutland':
-            continue
+def create_proof_files():
+    with shelve.open(PATH.TEST_DB, 'r') as farms_db:
+        for county, references in farms_db.items():
+            print(f"{county=}")
+            if county == 'RD Rutland':
+                continue
 
-        proof_data = [
-            _transform_farm_to_proof(references[catalogue_reference]['Farm'])
-            for catalogue_reference in references.keys()
-        ]
-        print(f"\tTotal farms = {len(proof_data)}")
-        
-        excel_data = [{
-            'sheet_name': f"{county} Proof data",
-            'row_data': proof_data,
-            'column_settings': CSVEXCEL.PROOF_COLUMNS,
-        }]
-        
-        proof_file_name = PATH.HARVEST / f"{county} Proof data.xlsx"
-        xlwriter = ExcelWriter()
-        xlwriter.write_excel(excel_data, proof_file_name)
+            proof_data = [
+                _transform_farm_to_proof(references[catalogue_reference]['Farm'])
+                for catalogue_reference in references.keys()
+            ]
+            print(f"\tTotal farms = {len(proof_data)}")
+            
+            excel_data = [{
+                'sheet_name': f"{county} Proof data",
+                'row_data': proof_data,
+                'column_settings': CSVEXCEL.PROOF_COLUMNS,
+            }]
+            
+            proof_file_name = PATH.HARVEST / f"{county} Proof data.xlsx"
+            xlwriter = ExcelWriter()
+            xlwriter.write_excel(excel_data, proof_file_name)
 
+
+if __name__ == "__main__":
+    create_proof_files()
