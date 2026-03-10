@@ -1,10 +1,14 @@
 import shelve
 import re
+import logging
 
 from src._config.constants import PATH, CSVEXCEL
 from src.farm_setup import Farm, Details, ListOrStr
 from src.details_still import distill_details
 from src._tools.xlwriter import ExcelWriter
+
+
+logger = logging.getLogger(__name__)
 
 
 def process_forms(forms: dict) -> dict:
