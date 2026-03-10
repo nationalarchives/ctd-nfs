@@ -127,7 +127,7 @@ class RegexNamespace():
 class PathNamespace():
     __slots__ = ()
     
-    _PIPELINE_ROOT = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\Pipeline")
+    _PIPELINE_ROOT = Path(r"Pipeline")
   
     _PIECE_LOOKUP_DB = Path("MAF 32 Piece Lookup Table.db")
     EXCEL_LOOKUP_FILE = Path(r"C:\Users\rbruno\OneDrive - The National Archives\Projects\NFS\MAF 32 Piece Lookup Table 04-12-2025.xlsx")  
