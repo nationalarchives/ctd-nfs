@@ -122,7 +122,9 @@ def process_file(csv_file: Path, test_mode: bool = False) -> None:
 
 
 if __name__ == "__main__":
+    logger.info(" ===== HARVESTING FARMS ===== ")
     for csv_file in PATH.INPUT.glob("*.csv"):
         process_file(csv_file)
 
+    logger.info(" ===== CREATING PROOF FILES ===== ")
     create_proof_files()
