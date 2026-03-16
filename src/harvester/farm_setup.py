@@ -126,7 +126,7 @@ class Image:
 
 @dataclass
 class Form:
-    images: list[str]
+    images: list[Image]
     field_info_date: ListOrStr
     primary_record_date: ListOrStr
 
