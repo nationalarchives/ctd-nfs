@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 from src._config.constants import PATH
-from src.file_processor import process_file
-from src.farm_setup import Farm
+from src.harvester.file_processor import process_file
+from src.harvester.farm_setup import Farm
 
 
 def test_nfs_checks_and_mergers():

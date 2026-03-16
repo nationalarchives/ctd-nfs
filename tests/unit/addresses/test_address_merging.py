@@ -1,4 +1,4 @@
-from src.details_still import distill_details
+from src.harvester.details_still import distill_details
 
 
 def test_distill_address(addresses):

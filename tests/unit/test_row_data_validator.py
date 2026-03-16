@@ -1,4 +1,4 @@
-from src.row_data_validator import \
+from src.harvester.row_data_validator import \
 	check_values_between_filenames, \
 	vali_dates
 from tests.unit.conftest import setup

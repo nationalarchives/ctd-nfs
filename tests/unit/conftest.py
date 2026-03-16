@@ -2,7 +2,7 @@ import pytest
 import re
 
 from src._config.constants import REGEX
-from src.farm_setup import Form, initialise_forms_mapping
+from src.harvester.farm_setup import Form, initialise_forms_mapping
 
 
 def setup(test_data, row_num) -> tuple:

@@ -1,5 +1,4 @@
-from src.farm_setup import Farm, concatenate_instance, concatenate_forms
-from src.farm_setup import normalize_date
+from src.harvester.farm_setup import Farm, concatenate_instance, concatenate_forms, normalize_date
 
 def test_farm_dataclass_instantiation(capsys, farms):
 	for farm_fixture in farms:

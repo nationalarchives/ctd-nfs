@@ -1,4 +1,4 @@
-from src.row_data_validator import has_valid_reference_values
+from src.harvester.row_data_validator import has_valid_reference_values
 from tests.unit.conftest import setup
 
 

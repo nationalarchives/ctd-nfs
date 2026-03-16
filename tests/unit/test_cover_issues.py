@@ -1,4 +1,4 @@
-from src.row_data_validator import check_for_cover_with_farm_details, report_cover_image_inconsistencies
+from src.harvester.row_data_validator import check_for_cover_with_farm_details, report_cover_image_inconsistencies
 from tests.unit.conftest import setup
 
 
