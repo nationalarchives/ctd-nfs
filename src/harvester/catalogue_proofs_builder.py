@@ -131,8 +131,8 @@ def _transform_farm_to_proof(farm: Farm) -> list:
     ]
 
 
-def create_proof_files():
-    with shelve.open(PATH.TEST_DB, 'r') as farms_db:
+def create_proof_files(test_mode: bool = False):
+    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'r') as farms_db:
         for county, references in farms_db.items():
             logger.info(f"County: {county}")
             if county == 'RD Rutland':
