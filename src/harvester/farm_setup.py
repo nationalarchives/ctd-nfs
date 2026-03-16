@@ -283,8 +283,8 @@ def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form
             existing_forms[key] = new_forms[key]
             continue
 
-        current_last_image = existing_forms[key][0].images[-1]
-        new_image = new_forms[key][0].images[0]
+        current_last_image = existing_forms[key][0].images[-1].name
+        new_image = new_forms[key][0].images[0].name
         if len(new_forms[key][0].images) == 1 and is_consecutive_image(current_last_image, new_image):
             existing_forms[key][0].images.append(new_image)
             concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')

@@ -2,7 +2,7 @@ import pytest
 import re
 
 from src._config.constants import REGEX
-from src.harvester.farm_setup import Form, initialise_forms_mapping
+from src.harvester.farm_setup import Form, Image, initialise_forms_mapping
 
 
 def setup(test_data, row_num) -> tuple:
@@ -572,7 +572,7 @@ def concatenate_forms_fixture():
 		for form_data in document_set:
 			set_of_forms = initialise_forms_mapping()
 			item = dict(zip(fields, form_data))
-			pics = [item[key]
+			pics = [Image(item[key])
 				for key in ["filename_1", "filename_2"]
 				if item[key]
 			]

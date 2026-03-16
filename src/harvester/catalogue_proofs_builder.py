@@ -21,7 +21,7 @@ def process_forms(forms: dict) -> dict:
             continue
         output_forms.append(form_type)
         for form in forms[form_type]:
-            output_files.append(", ".join(form.images))
+            output_files.append(", ".join([image.name for image in form.images]))
             dates['field_info_date'].append(form.field_info_date)
             dates['primary_record_date'].append(form.primary_record_date)
 
