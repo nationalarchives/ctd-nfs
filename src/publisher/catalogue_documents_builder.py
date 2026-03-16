@@ -4,7 +4,7 @@ from dataclasses import asdict
 import requests
 
 from src._config.constants import DATA
-from src.record_setup import Image, Record, Replica
+from src.publisher.record_setup import Image, Record, Replica
 
 
 def get_parent_id(raw_reference: str) -> str:

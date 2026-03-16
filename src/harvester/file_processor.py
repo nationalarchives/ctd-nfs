@@ -4,10 +4,9 @@ import csv
 import re
 import shelve
 
-from src.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
+from src.harvester.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
-from src.farm_setup import Farm, concatenate_instance, initialise_warnings_mapping
-from src.catalogue_proofs_builder import create_proof_files
+from src.harvester.farm_setup import Farm, concatenate_instance, initialise_warnings_mapping
 from src._tools.logging_setup import create_logger
 
 
@@ -120,15 +119,3 @@ def process_file(csv_file: Path, test_mode: bool = False) -> None:
     normalised_farm_data = normalise_csv_data(raw_farm_data)
     create_farms(normalised_farm_data, test_mode=test_mode)
 
-
-def main():
-    logger.info(" ===== HARVESTING FARMS ===== ")
-    for csv_file in PATH.INPUT.glob("*.csv"):
-        process_file(csv_file)
-
-    logger.info(" ===== CREATING PROOF FILES ===== ")
-    create_proof_files()
-
-
-if __name__ == "__main__":
-    main()

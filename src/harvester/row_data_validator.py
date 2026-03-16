@@ -13,7 +13,7 @@ import re
 from datetime import datetime
 import logging
 
-from src.farm_setup import initialise_forms_mapping, initialise_warnings_mapping
+from src.harvester.farm_setup import initialise_forms_mapping, initialise_warnings_mapping
 from src._config.constants import REGEX, DATA
 
 

@@ -67,5 +67,6 @@ class Replica:
     replicaId: str
     files: list[Image]
     origination: str = "DigitalSurrogate"
+    totalSize: None
 
 

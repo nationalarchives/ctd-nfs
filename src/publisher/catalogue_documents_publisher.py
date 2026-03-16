@@ -2,9 +2,9 @@
 """
 import json
 
-from src._config.constants import PATH
+from src._config.constants import PATH, CSVEXCEL
 from src._tools.xlreader import read_file
-from src.catalogue_documents_builder import build_catalogue_documents
+from src.publisher.catalogue_documents_builder import build_catalogue_documents
 
 
 def load_excel_data() -> list[dict]:
@@ -45,6 +45,14 @@ def write_catalogue_documents(documents: list[dict]) -> None:
         with open(PATH.TEST_OUTPUT / f"{document['record']['iaid']}.json", 'w') as final_file:
             print(f"{final_file.name}")
             json.dump(document, final_file)
+
+
+def transform_proof_to_axiell(cleaned_data: list[dict]) -> list:
+    proof_data = [
+    f"{cleaned_data[key]}"
+    for key in CSVEXCEL.AXIELL_COLUMNS
+    ]
+    
            
             
 if __name__ == "__main__":
