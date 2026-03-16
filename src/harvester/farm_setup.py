@@ -213,7 +213,7 @@ class Farm:
         self.forms[self.document_type].append(new_form)
 
     def __post_init__(self):
-        self.iaid: str = field(default_factory=_create_uuid_str)
+        self.iaid = _create_uuid_str()
         self.addressee = Details(
             title=self.addressee_title,
             individual_name=self.addressee_individual_name,
