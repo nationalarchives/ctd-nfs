@@ -114,8 +114,10 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
         update_farms_db(candidate_farm, farm_data_row, row_number, test_mode=test_mode)
         
 
-def process_file(csv_file: Path, test_mode: bool = False) -> None:
-    raw_farm_data: list[dict] = load_data_from_file(csv_file)
-    normalised_farm_data = normalise_csv_data(raw_farm_data)
-    create_farms(normalised_farm_data, test_mode=test_mode)
+def process_csv_files(test_mode: bool = False) -> None:
+    input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
+    for csv_file in input_files:
+        raw_farm_data: list[dict] = load_data_from_file(csv_file)
+        normalised_farm_data = normalise_csv_data(raw_farm_data)
+        create_farms(normalised_farm_data, test_mode=test_mode)
 
