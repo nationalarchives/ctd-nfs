@@ -6,6 +6,10 @@ from src._config.constants import PATH
 from src.harvester.file_processor import process_csv_files
 from src.harvester.catalogue_proofs_builder import create_proof_files
 from src.harvester.farm_setup import Farm
+from src._tools.logging_setup import create_logger
+
+
+logger = create_logger("src._config", "logging.yaml")
 
 
 def test_nfs_checks_and_mergers():
