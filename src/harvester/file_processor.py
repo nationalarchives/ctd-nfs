@@ -3,14 +3,14 @@ from typing import Generator, Iterator
 import csv
 import re
 import shelve
+import logging
 
 from src.harvester.row_data_validator import check_for_other_row_data_issues, has_valid_reference_values, row_is_cover_form, has_cover_issues
 from src._config.constants import PATH, REGEX, CSVEXCEL
 from src.harvester.farm_setup import Farm, concatenate_instance, initialise_warnings_mapping
-from src._tools.logging_setup import create_logger
 
 
-logger = create_logger("src._config", "logging.yaml")
+logger = logging.getLogger(__name__)
 
 
 def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
