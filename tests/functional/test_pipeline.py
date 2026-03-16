@@ -13,7 +13,7 @@ def test_nfs_checks_and_mergers():
         os.remove(file)
 
     process_csv_files(test_mode=True)
-    create_proof_files()
+    create_proof_files(test_mode=True)
 
     with shelve.open(PATH.TEST_DB, 'r') as test_db:
         for reference in test_db.values():
