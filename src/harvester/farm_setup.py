@@ -201,7 +201,7 @@ class Farm:
             csv_data (dict): _description_
         """
         new_images = [
-            file_name
+            Image(file_name)
             for file_name in [self.filename_1, self.filename_2] 
             if file_name
         ]
