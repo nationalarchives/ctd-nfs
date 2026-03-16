@@ -53,7 +53,7 @@ def initialise_warnings_mapping() -> dict:
     }
 
 
-def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
+def _get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
     """
     Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
 
@@ -75,7 +75,7 @@ def get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
     return reference_record['Catalogue ref']
 
 
-def normalize_date(candi_date: str) -> str:
+def _normalize_date(candi_date: str) -> str:
     """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
     Note: day must not have leading zeros.
 
@@ -179,7 +179,7 @@ class Farm:
         """
         _county_code, _ = self.county.split()
         _parish_number, *_ = self.parish.split()
-        _catalogue_reference = get_catalogue_reference_stem(_county_code, _parish_number)
+        _catalogue_reference = _get_catalogue_reference_stem(_county_code, _parish_number)
         return f"{_catalogue_reference}/{self.primary_farm_number}"
 
     @property
@@ -226,8 +226,8 @@ class Farm:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
-        self.field_info_date=normalize_date(self.field_info_date)
-        self.primary_record_date=normalize_date(self.primary_record_date)
+        self.field_info_date=_normalize_date(self.field_info_date)
+        self.primary_record_date=_normalize_date(self.primary_record_date)
         self.assign_filenames_to_forms()
 
 
