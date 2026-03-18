@@ -85,3 +85,40 @@ def test_title_and_name_both_specified():
     
     assert full_address == "Mr Sherlock Holmes"
 
+
+def test_title_wihtout_name():
+    title = "Mr"
+    name = "[not specified]"
+
+    full_address = distill_single_title_and_name(title, name)
+    
+    assert full_address == "[not specified]"
+
+
+def test_name_without_title():
+    title = "[not specified]"
+    name = "Sherlock Holmes"
+
+    full_address = distill_single_title_and_name(title, name)
+    
+    assert full_address == "Sherlock Holmes"
+
+
+def test_without_name_nor_title():
+    title = "[not specified]"
+    name = "[not specified]"
+
+    full_address = distill_single_title_and_name(title, name)
+    
+    assert full_address == "[not specified]"
+
+
+def test_title_after_name():
+    title = "Esq"
+    name = "Sherlock Holmes"
+
+    full_address = distill_single_title_and_name(title, name)
+    
+    assert full_address == "Sherlock Holmes, Esq"
+
+
