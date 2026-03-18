@@ -1,4 +1,7 @@
-from src.harvester.distillation.distiller import distill_single_name_and_address, distill_multiple_details
+from src.harvester.distillation.distiller import \
+    distill_single_name_and_address, \
+    distill_multiple_details, \
+    distill_single_title_and_name
 
 
 def test_name_with_address_both_specified():
@@ -72,4 +75,13 @@ def test_multiple_on_single_form_missing_name_and_address_v2():
     full_address = distill_multiple_details(name, address)
     
     assert full_address == "[not specified]; John Watson, 221B Baker Street"
+
+
+def test_title_and_name_both_specified():
+    title = "Mr"
+    name = "Sherlock Holmes"
+
+    full_address = distill_single_title_and_name(title, name)
+    
+    assert full_address == "Mr Sherlock Holmes"
 
