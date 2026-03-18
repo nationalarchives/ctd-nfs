@@ -17,6 +17,8 @@ def distill_single_title_and_name(title: str, name: str) -> str:
         return "[not specified]"
 
     if (title != "[not specified]" != name):
+        if title.startswith(("Esq", "KC")):
+            return f"{name}, {title}"
         return f"{title} {name}"
     
     if (title == "[not specified]"):
