@@ -42,3 +42,34 @@ def test_multiple_on_single_form_all_values():
     assert full_address == "Sherlock Holmes, 221B Baker Street; John Watson, 222B Baker Street"
 
 
+def test_multiple_on_single_form_missing_address():
+    name = "Sherlock Holmes; John Watson"
+    address = "221B Baker Street; [not specified]"
+    full_address = distill_multiple_details(name, address)
+    
+    assert full_address == "Sherlock Holmes, 221B Baker Street; John Watson"
+
+
+def test_multiple_on_single_form_missing_name():
+    name = "[not specified]; John Watson"
+    address = "221B Baker Street; 221B Baker Street"
+    full_address = distill_multiple_details(name, address)
+    
+    assert full_address == "[not specified], 221B Baker Street; John Watson, 221B Baker Street"
+
+
+def test_multiple_on_single_form_missing_name_and_address_v1():
+    name = "[not specified]; John Watson"
+    address = "221B Baker Street; [not specified]"
+    full_address = distill_multiple_details(name, address)
+    
+    assert full_address == "[not specified], 221B Baker Street; John Watson"
+
+
+def test_multiple_on_single_form_missing_name_and_address_v2():
+    name = "[not specified]; John Watson"
+    address = "[not specified]; 221B Baker Street"
+    full_address = distill_multiple_details(name, address)
+    
+    assert full_address == "[not specified]; John Watson, 221B Baker Street"
+
