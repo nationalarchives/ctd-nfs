@@ -1,5 +1,6 @@
 import re
 
+
 def distill_single_name_and_address(name: str, address: str) -> str:
     if (name == "[not specified]" == address):
         return "[not specified]"
@@ -21,4 +22,5 @@ def distill_multiple_details(names: str, address: str) -> str:
     ]
 
     return "; ".join(details)
+
 
