@@ -12,6 +12,17 @@ def distill_single_name_and_address(name: str, address: str) -> str:
         return f"{name}, {address}"
 
 
+def distill_single_title_and_name(title: str, name: str) -> str:
+    if (title == "[not specified]" == name) or (name == "[not specified]"):
+        return "[not specified]"
+
+    if (title != "[not specified]" != name):
+        return f"{title} {name}"
+    
+    if (title == "[not specified]"):
+        return f"{name}"
+
+
 def distill_multiple_details(names: str, address: str) -> str:
     separated_names = re.split("; *", names)
     separated_addresses = re.split("; *", address)
