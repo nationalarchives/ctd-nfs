@@ -150,3 +150,10 @@ def test_title_after_name():
     assert full_address == "Sherlock Holmes, Esq"
 
 
+def test_full_details_for_multiple_people():
+    titles = "Esq.; Dr; Insp; Prof"
+    names = "Sherlock Holmes; John Watson; Baynes; James Moriarty"
+    addresses = "221B Baker Street; 222B Baker Street; Surrey Constabulary, Guildford; London"
+    full_address = distill_multiple_details(titles, names, addresses)
+    
+    assert full_address == "Sherlock Holmes, Esq., 221B Baker Street; Dr John Watson, 222B Baker Street; Insp Baynes, Surrey Constabulary, Guildford; Prof James Moriarty, London"
