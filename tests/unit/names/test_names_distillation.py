@@ -60,44 +60,49 @@ def test_single_person_with_no_details():
     assert full_address == "[not specified]"
 
 
-def test_multiple_on_single_form_all_values():
-    name = "Sherlock Holmes; John Watson"
-    address = "221B Baker Street; 222B Baker Street"
-    full_address = distill_multiple_details(name, address)
+def test_full_details_for_two_people():
+    titles = "Mr; Dr"
+    names = "Sherlock Holmes; John Watson"
+    addresses = "221B Baker Street; 222B Baker Street"
+    full_address = distill_multiple_details(titles, names, addresses)
     
-    assert full_address == "Sherlock Holmes, 221B Baker Street; John Watson, 222B Baker Street"
+    assert full_address == "Mr Sherlock Holmes, 221B Baker Street; Dr John Watson, 222B Baker Street"
 
 
-def test_multiple_on_single_form_missing_address():
+def test_full_details_for_two_people_with_missing_address():
+    titles = "Mr; Dr"
     name = "Sherlock Holmes; John Watson"
     address = "221B Baker Street; [not specified]"
-    full_address = distill_multiple_details(name, address)
+    full_address = distill_multiple_details(titles, name, address)
     
-    assert full_address == "Sherlock Holmes, 221B Baker Street; John Watson"
+    assert full_address == "Mr Sherlock Holmes, 221B Baker Street; Dr John Watson"
 
 
-def test_multiple_on_single_form_missing_name():
+def test_full_details_for_two_people_with_missing_name():
+    titles = "Mr; Dr"
     name = "[not specified]; John Watson"
     address = "221B Baker Street; 221B Baker Street"
-    full_address = distill_multiple_details(name, address)
+    full_address = distill_multiple_details(titles, name, address)
     
-    assert full_address == "[not specified], 221B Baker Street; John Watson, 221B Baker Street"
+    assert full_address == "[not specified], 221B Baker Street; Dr John Watson, 221B Baker Street"
 
 
-def test_multiple_on_single_form_missing_name_and_address_v1():
+def test_full_details_for_two_people_with_name_and_address_v1():
+    titles = "Mr; Dr"
     name = "[not specified]; John Watson"
     address = "221B Baker Street; [not specified]"
-    full_address = distill_multiple_details(name, address)
+    full_address = distill_multiple_details(titles, name, address)
     
-    assert full_address == "[not specified], 221B Baker Street; John Watson"
+    assert full_address == "[not specified], 221B Baker Street; Dr John Watson"
 
 
-def test_multiple_on_single_form_missing_name_and_address_v2():
-    name = "[not specified]; John Watson"
+def test_full_details_for_two_people_with_missing_title_and_address_v2():
+    titles = "Mr; [not specified]"
+    name = "Sherlock Holmes; John Watson"
     address = "[not specified]; 221B Baker Street"
-    full_address = distill_multiple_details(name, address)
+    full_address = distill_multiple_details(titles, name, address)
     
-    assert full_address == "[not specified]; John Watson, 221B Baker Street"
+    assert full_address == "Mr Sherlock Holmes; John Watson, 221B Baker Street"
 
 
 def test_title_and_name_both_specified():
