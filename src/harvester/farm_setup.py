@@ -137,6 +137,7 @@ class Details:
     individual_name: ListOrStr
     group_names: ListOrStr
     address: ListOrStr
+    full_address: str = ""
 
 
 @dataclass
