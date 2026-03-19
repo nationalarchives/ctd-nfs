@@ -5,12 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "jellyfish>=1.2.1",
-    "numpy>=2.4.2",
     "openpyxl>=3.1.5",
     "pyinstaller>=6.17.0",
     "pyyaml>=6.0.3",
-    "rapidfuzz>=3.14.3",
     "requests>=2.32.5",
     "xlutils>=2.0.0",
 ]
