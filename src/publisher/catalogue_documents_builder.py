@@ -29,11 +29,9 @@ def create_description(row_data: dict) -> str:
 
 
 def build_record_subdocument(row: dict) -> Record:
-    parent_id = get_parent_id(row['Reference'])
     description = create_description(row)
     return Record(
             citableReference=row['Reference'],
-            parentId=parent_id,
             scopeContent={'description': description},
             title=row['Farm Number'],
         )
