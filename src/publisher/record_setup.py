@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import uuid
 import shelve
 import requests
+from urllib import parse
 
 from src._config.constants import DATA
 from src._config.constants import PATH
@@ -38,6 +39,16 @@ def _get_farm_iaid(catalogue_reference: str) -> str:
     farm_instance = next(farms, None)
     
     return farm_instance.iaid
+
+def _get_parent_id(catalague_reference: str) -> str:
+    ref = catalague_reference.rsplit("/", maxsplit=1)[0]
+    ref_url_safe = parse.quote(ref)
+
+    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    result = requests.get(api_query)
+    parent_record = result.json()
+
+    return parent_record['records'][0]['id']
 
 closure_status = {
 	'Closed Or Retained Document, Closed Description': "C",

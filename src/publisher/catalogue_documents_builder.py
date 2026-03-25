@@ -1,22 +1,7 @@
-from urllib import parse
 from dataclasses import asdict
-
-import requests
 
 from src._config.constants import DATA
 from src.publisher.record_setup import Image, Record, Replica
-
-
-def get_parent_id(raw_reference: str) -> str:
-    ref = raw_reference.rsplit("/", maxsplit=1)[0]
-    ref_url_safe = parse.quote(ref)
-
-    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-    result = requests.get(api_query)
-
-    parent_record = result.json()
-
-    return parent_record['records'][0]['id']
 
 
 def create_description(row_data: dict) -> str:
