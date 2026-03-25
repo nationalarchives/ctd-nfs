@@ -41,7 +41,7 @@ class Record:
     parentId: str # str(uuid) e.g. "8b2a43dd-752d-44a7-8163-2b64bb6e6cd0"
 
     """ generated at instantiation """
-    replicaId: str = field(default_factory=_create_uuid_str)
+    replicaId: str = field(default_factory=create_uuid_str)
 
     """ constants """
     catalogueLevel: int =  8

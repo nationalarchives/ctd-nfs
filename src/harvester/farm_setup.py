@@ -117,7 +117,7 @@ def _normalize_date(candi_date: str) -> str:
 @dataclass
 class Image:
     name: str
-    id: str = field(default_factory=_create_uuid_str) 
+    id: str = field(default_factory=create_uuid_str) 
 
 
 @dataclass
