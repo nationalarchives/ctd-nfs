@@ -173,6 +173,10 @@ class Farm:
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
 
     @property
+    def iaid() -> str:
+        return create_uuid_str()
+        
+    @property
     def catalogue_reference(self) -> str:
         """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
        Each farm must have a unique catalogue reference.
@@ -210,7 +214,6 @@ class Farm:
         self.forms[self.document_type].append(new_form)
 
     def __post_init__(self):
-        self.iaid = _create_uuid_str()
         self.addressee = Details(
             title=self.addressee_title,
             individual_name=self.addressee_individual_name,
