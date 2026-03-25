@@ -38,7 +38,6 @@ class Record:
     parentId: str # str(uuid) e.g. "8b2a43dd-752d-44a7-8163-2b64bb6e6cd0"
 
     """ generated at instantiation """
-    iaid: str = field(default_factory=_create_uuid_str)
     replicaId: str = field(default_factory=_create_uuid_str)
 
     """ constants """
@@ -55,6 +54,10 @@ class Record:
     scopeContent: dict = field(default_factory=description)
     source: str =  "FS"
     title: str = "title"
+
+    def __post_init__(self):
+        self.iaid = _get_farm_iaid(self.citableReference)
+
 
 @dataclass
 class Image:
