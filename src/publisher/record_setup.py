@@ -27,6 +27,18 @@ def held_by():
 def _create_uuid_filename():
     return f"66/MAF/32/{uuid.uuid4()}.jpg"
 
+def _get_farm_iaid(catalogue_reference: str) -> str:
+    with shelve.open(PATH.FARMS_DB, "r") as farms_db:   
+        farms = (
+            reference['Farm']
+            for county in farms_db
+            for reference in farms_db[county]
+            if reference == catalogue_reference
+        )
+    farm_instance = next(farms, None)
+    
+    return farm_instance.iaid
+
 closure_status = {
 	'Closed Or Retained Document, Closed Description': "C",
 	'Closed Or Retained Document, Open Description': "D",
