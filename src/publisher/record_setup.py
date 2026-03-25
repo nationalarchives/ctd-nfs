@@ -3,6 +3,12 @@ Dataclasses and factories used to create Discovery JSON records
 """
 from dataclasses import dataclass, field
 import uuid
+import shelve
+import requests
+
+from src._config.constants import DATA
+from src._config.constants import PATH
+from src._tools.helpers import create_uuid_str
 
 
 def description():
@@ -17,9 +23,6 @@ def held_by():
             "xReferenceName": "The National Archives, Kew",
         }
     ]
-
-def _create_uuid_str():
-    return f"{uuid.uuid4()}"
 
 def _create_uuid_filename():
     return f"66/MAF/32/{uuid.uuid4()}.jpg"

@@ -6,16 +6,12 @@ from collections import OrderedDict
 import shelve
 import re
 from datetime import datetime
-import uuid
 
 from src._config.constants import PATH, REGEX, DATA
+from src._tools.helpers import create_uuid_str
 
 
 type ListOrStr = list[str] | str
-
-
-def _create_uuid_str():
-    return f"{uuid.uuid4()}"
 
 
 def initialise_forms_mapping() -> OrderedDict:
