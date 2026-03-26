@@ -12,7 +12,7 @@ from src._tools.logging_setup import create_logger
 logger = create_logger("src._config", "logging.yaml")
 
 
-def test_nfs_checks_and_mergers():
+def test_file_processor():
     for file in Path(PATH.DB / "TEST").glob("*"):
         os.remove(file)
 
