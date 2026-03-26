@@ -1,4 +1,4 @@
-from harvester.details_resolution.resolver import \
+from src.harvester.details_resolution.resolver import \
     resolve_single_name_and_address, \
     resolve_multiple_details, \
     resolve_single_title_and_name
