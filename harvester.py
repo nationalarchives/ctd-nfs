@@ -10,8 +10,8 @@ def main():
     logger.info(" ===== HARVESTING FARMS ===== ")
     process_csv_files()
 
-    logger.info(" ===== CREATING PROOF FILES ===== ")
-    create_proof_files()
+    # logger.info(" ===== CREATING PROOF FILES ===== ")
+    # create_proof_files()
 
 
 if __name__ == "__main__":
