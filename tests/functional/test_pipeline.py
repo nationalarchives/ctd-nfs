@@ -17,12 +17,16 @@ def test_file_processor():
         os.remove(file)
 
     process_csv_files(test_mode=True)
-    create_proof_files(test_mode=True)
 
     with shelve.open(PATH.TEST_DB, 'r') as test_db:
         for reference in test_db.values():
             for farm in reference.values(): 
                 assert isinstance(farm['Farm'], Farm)
                 assert farm['source']
+
+
+def test_proof_creation():
+    create_proof_files(test_mode=True)
+
 
 
