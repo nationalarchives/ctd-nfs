@@ -98,4 +98,3 @@ class Replica:
     origination: str = "DigitalSurrogate"
     totalSize: None
 
-
