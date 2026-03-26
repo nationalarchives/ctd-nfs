@@ -1,5 +1,4 @@
-"""
-"""
+# TODO: split out Farm initialization attributes to new Form dataclass module
 
 from dataclasses import dataclass, field
 from collections import OrderedDict
@@ -144,7 +143,8 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: str
+    # TODO: extract these attributes to new Form dataclass which will be used when loading the csv
+    filename_1: str # TODO: create Filename ValueObject to include validation currently in row_data_validator.py
     filename_2: str
     document_type: str
     county: str
@@ -152,6 +152,8 @@ class Farm:
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
+    
+    # TODO: the following fields will all be InitVar, only used to create Details instances
     addressee_title: ListOrStr
     addressee_individual_name: ListOrStr
     addressee_group_names: ListOrStr
@@ -164,11 +166,13 @@ class Farm:
     farmer_individual_name: ListOrStr
     farmer_group_names: ListOrStr
     farmer_address: ListOrStr
+    
     acreage: ListOrStr
     OS_map_sheet: ListOrStr
     field_info_date: ListOrStr
     primary_record_date: ListOrStr
 
+    # TODO: move this to new Farm dataclass
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
 
@@ -176,6 +180,7 @@ class Farm:
     def iaid() -> str:
         return create_uuid_str()
         
+    # TODO: change private variables to non-private - not necessary in property method as only return value will be available
     @property
     def catalogue_reference(self) -> str:
         """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
@@ -195,6 +200,7 @@ class Farm:
         _parish_number, *_ = self.parish.split()
         return f"{_county_code}/{_parish_number}/{self.primary_farm_number}"
 
+    # TODO: move to new Farm dataclass
     def assign_filenames_to_forms(self):
         """_summary_
 
@@ -234,6 +240,8 @@ class Farm:
         )
         self.field_info_date=_normalize_date(self.field_info_date)
         self.primary_record_date=_normalize_date(self.primary_record_date)
+    
+        # TODO: move to new Farm dataclass
         self.assign_filenames_to_forms()
 
 
