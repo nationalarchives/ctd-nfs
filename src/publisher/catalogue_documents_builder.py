@@ -6,10 +6,10 @@ from src.publisher.record_setup import Image, Record, Replica
 
 
 def create_description(row_data: dict) -> str:
-    scope_and_content = [
-    f"{key}: {row_data[key]}<p>"
-    for key in DATA.DESCRIPTION_FIELDS
-    ]
+    description_values = {
+        key: row_data[key]
+        for key in DISCOVERY.DESCRIPTION_FIELDS
+    }
 
     return "".join(scope_and_content)
 
