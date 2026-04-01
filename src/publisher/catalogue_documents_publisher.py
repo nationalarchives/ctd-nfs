@@ -2,7 +2,7 @@
 """
 import json
 
-from src._config.constants import PATH, CSVEXCEL
+from src._tools.constants import PATH
 from src._tools.xlreader import read_file
 from src.publisher.catalogue_documents_builder import build_catalogue_documents
 

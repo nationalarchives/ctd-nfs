@@ -6,7 +6,7 @@ import shelve
 import re
 from datetime import datetime
 
-from src._config.constants import PATH, REGEX, DATA
+from src._tools.constants import PATH, REGEX, DATA
 from src._tools.helpers import create_uuid_str
 
 

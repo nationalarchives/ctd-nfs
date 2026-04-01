@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import pytest
 
-from src._config.constants import PATH
+from src._tools.constants import PATH
 from src.harvester.file_processor import process_csv_files
 from src.harvester.catalogue_proofs_builder import create_proof_files
 from src.harvester.farm_setup import Farm

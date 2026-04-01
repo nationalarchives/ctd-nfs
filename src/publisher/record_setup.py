@@ -7,8 +7,7 @@ import shelve
 import requests
 from urllib import parse
 
-from src._config.constants import DATA
-from src._config.constants import PATH
+from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
 
 

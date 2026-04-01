@@ -1,7 +1,7 @@
 import pytest
 import re
 
-from src._config.constants import REGEX
+from src._tools.constants import REGEX
 from src.harvester.farm_setup import Form, Image, initialise_forms_mapping
 
 

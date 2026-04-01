@@ -14,7 +14,7 @@ from datetime import datetime
 import logging
 
 from src.harvester.farm_setup import initialise_forms_mapping, initialise_warnings_mapping
-from src._config.constants import REGEX, DATA
+from src._tools.constants import REGEX, DATA
 
 
 logger = logging.getLogger(__name__)
