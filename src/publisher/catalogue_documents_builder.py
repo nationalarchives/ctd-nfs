@@ -1,8 +1,19 @@
-from dataclasses import asdict
+import shelve
+import logging
 
 from src._tools.constants import PATH, DATA, DISCOVERY
 from src.harvester.farm_setup import Farm
 from src.publisher.record_setup import Image, Record, Replica
+
+
+logger = logging.getLogger(__name__)
+
+
+def _get_farm_instance(catalogue_reference: str) -> Farm:
+    # TODO: parse county from filename
+    county_name = "RD Rutland"
+    with shelve.open(PATH.FARMS_DB, "r") as farms_db:
+        return farms_db[county_name][catalogue_reference]['Farm']
 
 
 def create_description(row_data: dict) -> str:
