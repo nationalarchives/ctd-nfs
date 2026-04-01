@@ -145,7 +145,7 @@ def create_proof_files(test_mode: bool = False):
             logger.info(f" --- Total farms created for {county}: {len(proof_data)}")
             
             excel_data = [{
-                'sheet_name': f"{county} Proof data",
+                'sheet_name': "Proof data",
                 'row_data': proof_data,
                 'column_settings': CSVEXCEL.PROOF_COLUMNS,
             }]
