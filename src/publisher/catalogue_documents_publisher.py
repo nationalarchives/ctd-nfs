@@ -60,7 +60,10 @@ def write_catalogue_documents(documents: list[dict]) -> None:
 def main(test_mode=False):
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
-    final_documents = build_catalogue_documents(cleaned_data)
+    final_documents = build_catalogue_documents(cleaned_data, test_mode)
+    if test_mode:
+        for document in final_documents:
+            pretty.pprint(document)
     write_catalogue_documents(final_documents)
 
 
