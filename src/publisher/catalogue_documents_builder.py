@@ -11,7 +11,7 @@ def create_description(row_data: dict) -> str:
         for key in DISCOVERY.DESCRIPTION_FIELDS
     }
 
-    return "".join(scope_and_content)
+    return DISCOVERY.DESCRIPTION_TEMPLATE.substitute(description_values)
 
 
 def build_record_subdocument(row: dict) -> Record:
