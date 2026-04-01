@@ -9,7 +9,7 @@ import shelve
 
 from src._tools.xlreader import read_file
 
-from src._config.constants import PATH
+from src._tools.constants import PATH
 def read_records_from_file(excel_file: Path) -> list[dict]:  
     """
     Reads data from file as a dictionary where each {key, value} refers to one sheet and its rows (a list of tuples) 
