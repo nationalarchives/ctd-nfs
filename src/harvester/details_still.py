@@ -60,4 +60,3 @@ def distill_details(list_of_details: list) -> str:
 
     return distilled_details[0] 
 
-
