@@ -57,11 +57,9 @@ closure_status = {
 }
 
 @dataclass
-class Record:
-    """ must be provided at instantiation """
+class Record:    
+    iaid: str # must be same as iaid from farm instance
     citableReference: str # catalogue reference e.g. "MAF 32/348/56/12"
-
-    """ generated at instantiation """
     replicaId: str = field(default_factory=create_uuid_str)
 
     """ constants """
@@ -80,7 +78,6 @@ class Record:
     title: str = "title"
 
     def __post_init__(self):
-        self.iaid = _get_farm_iaid(self.citableReference)
         self.parentId = _get_parent_id(self.citableReference)
         
 
