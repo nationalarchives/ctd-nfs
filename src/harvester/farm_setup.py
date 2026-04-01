@@ -175,10 +175,6 @@ class Farm:
     # TODO: move this to new Farm dataclass
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
-
-    @property
-    def iaid() -> str:
-        return create_uuid_str()
         
     # TODO: change private variables to non-private - not necessary in property method as only return value will be available
     @property
@@ -220,6 +216,7 @@ class Farm:
         self.forms[self.document_type].append(new_form)
 
     def __post_init__(self):
+        self.iaid = create_uuid_str()
         self.addressee = Details(
             title=self.addressee_title,
             individual_name=self.addressee_individual_name,
