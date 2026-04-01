@@ -19,7 +19,7 @@ def _get_parent_id(catalague_reference: str) -> str:
     ref = catalague_reference.rsplit("/", maxsplit=1)[0]
     ref_url_safe = parse.quote(ref)
 
-    api_query = fr"{DATA.DISCOVERY_API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+    api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
     result = requests.get(api_query)
     parent_record = result.json()
 
