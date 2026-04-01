@@ -2,10 +2,11 @@
 Merge list of names and address strings into one final version that will be visible in Discovery.
 """
 
-from collections import Counter
+from collections import namedtuple
 import pprint
 
 
+Form = namedtuple('Form', ['type', 'title', 'name', 'address'])
 pretty = pprint.PrettyPrinter(indent=4)
 
 # counts = Counter(list_of_addresses)
