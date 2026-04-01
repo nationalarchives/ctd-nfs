@@ -50,6 +50,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 
 def write_catalogue_documents(documents: list[dict]) -> None:
+    logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     for document in documents:
         with open(PATH.TEST_OUTPUT / f"{document['record']['iaid']}.json", 'w') as final_file:
             print(f"{final_file.name}")
