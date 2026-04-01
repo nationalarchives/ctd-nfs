@@ -5,6 +5,8 @@ Merge list of names and address strings into one final version that will be visi
 from collections import namedtuple
 import pprint
 
+from src.harvester.details_resolution.resolver import resolve_single_name_and_address
+
 
 Form = namedtuple('Form', ['type', 'title', 'name', 'address'])
 pretty = pprint.PrettyPrinter(indent=4)
