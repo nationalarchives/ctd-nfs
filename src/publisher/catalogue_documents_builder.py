@@ -24,15 +24,21 @@ def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
     return record
 
 
-def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Replica:
-    files_data = [
-        Image(originalName=filename.strip(",;"))
-        for filename in filenames.split()
-    ]
-
+def build_replica_subdocument(forms: dict, replica_id: str) -> Replica:
+    replica_files = []
+    for list_of_forms in forms.values():
+        if not list_of_forms:
+            continue
+        files = [
+            Image(originalName=image.name, id=image.id)
+            for form in list_of_forms
+            for image in form.images
+        ]
+        replica_files.extend(files)
+            
     return Replica(
         replicaId=replica_id,
-        files=files_data
+        files=replica_files
     )
 
 
