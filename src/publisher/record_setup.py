@@ -35,6 +35,15 @@ class Record:
 
     def __post_init__(self):
         self.parentId = _get_parent_id(self.citableReference)
+
+    def __repr__(self):       
+        return str({
+            'iaid': self.iaid,
+            'citableReference': self.citableReference,
+            'replicaId': self.replicaId,
+            'parentId': self.parentId,
+            'scopeContent': self.scopeContent,
+        } | DISCOVERY.RECORD_CONSTANTS)
         
 
 @dataclass
