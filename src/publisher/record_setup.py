@@ -87,8 +87,11 @@ class Record:
 @dataclass
 class Image:
     originalName: str
-    format: str = "jpg"
-    name: str = field(default_factory=_create_uuid_filename)
+    id: InitVar[str] = ""
+    
+    def __post_init__(self, id):
+        self.name = f"66/MAF/32/{id}.jpg"
+
 
 @dataclass
 class Replica:
