@@ -1,9 +1,7 @@
 """
 Dataclasses and factories used to create Discovery JSON records
 """
-from dataclasses import dataclass, field
-import uuid
-import shelve
+from dataclasses import dataclass, field, InitVar
 import requests
 from urllib import parse
 
@@ -11,33 +9,11 @@ from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
 
 
-def description():
-    return {'description': ""}
+def scope_and_content():
+    return {
+        'description': "",
+        'schema': """<colltype id="FarmSurvey">,</colltype>"""}
 
-def held_by():
-    """ constant for Record.heldBy attribute """
-    return [
-        {
-            "xReferenceId": "A13530124",
-            "xReferenceCode": "66",
-            "xReferenceName": "The National Archives, Kew",
-        }
-    ]
-
-def _create_uuid_filename():
-    return f"66/MAF/32/{uuid.uuid4()}.jpg"
-
-def _get_farm_iaid(catalogue_reference: str) -> str:
-    with shelve.open(PATH.FARMS_DB, "r") as farms_db:   
-        farms = (
-            reference['Farm']
-            for county in farms_db
-            for reference in farms_db[county]
-            if reference == catalogue_reference
-        )
-    farm_instance = next(farms, None)
-    
-    return farm_instance.iaid
 
 def _get_parent_id(catalague_reference: str) -> str:
     ref = catalague_reference.rsplit("/", maxsplit=1)[0]
