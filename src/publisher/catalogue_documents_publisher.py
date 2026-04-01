@@ -14,7 +14,9 @@ pretty = pprint.PrettyPrinter(indent=4)
 
 
 def load_excel_data() -> list[dict]:
-    data_file = PATH.TEST_INPUT / "Rutland - Interim to Final.xlsx"
+    # TODO: read file from INPUT folder without hardcoding and parse county from filename
+    data_file = PATH.INPUT / "RD Rutland Final Proof.xlsx"
+    logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
     excel_data = read_file(data_file)
 
     column_names = excel_data['Sheet'][0]
