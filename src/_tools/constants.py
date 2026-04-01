@@ -5,6 +5,7 @@ module for defining constants and constant namespaces.
 from pathlib import Path
 import re
 import calendar
+from string import Template
 
 
 class CSVandExcelNamespace():
@@ -60,9 +61,24 @@ class CSVandExcelNamespace():
         ('Acreage', 30),
         ('Appears on Ordnance Survey sheet(s)', 30),
         ('Field information date', 25),
-        # ('Field Date Warnings', 20),
         ('Primary farm record date', 25),
-        # ('Primary Date Warnings', 20)
+    ]
+    AXIELL_COLUMNS = [   
+        'Reference',
+        'Filenames',
+        'Record consists of',
+        'Farm number',
+        'Farm or holding',
+        'Addressee name',
+        'Addressee address',
+        'Farmer name',
+        'Farmer address',
+        'Landowner name',
+        'Landowner address',
+        'Acreage',
+        'Appears on Ordnance Survey sheet(s)',
+        'Field information date',
+        'Primary farm record date',
     ]
 
 
@@ -85,19 +101,6 @@ class DataNamespace():
     ]
     MONTH_NAMES: list = list(calendar.month_name)
     ABBR_MONTH_NAMES: list = list(calendar.month_abbr)
-    DISCOVERY_API_URI = r"https://discovery.nationalarchives.gov.uk/API"
-    DESCRIPTION_FIELDS = [
-        'Farm Number',
-        'Farm or holding',
-        'Addressee(s)',
-        'Farmer(s) or occupier(s)',
-        'Landowner(s)',
-        'Acreage',
-        'Appears on Ordnance Survey sheet(s)',
-        'Field information date',
-        'Primary farm record date',
-        'Record consists of',
-    ]
 
 
 class RegexNamespace():
@@ -150,8 +153,77 @@ class PathNamespace():
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
 
+class DiscoveryNamespace():
+    API_URI = r"https://discovery.nationalarchives.gov.uk/API"
+
+    _closure_status = {
+        'Closed Or Retained Document, Closed Description': "C",
+        'Closed Or Retained Document, Open Description': "D",
+        'Open Document, Open Description': "O",
+        'Partially Closed… not currently used': "P",
+    }
+    RECORD_CONSTANTS = {
+        'catalogueLevel': 8,
+        'coveringFromDate': 19410101,
+        'coveringToDate': 19431231,
+        'chargeType': 1,
+        'coveringDates': "1941-1943",
+        'closureStatus': _closure_status['Open Document, Open Description'],
+        'digitised': True,
+        'heldBy': [
+            {
+                "xReferenceId": "A13530124",
+                "xReferenceCode": "66",
+                "xReferenceName": "The National Archives, Kew",
+            }
+        ],
+        'legalStatus': "Public Record(s)",
+        'referencePart': 0,
+        'source': "FS",
+        'title': None,
+    }
+
+    # TODO: publlisher to use separate name and address fields instead of concatenated
+    DESCRIPTION_FIELDS = [
+        'catalogue_reference',
+        'farm_reference',
+        'filenames',
+        'forms',
+        'farm_name',
+        # 'addressee_name',
+        # 'addressee_address',
+        'addressee',
+        # 'farmer_name',
+        # 'farmer_address',
+        'farmer',
+        # 'landowner_name',
+        # 'landowner_address',
+        'landowners',
+        'acreage',
+        'os_sheet_number',
+        'field_info_date',
+        'primary_record_date',
+        'additional_farms',
+    ]
+    DESCRIPTION_TEMPLATE = Template(
+       """<emph altrender="doctype">FS</emph>""" +
+       """<emph altrender="farmNumber">$farm_reference</emph>""" +
+       """<emph altrender="farmName">$farm_name</emph>""" +
+       """<emph altrender="addressee">$addressee</emph>""" +
+       """<emph altrender="farmer">$farmer</emph>""" +
+       """<emph altrender="landowner">$landowners</emph>""" +
+       """<emph altrender="acreage">$acreage</emph>""" +
+       """<emph altrender="os_sheet_number">$os_sheet_number</emph>""" +
+       """<emph altrender="field_info_date">$field_info_date</emph>""" +
+       """<emph altrender="primary_record_date">$primary_record_date</emph>""" +
+       """<emph altrender="forms">$forms</emph>""" +
+       """<emph altrender="additional_farms">$additional_farms</emph>"""
+    )
+
+
 PATH = PathNamespace()
 REGEX = RegexNamespace()
 DATA = DataNamespace()
 CSVEXCEL = CSVandExcelNamespace()
+DISCOVERY = DiscoveryNamespace()
 
