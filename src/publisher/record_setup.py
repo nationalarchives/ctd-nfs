@@ -97,6 +97,23 @@ class Image:
 class Replica:
     replicaId: str # must be same as replicaId in record instance
     files: list[Image]
-    origination: str = "DigitalSurrogate"
-    totalSize: None
+
+    def __repr__(self):
+        images = [
+            {
+            'originalName': image.originalName,
+            'format': "jpg",
+            'name': image.name,
+            }
+            for image in self.files
+        ]
+        
+        return str({
+        'files': images,
+        'replicaId': self.replicaId,
+        'origination': "DigitalSurrogate",
+        'totalSize': None,
+        })
+    
+
 
