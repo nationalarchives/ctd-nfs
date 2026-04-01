@@ -53,12 +53,24 @@ def build_replica_subdocument(forms: dict, replica_id: str) -> Replica:
     )
 
 
-def build_catalogue_documents(cleaned_data: list[dict]) -> list[dict]:
+def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list[dict]:
+    logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
+
     documents = []
     for row in cleaned_data:
-        record = build_record_subdocument(row)
-        replica = build_replica_subdocument(row['Filenames'], record.iaid, record.replicaId)
-        documents.append({'record': asdict(record), 'replica': asdict(replica)})
+        if test_mode and row['catalogue_reference'] != "MAF 32/348/40/3a":
+            continue
+
+        farm = _get_farm_instance(row['catalogue_reference'])
+
+        record = build_record_subdocument(farm.iaid, row)
+        record: dict = eval(repr(record))      
+
+        replica = build_replica_subdocument(farm.forms, record['replicaId'])
+        replica: dict = eval(repr(replica))
+        
+        logger.info(f"--- Built record {record['iaid']} with {len(replica['files'])} images")
+        documents.append({'record': record, 'replica': replica})
 
     return documents
 
