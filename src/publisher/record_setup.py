@@ -25,33 +25,13 @@ def _get_parent_id(catalague_reference: str) -> str:
 
     return parent_record['records'][0]['id']
 
-closure_status = {
-	'Closed Or Retained Document, Closed Description': "C",
-	'Closed Or Retained Document, Open Description': "D",
-	'Open Document, Open Description': "O",
-	'Partially Closed… not currently used': "P",
-}
 
 @dataclass
 class Record:    
     iaid: str # must be same as iaid from farm instance
     citableReference: str # catalogue reference e.g. "MAF 32/348/56/12"
     replicaId: str = field(default_factory=create_uuid_str)
-
-    """ constants """
-    catalogueLevel: int =  8
-    coveringFromDate: int = 19410101
-    coveringToDate: int = 19431231
-    chargeType: int =  1
-    coveringDates: str =  "1941-1943"
-    closureStatus: str =  closure_status['Open Document, Open Description']
-    digitised: bool =  True
-    heldBy: list = field(default_factory=held_by)
-    legalStatus: str = "Public Record(s)"
-    referencePart: str = "0"
-    scopeContent: dict = field(default_factory=description)
-    source: str =  "FS"
-    title: str = "title"
+    scopeContent: dict = field(default_factory=scope_and_content)
 
     def __post_init__(self):
         self.parentId = _get_parent_id(self.citableReference)
