@@ -33,8 +33,11 @@ def read_records_from_file(excel_file: Path) -> list[dict]:
 
 if __name__ == "__main__":
 
-    lookup_table: list[dict] = read_records_from_file(PATH.EXCEL_LOOKUP_FILE)
-    with shelve.open(PATH.PIECE_LOOKUP_TABLE) as shelf:
-        shelf['pieces lookup table'] = lookup_table
-        pass
+    # lookup_table: list[dict] = read_records_from_file(PATH.EXCEL_LOOKUP_FILE)
+    with shelve.open(PATH.FARMS_DB, 'c') as farm_db:
+        for county in farm_db:
+            print(f"{county=}")
+            # if county == 'MX Middlesex':
+            #     farm_db[county] = {}
+
 
