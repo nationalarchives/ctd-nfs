@@ -1,10 +1,16 @@
 """
 """
 import json
+import pprint
 
 from src._tools.constants import PATH
 from src._tools.xlreader import read_file
+from src._tools.logging_setup import create_logger
 from src.publisher.catalogue_documents_builder import build_catalogue_documents
+
+
+logger = create_logger("src._config", "logging.yaml")
+pretty = pprint.PrettyPrinter(indent=4)
 
 
 def load_excel_data() -> list[dict]:
