@@ -14,7 +14,9 @@ pretty = pprint.PrettyPrinter(indent=4)
 # counts = Counter(list_of_addresses)
 
 
-def prepare_details_for_filtration(harvested_details: list) -> list:
+def prepare_details_for_distillation(harvested_details: list[Form]) -> list:
+    for form in harvested_details:
+        full_address = resolve_single_name_and_address(form.title, form.name, form.address)
     cleaned_details = [item for item in harvested_details if item != "[not specified]"]
     unique_details = list(set(cleaned_details))
     return sorted(unique_details, key=len)
