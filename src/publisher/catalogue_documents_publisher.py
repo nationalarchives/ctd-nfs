@@ -57,8 +57,12 @@ def write_catalogue_documents(documents: list[dict]) -> None:
             json.dump(document, final_file)   
            
             
-if __name__ == "__main__":
+def main(test_mode=False):
     excel_data = load_excel_data()
     cleaned_data = clean_excel_data(excel_data)
     final_documents = build_catalogue_documents(cleaned_data)
     write_catalogue_documents(final_documents)
+
+
+if __name__ == "__main__":
+    main(test_mode=True)
