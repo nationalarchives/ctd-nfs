@@ -92,7 +92,7 @@ class Image:
 
 @dataclass
 class Replica:
-    replicaId: str
+    replicaId: str # must be same as replicaId in record instance
     files: list[Image]
     origination: str = "DigitalSurrogate"
     totalSize: None
