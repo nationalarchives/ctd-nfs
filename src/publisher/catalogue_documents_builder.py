@@ -14,13 +14,14 @@ def create_description(row_data: dict) -> str:
     return DISCOVERY.DESCRIPTION_TEMPLATE.substitute(description_values)
 
 
-def build_record_subdocument(row: dict) -> Record:
-    description = create_description(row)
-    return Record(
-            citableReference=row['Reference'],
-            scopeContent={'description': description},
-            title=row['Farm Number'],
+def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
+    record = Record(
+            iaid=farm_iaid,
+            citableReference=row['catalogue_reference'],
         )
+    record.scopeContent['description'] = create_description(row)
+
+    return record
 
 
 def build_replica_subdocument(filenames: str, iaid: str, replica_id: str) -> Replica:
