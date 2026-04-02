@@ -4,6 +4,15 @@ from dataclasses import dataclass
 type ListOrStr = list[str] | str
 
 
+
+class BusinessRuleValidationException(Exception):
+  """A base class for all business rule validation exceptions"""
+
+
+class ValueObject:
+  """A base class for all value objects"""
+
+
 @dataclass
 class Form:
     """
