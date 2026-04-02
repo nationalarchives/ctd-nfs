@@ -25,6 +25,9 @@ class Filename(ValueObject):
 
         if not (self.page_pattern_match or self.cover_pattern_match):
             raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
+        
+    def is_cover(self) -> bool:
+        return True if self.cover_pattern_match else False
 
 
 @dataclass
