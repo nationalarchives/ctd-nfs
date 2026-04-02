@@ -20,10 +20,10 @@ class Filename(ValueObject):
     name: str
 
     def __post_init(self):
-        page_pattern_match: re.Match = REGEX.FORM_PATTERN.match(self.name)
-        cover_pattern_match: re.Match = REGEX.COVER_PATTERN.match(self.name)
+        self.page_pattern_match: re.Match = REGEX.FORM_PATTERN.match(self.name)
+        self.cover_pattern_match: re.Match = REGEX.COVER_PATTERN.match(self.name)
 
-        if not (page_pattern_match or cover_pattern_match):
+        if not (self.page_pattern_match or self.cover_pattern_match):
             raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
 
 
