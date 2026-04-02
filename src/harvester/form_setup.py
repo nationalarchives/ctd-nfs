@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+import re
+
+from src._tools.constants import REGEX
 
 
 type ListOrStr = list[str] | str
-
 
 
 class BusinessRuleValidationException(Exception):
@@ -18,7 +20,11 @@ class Filename(ValueObject):
     name: str
 
     def __post_init(self):
-       raise BusinessRuleValidationException("")
+        page_pattern_match: re.Match = REGEX.FORM_PATTERN.match(self.name)
+        cover_pattern_match: re.Match = REGEX.COVER_PATTERN.match(self.name)
+
+        if not (page_pattern_match or cover_pattern_match):
+            raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
 
 
 @dataclass
