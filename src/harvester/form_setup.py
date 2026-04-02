@@ -15,7 +15,10 @@ class ValueObject:
 
 @dataclass(frozen=True)
 class Filename(ValueObject):
+    name: str
 
+    def __post_init(self):
+       raise BusinessRuleValidationException("")
 
 
 @dataclass
