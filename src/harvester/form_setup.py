@@ -32,7 +32,7 @@ class Filename(ValueObject):
             raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
         
     def is_cover(self) -> bool:
-        if self.cover_pattern_match or self.page_pattern_match['image'] == "0001":
+        if cover_pattern_match(self.name) or page_pattern_match(self.name)['image'] == "0001":
             return True
 
         return False     
