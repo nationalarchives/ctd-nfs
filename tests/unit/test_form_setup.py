@@ -2,7 +2,8 @@ from src.harvester.form_setup import Filename
 
 
 def test_valid_filename():
-    test_name = "MAF32-194-1_59.tif"
+    fixture = "MAF32-194-1_59.tif"
+    test = Filename(fixture)
 
     assert isinstance(Filename(test_name), Filename)
 
