@@ -26,10 +26,10 @@ class Filename(ValueObject):
 
     @property   
     def is_cover(self) -> bool:
-        if cover_pattern_match(self.name) or page_pattern_match(self.name)['image'] == "0001":
+        if cover_pattern_match(self.name) or page_pattern_match(self.name)['image_number'] == "0001":
             return True
 
-        return False     
+        return False
 
 
 @dataclass
