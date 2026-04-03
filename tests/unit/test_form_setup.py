@@ -1,3 +1,6 @@
+import pytest
+
+from src._tools.helpers import BusinessRuleValidationException
 from src.harvester.form_setup import Filename
 
 
@@ -10,8 +13,17 @@ def test_valid_filename():
 
 
 def test_cover_image():
-    test_name = "MAF32-51-285_0001.tif"
+    fixture = "MAF32-51-285_0001.tif"
+    test = Filename(fixture)
 
-    assert isinstance(Filename(test_name), Filename)
+    assert isinstance(test, Filename)
+    assert test.is_cover
+
+
+def test_bad_image_name():
+    fixture = "MAF3251286.tif"
+
+    with pytest.raises(BusinessRuleValidationException):
+        Filename(fixture)
 
 
