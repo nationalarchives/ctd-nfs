@@ -1,7 +1,7 @@
 import pytest
 
 from src._tools.helpers import DomainRuleValidationException
-from src.harvester.form_setup import Filename
+from src.harvester.form_setup import Filename, FormType
 
 
 def test_valid_filename():
@@ -46,4 +46,9 @@ def test_properties():
     assert test.parish_number == "1"
 
 
+def test_bad_form_types():
+    fixture = 'SF 51'
+
+    with pytest.raises(DomainRuleValidationException):
+        FormType(fixture)
 
