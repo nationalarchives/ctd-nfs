@@ -84,6 +84,17 @@ class CSVandExcelNamespace():
 
 class DataNamespace():
     __slots__ = ()
+    FORM_TYPES = [
+		'C 47/SSY',
+		'C 49/SSY',
+		'C51/SSY',
+		'SF',
+		'SF C69/SSY',
+		'B496/EI',
+		'Other',
+		'Cover',
+    ]   
+
     DATE_FORMATS = [
         "%d %B %Y",
         "%d %B %y",
