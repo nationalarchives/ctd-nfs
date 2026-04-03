@@ -5,7 +5,8 @@ def test_valid_filename():
     fixture = "MAF32-194-1_59.tif"
     test = Filename(fixture)
 
-    assert isinstance(Filename(test_name), Filename)
+    assert isinstance(test, Filename)
+    assert test.is_cover is False
 
 
 def test_cover_image():
