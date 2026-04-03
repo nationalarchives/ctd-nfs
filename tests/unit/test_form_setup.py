@@ -42,6 +42,8 @@ def test_properties():
 
     assert isinstance(test, Filename)
     assert test.image_number == 59
+    assert test.piece == "194"
+    assert test.parish_number == "1"
 
 
 
