@@ -12,7 +12,7 @@ def test_valid_filename():
     assert test.is_cover is False
 
 
-def test_cover_image():
+def test_cover_image_1():
     fixture = "MAF32-51-285_0001.tif"
     test = Filename(fixture)
 
