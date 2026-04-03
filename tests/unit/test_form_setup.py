@@ -36,3 +36,12 @@ def test_bad_image_name():
         Filename(fixture)
 
 
+def test_image_number():
+    fixture = "MAF32-194-1_59.tif"
+    test = Filename(fixture)
+
+    assert isinstance(test, Filename)
+    assert test.image_number == 59
+
+
+
