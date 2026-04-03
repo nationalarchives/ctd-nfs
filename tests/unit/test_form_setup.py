@@ -1,6 +1,6 @@
 import pytest
 
-from src._tools.helpers import BusinessRuleValidationException
+from src._tools.helpers import DomainRuleValidationException
 from src.harvester.form_setup import Filename
 
 
@@ -32,7 +32,7 @@ def test_cover_image_2():
 def test_bad_image_name():
     fixture = "MAF3251286.tif"
 
-    with pytest.raises(BusinessRuleValidationException):
+    with pytest.raises(DomainRuleValidationException):
         Filename(fixture)
 
 

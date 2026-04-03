@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 import re
 
-from _tools.helpers import BusinessRuleValidationException, ValueObject
-from src._tools.constants import REGEX
+from _tools.helpers import DomainRuleValidationException, ValueObject
+from src._tools.constants import REGEX, DATA
 
 
 type ListOrStr = list[str] | str
@@ -22,7 +22,7 @@ class Filename(ValueObject):
 
     def __post_init__(self):
         if not (page_pattern_match(self.name) or cover_pattern_match(self.name)):
-            raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
+            raise DomainRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
 
     @property   
     def is_cover(self) -> bool:

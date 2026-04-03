@@ -5,7 +5,7 @@ def create_uuid_str():
     return f"{uuid.uuid4()}"
 
 
-class BusinessRuleValidationException(Exception):
+class DomainRuleValidationException(Exception):
     """A base class for all business rule validation exceptions"""
 
 
