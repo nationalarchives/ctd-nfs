@@ -20,6 +20,15 @@ def test_cover_image_1():
     assert test.is_cover
 
 
+def test_cover_image_2():
+    fixture = "MAF32-51-285.tif"
+    test = Filename(fixture)
+
+    assert isinstance(test, Filename)
+    assert test.is_cover
+    assert test.image_number is None
+
+
 def test_bad_image_name():
     fixture = "MAF3251286.tif"
 
