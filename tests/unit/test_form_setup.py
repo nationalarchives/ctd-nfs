@@ -36,7 +36,7 @@ def test_bad_image_name():
         Filename(fixture)
 
 
-def test_image_number():
+def test_properties():
     fixture = "MAF32-194-1_59.tif"
     test = Filename(fixture)
 
