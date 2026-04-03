@@ -35,6 +35,16 @@ class Filename(ValueObject):
     def image_number(self) -> int | None:
         if match := page_pattern_match(self.name):
             return int(match['image_number'])
+    
+    @property
+    def piece(self) -> str:
+        match = (page_pattern_match(self.name) or cover_pattern_match(self.name))
+        return match['piece']
+    
+    @property
+    def parish_number(self) -> str:
+        match = (page_pattern_match(self.name) or cover_pattern_match(self.name))
+        return match['parish_number']
 
 
 @dataclass
