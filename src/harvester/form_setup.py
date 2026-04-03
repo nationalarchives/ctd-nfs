@@ -66,7 +66,7 @@ class Form:
     """
     filename_1: Filename
     filename_2: Filename | None
-    document_type: str
+    document_type: FormType
     county: str
     parish: str
     primary_farm_number: str
