@@ -55,8 +55,8 @@ class Form:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: str # TODO: create Filename ValueObject to include validation currently in row_data_validator.py
-    filename_2: str
+    filename_1: Filename
+    filename_2: Filename | None
     document_type: str
     county: str
     parish: str
