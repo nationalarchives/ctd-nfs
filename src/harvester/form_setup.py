@@ -1,18 +1,11 @@
 from dataclasses import dataclass
 import re
 
+from _tools.helpers import BusinessRuleValidationException, ValueObject
 from src._tools.constants import REGEX
 
 
 type ListOrStr = list[str] | str
-
-
-class BusinessRuleValidationException(Exception):
-    """A base class for all business rule validation exceptions"""
-
-
-class ValueObject:
-    """A base class for all value objects"""
 
 
 def page_pattern_match(filename: str) -> re.Match:
