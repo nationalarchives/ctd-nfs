@@ -47,6 +47,15 @@ class Filename(ValueObject):
         return match['parish_number']
 
 
+@dataclass(frozen=True)
+class FormType(ValueObject):
+    name: str
+
+    def __post_init__(self):
+        if self.name not in DATA.FORM_TYPES:
+            raise DomainRuleValidationException(f"Form type '{self.name}' is not a recognised form.")
+
+
 @dataclass
 class Form:
     """
