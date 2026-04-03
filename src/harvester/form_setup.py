@@ -23,7 +23,8 @@ class Filename(ValueObject):
     def __post_init__(self):
         if not (page_pattern_match(self.name) or cover_pattern_match(self.name)):
             raise BusinessRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
-        
+
+    @property   
     def is_cover(self) -> bool:
         if cover_pattern_match(self.name) or page_pattern_match(self.name)['image'] == "0001":
             return True
