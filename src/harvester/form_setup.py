@@ -30,6 +30,11 @@ class Filename(ValueObject):
             return True
 
         return False
+    
+    @property
+    def image_number(self) -> int | None:
+        if match := page_pattern_match(self.name):
+            return int(match['image_number'])
 
 
 @dataclass
