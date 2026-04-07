@@ -120,8 +120,8 @@ class Transcription:
     county: str
     parish: str
     primary_farm_number: str
-    additional_farms: list[str]
-    farm_name: list[str]
+    additional_farms: str
+    farm_name: str
     addressee_title: InitVar[str]
     addressee_individual_name: InitVar[str]
     addressee_group_names: InitVar[str]
