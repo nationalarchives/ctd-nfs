@@ -149,6 +149,12 @@ class Transcription:
         ]
         return all(no_values)
     
+    # @property
+    # def is_cover_page(self) -> bool:
+    #     if self.file1.cover and self.document_type == "Cover":
+    #         return True
+    #     return False
+    
     def __post_init__(self, 
                       filename_1, filename_2, 
                       addressee_title, addressee_individual_name, addressee_group_names, address,
@@ -177,4 +183,7 @@ class Transcription:
         )
         self.field_info_date=_normalize_date(self.field_info_date)
         self.primary_record_date=_normalize_date(self.primary_record_date)
+
+        # if not self.is_cover_page and self.no_data:
+        #     raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid form patterns but no farm data provided.")
 
