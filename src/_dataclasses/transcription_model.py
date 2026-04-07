@@ -5,9 +5,6 @@ from src._tools.helpers import DomainRuleValidationException, ValueObject
 from src._tools.constants import REGEX, DATA
 
 
-type ListOrStr = list[str] | str
-
-
 def page_pattern_match(filename: str) -> re.Match:
     return REGEX.FORM_PATTERN.match(filename)
 
@@ -72,20 +69,20 @@ class Form:
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
-    addressee_title: ListOrStr
-    addressee_individual_name: ListOrStr
-    addressee_group_names: ListOrStr
-    address: ListOrStr
-    owner_title: ListOrStr
-    owner_individual_name: ListOrStr
-    owner_group_names: ListOrStr
-    owner_address: ListOrStr
-    farmer_title: ListOrStr
-    farmer_individual_name: ListOrStr
-    farmer_group_names: ListOrStr
-    farmer_address: ListOrStr    
-    acreage: ListOrStr
-    OS_map_sheet: ListOrStr
-    field_info_date: ListOrStr
-    primary_record_date: ListOrStr
+    addressee_title: str
+    addressee_individual_name: str
+    addressee_group_names: str
+    address: str
+    owner_title: str
+    owner_individual_name: str
+    owner_group_names: str
+    owner_address: str
+    farmer_title: str
+    farmer_individual_name: str
+    farmer_group_names: str
+    farmer_address: str    
+    acreage: str
+    OS_map_sheet: str
+    field_info_date: str
+    primary_record_date: str
 
