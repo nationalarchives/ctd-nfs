@@ -158,3 +158,6 @@ class Form:
             group_names=self.farmer_group_names,
             address=self.farmer_address,
         )
+        self.field_info_date=_normalize_date(self.field_info_date)
+        self.primary_record_date=_normalize_date(self.primary_record_date)
+
