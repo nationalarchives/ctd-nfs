@@ -1,7 +1,7 @@
 import pytest
 
 from src._tools.helpers import DomainRuleValidationException
-from src.harvester.form_setup import Filename, FormType
+from src._dataclasses.transcription_model import Filename, FormType
 
 
 def test_valid_filename():
