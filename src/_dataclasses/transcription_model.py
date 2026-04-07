@@ -107,7 +107,7 @@ def _normalize_date(candi_date: str) -> str:
 
 
 @dataclass
-class Form:
+class Transcription:
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
     all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
