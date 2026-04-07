@@ -158,22 +158,22 @@ class Transcription:
         self.file1 = filename_1
         self.file2 = filename_2
         self.addressee = Details(
-            title=self.addressee_title,
-            individual_name=self.addressee_individual_name,
-            group_names=self.addressee_group_names,
-            address=self.address,
+            title=addressee_title,
+            individual_name=addressee_individual_name,
+            group_names=addressee_group_names,
+            address=address,
         )
         self.owner = Details(
-            title=self.owner_title,
-            individual_name=self.owner_individual_name,
-            group_names=self.owner_group_names,
-            address=self.owner_address,
+            title=owner_title,
+            individual_name=owner_individual_name,
+            group_names=owner_group_names,
+            address=owner_address,
         )
         self.farmer = Details(
-            title=self.farmer_title,
-            individual_name=self.farmer_individual_name,
-            group_names=self.farmer_group_names,
-            address=self.farmer_address,
+            title=farmer_title,
+            individual_name=farmer_individual_name,
+            group_names=farmer_group_names,
+            address=farmer_address,
         )
         self.field_info_date=_normalize_date(self.field_info_date)
         self.primary_record_date=_normalize_date(self.primary_record_date)
