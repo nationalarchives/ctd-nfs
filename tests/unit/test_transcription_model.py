@@ -1,6 +1,6 @@
 import pytest
 
-from src._tools.helpers import DomainRuleValidationException
+from src._tools.helpers import TranscriptionDataError
 from src._dataclasses.transcription_model import Filename, FormType
 
 
@@ -32,7 +32,7 @@ def test_cover_image_2():
 def test_bad_image_name():
     fixture = "MAF3251286.tif"
 
-    with pytest.raises(DomainRuleValidationException):
+    with pytest.raises(TranscriptionDataError):
         Filename(fixture)
 
 
@@ -49,6 +49,6 @@ def test_properties():
 def test_bad_form_types():
     fixture = 'SF 51'
 
-    with pytest.raises(DomainRuleValidationException):
+    with pytest.raises(TranscriptionDataError):
         FormType(fixture)
 

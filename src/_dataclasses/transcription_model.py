@@ -2,7 +2,7 @@ from dataclasses import dataclass, InitVar
 import re
 from datetime import datetime
 
-from src._tools.helpers import DomainRuleValidationException, ValueObject
+from src._tools.helpers import TranscriptionDataError, ValueObject
 from src._tools.constants import REGEX, DATA
 
 
@@ -20,7 +20,7 @@ class Filename(ValueObject):
 
     def __post_init__(self):
         if not (_page_pattern_match(self.name) or _cover_pattern_match(self.name)):
-            raise DomainRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
+            raise TranscriptionDataError(f"{self.name} does not match expected pattern for form images or cover.")
 
     @property   
     def is_cover(self) -> bool:
@@ -51,7 +51,8 @@ class FormType(ValueObject):
 
     def __post_init__(self):
         if self.name not in DATA.FORM_TYPES:
-            raise DomainRuleValidationException(f"Form type '{self.name}' is not a recognised form.")
+            raise TranscriptionDataError(f"Form type '{self.name}' is not a recognised form.")
+
 
 @dataclass
 class Details:
