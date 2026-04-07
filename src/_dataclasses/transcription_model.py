@@ -77,18 +77,18 @@ class Form:
     primary_farm_number: str
     additional_farms: list[str]
     farm_name: list[str]
-    addressee_title: str
-    addressee_individual_name: str
-    addressee_group_names: str
-    address: str
-    owner_title: str
-    owner_individual_name: str
-    owner_group_names: str
-    owner_address: str
-    farmer_title: str
-    farmer_individual_name: str
-    farmer_group_names: str
-    farmer_address: str    
+    addressee_title: InitVar[str]
+    addressee_individual_name: InitVar[str]
+    addressee_group_names: InitVar[str]
+    address: InitVar[str]
+    owner_title: InitVar[str]
+    owner_individual_name: InitVar[str]
+    owner_group_names: InitVar[str]
+    owner_address: InitVar[str]
+    farmer_title: InitVar[str]
+    farmer_individual_name: InitVar[str]
+    farmer_group_names: InitVar[str]
+    farmer_address: InitVar[str]
     acreage: str
     OS_map_sheet: str
     field_info_date: str
@@ -97,3 +97,21 @@ class Form:
     def __post_init__(self):
         self.file1 = self.filename_1
         self.file2 = self.filename_2
+        self.addressee = Details(
+            title=self.addressee_title,
+            individual_name=self.addressee_individual_name,
+            group_names=self.addressee_group_names,
+            address=self.address,
+        )
+        self.owner = Details(
+            title=self.owner_title,
+            individual_name=self.owner_individual_name,
+            group_names=self.owner_group_names,
+            address=self.owner_address,
+        )
+        self.farmer = Details(
+            title=self.farmer_title,
+            individual_name=self.farmer_individual_name,
+            group_names=self.farmer_group_names,
+            address=self.farmer_address,
+        )
