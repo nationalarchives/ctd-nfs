@@ -139,9 +139,24 @@ class Transcription:
     field_info_date: str
     primary_record_date: str
 
-    def __post_init__(self):
-        self.file1 = self.filename_1
-        self.file2 = self.filename_2
+    @property
+    def no_data(self) -> bool:
+        no_values = [
+            getattr(self, field_name)
+            for field_name in self.__dict__
+            if field_name not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ] \
+                and getattr(self, field_name) == "[not specified]"
+        ]
+        return all(no_values)
+    
+    def __post_init__(self, 
+                      filename_1, filename_2, 
+                      addressee_title, addressee_individual_name, addressee_group_names, address,
+                      owner_title, owner_individual_name, owner_group_names, owner_address,
+                      farmer_title, farmer_individual_name, farmer_group_names, farmer_address,
+                      ):
+        self.file1 = filename_1
+        self.file2 = filename_2
         self.addressee = Details(
             title=self.addressee_title,
             individual_name=self.addressee_individual_name,
