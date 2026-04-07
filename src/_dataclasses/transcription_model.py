@@ -52,6 +52,14 @@ class FormType(ValueObject):
         if self.name not in DATA.FORM_TYPES:
             raise DomainRuleValidationException(f"Form type '{self.name}' is not a recognised form.")
 
+@dataclass
+class Details:
+    title: str
+    individual_name: str
+    group_names: str
+    address: str
+    full_address: str = ""
+
 
 @dataclass
 class Form:
