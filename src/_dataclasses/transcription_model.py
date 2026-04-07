@@ -114,8 +114,8 @@ class Transcription:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: InitVar[Filename]
-    filename_2: InitVar[Filename | None]
+    filename_1: InitVar[str]
+    filename_2: InitVar[str | None]
     document_type: FormType
     county: str
     parish: str
@@ -155,8 +155,8 @@ class Transcription:
                       owner_title, owner_individual_name, owner_group_names, owner_address,
                       farmer_title, farmer_individual_name, farmer_group_names, farmer_address,
                       ):
-        self.file1 = filename_1
-        self.file2 = filename_2
+        self.file1 = Filename(filename_1)
+        self.file2 = Filename(filename_2) if filename_2 else None
         self.addressee = Details(
             title=addressee_title,
             individual_name=addressee_individual_name,
