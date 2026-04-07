@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, InitVar
 import re
 
 from src._tools.helpers import DomainRuleValidationException, ValueObject
@@ -61,8 +61,8 @@ class Form:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: Filename
-    filename_2: Filename | None
+    filename_1: InitVar[Filename]
+    filename_2: InitVar[Filename | None]
     document_type: FormType
     county: str
     parish: str
@@ -86,3 +86,6 @@ class Form:
     field_info_date: str
     primary_record_date: str
 
+    def __post_init__(self):
+        self.file1 = self.filename_1
+        self.file2 = self.filename_2
