@@ -61,6 +61,49 @@ class Details:
     full_address: str = ""
 
 
+def _normalize_date(candi_date: str) -> str:
+    """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
+    Note: day must not have leading zeros.
+
+    Args:
+        date_str (str): The date string to normalize.
+
+    Returns:
+        str: The normalized date string.
+    """
+
+    if REGEX.MONTH.match(candi_date) or REGEX.MON.match(candi_date):
+        if REGEX.MON.match(candi_date):
+            index = DATA.ABBR_MONTH_NAMES.index(candi_date)
+            candi_date = DATA.MONTH_NAMES[index]
+        return f"{candi_date}"
+
+    if REGEX.DAYMONTH.match(candi_date) or REGEX.DAYMON.match(candi_date):
+        day, month = candi_date.split()
+        if REGEX.DAYMON.match(candi_date):
+            index = DATA.ABBR_MONTH_NAMES.index(month)
+            month = DATA.MONTH_NAMES[index]
+        return f"{int(day)} {month}"
+
+    candi_date = REGEX.REMOVE_DELIMITERS.sub(' ', candi_date)
+    date_match: dict[re.Match] = {
+        'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
+        'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
+    }
+    if not (date_match['daymonthyear'] or date_match['ddmmyyyy']):
+        return candi_date
+
+    for fmt in DATA.DATE_FORMATS:
+        try:
+            parsed_date = datetime.strptime(candi_date, fmt)
+            day, month, year = parsed_date.strftime("%d %B %Y").split()
+            break
+        except ValueError:
+            continue
+
+    return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
+
+
 @dataclass
 class Form:
     """
