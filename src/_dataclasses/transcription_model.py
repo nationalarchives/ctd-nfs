@@ -1,5 +1,6 @@
 from dataclasses import dataclass, InitVar
 import re
+from datetime import datetime
 
 from src._tools.helpers import DomainRuleValidationException, ValueObject
 from src._tools.constants import REGEX, DATA
