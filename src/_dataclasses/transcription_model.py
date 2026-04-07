@@ -6,11 +6,11 @@ from src._tools.helpers import DomainRuleValidationException, ValueObject
 from src._tools.constants import REGEX, DATA
 
 
-def page_pattern_match(filename: str) -> re.Match:
+def _page_pattern_match(filename: str) -> re.Match:
     return REGEX.FORM_PATTERN.match(filename)
 
 
-def cover_pattern_match(filename: str) -> re.Match:
+def _cover_pattern_match(filename: str) -> re.Match:
     return REGEX.COVER_PATTERN.match(filename)
 
 
@@ -19,29 +19,29 @@ class Filename(ValueObject):
     name: str
 
     def __post_init__(self):
-        if not (page_pattern_match(self.name) or cover_pattern_match(self.name)):
+        if not (_page_pattern_match(self.name) or _cover_pattern_match(self.name)):
             raise DomainRuleValidationException(f"{self.name} does not match expected pattern for form images or cover.")
 
     @property   
     def is_cover(self) -> bool:
-        if cover_pattern_match(self.name) or page_pattern_match(self.name)['image_number'] == "0001":
+        if _cover_pattern_match(self.name) or _page_pattern_match(self.name)['image_number'] == "0001":
             return True
 
         return False
     
     @property
     def image_number(self) -> int | None:
-        if match := page_pattern_match(self.name):
+        if match := _page_pattern_match(self.name):
             return int(match['image_number'])
     
     @property
     def piece(self) -> str:
-        match = (page_pattern_match(self.name) or cover_pattern_match(self.name))
+        match = (_page_pattern_match(self.name) or _cover_pattern_match(self.name))
         return match['piece']
     
     @property
     def parish_number(self) -> str:
-        match = (page_pattern_match(self.name) or cover_pattern_match(self.name))
+        match = (_page_pattern_match(self.name) or _cover_pattern_match(self.name))
         return match['parish_number']
 
 
