@@ -100,7 +100,7 @@ def _normalize_date(candi_date: str) -> str:
         try:
             parsed_date = datetime.strptime(candi_date, fmt)
             day, month, year = parsed_date.strftime("%d %B %Y").split()
-            break
+            return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
         except ValueError:
             continue
 
