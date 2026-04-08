@@ -6,11 +6,11 @@ from src._tools.helpers import TranscriptionDataError, ValueObject
 from src._tools.constants import REGEX, DATA
 
 
-def _page_pattern_match(filename: str) -> re.Match:
+def _page_pattern_match(filename: str) -> re.Match[str] | None:
     return REGEX.FORM_PATTERN.match(filename)
 
 
-def _cover_pattern_match(filename: str) -> re.Match:
+def _cover_pattern_match(filename: str) -> re.Match[str] | None:
     return REGEX.COVER_PATTERN.match(filename)
 
 
