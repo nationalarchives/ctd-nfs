@@ -103,8 +103,9 @@ def _normalize_date(candi_date: str) -> str:
             return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
         except ValueError:
             continue
+    
+    return candi_date
 
-    return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
 
 @dataclass
