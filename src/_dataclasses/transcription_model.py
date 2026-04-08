@@ -89,7 +89,7 @@ def _normalize_date(candi_date: str) -> str:
         return f"{int(day)} {month}"
 
     candi_date = REGEX.REMOVE_DELIMITERS.sub(' ', candi_date)
-    date_match: dict[re.Match] = {
+    date_match = {
         'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
         'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
     }
