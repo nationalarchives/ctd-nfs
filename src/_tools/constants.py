@@ -121,8 +121,8 @@ class RegexNamespace():
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?\.tif$""")   
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
-    _month_names: list = "|".join(DataNamespace.MONTH_NAMES[1:])
-    _abbr_month_names: list = "|".join(DataNamespace.ABBR_MONTH_NAMES[1:])
+    _month_names: str = "|".join(DataNamespace.MONTH_NAMES[1:])
+    _abbr_month_names: str = "|".join(DataNamespace.ABBR_MONTH_NAMES[1:])
 
     DAYMONTHYEAR = re.compile(fr"""^(?P<day>\d\d?) +(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
     MONTHYEAR = re.compile(fr"""^(?P<month>{_month_names}) +(?P<year>\d\d\d\d)$""")
