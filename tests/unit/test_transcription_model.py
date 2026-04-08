@@ -41,7 +41,8 @@ def test_reference_values_no_farm_data():
 	test = Transcription(**fixture)
 	assert test.no_data
 	
-@pytest.mark.skip()
+
+# @pytest.mark.skip()
 def test_cover_page_with_transcription_values():
     fixture = {
             "filename_1": "MAF32194-1.tif",
