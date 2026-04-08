@@ -118,7 +118,7 @@ class Transcription:
     """
     filename_1: InitVar[str]
     filename_2: InitVar[str | None]
-    document_type: FormType
+    document_type: InitVar[str]
     county: str
     parish: str
     primary_farm_number: str
