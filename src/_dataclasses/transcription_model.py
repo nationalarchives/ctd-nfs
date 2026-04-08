@@ -24,9 +24,10 @@ class Filename(ValueObject):
 
     @property   
     def is_cover(self) -> bool:
-        if _cover_pattern_match(self.name) or _page_pattern_match(self.name)['image_number'] == "0001":
+        if _cover_pattern_match(self.name):
             return True
-
+        if (match := _page_pattern_match(self.name)) and match['image_number'] == "0001":
+            return True
         return False
     
     @property
@@ -35,14 +36,14 @@ class Filename(ValueObject):
             return int(match['image_number'])
     
     @property
-    def piece(self) -> str:
-        match = (_page_pattern_match(self.name) or _cover_pattern_match(self.name))
-        return match['piece']
+    def piece(self) -> str | None:
+        if match := (_page_pattern_match(self.name) or _cover_pattern_match(self.name)):
+            return match['piece']
     
     @property
-    def parish_number(self) -> str:
-        match = (_page_pattern_match(self.name) or _cover_pattern_match(self.name))
-        return match['parish_number']
+    def parish_number(self) -> str | None:
+        if match := (_page_pattern_match(self.name) or _cover_pattern_match(self.name)):
+            return match['parish_number']
 
 
 @dataclass(frozen=True)
