@@ -46,7 +46,7 @@ def test_reference_values_no_farm_data():
 def test_cover_page_with_transcription_values():
     fixture = {
             "filename_1": "MAF32194-1.tif",
-            'filename_2': None,
+            'filename_2': "",
             "document_type": "Cover",
             "county": "WD Westmorland",
             "parish": "1 Ambleside",
