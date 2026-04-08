@@ -158,13 +158,14 @@ class Transcription:
     #     return False
     
     def __post_init__(self, 
-                      filename_1, filename_2, 
+                      filename_1, filename_2, document_type,
                       addressee_title, addressee_individual_name, addressee_group_names, address,
                       owner_title, owner_individual_name, owner_group_names, owner_address,
                       farmer_title, farmer_individual_name, farmer_group_names, farmer_address,
                       ):
         self.file1 = Filename(filename_1)
         self.file2 = Filename(filename_2) if filename_2 else None
+        self.form_type = FormType(document_type)
         self.addressee = Details(
             title=addressee_title,
             individual_name=addressee_individual_name,
