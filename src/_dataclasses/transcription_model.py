@@ -119,6 +119,6 @@ class Transcription:
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
         self.form_type = FormType(self.document_type)
 
-        if (not self.file1.is_cover) and (self.form_type.name != "Cover") and not self.has_data:
+        if self.file2 and (not self.file1.is_cover) and (self.form_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
 
