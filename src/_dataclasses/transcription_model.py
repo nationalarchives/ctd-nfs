@@ -99,11 +99,17 @@ class Transcription:
                 ]
         ])
     
-    # @property
-    # def is_cover_page(self) -> bool:
-    #     if self.file1.cover and self.document_type == "Cover":
-    #         return True
-    #     return False
+    @property
+    def is_cover_page(self) -> bool:
+        if self.file1.is_cover and self.form_type.name == "Cover" and not self.has_data:
+            return True
+        return False
+    
+    @property
+    def is_form(self) -> bool:
+        if not self.file1.is_cover and self.form_type.name != "Cover" and self.has_data:
+            return True
+        return False
     
     def __post_init__(self):
         """
