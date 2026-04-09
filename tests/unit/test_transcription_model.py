@@ -4,7 +4,7 @@ from src._dataclasses.transcription_model import Transcription
 from src._tools.helpers import TranscriptionDataError
 
 
-@pytest.mark.skip
+@pytest.mark.skip()
 def test_is_form_page():
 	fixture = {
         'filename_1': "MAF32-194-1_59.tif",
@@ -103,7 +103,7 @@ def test_cover_page_with_transcription_values():
         Transcription(**fixture)
 
 
-# @pytest.mark.skip  
+@pytest.mark.skip()
 def test_page_pattern_with_no_transcription_data():
     fixture = {
         'filename_1': "MAF32-194-1_59.tif",
