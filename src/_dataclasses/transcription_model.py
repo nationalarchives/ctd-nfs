@@ -88,14 +88,12 @@ class Transcription:
     primary_record_date: str
 
     @property
-    def no_data(self) -> bool:
-        no_values = [
-            getattr(self, field_name)
+    def has_data(self) -> bool:
+        return any([
+            getattr(self, field_name) != "[not specified]"
             for field_name in self.__dict__
-            if field_name not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ] \
-                and getattr(self, field_name) == "[not specified]"
-        ]
-        return all(no_values)
+            if field_name not in ['filename_1', 'filename_2','document_type', 'county', 'parish']
+        ])
     
     # @property
     # def is_cover_page(self) -> bool:
