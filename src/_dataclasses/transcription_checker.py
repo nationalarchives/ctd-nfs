@@ -20,54 +20,6 @@ from src._tools.constants import REGEX, DATA
 logger = logging.getLogger(__name__)
 
 
-def has_valid_reference_values(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> bool:
-    """
-    Perform checks which will result in the row being rejected if they fail
-    * invalid form type
-    * either filename is invalid
-    * images not consecutive
-
-    Args:
-        csv_values (dict): dictionary with the following keys
-
-    Returns:
-        bool: True if row should be rejected, False otherwise
-    """
-    valid_forms = list(initialise_forms_mapping().keys())
-    no_farm_details_provided = [
-        item == "[not specified]"
-        for key, item in csv_values.items() 
-        if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
-    ]
-    
-    checks = {
-        f"Form type '{csv_values['document_type']}' is not a recognised form.": 
-            lambda: csv_values['document_type'] not in valid_forms,
-        
-        f"filename_1 {csv_values['filename_1']} does not match expected pattern for form images or cover.": 
-            lambda: not (pattern_matches['filename_1'] or pattern_matches['cover']),
-        
-        f"filename_2 {csv_values['filename_2']} does not match expected pattern for form images.":             
-            lambda: csv_values['filename_2'] and not pattern_matches['filename_2'],
-
-        f"{csv_values['filename_1']} and {csv_values['filename_2']} have valid form patterns but no farm data provided.":
-            lambda: (csv_values['filename_2'] and pattern_matches['filename_2']) \
-                and all(no_farm_details_provided)
-    }
-    
-    errors = (msg for msg, check in checks.items() if check())
-    if error_message := next(errors, None):
-        print(f"{row_prefix}not processed because {error_message}")
-        return False
-
-    return True
-
-
-def row_is_cover_form(document_type: str, pattern_matches: dict[re.Match]):
-    if document_type == 'Cover' or pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001":
-        return True
-
-
 def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
