@@ -92,7 +92,11 @@ class Transcription:
         return any([
             getattr(self, field_name) != "[not specified]"
             for field_name in self.__dict__
-            if field_name not in ['filename_1', 'filename_2','document_type', 'county', 'parish']
+            if field_name not in [
+                'filename_1', 'filename_2',
+                'document_type', 'county', 'parish', 
+                'file1', 'file2', 'form_type'
+                ]
         ])
     
     # @property
