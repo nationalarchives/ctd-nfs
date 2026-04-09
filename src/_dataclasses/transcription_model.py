@@ -107,7 +107,7 @@ class Transcription:
     
     @property
     def is_form(self) -> bool:
-        if not self.file1.is_cover and self.form_type.name != "Cover" and self.has_data:
+        if (not self.file1.is_cover) and (self.form_type.name != "Cover") and self.has_data:
             return True
         return False
     
