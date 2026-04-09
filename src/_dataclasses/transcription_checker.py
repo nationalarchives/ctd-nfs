@@ -51,17 +51,7 @@ def report_cover_image_inconsistencies(transcription: Transcription, warnings: d
     i.e. no image number suffix in filename or image number is 0001
 
     Args:
-        csv_values (dict): dictionary with the following keys
-            row_number (int): row number from original csv, used for reporting errors/warning
-            form (str): form number from spreadsheet row
-            parish (str): parish number and name e.g. "1 Alkington"
-            filename_1 (str): front page of form
-            filename_2 (str, optional): back page of form Defaults to None, not used if form is Cover 
-
-        pattern_matches
-            'filename_1' (re.Match): match for filename_1 against form pattern
-            'filename_2' (re.Match): match for filename_2 against form pattern
-            'cover' (re.Match): match for filename_1 against cover pattern
+        transcription (Transcription)
 
         warnings (dict): warning messages for any issues found
 
@@ -120,17 +110,7 @@ def check_values_between_filenames(transcription: Transcription, warnings: dict,
     * image numbers must be consecutive
 
     Args:
-        csv_values (dict): dictionary with the following keys
-            'row_number' (int): row number from original csv, used for reporting errors/warning
-            'document_type' (str): form number from spreadsheet row
-            'parish' (str): parish number and name e.g. "1 Alkington"
-            'filename_1' (str): front page of form
-            'filename_2' (str, optional): back page of form Defaults to None, not used if form is Cover 
-
-        pattern_matches
-            'filename_1' (re.Match): match for filename_1 against form pattern
-            'filename_2' (re.Match): match for filename_2 against form pattern
-            'cover' (re.Match): match for filename_1 against cover pattern
+        transcription (Transcription): 
 
         warnings (dict): warning messages for any issues found
 
