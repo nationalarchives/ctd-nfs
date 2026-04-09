@@ -121,4 +121,10 @@ class Transcription:
 
         if self.file2 and (not self.file1.is_cover) and (self.form_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
+        
+        if not (self.is_form and self.is_cover_page):
+            self.warnings = self._run_transcription_checks()
+
+    def _run_validation_checks(self) -> dict:
+        pass
 
