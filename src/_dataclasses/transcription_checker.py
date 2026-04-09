@@ -51,7 +51,7 @@ def check_for_cover_with_farm_details(transcription: Transcription, warnings: di
     return warnings 
 
 
-def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
+def report_cover_image_inconsistencies(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
     """
     Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern
     * if document type is 'Cover', only one image should be provided, and it should match either the cover pattern aor the form pattern with image number 0001
@@ -103,11 +103,11 @@ def report_cover_image_inconsistencies(csv_values: dict, pattern_matches: dict[r
     return warnings
 
 
-def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_prefix: str) -> dict | None:
+def has_cover_issues(transcription: Transcription, row_prefix: str) -> dict | None:
     no_cover_warnings = initialise_warnings_mapping()
 
-    warnings = check_for_cover_with_farm_details(csv_values, pattern_matches, no_cover_warnings, row_prefix)
-    warnings = report_cover_image_inconsistencies(csv_values, pattern_matches, warnings, row_prefix)
+    warnings = check_for_cover_with_farm_details(transcription, no_cover_warnings, row_prefix)
+    warnings = report_cover_image_inconsistencies(transcription, warnings, row_prefix)
 
     if warnings != no_cover_warnings:
         return warnings
@@ -117,7 +117,7 @@ def has_cover_issues(csv_values: dict, pattern_matches: dict[re.Match], row_pref
         return None
 
 
-def check_values_between_filenames(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
+def check_values_between_filenames(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
     """
 
     Performs checks on the piece, parish number and image number of the two file names
@@ -229,9 +229,9 @@ def vali_dates(candi_date: str) -> str | None:
                 continue
 
 
-def check_for_other_row_data_issues(farm_data_row: dict, row_prefix: str, pattern_matches: dict[re.Match], warnings: dict):
+def check_for_other_row_data_issues(transcription: Transcription, warnings: dict, row_prefix: str):
     if pattern_matches['filename_1'] and pattern_matches['filename_2']:
-        warnings = check_values_between_filenames(farm_data_row, pattern_matches, warnings, row_prefix)
+        warnings = check_values_between_filenames(transcription, warnings, row_prefix)
 
     for key in ['field_info_date', 'primary_record_date']:
         if not farm_data_row[key]:
