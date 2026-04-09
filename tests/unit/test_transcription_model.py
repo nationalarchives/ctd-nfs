@@ -97,8 +97,9 @@ def test_reference_values_no_farm_data():
         'primary_record_date': "[not specified]",
     }
 	test = Transcription(**fixture)
-	assert test.no_data
+	assert not test.has_data
 	
+
 @pytest.mark.skip()
 def test_cover_page_with_transcription_values():
     fixture = {
