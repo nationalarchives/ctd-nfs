@@ -15,6 +15,7 @@ import logging
 
 from src.harvester.farm_setup import initialise_forms_mapping, initialise_warnings_mapping
 from src._tools.constants import REGEX, DATA
+from src._dataclasses.transcription_model import Transcription
 
 
 logger = logging.getLogger(__name__)
@@ -226,3 +227,13 @@ def check_for_other_row_data_issues(farm_data_row: dict, row_prefix: str, patter
 
     return warnings
 
+
+def run_validation_checks(transcription: Transcription, row_prefix) -> dict:
+    warnings = initialise_warnings_mapping()
+    
+    if transcription.is_cover_page: 
+        warnings = has_cover_issues(farm_data_row, pattern_matches, row_prefix)
+        if warnings is None:
+            continue
+    
+    warnings = check_for_other_row_data_issues(transcription, warnings, row_prefix)
