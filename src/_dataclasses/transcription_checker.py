@@ -13,7 +13,6 @@ import re
 from datetime import datetime
 import logging
 
-from src.harvester.farm_setup import initialise_forms_mapping, initialise_warnings_mapping
 from src._tools.constants import REGEX, DATA
 from src._dataclasses.transcription_model import Transcription
 
@@ -21,7 +20,23 @@ from src._dataclasses.transcription_model import Transcription
 logger = logging.getLogger(__name__)
 
 
-def check_for_cover_with_farm_details(csv_values: dict, pattern_matches: dict[re.Match], warnings: dict, row_prefix: str) -> dict:
+def initialise_warnings_mapping() -> dict:
+    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
+    return {
+        'Reference Warnings': [],
+		'Filename Warnings': [],
+		'Type Warnings': [],
+		'Farm Number Warnings': [],
+		'Farm Name Warnings': [],
+		'Landowner Warnings': [],
+		'Farmer Warnings': [],
+		'Acreage Warnings': [],
+		'Field Date Warnings': [],
+		'Primary Date Warnings': []
+    }
+
+
+def check_for_cover_with_farm_details(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
     file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
     document_type_is_cover = csv_values['document_type'] == 'Cover'
     farm_details_provided = [
