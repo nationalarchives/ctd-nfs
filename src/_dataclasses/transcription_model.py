@@ -106,6 +106,9 @@ class Transcription:
     #     return False
     
     def __post_init__(self):
+        """
+        abbreviated attributes
+        """
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
         self.form_type = FormType(self.document_type)
