@@ -37,14 +37,7 @@ def initialise_warnings_mapping() -> dict:
 
 
 def check_for_cover_with_farm_details(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
-    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
-    document_type_is_cover = csv_values['document_type'] == 'Cover'
-    farm_details_provided = [
-        item
-        for key, item in csv_values.items() 
-        if key not in ['filename_1', 'filename_2','document_type', 'county', 'parish', ]
-    ]
-    if (document_type_is_cover or file_is_cover_image) and any(farm_details_provided):
+    if (transcription.file1.is_cover) and (transcription.form_type.name == "Cover") and transcription.has_data:
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
     
@@ -76,28 +69,29 @@ def report_cover_image_inconsistencies(transcription: Transcription, warnings: d
         warnings (dict):
     """
 
-    file_is_cover_image = pattern_matches['cover'] or pattern_matches['filename_1']['image_number'] == "0001"
-    document_type_is_cover = csv_values['document_type'] == 'Cover'
-    images_are_for_document_which_is_not_cover = \
-        pattern_matches['filename_1'] and \
-        pattern_matches['filename_1']['image_number'] != "0001" and \
-        pattern_matches['filename_2']
-
-    if images_are_for_document_which_is_not_cover and document_type_is_cover:
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but two form images were provided: {csv_values['filename_1']} and {csv_values['filename_2']}.")
+    if not transcription.file1.is_cover and transcription.file2 and transcription.form_type.name == "Cover":
+        warnings['Filename Warnings'].append(
+            f"{row_prefix}Form type is 'Cover' but two form images were provided: {transcription.file1.name} and {transcription.file2.name}."
+        )
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
-    elif document_type_is_cover and not file_is_cover_image:
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but {csv_values['filename_1']} does not match expected cover pattern or have image number 0001.")
+    elif transcription.form_type.name == "Cover" and not transcription.file1.is_cover:
+        warnings['Filename Warnings'].append(
+            f"{row_prefix}Form type is 'Cover' but {transcription.file1.name} does not match expected cover pattern or have image number 0001."
+        )
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
-    elif not document_type_is_cover and file_is_cover_image:
-        warnings['Filename Warnings'].append(f"{row_prefix}{csv_values['filename_1']} matches expected cover pattern or has image number 0001 but form type is '{csv_values['document_type']}'.")
+    elif not transcription.form_type.name == "Cover" and transcription.file1.is_cover:
+        warnings['Filename Warnings'].append(
+            f"{row_prefix}{transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{transcription.form_type.name}'."
+        )
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
 
-    elif document_type_is_cover and file_is_cover_image and csv_values['filename_2']:
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover', and {csv_values['filename_1']} matches expected pattern for cover image " \
-                                             f"but additional image {csv_values['filename_2']} was also provided.")
+    elif transcription.form_type.name == "Cover" and transcription.file1.is_cover and transcription.file2:
+        warnings['Filename Warnings'].append(
+            f"{row_prefix}Form type is 'Cover', and {transcription.file1.name} matches expected pattern for cover image " \
+            f"but additional image {transcription.file2.name} was also provided."
+        )
         warnings['Type Warnings'].append(f"{row_prefix}document is listed as 'Cover' in data but two form images provided.")
     
     return warnings
@@ -144,18 +138,18 @@ def check_values_between_filenames(transcription: Transcription, warnings: dict,
         warnings (dict):
     """
     
-    filenames = f"{csv_values['filename_1']} and {csv_values['filename_2']}"
-    if pattern_matches['filename_1']['piece'] != pattern_matches['filename_2']['piece']:
+    filenames = f"{transcription.file1.name} and {transcription.file2.name}"
+    if transcription.file1.piece != transcription.file2.piece:
         warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different pieces.")
 
-    parish_number = csv_values['parish'].split()[0]
-    if pattern_matches['filename_1']['parish_number'] != pattern_matches['filename_2']['parish_number']:
+    parish_number = transcription.parish.split()[0]
+    if transcription.file1.parish != transcription.file2.parish:
         warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different parish numbers.")
-    elif pattern_matches['filename_1']['parish_number'] != parish_number:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have a different parish number from parish name '{csv_values['parish']}'.")
+    elif transcription.file1.parish != parish_number:
+        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have a different parish number from parish name '{transcription.parish}'.")
        
-    image1 = int(pattern_matches['filename_1']['image_number'])
-    image2 = int(pattern_matches['filename_2']['image_number'])
+    image1 = transcription.file1.image_number
+    image2 = transcription.file2.image_number
     if image2 != image1 + 1:
         warnings['Filename Warnings'].append(f"{row_prefix}{filenames} are either not consecutive images or in the wrong order.")
     
@@ -230,14 +224,15 @@ def vali_dates(candi_date: str) -> str | None:
 
 
 def check_for_other_row_data_issues(transcription: Transcription, warnings: dict, row_prefix: str):
-    if pattern_matches['filename_1'] and pattern_matches['filename_2']:
+    if transcription.file1.name and transcription.file2.name:
         warnings = check_values_between_filenames(transcription, warnings, row_prefix)
 
     for key in ['field_info_date', 'primary_record_date']:
-        if not farm_data_row[key]:
+        date_value = getattr(transcription, key)
+        if not date_value:
             continue
         warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
-        if check_result := vali_dates(farm_data_row[key]):
+        if check_result := vali_dates(date_value):
             warnings[warning_key].append(f"{row_prefix}{check_result}")
 
     return warnings
@@ -247,7 +242,7 @@ def run_validation_checks(transcription: Transcription, row_prefix) -> dict:
     warnings = initialise_warnings_mapping()
     
     if transcription.is_cover_page: 
-        warnings = has_cover_issues(farm_data_row, pattern_matches, row_prefix)
+        warnings = has_cover_issues(transcription, row_prefix)
         if warnings is None:
             continue
     
