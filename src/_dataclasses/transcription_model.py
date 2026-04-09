@@ -1,4 +1,4 @@
-from dataclasses import dataclass, InitVar
+from dataclasses import dataclass
 import re
 
 from src._tools.helpers import TranscriptionDataError, ValueObject
@@ -62,26 +62,26 @@ class Transcription:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: InitVar[str]
-    filename_2: InitVar[str | None]
-    document_type: InitVar[str]
+    filename_1: str
+    filename_2: str
+    document_type: str
     county: str
     parish: str
     primary_farm_number: str
     additional_farms: str
     farm_name: str
-    addressee_title: InitVar[str]
-    addressee_individual_name: InitVar[str]
-    addressee_group_names: InitVar[str]
-    address: InitVar[str]
-    owner_title: InitVar[str]
-    owner_individual_name: InitVar[str]
-    owner_group_names: InitVar[str]
-    owner_address: InitVar[str]
-    farmer_title: InitVar[str]
-    farmer_individual_name: InitVar[str]
-    farmer_group_names: InitVar[str]
-    farmer_address: InitVar[str]
+    addressee_title: str
+    addressee_individual_name: str
+    addressee_group_names: str
+    address: str
+    owner_title: str
+    owner_individual_name: str
+    owner_group_names: str
+    owner_address: str
+    farmer_title: str
+    farmer_individual_name: str
+    farmer_group_names: str
+    farmer_address: str
     acreage: str
     OS_map_sheet: str
     field_info_date: str
@@ -103,11 +103,10 @@ class Transcription:
     #         return True
     #     return False
     
-    def __post_init__(self, 
-                      filename_1, filename_2, document_type):
-        self.file1 = Filename(filename_1)
-        self.file2 = Filename(filename_2) if filename_2 else None
-        self.form_type = FormType(document_type)
+    def __post_init__(self):
+        self.file1 = Filename(self.filename_1)
+        self.file2 = Filename(self.filename_2) if self.filename_2 else None
+        self.form_type = FormType(self.document_type)
 
         # if not self.is_cover_page and self.no_data:
         #     raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid form patterns but no farm data provided.")
