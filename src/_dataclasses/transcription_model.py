@@ -1,6 +1,5 @@
 from dataclasses import dataclass, InitVar
 import re
-from datetime import datetime
 
 from src._tools.helpers import TranscriptionDataError, ValueObject
 from src._tools.constants import REGEX, DATA
@@ -56,59 +55,6 @@ class FormType(ValueObject):
 
 
 @dataclass
-class Details:
-    title: str
-    individual_name: str
-    group_names: str
-    address: str
-    full_address: str = ""
-
-
-def _normalize_date(candi_date: str) -> str:
-    """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
-    Note: day must not have leading zeros.
-
-    Args:
-        date_str (str): The date string to normalize.
-
-    Returns:
-        str: The normalized date string.
-    """
-
-    if REGEX.MONTH.match(candi_date) or REGEX.MON.match(candi_date):
-        if REGEX.MON.match(candi_date):
-            index = DATA.ABBR_MONTH_NAMES.index(candi_date)
-            candi_date = DATA.MONTH_NAMES[index]
-        return f"{candi_date}"
-
-    if REGEX.DAYMONTH.match(candi_date) or REGEX.DAYMON.match(candi_date):
-        day, month = candi_date.split()
-        if REGEX.DAYMON.match(candi_date):
-            index = DATA.ABBR_MONTH_NAMES.index(month)
-            month = DATA.MONTH_NAMES[index]
-        return f"{int(day)} {month}"
-
-    candi_date = REGEX.REMOVE_DELIMITERS.sub(' ', candi_date)
-    date_match = {
-        'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
-        'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
-    }
-    if not (date_match['daymonthyear'] or date_match['ddmmyyyy']):
-        return candi_date
-
-    for fmt in DATA.DATE_FORMATS:
-        try:
-            parsed_date = datetime.strptime(candi_date, fmt)
-            day, month, year = parsed_date.strftime("%d %B %Y").split()
-            return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
-        except ValueError:
-            continue
-    
-    return candi_date
-
-
-
-@dataclass
 class Transcription:
     """
     all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
@@ -158,34 +104,10 @@ class Transcription:
     #     return False
     
     def __post_init__(self, 
-                      filename_1, filename_2, document_type,
-                      addressee_title, addressee_individual_name, addressee_group_names, address,
-                      owner_title, owner_individual_name, owner_group_names, owner_address,
-                      farmer_title, farmer_individual_name, farmer_group_names, farmer_address,
-                      ):
+                      filename_1, filename_2, document_type):
         self.file1 = Filename(filename_1)
         self.file2 = Filename(filename_2) if filename_2 else None
         self.form_type = FormType(document_type)
-        self.addressee = Details(
-            title=addressee_title,
-            individual_name=addressee_individual_name,
-            group_names=addressee_group_names,
-            address=address,
-        )
-        self.owner = Details(
-            title=owner_title,
-            individual_name=owner_individual_name,
-            group_names=owner_group_names,
-            address=owner_address,
-        )
-        self.farmer = Details(
-            title=farmer_title,
-            individual_name=farmer_individual_name,
-            group_names=farmer_group_names,
-            address=farmer_address,
-        )
-        self.field_info_date=_normalize_date(self.field_info_date)
-        self.primary_record_date=_normalize_date(self.primary_record_date)
 
         # if not self.is_cover_page and self.no_data:
         #     raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid form patterns but no farm data provided.")
