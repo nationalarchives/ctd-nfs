@@ -6,6 +6,7 @@ import shelve
 
 from src._tools.constants import PATH, REGEX
 from src._tools.helpers import create_uuid_str
+from src._dataclasses.transcription_model import Filename
 
 
 def initialise_forms_mapping() -> OrderedDict:
@@ -64,6 +65,8 @@ class Form:
 
 @dataclass
 class Farm:
+    file1: Filename
+    file2: Filename
     forms_to_files_map: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]]
         
