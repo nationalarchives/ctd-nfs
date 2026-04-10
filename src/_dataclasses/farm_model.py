@@ -156,7 +156,6 @@ class Farm:
     field_info_date: str
     primary_record_date: str
 
-    # TODO: move this to new Farm dataclass
     warnings: dict[str, list[str]]
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
         
@@ -164,7 +163,6 @@ class Farm:
     def iaid() -> str:
         return create_uuid_str()
 
-    # TODO: change private variables to non-private - not necessary in property method as only return value will be available
     @property
     def catalogue_reference(self) -> str:
         """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
@@ -184,7 +182,6 @@ class Farm:
         _parish_number, *_ = self.parish.split()
         return f"{_county_code}/{_parish_number}/{self.primary_farm_number}"
 
-    # TODO: move to new Farm dataclass
     def assign_filenames_to_forms(self):
         """_summary_
 
