@@ -125,9 +125,9 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    filename_1: Filename
-    filename_2: Filename
-    document_type: FormType
+    file1: Filename
+    file2: Filename
+    form_type: FormType
     county: str
     parish: str
     primary_farm_number: str
@@ -189,7 +189,7 @@ class Farm:
         """
         new_images = [
             Image(file_name)
-            for file_name in [self.filename_1, self.filename_2] 
+            for file_name in [self.file1.name, self.file2.name] 
             if file_name
         ]
         new_form = Form(
@@ -197,7 +197,7 @@ class Farm:
             field_info_date=self.field_info_date,
             primary_record_date=self.primary_record_date,
         )
-        self.forms[self.document_type].append(new_form)
+        self.forms[self.form_type.name].append(new_form)
 
     def __post_init__(self,
                       addressee_title, addressee_individual_name, addressee_group_names, address,
