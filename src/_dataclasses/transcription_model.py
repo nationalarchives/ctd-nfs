@@ -64,7 +64,7 @@ class Transcription:
     """
     filename_1: str
     filename_2: str
-    document_type: str
+    document_type: FormType
     county: str
     parish: str
     primary_farm_number: str
@@ -95,19 +95,19 @@ class Transcription:
             if field_name not in [
                 'filename_1', 'filename_2',
                 'document_type', 'county', 'parish', 
-                'file1', 'file2', 'form_type'
+                'file1', 'file2', 'document_type'
                 ]
         ])
     
     @property
     def is_cover_page(self) -> bool:
-        if self.file1.is_cover and self.form_type.name == "Cover" and not self.has_data:
+        if self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data:
             return True
         return False
     
     @property
     def is_form(self) -> bool:
-        if (not self.file1.is_cover) and (self.form_type.name != "Cover") and self.has_data:
+        if (not self.file1.is_cover) and (self.document_type.name != "Cover") and self.has_data:
             return True
         return False
     
@@ -117,9 +117,8 @@ class Transcription:
         """
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
-        self.form_type = FormType(self.document_type)
 
-        if self.file2 and (not self.file1.is_cover) and (self.form_type.name != "Cover") and not self.has_data:
+        if self.file2 and (not self.file1.is_cover) and (self.document_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
         
         # if not (self.is_form and self.is_cover_page):
