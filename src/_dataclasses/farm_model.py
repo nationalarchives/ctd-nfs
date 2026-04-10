@@ -131,7 +131,7 @@ class Farm:
     """
     filename_1: Filename
     filename_2: Filename
-    form_type: FormType
+    document_type: FormType
     county: str
     parish: str
     primary_farm_number: str
@@ -198,7 +198,7 @@ class Farm:
             field_info_date=self.field_info_date,
             primary_record_date=self.primary_record_date,
         )
-        self.forms[self.form_type.name].append(new_form)
+        self.forms[self.document_type.name].append(new_form)
 
     def __post_init__(self,
                       addressee_title, addressee_individual_name, addressee_group_names, address,
