@@ -157,8 +157,8 @@ class Farm:
     primary_record_date: str
 
     # TODO: move this to new Farm dataclass
-    forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]]
+    forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
         
     @property
     def iaid() -> str:
