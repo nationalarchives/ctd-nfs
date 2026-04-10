@@ -192,9 +192,9 @@ class Farm:
             csv_data (dict): _description_
         """
         new_images = [
-            Image(file_name)
-            for file_name in [self.file1.name, self.file2.name] 
-            if file_name
+            Image(image_file)
+            for image_file in [self.file1, self.file2] 
+            if image_file
         ]
         new_form = Form(
             images=new_images,
