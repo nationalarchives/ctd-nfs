@@ -262,12 +262,6 @@ def concatenate_instance_attributes(existing_attribute: str, new_attribute: str,
 
     concatenated_value = concatenate_attribute_values(existing_value, new_value)
     setattr(existing_attribute, field_name, concatenated_value)
-
-
-def is_consecutive_image(last_image: str, candidate_image: str) -> bool:
-    image_number = int(REGEX.FORM_PATTERN.match(last_image)['image_number'])
-    new_image_number = int(REGEX.FORM_PATTERN.match(candidate_image)['image_number'])
-    return new_image_number == image_number + 1
            
 
 def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form]) -> dict[str, Form]:
@@ -279,9 +273,9 @@ def concatenate_forms(existing_forms: dict[str, Form], new_forms: dict[str, Form
             existing_forms[key] = new_forms[key]
             continue
 
-        current_last_image = existing_forms[key][0].images[-1].name
-        new_image = new_forms[key][0].images[0].name
-        if len(new_forms[key][0].images) == 1 and is_consecutive_image(current_last_image, new_image):
+        current_last_image = existing_forms[key][0].images[-1]
+        new_image = new_forms[key][0].images[0]
+        if len(new_forms[key][0].images) == 1 and (new_image.number == current_last_image.number + 1):
             existing_forms[key][0].images.append(new_image)
             concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')
             concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
