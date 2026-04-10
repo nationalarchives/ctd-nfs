@@ -27,22 +27,6 @@ def initialise_forms_mapping() -> OrderedDict:
     ])
 
 
-def initialise_warnings_mapping() -> dict:
-    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
-    return {
-        'Reference Warnings': [],
-		'Filename Warnings': [],
-		'Type Warnings': [],
-		'Farm Number Warnings': [],
-		'Farm Name Warnings': [],
-		'Landowner Warnings': [],
-		'Farmer Warnings': [],
-		'Acreage Warnings': [],
-		'Field Date Warnings': [],
-		'Primary Date Warnings': []
-    }
-
-
 def _get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
     """
     Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
@@ -81,7 +65,7 @@ class Form:
 @dataclass
 class Farm:
     forms_to_files_map: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
-    warnings: dict[str, list[str]] = field(default_factory=initialise_warnings_mapping)
+    warnings: dict[str, list[str]]
         
     # TODO: change private variables to non-private - not necessary in property method as only return value will be available
 
