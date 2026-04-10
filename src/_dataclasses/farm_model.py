@@ -97,11 +97,12 @@ def _normalize_date(candi_date: str) -> str:
 
 @dataclass
 class Image:
-    name: Filename
+    file: InitVar[Filename]
     id: str = field(default_factory=create_uuid_str)
 
-    def __post_init__(self):
-        self.number = self.name.image_number
+    def __post_init__(self, file):
+        self.name = file.name
+        self.number = file.image_number
 
 
 @dataclass
