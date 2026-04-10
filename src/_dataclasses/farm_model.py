@@ -1,6 +1,6 @@
 # TODO: split out Farm initialization attributes to new Form dataclass module
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from collections import OrderedDict
 import shelve
 import re
@@ -125,7 +125,6 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    # TODO: extract these attributes to new Form dataclass which will be used when loading the csv
     filename_1: Filename
     filename_2: Filename
     document_type: FormType
@@ -135,19 +134,18 @@ class Farm:
     additional_farms: str
     farm_name: str
     
-    # TODO: the following fields will all be InitVar, only used to create Details instances
-    addressee_title: str
-    addressee_individual_name: str
-    addressee_group_names: str
-    address: str
-    owner_title: str
-    owner_individual_name: str
-    owner_group_names: str
-    owner_address: str
-    farmer_title: str
-    farmer_individual_name: str
-    farmer_group_names: str
-    farmer_address: str
+    addressee_title: InitVar[str]
+    addressee_individual_name: InitVar[str]
+    addressee_group_names: InitVar[str]
+    address: InitVar[str]
+    owner_title: InitVar[str]
+    owner_individual_name: InitVar[str]
+    owner_group_names: InitVar[str]
+    owner_address: InitVar[str]
+    farmer_title: InitVar[str]
+    farmer_individual_name: InitVar[str]
+    farmer_group_names: InitVar[str]
+    farmer_address: InitVar[str]
     
     acreage: str
     OS_map_sheet: str
