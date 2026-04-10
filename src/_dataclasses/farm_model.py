@@ -8,6 +8,7 @@ from datetime import datetime
 
 from src._tools.constants import PATH, REGEX, DATA
 from src._tools.helpers import create_uuid_str
+from src._dataclasses.transcription_model import Filename, FormType
 
 
 def initialise_forms_mapping() -> OrderedDict:
@@ -125,9 +126,9 @@ class Farm:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
     # TODO: extract these attributes to new Form dataclass which will be used when loading the csv
-    filename_1: str # TODO: create Filename ValueObject to include validation currently in row_data_validator.py
-    filename_2: str
-    document_type: str
+    filename_1: Filename
+    filename_2: Filename
+    document_type: FormType
     county: str
     parish: str
     primary_farm_number: str
