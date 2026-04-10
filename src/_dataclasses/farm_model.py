@@ -129,8 +129,8 @@ class Farm:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    file1: Filename
-    file2: Filename
+    filename_1: Filename
+    filename_2: Filename
     form_type: FormType
     county: str
     parish: str
@@ -190,7 +190,7 @@ class Farm:
         """
         new_images = [
             Image(image_file)
-            for image_file in [self.file1, self.file2] 
+            for image_file in [self.filename_1, self.filename_2] 
             if image_file
         ]
         new_form = Form(
