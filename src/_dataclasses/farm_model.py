@@ -132,8 +132,8 @@ class Farm:
     county: str
     parish: str
     primary_farm_number: str
-    additional_farms: list[str]
-    farm_name: list[str]
+    additional_farms: str
+    farm_name: str
     
     # TODO: the following fields will all be InitVar, only used to create Details instances
     addressee_title: str
