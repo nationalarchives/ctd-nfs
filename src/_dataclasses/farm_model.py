@@ -68,6 +68,15 @@ class Farm:
     file1: Filename
     file2: Filename
     form_type: FormType
+    county: str
+    parish: str
+    primary_farm_number: str
+    additional_farms: str
+    farm_name: str
+    acreage: str
+    OS_map_sheet: str
+    field_info_date: str
+    primary_record_date: str
     forms_to_files_map: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]]
         
