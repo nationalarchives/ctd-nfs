@@ -10,9 +10,6 @@ from src._tools.constants import PATH, REGEX, DATA
 from src._tools.helpers import create_uuid_str
 
 
-type ListOrStr = list[str] | str
-
-
 def initialise_forms_mapping() -> OrderedDict:
     """Create a mapping of form codes to empty lists for storing filenames.
         An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
@@ -106,16 +103,16 @@ class Image:
 @dataclass
 class Form:
     images: list[Image]
-    field_info_date: ListOrStr
-    primary_record_date: ListOrStr
+    field_info_date: str
+    primary_record_date: str
 
 
 @dataclass
 class Details:
-    title: ListOrStr
-    individual_name: ListOrStr
-    group_names: ListOrStr
-    address: ListOrStr
+    title: str
+    individual_name: str
+    group_names: str
+    address: str
     full_address: str = ""
 
 
@@ -138,23 +135,23 @@ class Farm:
     farm_name: list[str]
     
     # TODO: the following fields will all be InitVar, only used to create Details instances
-    addressee_title: ListOrStr
-    addressee_individual_name: ListOrStr
-    addressee_group_names: ListOrStr
-    address: ListOrStr
-    owner_title: ListOrStr
-    owner_individual_name: ListOrStr
-    owner_group_names: ListOrStr
-    owner_address: ListOrStr
-    farmer_title: ListOrStr
-    farmer_individual_name: ListOrStr
-    farmer_group_names: ListOrStr
-    farmer_address: ListOrStr
+    addressee_title: str
+    addressee_individual_name: str
+    addressee_group_names: str
+    address: str
+    owner_title: str
+    owner_individual_name: str
+    owner_group_names: str
+    owner_address: str
+    farmer_title: str
+    farmer_individual_name: str
+    farmer_group_names: str
+    farmer_address: str
     
-    acreage: ListOrStr
-    OS_map_sheet: ListOrStr
-    field_info_date: ListOrStr
-    primary_record_date: ListOrStr
+    acreage: str
+    OS_map_sheet: str
+    field_info_date: str
+    primary_record_date: str
 
     # TODO: move this to new Farm dataclass
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
@@ -226,12 +223,12 @@ class Farm:
         self.assign_filenames_to_forms()
 
 
-def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr) -> ListOrStr:
+def concatenate_attribute_values(existing_value: str, new_value: str) -> str:
     """Concatenate two values, ensuring no duplicates.
 
     Args:
-        existing_value (ListOrStr): The existing value.
-        new_value (ListOrStr): The new value to be added.
+        existing_value (str): The existing value.
+        new_value (str): The new value to be added.
 
     Returns:
         The concatenated value with duplicates removed.
@@ -249,7 +246,7 @@ def concatenate_attribute_values(existing_value: ListOrStr, new_value: ListOrStr
         return existing_value + new_value
 
 
-def concatenate_instance_attributes(existing_attribute: ListOrStr, new_attribute: ListOrStr, field_name: str) -> None:
+def concatenate_instance_attributes(existing_attribute: str, new_attribute: str, field_name: str) -> None:
     existing_value = getattr(existing_attribute, field_name)
     new_value = getattr(new_attribute, field_name)
 
