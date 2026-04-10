@@ -156,6 +156,10 @@ class Farm:
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]]
         
+    @property
+    def iaid() -> str:
+        return create_uuid_str()
+
     # TODO: change private variables to non-private - not necessary in property method as only return value will be available
     @property
     def catalogue_reference(self) -> str:
@@ -200,7 +204,6 @@ class Farm:
                       owner_title, owner_individual_name, owner_group_names, owner_address,
                       farmer_title, farmer_individual_name, farmer_group_names, farmer_address
                       ):
-        self.iaid = create_uuid_str()
         self.addressee = Details(
             title=addressee_title,
             individual_name=addressee_individual_name,
