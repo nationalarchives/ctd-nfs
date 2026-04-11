@@ -64,7 +64,7 @@ class Transcription:
     """
     filename_1: str
     filename_2: str
-    document_type: FormType
+    document_type: str
     county: str
     parish: str
     primary_farm_number: str
@@ -118,6 +118,7 @@ class Transcription:
         """
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
+        self.document_type = FormType(self.document_type)
 
         if self.file2 and (not self.file1.is_cover) and (self.document_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
