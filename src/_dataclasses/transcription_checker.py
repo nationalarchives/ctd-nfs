@@ -208,3 +208,5 @@ def run_validation_checks(transcription: Transcription, row_prefix) -> dict | No
         has_cover_issues(transcription, row_prefix)
     
     check_for_other_row_data_issues(transcription, row_prefix)
+
+    return warnings if any(value for value in warnings.values() if value) else None
