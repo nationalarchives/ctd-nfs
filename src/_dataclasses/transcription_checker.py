@@ -20,193 +20,194 @@ from src._dataclasses.transcription_model import Transcription
 logger = logging.getLogger(__name__)
 
 
-warnings = {
-        'Reference Warnings': [],
-		'Filename Warnings': [],
-		'Type Warnings': [],
-		'Farm Number Warnings': [],
-		'Farm Name Warnings': [],
-		'Landowner Warnings': [],
-		'Farmer Warnings': [],
-		'Acreage Warnings': [],
-		'Field Date Warnings': [],
-		'Primary Date Warnings': []
-    }
+class TranscriptionChecker:
+    def __init__(self, transcription, row_number):
+        self.transcription: Transcription = transcription
+        self.row_prefix = f"Row {row_number}: "
+        self.warnings = {
+                'Reference Warnings': [],
+                'Filename Warnings': [],
+                'Type Warnings': [],
+                'Landowner Warnings': [],
+                'Farmer Warnings': [],
+                'Field Date Warnings': [],
+                'Primary Date Warnings': []
+            }
 
 
-def check_for_cover_with_farm_details(transcription: Transcription, row_prefix: str) -> None:
-    if (transcription.file1.is_cover) and (transcription.form_type.name == "Cover") and transcription.has_data:
-        warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
+    def check_for_cover_with_farm_details(self) -> None:
+        if (self.transcription.file1.is_cover) and (self.transcription.form_type.name == "Cover") and self.self.transcription.has_data:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}Form type is 'Cover' but row contains farm details.")
+            self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
 
-def report_cover_image_inconsistencies(transcription: Transcription, row_prefix: str) -> None:
-    """
-    Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern
-    * if document type is 'Cover', only one image should be provided, and it should match either the cover pattern aor the form pattern with image number 0001
-    i.e. no image number suffix in filename or image number is 0001
+    def report_cover_image_inconsistencies(self) -> None:
+        """
+        Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern
+        * if document type is 'Cover', only one image should be provided, and it should match either the cover pattern aor the form pattern with image number 0001
+        i.e. no image number suffix in filename or image number is 0001
 
-    Args:
-        transcription (Transcription)
+        Args:
+            transcription (Transcription)
 
-        warnings (dict): warning messages for any issues found
+            warnings (dict): warning messages for any issues found
 
-    Returns:
-        warnings (dict):
-    """
-
-    if not transcription.file1.is_cover and transcription.file2 and transcription.form_type.name == "Cover":
-        warnings['Filename Warnings'].append(
-            f"{row_prefix}Form type is 'Cover' but two form images were provided: {transcription.file1.name} and {transcription.file2.name}."
-        )
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
-
-    elif transcription.form_type.name == "Cover" and not transcription.file1.is_cover:
-        warnings['Filename Warnings'].append(
-            f"{row_prefix}Form type is 'Cover' but {transcription.file1.name} does not match expected cover pattern or have image number 0001."
-        )
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
-
-    elif not transcription.form_type.name == "Cover" and transcription.file1.is_cover:
-        warnings['Filename Warnings'].append(
-            f"{row_prefix}{transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{transcription.form_type.name}'."
-        )
-        warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
-
-    elif transcription.form_type.name == "Cover" and transcription.file1.is_cover and transcription.file2:
-        warnings['Filename Warnings'].append(
-            f"{row_prefix}Form type is 'Cover', and {transcription.file1.name} matches expected pattern for cover image " \
-            f"but additional image {transcription.file2.name} was also provided."
-        )
-        warnings['Type Warnings'].append(f"{row_prefix}document is listed as 'Cover' in data but two form images provided.")
-
-
-def has_cover_issues(transcription: Transcription, row_prefix: str) -> None:
-    check_for_cover_with_farm_details(transcription, row_prefix)
-    report_cover_image_inconsistencies(transcription, row_prefix)
-
-    msg = f"{row_prefix}is a cover so will not be processed."
-    logger.info(f" {msg:->80}")
-    return None
-
-
-def check_values_between_filenames(transcription: Transcription, row_prefix: str) -> None:
-    """
-
-    Performs checks on the piece, parish number and image number of the two file names
-    * piece must be the same in the both file name
-    * parish number must be the same in the both file name, and also match the number in the full parish name
-    * image numbers must be consecutive
-
-    Args:
-        transcription (Transcription): 
-
-        warnings (dict): warning messages for any issues found
-
-    Returns:
-        warnings (dict):
-    """
-    
-    filenames = f"{transcription.file1.name} and {transcription.file2.name}"
-    if transcription.file1.piece != transcription.file2.piece:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different pieces.")
-
-    parish_number = transcription.parish.split()[0]
-    if transcription.file1.parish != transcription.file2.parish:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have different parish numbers.")
-    elif transcription.file1.parish != parish_number:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} have a different parish number from parish name '{transcription.parish}'.")
-       
-    image1 = transcription.file1.image_number
-    image2 = transcription.file2.image_number
-    if image2 != image1 + 1:
-        warnings['Filename Warnings'].append(f"{row_prefix}{filenames} are either not consecutive images or in the wrong order.")
-
-
-def vali_dates(candi_date: str) -> str | None:    
-    ''' Checks if the date, given as a string, is a valid date
-    
-        Key Arguments:
-            potential_date - string containing the date value for checking
-            
         Returns:
-            warning/error message string if issues found, else None
-    '''
-    if candi_date == "[not specified]":
-        return
-    
-    date_match: dict[re.Match] = {
-        'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
-        'monthyear': REGEX.MONTHYEAR.match(candi_date),
-        'yearonly': REGEX.YEARONLY.match(candi_date),
-        'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
-        'ddmonyyyy': REGEX.DDMONYEAR.match(candi_date),
-        'daymonth': REGEX.DAYMONTH.match(candi_date),
-        'daymon': REGEX.DAYMON.match(candi_date),
-        'month': REGEX.MONTH.match(candi_date),
-        'mon': REGEX.MON.match(candi_date),
-    }
+            warnings (dict):
+        """
 
-    date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
-    if not (date_type := next(date_type, None)):
-        return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
+        if not self.transcription.file1.is_cover and self.transcription.file2 and self.transcription.form_type.name == "Cover":
+            self.warnings['Filename Warnings'].append(
+                f"{self.row_prefix}Form type is 'Cover' but two form images were provided: {self.transcription.file1.name} and {self.transcription.file2.name}."
+            )
+            self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-    if date_match['month'] or date_match['mon']:
-        return
+        elif self.transcription.form_type.name == "Cover" and not self.transcription.file1.is_cover:
+            self.warnings['Filename Warnings'].append(
+                f"{self.row_prefix}Form type is 'Cover' but {self.transcription.file1.name} does not match expected cover pattern or have image number 0001."
+            )
+            self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-    if date_type in ['daymonth', 'daymon']:
-        day = date_match[date_type]['day'].zfill(2)
-        month = date_match[date_type]['month']
-        if (int(day) > 29 and month in ["February", "Feb"]) or int(day) > 31:
-            return f"[ERROR] '{candi_date}' is not a valid calendar date."
-        else:
+        elif not self.transcription.form_type.name == "Cover" and self.transcription.file1.is_cover:
+            self.warnings['Filename Warnings'].append(
+                f"{self.row_prefix}{self.transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{self.transcription.form_type.name}'."
+            )
+            self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
+
+        elif self.transcription.form_type.name == "Cover" and self.transcription.file1.is_cover and self.transcription.file2:
+            self.warnings['Filename Warnings'].append(
+                f"{self.row_prefix}Form type is 'Cover', and {self.transcription.file1.name} matches expected pattern for cover image " \
+                f"but additional image {self.transcription.file2.name} was also provided."
+            )
+            self.warnings['Type Warnings'].append(f"{self.row_prefix}document is listed as 'Cover' in data but two form images provided.")
+
+
+    def has_cover_issues(self) -> None:
+        self.check_for_cover_with_farm_details()
+        self.report_cover_image_inconsistencies()
+
+        msg = f"{self.row_prefix}is a cover so will not be processed."
+        logger.info(f" {msg:->80}")
+        return None
+
+
+    def check_values_between_filenames(self) -> None:
+        """
+
+        Performs checks on the piece, parish number and image number of the two file names
+        * piece must be the same in the both file name
+        * parish number must be the same in the both file name, and also match the number in the full parish name
+        * image numbers must be consecutive
+
+        Args:
+            transcription (Transcription): 
+
+            warnings (dict): warning messages for any issues found
+
+        Returns:
+            warnings (dict):
+        """
+        
+        filenames = f"{self.transcription.file1.name} and {self.transcription.file2.name}"
+        if self.transcription.file1.piece != self.transcription.file2.piece:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different pieces.")
+
+        parish_number = self.transcription.parish.split()[0]
+        if self.transcription.file1.parish != self.transcription.file2.parish:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different parish numbers.")
+        elif self.transcription.file1.parish != parish_number:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have a different parish number from parish name '{self.transcription.parish}'.")
+        
+        image1 = self.transcription.file1.image_number
+        image2 = self.transcription.file2.image_number
+        if image2 != image1 + 1:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} are either not consecutive images or in the wrong order.")
+
+
+    def vali_dates(candi_date: str) -> str | None:    
+        ''' Checks if the date, given as a string, is a valid date
+        
+            Key Arguments:
+                potential_date - string containing the date value for checking
+                
+            Returns:
+                warning/error message string if issues found, else None
+        '''
+        if candi_date == "[not specified]":
+            return
+        
+        date_match: dict[re.Match] = {
+            'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
+            'monthyear': REGEX.MONTHYEAR.match(candi_date),
+            'yearonly': REGEX.YEARONLY.match(candi_date),
+            'ddmmyyyy': REGEX.DDMMYYYY.match(candi_date),
+            'ddmonyyyy': REGEX.DDMONYEAR.match(candi_date),
+            'daymonth': REGEX.DAYMONTH.match(candi_date),
+            'daymon': REGEX.DAYMON.match(candi_date),
+            'month': REGEX.MONTH.match(candi_date),
+            'mon': REGEX.MON.match(candi_date),
+        }
+
+        date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
+        if not (date_type := next(date_type, None)):
+            return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
+
+        if date_match['month'] or date_match['mon']:
             return
 
-    valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
-    if not valid_year:
-        return f"[ERROR] '{candi_date}' is outside the survey timespan."
-
-    candi_date = re.sub(r'[\/\-\. ]+', ' ', candi_date)
-    if date_type in ['daymonthyear', 'ddmmyyyy', 'ddmonyyyy']:
-        day = date_match[date_type]['day'].zfill(2)
-        if int(day) > 31:
-            return f"[ERROR] '{candi_date}' is not a valid calendar date."
-
-        month = date_match[date_type]['month']
-        if date_type == 'ddmmyyyy':
-            month = month.zfill(2)
-
-        year = f"19{date_match[date_type]['year'][-2:]}"
-
-        candi_date = f"{day} {month} {year}"
-
-    for fmt in DATA.DATE_FORMATS:
-        try:
-            datetime.strptime(candi_date, fmt)
-        except ValueError as ve:
-            if "day is out of range for month" in str(ve):
+        if date_type in ['daymonth', 'daymon']:
+            day = date_match[date_type]['day'].zfill(2)
+            month = date_match[date_type]['month']
+            if (int(day) > 29 and month in ["February", "Feb"]) or int(day) > 31:
                 return f"[ERROR] '{candi_date}' is not a valid calendar date."
             else:
+                return
+
+        valid_year = REGEX.SURVEY_YEARS.match(date_match[date_type]['year'])
+        if not valid_year:
+            return f"[ERROR] '{candi_date}' is outside the survey timespan."
+
+        candi_date = re.sub(r'[\/\-\. ]+', ' ', candi_date)
+        if date_type in ['daymonthyear', 'ddmmyyyy', 'ddmonyyyy']:
+            day = date_match[date_type]['day'].zfill(2)
+            if int(day) > 31:
+                return f"[ERROR] '{candi_date}' is not a valid calendar date."
+
+            month = date_match[date_type]['month']
+            if date_type == 'ddmmyyyy':
+                month = month.zfill(2)
+
+            year = f"19{date_match[date_type]['year'][-2:]}"
+
+            candi_date = f"{day} {month} {year}"
+
+        for fmt in DATA.DATE_FORMATS:
+            try:
+                datetime.strptime(candi_date, fmt)
+            except ValueError as ve:
+                if "day is out of range for month" in str(ve):
+                    return f"[ERROR] '{candi_date}' is not a valid calendar date."
+                else:
+                    continue
+
+
+    def check_for_other_row_data_issues(self) -> None:
+        if self.transcription.file1.name and self.transcription.file2.name:
+            self.check_values_between_filenames()
+
+        for key in ['field_info_date', 'primary_record_date']:
+            date_value = getattr(self.transcription, key)
+            if not date_value:
                 continue
+            warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
+            if check_result := self.vali_dates(date_value):
+                self.warnings[warning_key].append(f"{self.row_prefix}{check_result}")
 
 
-def check_for_other_row_data_issues(transcription: Transcription, row_prefix: str) -> None:
-    if transcription.file1.name and transcription.file2.name:
-        check_values_between_filenames(transcription, row_prefix)
+    def run_validation_checks(self) -> dict | None:
+        if self.transcription.is_cover_page: 
+            self.has_cover_issues()
+        
+        self.check_for_other_row_data_issues()
 
-    for key in ['field_info_date', 'primary_record_date']:
-        date_value = getattr(transcription, key)
-        if not date_value:
-            continue
-        warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
-        if check_result := vali_dates(date_value):
-            warnings[warning_key].append(f"{row_prefix}{check_result}")
-
-
-def run_validation_checks(transcription: Transcription, row_prefix) -> dict | None:
-    if transcription.is_cover_page: 
-        has_cover_issues(transcription, row_prefix)
-    
-    check_for_other_row_data_issues(transcription, row_prefix)
-
-    return warnings if any(value for value in warnings.values() if value) else None
+        return self.warnings if any(value for value in self.warnings.values() if value) else None
