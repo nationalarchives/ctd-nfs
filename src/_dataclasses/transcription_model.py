@@ -86,6 +86,7 @@ class Transcription:
     OS_map_sheet: str
     field_info_date: str
     primary_record_date: str
+    warnings: dict | None = None
 
     @property
     def has_data(self) -> bool:
