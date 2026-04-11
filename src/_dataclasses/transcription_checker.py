@@ -207,4 +207,4 @@ def run_validation_checks(transcription: Transcription, row_prefix) -> dict | No
     if transcription.is_cover_page: 
         has_cover_issues(transcription, row_prefix)
     
-    warnings = check_for_other_row_data_issues(transcription, warnings, row_prefix)
+    check_for_other_row_data_issues(transcription, row_prefix)
