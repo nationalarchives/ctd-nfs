@@ -28,8 +28,6 @@ class TranscriptionChecker:
                 'Reference Warnings': [],
                 'Filename Warnings': [],
                 'Type Warnings': [],
-                'Landowner Warnings': [],
-                'Farmer Warnings': [],
                 'Field Date Warnings': [],
                 'Primary Date Warnings': []
             }
