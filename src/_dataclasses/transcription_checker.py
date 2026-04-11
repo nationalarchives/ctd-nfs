@@ -20,9 +20,7 @@ from src._dataclasses.transcription_model import Transcription
 logger = logging.getLogger(__name__)
 
 
-def initialise_warnings_mapping() -> dict:
-    """Create a mapping of warning categories to empty lists for storing warnings in the output file"""
-    return {
+warnings = {
         'Reference Warnings': [],
 		'Filename Warnings': [],
 		'Type Warnings': [],
@@ -36,15 +34,14 @@ def initialise_warnings_mapping() -> dict:
     }
 
 
-def check_for_cover_with_farm_details(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
+def check_for_cover_with_farm_details(transcription: Transcription, row_prefix: str) -> dict:
     if (transcription.file1.is_cover) and (transcription.form_type.name == "Cover") and transcription.has_data:
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
     
     return warnings 
 
-
-def report_cover_image_inconsistencies(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
+def report_cover_image_inconsistencies(transcription: Transcription, row_prefix: str) -> None:
     """
     Performs checks to ensure that if the form is a cover, only one image is provided and that it matches the cover pattern
     * if document type is 'Cover', only one image should be provided, and it should match either the cover pattern aor the form pattern with image number 0001
@@ -87,11 +84,9 @@ def report_cover_image_inconsistencies(transcription: Transcription, warnings: d
     return warnings
 
 
-def has_cover_issues(transcription: Transcription, row_prefix: str) -> dict | None:
-    no_cover_warnings = initialise_warnings_mapping()
-
-    warnings = check_for_cover_with_farm_details(transcription, no_cover_warnings, row_prefix)
-    warnings = report_cover_image_inconsistencies(transcription, warnings, row_prefix)
+def has_cover_issues(transcription: Transcription, row_prefix: str) -> dict:
+    check_for_cover_with_farm_details(transcription, row_prefix)
+    report_cover_image_inconsistencies(transcription, row_prefix)
 
     if warnings != no_cover_warnings:
         return warnings
@@ -101,7 +96,7 @@ def has_cover_issues(transcription: Transcription, row_prefix: str) -> dict | No
         return None
 
 
-def check_values_between_filenames(transcription: Transcription, warnings: dict, row_prefix: str) -> dict:
+def check_values_between_filenames(transcription: Transcription, row_prefix: str) -> dict:
     """
 
     Performs checks on the piece, parish number and image number of the two file names
@@ -203,9 +198,9 @@ def vali_dates(candi_date: str) -> str | None:
                 continue
 
 
-def check_for_other_row_data_issues(transcription: Transcription, warnings: dict, row_prefix: str):
+def check_for_other_row_data_issues(transcription: Transcription, row_prefix: str) -> dict:
     if transcription.file1.name and transcription.file2.name:
-        warnings = check_values_between_filenames(transcription, warnings, row_prefix)
+        check_values_between_filenames(transcription, row_prefix)
 
     for key in ['field_info_date', 'primary_record_date']:
         date_value = getattr(transcription, key)
@@ -222,8 +217,6 @@ def run_validation_checks(transcription: Transcription, row_prefix) -> dict:
     warnings = initialise_warnings_mapping()
     
     if transcription.is_cover_page: 
-        warnings = has_cover_issues(transcription, row_prefix)
-        if warnings is None:
-            continue
+        has_cover_issues(transcription, row_prefix)
     
     warnings = check_for_other_row_data_issues(transcription, warnings, row_prefix)
