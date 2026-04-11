@@ -34,12 +34,11 @@ warnings = {
     }
 
 
-def check_for_cover_with_farm_details(transcription: Transcription, row_prefix: str) -> dict:
+def check_for_cover_with_farm_details(transcription: Transcription, row_prefix: str) -> None:
     if (transcription.file1.is_cover) and (transcription.form_type.name == "Cover") and transcription.has_data:
         warnings['Filename Warnings'].append(f"{row_prefix}Form type is 'Cover' but row contains farm details.")
         warnings['Type Warnings'].append(f"{row_prefix}[see Filename Warnings]")
-    
-    return warnings 
+
 
 def report_cover_image_inconsistencies(transcription: Transcription, row_prefix: str) -> None:
     """
@@ -80,23 +79,18 @@ def report_cover_image_inconsistencies(transcription: Transcription, row_prefix:
             f"but additional image {transcription.file2.name} was also provided."
         )
         warnings['Type Warnings'].append(f"{row_prefix}document is listed as 'Cover' in data but two form images provided.")
-    
-    return warnings
 
 
-def has_cover_issues(transcription: Transcription, row_prefix: str) -> dict:
+def has_cover_issues(transcription: Transcription, row_prefix: str) -> None:
     check_for_cover_with_farm_details(transcription, row_prefix)
     report_cover_image_inconsistencies(transcription, row_prefix)
 
-    if warnings != no_cover_warnings:
-        return warnings
-    else:
-        msg = f"{row_prefix}is a cover so will not be processed."
-        logger.info(f" {msg:->80}")
-        return None
+    msg = f"{row_prefix}is a cover so will not be processed."
+    logger.info(f" {msg:->80}")
+    return None
 
 
-def check_values_between_filenames(transcription: Transcription, row_prefix: str) -> dict:
+def check_values_between_filenames(transcription: Transcription, row_prefix: str) -> None:
     """
 
     Performs checks on the piece, parish number and image number of the two file names
@@ -127,8 +121,6 @@ def check_values_between_filenames(transcription: Transcription, row_prefix: str
     image2 = transcription.file2.image_number
     if image2 != image1 + 1:
         warnings['Filename Warnings'].append(f"{row_prefix}{filenames} are either not consecutive images or in the wrong order.")
-    
-    return warnings
 
 
 def vali_dates(candi_date: str) -> str | None:    
@@ -198,7 +190,7 @@ def vali_dates(candi_date: str) -> str | None:
                 continue
 
 
-def check_for_other_row_data_issues(transcription: Transcription, row_prefix: str) -> dict:
+def check_for_other_row_data_issues(transcription: Transcription, row_prefix: str) -> None:
     if transcription.file1.name and transcription.file2.name:
         check_values_between_filenames(transcription, row_prefix)
 
@@ -210,12 +202,8 @@ def check_for_other_row_data_issues(transcription: Transcription, row_prefix: st
         if check_result := vali_dates(date_value):
             warnings[warning_key].append(f"{row_prefix}{check_result}")
 
-    return warnings
 
-
-def run_validation_checks(transcription: Transcription, row_prefix) -> dict:
-    warnings = initialise_warnings_mapping()
-    
+def run_validation_checks(transcription: Transcription, row_prefix) -> dict | None:
     if transcription.is_cover_page: 
         has_cover_issues(transcription, row_prefix)
     
