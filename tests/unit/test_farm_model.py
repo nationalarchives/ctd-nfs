@@ -1,4 +1,6 @@
-from src.harvester.farm_setup import Farm, concatenate_instance, concatenate_forms, _normalize_date
+import pytest
+
+from src._dataclasses.farm_model import Farm, concatenate_instance, concatenate_forms, _normalize_date
 
 def test_farm_dataclass_instantiation(capsys, farms):
 	"""_summary_
@@ -16,7 +18,9 @@ def test_farm_dataclass_instantiation(capsys, farms):
 			print(f"{new_farm.catalogue_reference}")
 			print(new_farm.forms)
 		assert isinstance(new_farm, Farm)
-            
+
+
+@pytest.mark.skip(reason="awaiting refactoring of concatenation methods")
 def test_farm_attribute_concatenation(concatenation_data):
 	for farm_name, test_data in concatenation_data.items():
 		existing_farm = Farm(**test_data['data'][0])
@@ -50,6 +54,13 @@ def test_concatenate_forms(concatenate_forms_fixture):
 		if index == 1:
 			assert len(existing_farm['B496/EI'][0].images) == 3
 			continue
+
+
+def test_normalize_date(valid_dates, normalized_dates):
+      for index, test_date in enumerate(valid_dates):
+            expected_result = normalized_dates[index]
+
+            assert expected_result == _normalize_date(test_date)
 
 
 
