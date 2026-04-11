@@ -111,9 +111,9 @@ class TranscriptionChecker:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different pieces.")
 
         parish_number = self.transcription.parish.split()[0]
-        if self.transcription.file1.parish != self.transcription.file2.parish:
+        if self.transcription.file1.parish_number != self.transcription.file2.parish_number:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different parish numbers.")
-        elif self.transcription.file1.parish != parish_number:
+        elif self.transcription.file1.parish_number != parish_number:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have a different parish number from parish name '{self.transcription.parish}'.")
         
         image1 = self.transcription.file1.image_number
