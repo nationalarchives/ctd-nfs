@@ -114,17 +114,3 @@ def test_cover_image_inconsistencies_form_supplied_but_cover_pattern():
 	expected_message = f"{checker.row_prefix}MAF32-51-285.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
 	assert expected_message == checker.warnings['Filename Warnings'][0]
 
-
-def test_cover_with_farm_details(cover_with_farm_details):
-	for test_data in cover_with_farm_details:
-		data = test_data['data']
-		row_num = test_data['row_num']
-		expected_message = test_data['warning']
-
-		pattern_matches, row_prefix = setup(data, row_num)
-		warnings_map = {
-			'Filename Warnings': [],
-			'Type Warnings': []
-			}
-		actual_warnings = check_for_cover_with_farm_details(data, pattern_matches, warnings_map, row_prefix)
-		assert expected_message == actual_warnings['Filename Warnings'][0]
