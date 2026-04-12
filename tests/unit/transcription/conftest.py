@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture()
-def base_farm():
+def farm():
 	return {
 		'primary_farm_number': "18",
 		'additional_farms': "Outhouse, No 1",
