@@ -1,4 +1,4 @@
-from src._dataclasses.transcription_checker import TranscriptionChecker
+from src.harvester.transcription_checker import TranscriptionChecker
 
 
 def test_valid_dates():

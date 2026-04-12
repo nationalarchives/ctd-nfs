@@ -1,5 +1,5 @@
 from src._dataclasses.transcription_model import Transcription
-from src._dataclasses.transcription_checker import TranscriptionChecker
+from src.harvester.transcription_checker import TranscriptionChecker
 
 
 def test_values_between_filenames_different_pieces(farm):
