@@ -30,10 +30,14 @@ def test_cover_image_2():
 
 
 def test_bad_image_name():
-    fixture = "MAF3251286.tif"
+    fixture = [
+        "MAF3251286.tif",
+        "MAF32-51.tif",
+    ]
 
     with pytest.raises(TranscriptionDataError):
-        Filename(fixture)
+        for filename in fixture:
+            Filename(filename)
 
 
 def test_properties():
@@ -47,8 +51,12 @@ def test_properties():
 
 
 def test_bad_form_types():
-    fixture = 'SF 51'
+    fixture = [
+        "SF 51",
+        "SF47/SSY",
+    ]
 
     with pytest.raises(TranscriptionDataError):
-        FormType(fixture)
+        for form_name in fixture:
+            FormType(form_name)
 
