@@ -661,34 +661,6 @@ def reference_values_bad_form():
 
 
 @pytest.fixture()
-def reference_values_filename1_bad_pattern():
-	return	{
-			'row_num': "10101",
-			'data':{
-				'filename_1': Filename("MAF32-51.tif"),
-				'filename_2': None,
-				'document_type': FormType("C 49/SSY"),
-				'county': "WL Wiltshire",
-				'parish': "285 Zeals",
-			},
-		}		
-
-
-@pytest.fixture()
-def reference_values_filename2_bad_pattern():
-	return	{
-			'row_num': "10101",
-			'data':{
-				'filename_1': Filename("MAF32-51-285.tif"),
-				'filename_2': Filename("MAF3251286.tif"),
-				'document_type': FormType("SF C69/SSY"),
-				'county': "WL Wiltshire",
-				'parish': "285 Zeals",
-			},
-		}	
-
-
-@pytest.fixture()
 def reference_values_no_farm_data():
 	return	{
 			'row_num': "10101",
@@ -719,66 +691,6 @@ def reference_values_no_farm_data():
 				'primary_record_date': "[not specified]",
 			},
 	}		
-
-
-@pytest.fixture()
-def values_between_filenames_different_pieces():
-	return	{
-		'row_num': "1111",
-		'data':{
-			'filename_1': Filename("MAF32-194-1_59.tif"),
-			'filename_2': Filename("MAF32-195-1_60.tif"),
-			'document_type': FormType("C51/SSY"),
-			'county': "WD Westmorland",
-			'parish': "1 Ambleside",
-		},
-		'warning': "Row 1111: MAF32-194-1_59.tif and MAF32-195-1_60.tif have different pieces."
-	}
-
-
-@pytest.fixture()
-def values_between_filenames_different_parish_numbers():
-	return	{
-		'row_num': "2222",
-		'data':{
-			'filename_1': Filename("MAF32-5-98_28.tif"),
-			'filename_2': Filename("MAF32-5-96_29.tif"),
-			'document_type': FormType("B496/EI"),
-			'county': "HF Herefordshire",
-			'parish': "98 Clehonger",
-		},
-		'warning': "Row 2222: MAF32-5-98_28.tif and MAF32-5-96_29.tif have different parish numbers."
-	}
-
-
-@pytest.fixture()
-def values_between_filenames_image_number_error():
-	return	{
-		'row_num': "3333",
-		'data':{
-			'filename_1': Filename("MAF32-167-28_386.tif"),
-			'filename_2': Filename("MAF32-167-28_388.tif"),
-			'document_type': FormType("C 47/SSY"),
-			'county': "CU Cumberland",
-			'parish': "28 Aikton",
-		},
-		'warning': "Row 3333: MAF32-167-28_386.tif and MAF32-167-28_388.tif are either not consecutive images or in the wrong order."
-	}
-
-
-@pytest.fixture()
-def values_between_filenames_parish_number_mismatch():
-	return	{
-		'row_num': "4444",
-		'data':{
-			'filename_1': Filename("MAF32-5-96_28.tif"),
-			'filename_2': Filename("MAF32-5-96_29.tif"),
-			'document_type': FormType("B496/EI"),
-			'county': "HF Herefordshire",
-			'parish': "98 Clehonger",
-		},
-		'warning': "Row 4444: MAF32-5-96_28.tif and MAF32-5-96_29.tif have a different parish number from parish name '98 Clehonger'."
-	}
 
 
 @pytest.fixture()
