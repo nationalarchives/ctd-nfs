@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture()
-def transcription_checker_base():
+def base_farm():
 	return {
 		'primary_farm_number': "18",
 		'additional_farms': "Outhouse, No 1",
@@ -24,3 +24,4 @@ def transcription_checker_base():
 		'field_info_date': "06-Feb-42",
 		'primary_record_date': "12-Feb-43",
 	}
+
