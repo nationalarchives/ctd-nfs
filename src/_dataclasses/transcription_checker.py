@@ -34,7 +34,7 @@ class TranscriptionChecker:
 
 
     def _check_for_cover_with_farm_details(self) -> None:
-        if (self.transcription.file1.is_cover) and (self.transcription.form_type.name == "Cover") and self.self.transcription.has_data:
+        if (self.transcription.file1.is_cover) and (self.transcription.document_type.name == "Cover") and self.self.transcription.has_data:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}Form type is 'Cover' but row contains farm details.")
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
@@ -54,25 +54,25 @@ class TranscriptionChecker:
             warnings (dict):
         """
 
-        if not self.transcription.file1.is_cover and self.transcription.file2 and self.transcription.form_type.name == "Cover":
+        if not self.transcription.file1.is_cover and self.transcription.file2 and self.transcription.document_type.name == "Cover":
             self.warnings['Filename Warnings'].append(
                 f"{self.row_prefix}Form type is 'Cover' but two form images were provided: {self.transcription.file1.name} and {self.transcription.file2.name}."
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-        elif self.transcription.form_type.name == "Cover" and not self.transcription.file1.is_cover:
+        elif self.transcription.document_type.name == "Cover" and not self.transcription.file1.is_cover:
             self.warnings['Filename Warnings'].append(
                 f"{self.row_prefix}Form type is 'Cover' but {self.transcription.file1.name} does not match expected cover pattern or have image number 0001."
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-        elif not self.transcription.form_type.name == "Cover" and self.transcription.file1.is_cover:
+        elif not self.transcription.document_type.name == "Cover" and self.transcription.file1.is_cover:
             self.warnings['Filename Warnings'].append(
-                f"{self.row_prefix}{self.transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{self.transcription.form_type.name}'."
+                f"{self.row_prefix}{self.transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{self.transcription.document_type.name}'."
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-        elif self.transcription.form_type.name == "Cover" and self.transcription.file1.is_cover and self.transcription.file2:
+        elif self.transcription.document_type.name == "Cover" and self.transcription.file1.is_cover and self.transcription.file2:
             self.warnings['Filename Warnings'].append(
                 f"{self.row_prefix}Form type is 'Cover', and {self.transcription.file1.name} matches expected pattern for cover image " \
                 f"but additional image {self.transcription.file2.name} was also provided."
@@ -209,3 +209,4 @@ class TranscriptionChecker:
         self._check_for_other_row_data_issues()
 
         return self.warnings if any(value for value in self.warnings.values() if value) else None
+    
