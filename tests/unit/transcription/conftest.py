@@ -4,6 +4,11 @@ import pytest
 @pytest.fixture()
 def farm():
 	return {
+		'filename_1': None,
+		'filename_2': None,
+		'document_type': None,
+		'county': None,
+		'parish': None,
 		'primary_farm_number': "18",
 		'additional_farms': "Outhouse, No 1",
 		'farm_name': "The Grove Farm",
