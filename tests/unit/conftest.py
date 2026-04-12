@@ -647,20 +647,6 @@ def bad_farm_initial_values():
 
 
 @pytest.fixture()
-def reference_values_bad_form():
-	return	{
-			'row_num': "10101",
-			'data':{
-				'filename_1': Filename("MAF32-51-285.tif"),
-				'filename_2': None,
-				'document_type': FormType("SF47/SSY"),
-				'county': "WL Wiltshire",
-				'parish': "285 Zeals",
-			},
-		}	
-
-
-@pytest.fixture()
 def reference_values_no_farm_data():
 	return	{
 			'row_num': "10101",
