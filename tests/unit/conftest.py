@@ -647,39 +647,6 @@ def bad_farm_initial_values():
 
 
 @pytest.fixture()
-def reference_values_no_farm_data():
-	return	{
-			'row_num': "10101",
-			'data':{
-				'filename_1': Filename("MAF32-194-1_59.tif"),
-				'filename_2': Filename("MAF32-194-1_60.tif"),
-				'document_type': FormType("B496/EI"),
-				'county': "WD Westmorland",
-				'parish': "1 Ambleside",
-				'primary_farm_number': "[not specified]",
-				'additional_farms': "[not specified]",
-				'farm_name': "[not specified]",
-				'addressee_title': "[not specified]",
-				'addressee_individual_name': "[not specified]",
-				'addressee_group_names': "[not specified]",
-				'address': "[not specified]",
-				'owner_title': "[not specified]",
-				'owner_individual_name': "[not specified]",
-				'owner_group_names': "[not specified]",
-				'owner_address': "[not specified]",
-				'farmer_title': "[not specified]",
-				'farmer_individual_name': "[not specified]",
-				'farmer_group_names': "[not specified]",
-				'farmer_address': "[not specified]",
-				'acreage': "[not specified]",
-				'OS_map_sheet': "[not specified]",
-				'field_info_date': "[not specified]",
-				'primary_record_date': "[not specified]",
-			},
-	}		
-
-
-@pytest.fixture()
 def normalized_dates():
 	return [
 		"15 October 1941",
