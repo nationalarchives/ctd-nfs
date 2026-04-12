@@ -25,75 +25,94 @@ fixture = {
 }
 
 
-def test_cover_image_inconsistencies_bad_cover_pattern(cover_image_inconsistencies_bad_cover_pattern):
-	data = cover_image_inconsistencies_bad_cover_pattern['data']
-	row_num = cover_image_inconsistencies_bad_cover_pattern['row_num']
-	expected_message = cover_image_inconsistencies_bad_cover_pattern['warning']
+def test_cover_image_inconsistencies_bad_cover_pattern():
+	fixture.update({
+		'filename_1': "MAF32-194-1_59.tif",
+		'filename_2': "",
+		'document_type': "Cover",
+		'county': "WD Westmorland",
+		'parish': "1 Ambleside",
+	})
+	transcription = Transcription(**fixture)
+	row_number = "10"
 
-	pattern_matches, row_prefix = setup(data, row_num)
-	warnings_map = {
-		'Filename Warnings': [],
-		'Type Warnings': []
-		}
+	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
+	checker._check_values_between_filenames()
 
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
-	assert expected_message == actual_warnings['Filename Warnings'][0]
-
-
-def test_cover_image_inconsistencies_cover_with_two_images_1(cover_image_inconsistencies_cover_with_two_images_1):
-	data = cover_image_inconsistencies_cover_with_two_images_1['data']
-	row_num = cover_image_inconsistencies_cover_with_two_images_1['row_num']
-	expected_message = cover_image_inconsistencies_cover_with_two_images_1['warning']
-
-	pattern_matches, row_prefix = setup(data, row_num)
-	warnings_map = {
-		'Filename Warnings': [],
-		'Type Warnings': []
-		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
-	assert expected_message == actual_warnings['Filename Warnings'][0]
+	expected_message = f"{checker.row_prefix}Form type is 'Cover' but MAF32-194-1_59.tif does not match expected cover pattern or have image number 0001."
+	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_cover_with_two_images_2(cover_image_inconsistencies_cover_with_two_images_2):
-	data = cover_image_inconsistencies_cover_with_two_images_2['data']
-	row_num = cover_image_inconsistencies_cover_with_two_images_2['row_num']
-	expected_message = cover_image_inconsistencies_cover_with_two_images_2['warning']
+def test_cover_image_inconsistencies_cover_with_two_images_1():
+	fixture.update({
+		'filename_1': "MAF32-193-203_97.tif",
+		'filename_2': "MAF32-193-203_98.tif",
+		'document_type': "Cover",
+		'county': "CU Cumberland",
+		'parish': "203 Winscales",
+	})
+	transcription = Transcription(**fixture)
+	row_number = "10"
 
-	pattern_matches, row_prefix = setup(data, row_num)
-	warnings_map = {
-		'Filename Warnings': [],
-		'Type Warnings': []
-		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
-	assert expected_message == actual_warnings['Filename Warnings'][0]
+	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
+	checker._check_values_between_filenames()
 
-
-def test_cover_image_inconsistencies_form_supplied_but_cover_image(cover_image_inconsistencies_form_supplied_but_cover_image):
-	data = cover_image_inconsistencies_form_supplied_but_cover_image['data']
-	row_num = cover_image_inconsistencies_form_supplied_but_cover_image['row_num']
-	expected_message = cover_image_inconsistencies_form_supplied_but_cover_image['warning']
-
-	pattern_matches, row_prefix = setup(data, row_num)
-	warnings_map = {
-		'Filename Warnings': [],
-		'Type Warnings': []
-		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
-	assert expected_message == actual_warnings['Filename Warnings'][0]
+	expected_message = f"{checker.row_prefix}Form type is 'Cover' but two form images were provided: MAF32-193-203_97.tif and MAF32-193-203_98.tif."
+	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_form_supplied_but_cover_pattern(cover_image_inconsistencies_form_supplied_but_cover_pattern):
-	data = cover_image_inconsistencies_form_supplied_but_cover_pattern['data']
-	row_num = cover_image_inconsistencies_form_supplied_but_cover_pattern['row_num']
-	expected_message = cover_image_inconsistencies_form_supplied_but_cover_pattern['warning']
+def test_cover_image_inconsistencies_cover_with_two_images_2():
+	fixture.update({
+		'filename_1': "MAF32-51-285_0001.tif",
+		'filename_2': "MAF32-51-285_0002.tif",
+		'document_type': "Cover",
+		'county': "WL Wiltshire",
+		'parish': "285 Zeals",
+	})
+	transcription = Transcription(**fixture)
+	row_number = "10"
 
-	pattern_matches, row_prefix = setup(data, row_num)
-	warnings_map = {
-		'Filename Warnings': [],
-		'Type Warnings': []
-		}
-	actual_warnings = report_cover_image_inconsistencies(data, pattern_matches, warnings_map, row_prefix)
-	assert expected_message == actual_warnings['Filename Warnings'][0]
+	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
+	checker._check_values_between_filenames()
+
+	expected_message = f"{checker.row_prefix}Form type is 'Cover', and MAF32-51-285_0001.tif matches expected pattern for cover image but additional image MAF32-51-285_0002.tif was also provided."
+	assert expected_message == checker.warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_form_supplied_but_cover_image():
+	fixture.update({
+		'filename_1': "MAF32-51-285_0001.tif",
+		'filename_2': "",
+		'document_type': "SF",
+		'county': "WL Wiltshire",
+		'parish': "285 Zeals",
+	})
+	transcription = Transcription(**fixture)
+	row_number = "10"
+
+	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
+	checker._check_values_between_filenames()
+
+	expected_message = f"{checker.row_prefix}MAF32-51-285_0001.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
+	assert expected_message == checker.warnings['Filename Warnings'][0]
+
+
+def test_cover_image_inconsistencies_form_supplied_but_cover_pattern():
+	fixture.update({
+		'filename_1': "MAF32-51-285.tif",
+		'filename_2': "",
+		'document_type': "SF",
+		'county': "WL Wiltshire",
+		'parish': "285 Zeals",
+	})
+	transcription = Transcription(**fixture)
+	row_number = "10"
+
+	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
+	checker._check_values_between_filenames()
+
+	expected_message = f"{checker.row_prefix}MAF32-51-285.tif matches expected cover pattern or has image number 0001 but form type is 'SF'."
+	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
 def test_cover_with_farm_details(cover_with_farm_details):
