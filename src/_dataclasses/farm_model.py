@@ -114,11 +114,8 @@ class Form:
 
 @dataclass
 class Details:
-    title: str
-    individual_name: str
-    group_names: str
+    name: str
     address: str
-    full_address: str = ""
 
 
 @dataclass
