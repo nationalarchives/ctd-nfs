@@ -74,23 +74,6 @@ def _normalize_date(candi_date: str) -> str:
 
 
 @dataclass
-class Image:
-    file: InitVar[Filename]
-    id: str = field(default_factory=create_uuid_str)
-
-    def __post_init__(self, file):
-        self.name = file.name
-        self.number = file.image_number
-
-
-@dataclass
-class Form:
-    images: list[Image]
-    field_info_date: str
-    primary_record_date: str
-
-
-@dataclass
 class Details:
     name: str
     address: str
