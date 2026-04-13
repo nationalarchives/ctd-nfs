@@ -126,13 +126,13 @@ class Farm:
     county: str
     parish: str
     primary_farm_number: str
-    additional_farms: str
-    farm_name: str
+    additional_farms: str = field(init=False)
+    farm_name: str = field(init=False)
     
-    acreage: str
-    OS_map_sheet: str
-    field_info_date: str
-    primary_record_date: str
+    acreage: str = field(init=False)
+    OS_map_sheet: str = field(init=False)
+    field_info_date: str = field(init=False)
+    primary_record_date: str = field(init=False)
 
     warnings: dict[str, list[str]]
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
