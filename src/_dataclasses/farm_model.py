@@ -194,35 +194,6 @@ class Farm:
         )
         self.forms[self.document_type.name].append(new_form)
 
-    def __post_init__(self,
-                      addressee_title, addressee_individual_name, addressee_group_names, address,
-                      owner_title, owner_individual_name, owner_group_names, owner_address,
-                      farmer_title, farmer_individual_name, farmer_group_names, farmer_address
-                      ):
-        self.addressee = Details(
-            title=addressee_title,
-            individual_name=addressee_individual_name,
-            group_names=addressee_group_names,
-            address=address,
-        )
-        self.owner = Details(
-            title=owner_title,
-            individual_name=owner_individual_name,
-            group_names=owner_group_names,
-            address=owner_address,
-        )
-        self.farmer = Details(
-            title=farmer_title,
-            individual_name=farmer_individual_name,
-            group_names=farmer_group_names,
-            address=farmer_address,
-        )
-        self.field_info_date=_normalize_date(self.field_info_date)
-        self.primary_record_date=_normalize_date(self.primary_record_date)
-    
-        # TODO: move to new Farm dataclass
-        self.assign_filenames_to_forms()
-
 
 def concatenate_attribute_values(existing_value: str, new_value: str) -> str:
     """Concatenate two values, ensuring no duplicates.
