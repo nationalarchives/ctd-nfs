@@ -134,7 +134,7 @@ class Farm:
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
 
-    warnings: dict[str, list[str]]
+    warnings: dict[str, list[str]] = None
     forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
         
     @property
