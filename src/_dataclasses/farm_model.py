@@ -163,23 +163,18 @@ class Farm:
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
 
-    def assign_filenames_to_forms(self):
+    def assign_ids_to_filenames(self):
         """_summary_
 
         Args:
             csv_data (dict): _description_
         """
-        new_images = [
-            Image(image_file)
-            for image_file in [self.filename_1, self.filename_2] 
-            if image_file
-        ]
-        new_form = Form(
-            images=new_images,
-            field_info_date=self.field_info_date,
-            primary_record_date=self.primary_record_date,
-        )
-        self.forms[self.document_type.name].append(new_form)
+        
+        for list_of_transcriptions in self.source_data.values():
+            for transcription in list_of_transcriptions:
+                self.files.update({transcription.file1.name: create_uuid_str()})
+                if transcription.file2:
+                    self.files.update({transcription.file2.name: create_uuid_str()})
 
 
 def concatenate_attribute_values(existing_value: str, new_value: str) -> str:
