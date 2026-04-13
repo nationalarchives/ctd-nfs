@@ -155,16 +155,13 @@ class Farm:
         Returns:
             str: catalogue reference for the farm
         """
-        _county_code, _ = self.county.split()
-        _parish_number, *_ = self.parish.split()
-        _catalogue_reference = _get_catalogue_reference_stem(_county_code, _parish_number)
+        _catalogue_reference = _get_catalogue_reference_stem(self._county_code, self._parish_number)
+
         return f"{_catalogue_reference}/{self.primary_farm_number}"
 
     @property
     def farm_reference(self) -> str:
-        _county_code, _ = self.county.split()
-        _parish_number, *_ = self.parish.split()
-        return f"{_county_code}/{_parish_number}/{self.primary_farm_number}"
+        return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
 
     def assign_filenames_to_forms(self):
         """_summary_
