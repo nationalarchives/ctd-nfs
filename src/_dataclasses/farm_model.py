@@ -123,12 +123,6 @@ class Details:
 
 @dataclass
 class Farm:
-    """
-    all values except catalogue_reference will be instantiated from the raw csv data and then validated in a later step
-    all fields after primary_farm_number are lists to accomodate variation in names and addresses when original forms were filled out 
-    e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
-    These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
-    """
     filename_1: Filename
     filename_2: Filename
     document_type: FormType
