@@ -138,6 +138,10 @@ class Farm:
 
     warnings: dict[str, list[str]] | None = None   
     source_data: OrderedDict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
+
+    def __post_init__(self):
+        self._county_code, *_ = self.county.split()
+        self._parish_number, *_ = self.parish.split()
         
     @property
     def iaid() -> str:
