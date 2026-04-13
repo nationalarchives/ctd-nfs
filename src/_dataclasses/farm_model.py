@@ -8,7 +8,7 @@ from datetime import datetime
 
 from src._tools.constants import PATH, REGEX, DATA
 from src._tools.helpers import create_uuid_str
-from src._dataclasses.transcription_model import Filename, FormType
+from src._dataclasses.transcription_model import Transcription
 
 
 def initialise_forms_mapping() -> OrderedDict:
@@ -134,8 +134,8 @@ class Farm:
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
 
-    warnings: dict[str, list[str]] = None
-    forms: OrderedDict[str, list[str]] = field(default_factory=initialise_forms_mapping)
+    warnings: dict[str, list[str]] | None = None
+    forms: OrderedDict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
         
     @property
     def iaid() -> str:
