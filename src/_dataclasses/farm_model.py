@@ -127,8 +127,13 @@ class Farm:
     parish: str
     primary_farm_number: str
 
-    additional_farms: str = field(init=False)
     farm_name: str = field(init=False)   
+    additional_farms: str = field(init=False)
+
+    addressee: Details = field(init=False)
+    farmer: Details = field(init=False)
+    landowner: Details = field(init=False)
+
     acreage: str = field(init=False)
     OS_map_sheet: str = field(init=False)
     field_info_date: str = field(init=False)
