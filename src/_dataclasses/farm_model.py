@@ -123,27 +123,11 @@ class Details:
 
 @dataclass
 class Farm:
-    filename_1: Filename
-    filename_2: Filename
-    document_type: FormType
     county: str
     parish: str
     primary_farm_number: str
     additional_farms: str
     farm_name: str
-    
-    addressee_title: InitVar[str]
-    addressee_individual_name: InitVar[str]
-    addressee_group_names: InitVar[str]
-    address: InitVar[str]
-    owner_title: InitVar[str]
-    owner_individual_name: InitVar[str]
-    owner_group_names: InitVar[str]
-    owner_address: InitVar[str]
-    farmer_title: InitVar[str]
-    farmer_individual_name: InitVar[str]
-    farmer_group_names: InitVar[str]
-    farmer_address: InitVar[str]
     
     acreage: str
     OS_map_sheet: str
