@@ -30,28 +30,6 @@ def initialise_forms_mapping() -> OrderedDict:
     ])
 
 
-def _get_catalogue_reference_stem(county_code: str, parish_number: str) -> str:
-    """
-    Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
-
-    Args:
-        county_code (str):  
-        parish_number (str): 
-
-    Returns:
-        str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
-    """ 
-    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
-        all_references = (
-            reference
-            for reference in piece_lookup_db['pieces lookup table']
-            if reference['County & Parish'] == f"{county_code}/{parish_number}"
-        )
-    reference_record = next(all_references, None)
-    
-    return reference_record['Catalogue ref']
-
-
 def _normalize_date(candi_date: str) -> str:
     """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
     Note: day must not have leading zeros.
@@ -142,6 +120,27 @@ class Farm:
     def __post_init__(self):
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
+
+    def _get_catalogue_reference_stem(self) -> str:
+        """
+        Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
+
+        Args:
+            county_code (str):  
+            parish_number (str): 
+
+        Returns:
+            str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
+        """ 
+        with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+            all_references = (
+                reference
+                for reference in piece_lookup_db['pieces lookup table']
+                if reference['County & Parish'] == f"{self._county_code}/{self._parish_number}"
+            )
+        reference_record = next(all_references, None)
+        
+        return reference_record['Catalogue ref']
         
     @property
     def iaid() -> str:
@@ -155,7 +154,7 @@ class Farm:
         Returns:
             str: catalogue reference for the farm
         """
-        _catalogue_reference = _get_catalogue_reference_stem(self._county_code, self._parish_number)
+        _catalogue_reference = self._get_catalogue_reference_stem()
 
         return f"{_catalogue_reference}/{self.primary_farm_number}"
 
