@@ -138,9 +138,8 @@ class Farm:
     OS_map_sheet: str = field(init=False)
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
-    forms: list[str] = field(init=False)
-    warnings: dict[str, list[str]] | None = None
-    
+
+    warnings: dict[str, list[str]] | None = None   
     source_data: OrderedDict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
         
     @property
