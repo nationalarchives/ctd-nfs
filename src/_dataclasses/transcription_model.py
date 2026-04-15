@@ -122,4 +122,33 @@ class Transcription:
 
         if self.file2 and (not self.file1.is_cover) and (self.document_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
+        
+    def __repr__(self):
+        return str({
+            'filename_1': self.file1.name,
+            'filename_2': self.file2.name,
+            'document_type': self.document_type.name,
+            'county': self.county,
+            'parish': self.parish,
+            'primary_farm_number': self.primary_farm_number,
+            'additional_farms': self.additional_farms,
+            'farm_name': self.farm_name,
+            'addressee_title': self.addressee_title,
+            'addressee_individual_name': self.addressee_individual_name,
+            'addressee_group_names': self.addressee_group_names,
+            'address': self.address,
+            'owner_title': self.owner_title,
+            'owner_individual_name': self.owner_individual_name,
+            'owner_group_names': self.owner_group_names,
+            'owner_address': self.owner_address,
+            'farmer_title': self.farmer_title,
+            'farmer_individual_name': self.farmer_individual_name,
+            'farmer_group_names': self.farmer_group_names,
+            'farmer_address': self.farmer_address,
+            'acreage': self.acreage,
+            'OS_map_sheet': self.OS_map_sheet,
+            'field_info_date': self.field_info_date,
+            'primary_record_date': self.primary_record_date,
+            'warnings': self.warnings,
+        })
 
