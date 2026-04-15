@@ -605,23 +605,6 @@ def concatenate_forms_fixture():
 
 
 @pytest.fixture()
-def bad_farm_initial_values():
-	return	[
-		{
-			'data':{
-				'row_num': '6666',
-				'filename_1': Filename("MAF32-167-28_386.tif"),
-				'filename_2': Filename("MAF32-167-28_385.tif"),
-				'document_type': FormType("C 47/SSY"),
-				'county': "CU Cumberland",
-				'parish': "28 Aikton",
-			},
-			'warning': "Row 6666: MAF32-167-28_386.tif and MAF32-167-28_385.tif are either not consecutive images or in the wrong order."
-		},
-	]
-
-
-@pytest.fixture()
 def normalized_dates():
 	return [
 		"15 October 1941",
