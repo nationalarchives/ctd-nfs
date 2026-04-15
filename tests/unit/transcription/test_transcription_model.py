@@ -4,9 +4,9 @@ from src._dataclasses.transcription_model import Transcription
 from src._tools.helpers import TranscriptionDataError
 
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 def test_is_form_page():
-	fixture = {
+    fixture = {
         'filename_1': "MAF32-194-1_59.tif",
         'filename_2': "MAF32-194-1_60.tif",
         'document_type': "B496/EI",
@@ -32,8 +32,9 @@ def test_is_form_page():
         'field_info_date': "06-Feb-42",
         'primary_record_date': "12-Feb-43",
     }
-	test = Transcription(**fixture)
-	assert test.is_form
+
+    test = Transcription(**fixture)
+    assert test.is_form
 
 	
 @pytest.mark.skip()
