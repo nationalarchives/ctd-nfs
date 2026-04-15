@@ -1,7 +1,6 @@
 # TODO: split out Farm initialization attributes to new Form dataclass module
 
 from dataclasses import dataclass, field
-from collections import OrderedDict
 import shelve
 
 from _dataclasses.transcriptions_processor import Details
@@ -10,23 +9,24 @@ from src._tools.helpers import create_uuid_str
 from src._dataclasses.transcription_model import Transcription
 
 
-def initialise_forms_mapping() -> OrderedDict:
+def initialise_forms_mapping() -> dict:
     """Create a mapping of form codes to empty lists for storing filenames.
-        An orderedDict is used to maintain the order of forms as specified as there is a chronological significance to the order of forms.
+        The order of forms as specified is important as there is a chronological significance to the order of forms.
         An enum was not used here as the form codes are not valid enum names .
     Returns:
-        OrderedDict: Mapping of form codes to empty lists.
+        dict: Mapping of form codes to empty lists.
     """
-    return OrderedDict([
-        ('C 47/SSY', []),
-        ('C 49/SSY', []),
-        ('C51/SSY', []),
-        ('SF', []),
-        ('SF C69/SSY', []),
-        ('B496/EI', []),
-        ('Other', []),
-        ('Cover', []),
-    ])
+    return {
+        'C 47/SSY',
+        'C 49/SSY',
+        'C51/SSY',
+        'SF',
+        'SF C69/SSY',
+        'B496/EI',
+        'Other',
+        'Cover',
+    }
+
 
 
 @dataclass
@@ -49,7 +49,7 @@ class Farm:
 
     files: dict = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
-    source_data: OrderedDict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
+    source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
     def __post_init__(self):
         self._county_code, *_ = self.county.split()
