@@ -1,12 +1,12 @@
 # TODO: split out Farm initialization attributes to new Form dataclass module
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 import shelve
 
 from _dataclasses.transcriptions_processor import Details
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
-from src._dataclasses.transcription_model import Transcription
+from src._dataclasses.transcription_model import Transcription, Filename, FormType
 
 
 def initialise_forms_mapping() -> dict:
@@ -28,6 +28,24 @@ def initialise_forms_mapping() -> dict:
     }
 
 
+@dataclass
+class ImageFile:
+    filename: InitVar[Filename]
+    id: str = field(default_factory=create_uuid_str) 
+    
+    def __post_init__(self, filename):
+        self.name = filename.name
+        self.image_number = filename.image_number
+
+
+@dataclass
+class Form:
+    document_type: InitVar[FormType]
+    images: list[ImageFile]
+    
+    def __post_init__(self, document_type):
+        self.name = document_type.name
+
 
 @dataclass
 class Farm:
@@ -47,7 +65,7 @@ class Farm:
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
 
-    files: dict = field(default_factory=dict)
+    forms: list[Form]
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
