@@ -46,7 +46,6 @@ def farms():
 			'OS_map_sheet': "26 NE",
 			'field_info_date': "06-Feb-42",
 			'primary_record_date': "12-Feb-43",
-			'warnings': initialise_warnings_mapping(),
 		},
 		{
 			'filename_1': Filename("MAF32-194-1_75.tif"),
@@ -73,7 +72,6 @@ def farms():
 			'OS_map_sheet': "[not specified]",
 			'field_info_date': "[not specified]",
 			'primary_record_date': "[not specified]",
-			'warnings': initialise_warnings_mapping(),
 		},
 		{
 			'filename_1': Filename("MAF32-228-1_23.tif"),
@@ -100,7 +98,6 @@ def farms():
 			'OS_map_sheet': "XL NE 1898",
 			'field_info_date': "[not specified]",
 			'primary_record_date': "19 April 1943",
-			'warnings': initialise_warnings_mapping(),
 		},
 		{
 			'filename_1': Filename("MAF32-247-23_75.tif"),
@@ -127,7 +124,6 @@ def farms():
 			'OS_map_sheet': "9 NE1931 Edition",
 			'field_info_date': "30 January 1942",
 			'primary_record_date': "[not specified]",
-			'warnings': initialise_warnings_mapping(),
 		}
 	]
 
@@ -162,7 +158,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-346-10_27.tif"),
@@ -189,7 +184,6 @@ def concatenation_data():
 					'OS_map_sheet': "V 15",
 					'field_info_date': "September 1942",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -223,7 +217,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-348-49_25.tif"),
@@ -250,7 +243,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -284,7 +276,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-176-100_221.tif"),
@@ -311,7 +302,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -345,7 +335,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-175-97_237.tif"),
@@ -372,7 +361,6 @@ def concatenation_data():
 					'OS_map_sheet': "XLII 1926",
 					'field_info_date': "27 August 1941",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -406,7 +394,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-134-296_53.tif"),
@@ -433,7 +420,6 @@ def concatenation_data():
 					'OS_map_sheet': "XIII SW 2nd Edition 1903",
 					'field_info_date': "26/02/1944",
 					'primary_record_date': "23/05/1944",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -467,7 +453,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-131-91_137.tif"),
@@ -494,7 +479,6 @@ def concatenation_data():
 					'OS_map_sheet': "LXVII NW 2nd Edition 1905",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "02/01/1944",
-					'warnings': initialise_warnings_mapping(),
 				},
 			],
 			'result': {
@@ -528,7 +512,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				},
 				{
 					'filename_1': Filename("MAF32-346-1_89.tif"),
@@ -555,7 +538,6 @@ def concatenation_data():
 					'OS_map_sheet': "[not specified]",
 					'field_info_date': "[not specified]",
 					'primary_record_date': "[not specified]",
-					'warnings': initialise_warnings_mapping(),
 				}
 			],
 			'result': {
