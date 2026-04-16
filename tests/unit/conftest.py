@@ -7,17 +7,6 @@ from src._dataclasses.transcription_model import Filename, FormType
 # from src._dataclasses.transcription_checker import initialise_warnings_mapping
 
 
-def setup(test_data, row_num) -> tuple:
-	pattern_matches: dict[re.Match] = {
-		'filename_1': REGEX.FORM_PATTERN.match(test_data['filename_1']),
-		'filename_2': REGEX.FORM_PATTERN.match(test_data['filename_2']) if test_data['filename_2'] else REGEX.FORM_PATTERN.match(""),
-		'cover': REGEX.COVER_PATTERN.match(test_data['filename_1']),
-	}
-	row_prefix = f"Row {row_num}: "
-
-	return pattern_matches, row_prefix
-
-
 @pytest.fixture()
 def farms():
     return [
