@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from src._dataclasses.farm_model import Farm
+from src._dataclasses.farm_model import Form, ImageFile
 from src._tools.constants import DATA, REGEX
 from src._dataclasses.transcription_model import Transcription
 
