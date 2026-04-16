@@ -1,6 +1,6 @@
 import pytest
 
-from src._dataclasses.farm_model import Farm, concatenate_instance, concatenate_forms, _normalize_date
+from src._dataclasses.farm_model import Farm
 
 def test_farm_dataclass_instantiation(capsys, farms):
 	"""_summary_
