@@ -3,7 +3,6 @@
 from dataclasses import dataclass, field, InitVar
 import shelve
 
-from _dataclasses.transcriptions_processor import Details
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
 from src._dataclasses.transcription_model import Transcription, Filename, FormType
@@ -45,6 +44,12 @@ class Form:
     
     def __post_init__(self, document_type):
         self.name = document_type.name
+
+
+@dataclass
+class Details:
+    name: str
+    address: str
 
 
 @dataclass

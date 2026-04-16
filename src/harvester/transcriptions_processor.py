@@ -1,16 +1,9 @@
 import re
 from datetime import datetime
-from dataclasses import dataclass
 
 from src._dataclasses.farm_model import Farm
 from src._tools.constants import DATA, REGEX
 from src._dataclasses.transcription_model import Transcription
-
-
-@dataclass
-class Details:
-    name: str
-    address: str
 
 
 class TranscriptionsProcessor:
