@@ -33,7 +33,7 @@ def process_forms(forms: dict) -> dict:
     }
     
 
-def process_detail(detail: ListOrStr) -> str:
+def process_detail(detail: Details) -> str:
     return detail if type(detail) is str else distill_details(detail)    
 
 
@@ -52,7 +52,7 @@ def join_title_and_name(title: str, name: str) -> str:
         return f"{title} {name}"
 
 
-def process_full_individual_name(titles: ListOrStr, individual_names: ListOrStr) -> str:
+def process_full_individual_name(titles: str, individual_names: str) -> str:
     if type(titles) is str and type(individual_names) is str:
         return join_title_and_name(titles, individual_names)
 
@@ -64,7 +64,7 @@ def process_full_individual_name(titles: ListOrStr, individual_names: ListOrStr)
     return distill_details(full_names)
 
 
-def process_names(title: ListOrStr, individual_name: ListOrStr, group_names: ListOrStr) -> dict:
+def process_names(title: str, individual_name: str, group_names: str) -> dict:
     individual_name = process_full_individual_name(title, individual_name)
     group_names = process_detail(group_names)
 
