@@ -2,15 +2,15 @@ from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 
 
-def test_cover_image_inconsistencies_bad_cover_pattern(farm):
-	farm.update({
+def test_cover_image_inconsistencies_bad_cover_pattern(transcription):
+	transcription.update({
 		'filename_1': "MAF32-194-1_59.tif",
 		'filename_2': "",
 		'document_type': "Cover",
 		'county': "WD Westmorland",
 		'parish': "1 Ambleside",
 	})
-	transcription = Transcription(**farm)
+	transcription = Transcription(**transcription)
 	row_number = "10"
 
 	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
@@ -20,15 +20,15 @@ def test_cover_image_inconsistencies_bad_cover_pattern(farm):
 	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_cover_with_two_images_1(farm):
-	farm.update({
+def test_cover_image_inconsistencies_cover_with_two_images_1(transcription):
+	transcription.update({
 		'filename_1': "MAF32-193-203_97.tif",
 		'filename_2': "MAF32-193-203_98.tif",
 		'document_type': "Cover",
 		'county': "CU Cumberland",
 		'parish': "203 Winscales",
 	})
-	transcription = Transcription(**farm)
+	transcription = Transcription(**transcription)
 	row_number = "10"
 
 	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
@@ -38,15 +38,15 @@ def test_cover_image_inconsistencies_cover_with_two_images_1(farm):
 	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_cover_with_two_images_2(farm):
-	farm.update({
+def test_cover_image_inconsistencies_cover_with_two_images_2(transcription):
+	transcription.update({
 		'filename_1': "MAF32-51-285_0001.tif",
 		'filename_2': "MAF32-51-285_0002.tif",
 		'document_type': "Cover",
 		'county': "WL Wiltshire",
 		'parish': "285 Zeals",
 	})
-	transcription = Transcription(**farm)
+	transcription = Transcription(**transcription)
 	row_number = "10"
 
 	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
@@ -56,15 +56,15 @@ def test_cover_image_inconsistencies_cover_with_two_images_2(farm):
 	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_form_supplied_but_cover_image(farm):
-	farm.update({
+def test_cover_image_inconsistencies_form_supplied_but_cover_image(transcription):
+	transcription.update({
 		'filename_1': "MAF32-51-285_0001.tif",
 		'filename_2': "",
 		'document_type': "SF",
 		'county': "WL Wiltshire",
 		'parish': "285 Zeals",
 	})
-	transcription = Transcription(**farm)
+	transcription = Transcription(**transcription)
 	row_number = "10"
 
 	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
@@ -74,15 +74,15 @@ def test_cover_image_inconsistencies_form_supplied_but_cover_image(farm):
 	assert expected_message == checker.warnings['Filename Warnings'][0]
 
 
-def test_cover_image_inconsistencies_form_supplied_but_cover_pattern(farm):
-	farm.update({
+def test_cover_image_inconsistencies_form_supplied_but_cover_pattern(transcription):
+	transcription.update({
 		'filename_1': "MAF32-51-285.tif",
 		'filename_2': "",
 		'document_type': "SF",
 		'county': "WL Wiltshire",
 		'parish': "285 Zeals",
 	})
-	transcription = Transcription(**farm)
+	transcription = Transcription(**transcription)
 	row_number = "10"
 
 	checker = TranscriptionChecker(transcription=transcription, row_number=row_number)
