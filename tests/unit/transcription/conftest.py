@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture()
-def farm():
+def transcription():
 	return {
 		'filename_1': None,
 		'filename_2': None,
