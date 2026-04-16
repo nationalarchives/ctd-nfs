@@ -110,24 +110,26 @@ class TranscriptionsProcessor:
 
         return existing_farm
 
-    def _concatenate_forms(self, existing_forms: dict[str, Form], new_forms: dict[str, Form]) -> dict[str, Form]:
-        for key in new_forms.keys():
-            if not new_forms[key]:
-                continue
+    def _concatenate_forms(self) -> list[Form]:
+        forms = []
+        for transcription in self.transcriptions:
+            current_form_name = transcription.document_type.name
+            if last_form := (forms[-1] if forms else None):
+                is_same_form_name: bool = current_form_name == last_form.name
+                is_consecutive: bool = (transcription.file1.image_number == last_form.images[-1].image_number + 1)
 
-            if not existing_forms[key]:
-                existing_forms[key] = new_forms[key]
-                continue
+                if not transcription.file2 and is_same_form_name and is_consecutive:
+                    forms[-1].images.append(ImageFile(transcription.file1))
+                    continue
+            
+            image_files = [
+                ImageFile(transcription.file1),
+                ImageFile(transcription.file2),
+            ]
+            forms.append(Form(
+                document_type=transcription.document_type, 
+                images=image_files
+                ))
 
-            current_last_image = existing_forms[key][0].images[-1]
-            new_image = new_forms[key][0].images[0]
-            if len(new_forms[key][0].images) == 1 and (new_image.number == current_last_image.number + 1):
-                existing_forms[key][0].images.append(new_image)
-                self.concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'field_info_date')
-                self.concatenate_instance_attributes(existing_forms[key][0], new_forms[key][0], 'primary_record_date')
-
-            else:
-                existing_forms[key].append(new_forms[key][0])
-
-        return existing_forms
+        return forms
 
