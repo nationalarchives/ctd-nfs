@@ -1,8 +1,6 @@
 import pytest
-import re
 
-from src._tools.constants import REGEX
-from src._dataclasses.farm_model import Form, Image, initialise_forms_mapping
+from src._dataclasses.farm_model import Form, initialise_forms_mapping
 from src._dataclasses.transcription_model import Filename, FormType
 # from src._dataclasses.transcription_checker import initialise_warnings_mapping
 
