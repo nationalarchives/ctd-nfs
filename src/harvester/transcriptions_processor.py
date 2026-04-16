@@ -138,16 +138,3 @@ class TranscriptionsProcessor:
 
         return existing_forms
 
-    def assign_ids_to_filenames(self):
-        """_summary_
-
-        Args:
-            csv_data (dict): _description_
-        """
-        
-        for list_of_transcriptions in self.source_data.values():
-            for transcription in list_of_transcriptions:
-                self.files.update({transcription.file1.name: create_uuid_str()})
-                if transcription.file2:
-                    self.files.update({transcription.file2.name: create_uuid_str()})
-
