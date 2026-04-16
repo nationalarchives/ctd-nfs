@@ -33,6 +33,34 @@ def test_concatenate_muliple_of_same_form(transcription):
 	assert expected_number_of_forms == len(forms)
 
 
+def test_concatenate_consecutive_images_to_existing_form(transcription):
+	fixture1 = transcription.copy()
+	fixture2 = transcription.copy()
+
+	fixture1.update({
+		'filename_1': "MAF32-167-29_21.tif",
+		'filename_2': "MAF32-167-29_22.tif",
+		'document_type': "C51/SSY",
+		'county': "WD Westmorland",
+		'parish': "1 Ambleside",
+	})
+	fixture2.update({
+		'filename_1': "MAF32-167-29_23.tif",
+		'filename_2': "",
+		'document_type': "C51/SSY",
+		'county': "WD Westmorland",
+		'parish': "1 Ambleside",
+	})
+	transcription1 = Transcription(**fixture1)
+	transcription2 = Transcription(**fixture2)
+
+	processor = TranscriptionsProcessor(transcriptions=[transcription1, transcription2])
+	forms = processor._concatenate_forms()
+
+	expected_number_of_forms = 1
+	assert expected_number_of_forms == len(forms)
+
+
 @pytest.mark.skip(reason="awaiting refactoring of concatenation methods")
 def test_farm_attribute_concatenation(concatenation_data):
 	pass
