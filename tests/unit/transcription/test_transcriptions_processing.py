@@ -27,7 +27,7 @@ def test_concatenate_muliple_of_same_form(transcription):
 	transcription2 = Transcription(**fixture2)
 
 	processor = TranscriptionsProcessor(transcriptions=[transcription1, transcription2])
-	forms = processor._concatenate_forms()
+	forms = processor._collate_forms()
 
 	expected_number_of_forms = 2
 	assert expected_number_of_forms == len(forms)
@@ -55,7 +55,7 @@ def test_concatenate_consecutive_images_to_existing_form(transcription):
 	transcription2 = Transcription(**fixture2)
 
 	processor = TranscriptionsProcessor(transcriptions=[transcription1, transcription2])
-	forms = processor._concatenate_forms()
+	forms = processor._collate_forms()
 
 	expected_number_of_forms = 1
 	assert expected_number_of_forms == len(forms)
