@@ -81,7 +81,7 @@ class TranscriptionsProcessor:
         concatenated_value = self.concatenate_attribute_values(existing_value, new_value)
         setattr(existing_attribute, field_name, concatenated_value)
 
-    def _collate_attributes_to_be_distilled(self) -> dict:
+    def _collate_attributes_for_further_processing(self) -> dict:
         transcription_fields = [
         	'addressee_title',
         	'addressee_individual_name',
@@ -105,7 +105,7 @@ class TranscriptionsProcessor:
             for field_name in transcription_fields
         }
     
-    def _collate_non_distilled_attributes(self) -> dict:
+    def _collate_attributes_for_final_output(self) -> dict:
         farm_attributes = {
             'additional_farms': "",
             'acreage': "",
