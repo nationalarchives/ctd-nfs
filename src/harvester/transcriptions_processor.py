@@ -81,6 +81,9 @@ class TranscriptionsProcessor:
         concatenated_value = self.concatenate_attribute_values(existing_value, new_value)
         setattr(existing_attribute, field_name, concatenated_value)
 
+    def _collate_attributes_to_be_distilled(self):
+        pass
+    
     def _collate_non_distilled_attributes(self) -> dict:
         farm_attributes = {
             'additional_farms': "",
