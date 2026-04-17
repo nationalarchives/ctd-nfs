@@ -52,35 +52,6 @@ class TranscriptionsProcessor:
 
         return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
-    def _concatenate_attribute_values(self, existing_value: str, new_value: str) -> str:
-        """Concatenate two values, ensuring no duplicates.
-
-        Args:
-            existing_value (str): The existing value.
-            new_value (str): The new value to be added.
-
-        Returns:
-            The concatenated value with duplicates removed.
-        """
-        if type(existing_value) is str and type(new_value) is str:
-            return [existing_value, new_value]
-
-        if type(existing_value) is str and type(new_value) is list:
-            return [existing_value] + new_value
-
-        if type(existing_value) is list and type(new_value) is str:
-            return existing_value + [new_value]
-
-        if type(existing_value) is list and type(new_value) is list:
-            return existing_value + new_value
-
-    def _concatenate_instance_attributes(self, existing_attribute: str, new_attribute: str, field_name: str) -> None:
-        existing_value = getattr(existing_attribute, field_name)
-        new_value = getattr(new_attribute, field_name)
-
-        concatenated_value = self.concatenate_attribute_values(existing_value, new_value)
-        setattr(existing_attribute, field_name, concatenated_value)
-
     def _collate_attributes_for_further_processing(self) -> dict:
         transcription_fields = [
             'farm_name',
