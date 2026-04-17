@@ -81,7 +81,7 @@ class TranscriptionsProcessor:
         concatenated_value = self.concatenate_attribute_values(existing_value, new_value)
         setattr(existing_attribute, field_name, concatenated_value)
 
-    def _concatenate_non_distilled_attributes(self) -> dict:
+    def _collate_non_distilled_attributes(self) -> dict:
         farm_attributes = {
             'additional_farms': "",
             'acreage': "",
@@ -107,7 +107,7 @@ class TranscriptionsProcessor:
 
         return farm_attributes
 
-    def _concatenate_forms(self) -> list[Form]:
+    def _collate_forms(self) -> list[Form]:
         forms = []
         for transcription in self.transcriptions:
             current_form_name = transcription.document_type.name
