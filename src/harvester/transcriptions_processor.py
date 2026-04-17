@@ -106,30 +106,22 @@ class TranscriptionsProcessor:
         }
     
     def _collate_attributes_for_final_output(self) -> dict:
-        farm_attributes = {
+        final_output_fields = {
             'additional_farms': "",
             'acreage': "",
             'OS_map_sheet': "",
             'field_info_date': "",
             'primary_record_date': "",
-            'landowner': {'name': "", 'address': ""}
         }
             
-        for field_name in farm_attributes:
+        for field_name in final_output_fields:
             values = [
                 getattr(transcription, field_name)
                 for transcription in self.transcriptions
             ]
-            farm_attributes[field_name] = "; ".join(values)
+            final_output_fields[field_name] = "; ".join(values)
 
-        for field_name in farm_attributes['landowner']:
-            values = [
-                getattr(transcription.landowner, field_name)
-                for transcription in self.transcriptions
-            ]
-            farm_attributes['landowner'][field_name] = "; ".join(values)
-
-        return farm_attributes
+        return final_output_fields
 
     def _collate_forms(self) -> list[Form]:
         forms = []
