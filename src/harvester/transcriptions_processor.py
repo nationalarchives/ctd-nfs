@@ -52,6 +52,25 @@ class TranscriptionsProcessor:
 
         return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
+    def _process_dates(self) -> dict:        
+        processed_dates = {
+            'field_info_date': "",
+            'primary_record_date': "",
+        }
+        for date_field in processed_dates:
+            values = [
+                getattr(transcription, date_field)
+                for transcription in self.transcriptions
+            ]
+            normalized_dates = [
+                self._normalize_date(date)
+                for value in values
+                for date in value.split(";")
+            ]
+            processed_dates[date_field] = "; ".join(normalized_dates)
+
+        return processed_dates
+
     def _collate_attributes_for_further_processing(self) -> dict:
         transcription_fields = [
             'farm_name',
@@ -82,8 +101,6 @@ class TranscriptionsProcessor:
             'additional_farms': "",
             'acreage': "",
             'OS_map_sheet': "",
-            'field_info_date': "",
-            'primary_record_date': "",
         }
             
         for field_name in final_output_fields:
