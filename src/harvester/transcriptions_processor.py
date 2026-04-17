@@ -81,34 +81,31 @@ class TranscriptionsProcessor:
         concatenated_value = self.concatenate_attribute_values(existing_value, new_value)
         setattr(existing_attribute, field_name, concatenated_value)
 
-    def _concatenate_instance(self, existing_farm: 'Farm', new_farm: 'Farm') -> 'Farm':
-        """
-        Concatenate the attributes of two Farm instances, ensuring no duplicates.
+    def _concatenate_non_distilled_attributes(self) -> dict:
+        farm_attributes = {
+            'additional_farms': "",
+            'acreage': "",
+            'OS_map_sheet': "",
+            'field_info_date': "",
+            'primary_record_date': "",
+            'landowner': {'name': "", 'address': ""}
+        }
+            
+        for field_name in farm_attributes:
+            values = [
+                getattr(transcription, field_name)
+                for transcription in self.transcriptions
+            ]
+            farm_attributes[field_name] = "; ".join(values)
 
-        Args:
-            existing_farm (Farm): _description_
-            new_farm (Farm): _description_
+        for field_name in farm_attributes['landowner']:
+            values = [
+                getattr(transcription.landowner, field_name)
+                for transcription in self.transcriptions
+            ]
+            farm_attributes['landowner'][field_name] = "; ".join(values)
 
-        Returns:
-            Farm: _description_
-        """
-        for field_name in existing_farm.__dict__:
-            if field_name in ['addressee', 'owner', 'farmer']:
-                existing_detail = getattr(existing_farm, field_name)
-                new_detail = getattr(new_farm, field_name)
-                for detail_attribute in ['title', 'individual_name', 'group_names', 'address']:
-                    self.concatenate_instance_attributes(existing_detail, new_detail, detail_attribute)
-
-            if field_name in ['additional_farms', 'farm_name', 'acreage', 'OS_map_sheet']:
-                self.concatenate_instance_attributes(existing_farm, new_farm, field_name)
-
-        existing_farm.forms = self.concatenate_forms(existing_farm.forms, new_farm.forms)
-
-        # Merge warnings
-        for warning_category, warnings in new_farm.warnings.items():
-            existing_farm.warnings[warning_category].extend(warnings)
-
-        return existing_farm
+        return farm_attributes
 
     def _concatenate_forms(self) -> list[Form]:
         forms = []
