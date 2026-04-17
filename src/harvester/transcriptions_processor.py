@@ -83,6 +83,7 @@ class TranscriptionsProcessor:
 
     def _collate_attributes_for_further_processing(self) -> dict:
         transcription_fields = [
+            'farm_name',
         	'addressee_title',
         	'addressee_individual_name',
         	'addressee_group_names',
