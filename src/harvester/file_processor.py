@@ -97,6 +97,11 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     for row_number, farm_data_row in enumerate(csv_data, start=2):
         try: 
             transcription = Transcription(**farm_data_row)
+            if transcription.is_cover_page:
+                msg = f"Row {row_number} is a cover so will not be processed."
+                logger.info(f" {msg:->80}")
+                continue
+        
             checker = TranscriptionChecker(transcription, row_number)
             transcription.warnings = checker.run_validation_checks()
             update_farms_db(transcription, row_number, test_mode=test_mode)
