@@ -53,11 +53,11 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
                 normalised_data_row[key] = None
                 continue
             
-            if value in ["", "*"]:
+            if value == "":
                 normalised_data_row[key] = "[not specified]"
             
-            elif ";" in value and key not in ['field_info_date', 'primary_record_date']:
-                normalised_data_row[key] = split_list_values(value) or "[not specified]"
+            elif "*" in value:
+                normalised_data_row[key] = value.replace("*", "[not specified]")
             
             else:
                 normalised_data_row[key] = value.strip()
