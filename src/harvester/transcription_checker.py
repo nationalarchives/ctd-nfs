@@ -206,7 +206,8 @@ class TranscriptionChecker:
         if self.transcription.is_cover_page: 
             self._has_cover_issues()
         
-        self._check_for_other_row_data_issues()
+        if self.transcription.file2:
+            self._check_for_other_row_data_issues()
 
         return self.warnings if any(value for value in self.warnings.values() if value) else None
     
