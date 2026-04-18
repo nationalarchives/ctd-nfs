@@ -136,3 +136,6 @@ class TranscriptionsProcessor:
 
         return collated_forms
 
+    def process_transcriptions(self) -> dict:
+        pass
+
