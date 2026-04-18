@@ -16,14 +16,14 @@ def initialise_forms_mapping() -> dict:
         dict: Mapping of form codes to empty lists.
     """
     return {
-        'C 47/SSY',
-        'C 49/SSY',
-        'C51/SSY',
-        'SF',
-        'SF C69/SSY',
-        'B496/EI',
-        'Other',
-        'Cover',
+        'C 47/SSY': [],
+        'C 49/SSY': [],
+        'C51/SSY': [],
+        'SF': [],
+        'SF C69/SSY': [],
+        'B496/EI': [],
+        'Other': [],
+        'Cover': [],
     }
 
 
