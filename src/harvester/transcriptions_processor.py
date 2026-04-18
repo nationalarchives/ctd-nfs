@@ -97,41 +97,42 @@ class TranscriptionsProcessor:
         }
     
     def _collate_attributes_for_final_output(self) -> dict:
-        final_output_fields = {
+        collated_attributes = {
             'additional_farms': "",
             'acreage': "",
             'OS_map_sheet': "",
         }
             
-        for field_name in final_output_fields:
+        for field_name in collated_attributes:
             values = [
                 getattr(transcription, field_name)
                 for transcription in self.transcriptions
             ]
-            final_output_fields[field_name] = "; ".join(values)
+            collated_attributes[field_name] = "; ".join(values)
 
-        return final_output_fields
+        return collated_attributes
 
     def _collate_forms(self) -> list[Form]:
-        forms = []
+        collated_forms: list[Form] = []
+
         for transcription in self.transcriptions:
             current_form_name = transcription.document_type.name
-            if last_form := (forms[-1] if forms else None):
+            if last_form := (collated_forms[-1] if collated_forms else None):
                 is_same_form_name: bool = current_form_name == last_form.name
                 is_consecutive: bool = (transcription.file1.image_number == last_form.images[-1].image_number + 1)
 
                 if not transcription.file2 and is_same_form_name and is_consecutive:
-                    forms[-1].images.append(ImageFile(transcription.file1))
+                    collated_forms[-1].images.append(ImageFile(transcription.file1))
                     continue
             
             image_files = [
                 ImageFile(transcription.file1),
                 ImageFile(transcription.file2),
             ]
-            forms.append(Form(
+            collated_forms.append(Form(
                 document_type=transcription.document_type, 
                 images=image_files
                 ))
 
-        return forms
+        return collated_forms
 
