@@ -32,12 +32,10 @@ class TranscriptionChecker:
                 'Primary Date Warnings': []
             }
 
-
     def _check_for_cover_with_farm_details(self) -> None:
         if (self.transcription.file1.is_cover) and (self.transcription.document_type.name == "Cover") and self.self.transcription.has_data:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}Form type is 'Cover' but row contains farm details.")
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
-
 
     def _report_cover_image_inconsistencies(self) -> None:
         """
@@ -79,7 +77,6 @@ class TranscriptionChecker:
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}document is listed as 'Cover' in data but two form images provided.")
 
-
     def _has_cover_issues(self) -> None:
         self._check_for_cover_with_farm_details()
         self._report_cover_image_inconsistencies()
@@ -87,7 +84,6 @@ class TranscriptionChecker:
         msg = f"{self.row_prefix}is a cover so will not be processed."
         logger.info(f" {msg:->80}")
         return None
-
 
     def _check_values_between_filenames(self) -> None:
         """
@@ -121,7 +117,7 @@ class TranscriptionChecker:
         if image2 != image1 + 1:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} are either not consecutive images or in the wrong order.")
 
-
+    @staticmethod
     def _vali_dates(candi_date: str) -> str | None:    
         ''' Checks if the date, given as a string, is a valid date
         
@@ -188,19 +184,17 @@ class TranscriptionChecker:
                 else:
                     continue
 
-
     def _check_for_other_row_data_issues(self) -> None:
         if self.transcription.file1.name and self.transcription.file2.name:
             self._check_values_between_filenames()
 
         for key in ['field_info_date', 'primary_record_date']:
             date_value = getattr(self.transcription, key)
-            if not date_value:
+            if date_value == "[not specified]":
                 continue
             warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
             if check_result := self._vali_dates(date_value):
                 self.warnings[warning_key].append(f"{self.row_prefix}{check_result}")
-
 
     def run_validation_checks(self) -> dict | None:
         if self.transcription.is_cover_page: 
