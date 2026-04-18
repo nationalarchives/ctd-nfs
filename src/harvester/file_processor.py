@@ -101,8 +101,8 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             transcription.warnings = checker.run_validation_checks()
             update_farms_db(transcription, row_number, test_mode=test_mode)
         
-        except TranscriptionDataError:
-            logging.error()
+        except TranscriptionDataError as error_message:
+            logging.error(f"Row {row_number} not processed because {error_message}")
             continue
 
        
