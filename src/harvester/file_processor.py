@@ -9,6 +9,7 @@ from src._tools.constants import PATH, CSVEXCEL
 from src._dataclasses.transcription_model import Transcription
 from src._tools.helpers import TranscriptionDataError
 from src.harvester.transcription_checker import TranscriptionChecker
+from src._dataclasses.farm_model import Farm
 
 
 logger = logging.getLogger(__name__)
@@ -64,28 +65,31 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
         yield normalised_data_row
 
 
-def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: bool = False) -> None:
+def update_farms_db(transcription: Transcription, row_number: int, test_mode: bool = False) -> None:
     """_summary_
     """
     row_info = f"Processed row {row_number}:"
+    candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
+    form_type = transcription.document_type.name
+
     with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
-        if new_farm.county not in farm_db:
-            farm_db.update({new_farm.county: {}})
+        if candidate_farm.county not in farm_db:
+            farm_db.update({candidate_farm.county: {}})
 
-        county = farm_db[new_farm.county].copy()
+        county = farm_db[candidate_farm.county].copy()
 
-        if new_farm.catalogue_reference not in farm_db[new_farm.county]:
-            county[new_farm.catalogue_reference] = {'Farm': new_farm}
-            county[new_farm.catalogue_reference]['source'] = [row_data,]
-            logger.info(f"{row_info} NEW FARM: '{new_farm.catalogue_reference}' created from '{new_farm.document_type}'")
+        if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
+            candidate_farm.source_data[form_type].append(transcription)
+            county[candidate_farm.catalogue_reference] = {'Farm': candidate_farm}
+            logger.info(f"{row_info} NEW FARM: '{candidate_farm.catalogue_reference}' created from '{form_type}'")
 
         else:
-            existing_farm = county[new_farm.catalogue_reference]['Farm']
-            county[new_farm.catalogue_reference]['Farm'] = concatenate_instance(existing_farm, new_farm)
-            county[new_farm.catalogue_reference]['source'].append(row_data)
-            logger.info(f"{row_info}{' '*50} '{new_farm.catalogue_reference}' {'.'*10} updated from '{new_farm.document_type}'")
+            existing_farm = county[candidate_farm.catalogue_reference]['Farm']
+            existing_farm.source_data[form_type].append(transcription)
+            county[candidate_farm.catalogue_reference]['Farm'] = existing_farm
+            logger.info(f"{row_info}{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
 
-        farm_db[new_farm.county] = county.copy()
+        farm_db[candidate_farm.county] = county.copy()
 
 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
