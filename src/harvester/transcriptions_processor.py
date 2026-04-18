@@ -137,5 +137,10 @@ class TranscriptionsProcessor:
         return collated_forms
 
     def process_transcriptions(self) -> dict:
-        pass
+        return {
+            'dates': self._process_dates(),
+            'forms': self._collate_forms(),
+            'for output':self._collate_attributes_for_final_output(),
+            'for_processing': self._collate_attributes_for_further_processing(),
+        }
 
