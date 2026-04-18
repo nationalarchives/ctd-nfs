@@ -70,7 +70,7 @@ class Farm:
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
 
-    forms: list[Form]
+    forms: list[Form] = field(default_factory=list)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
