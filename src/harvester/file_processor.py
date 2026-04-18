@@ -5,10 +5,10 @@ import re
 import shelve
 import logging
 
+from src._tools.constants import PATH, CSVEXCEL
+from src._dataclasses.transcription_model import Transcription
+from src._tools.helpers import TranscriptionDataError
 from src.harvester.transcription_checker import TranscriptionChecker
-from src.harvester.transcriptions_processor import TranscriptionsProcessor
-from src._dataclasses.farm_model import Farm
-from src._tools.constants import PATH, REGEX, CSVEXCEL
 
 
 logger = logging.getLogger(__name__)
@@ -91,30 +91,17 @@ def update_farms_db(new_farm: Farm, row_data: dict, row_number: int, test_mode: 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-
-        pattern_matches: dict[re.Match] = {
-                'filename_1': REGEX.FORM_PATTERN.match(farm_data_row['filename_1']),
-                'filename_2': REGEX.FORM_PATTERN.match(farm_data_row['filename_2']) if farm_data_row['filename_2'] else REGEX.FORM_PATTERN.match(""),
-                'cover': REGEX.COVER_PATTERN.match(farm_data_row['filename_1']),
-            }
-        row_prefix = f"Row {row_number}: "
-        warnings = initialise_warnings_mapping()
-
-        if has_valid_reference_values(farm_data_row, pattern_matches, row_prefix) is False:
+        try: 
+            transcription = Transcription(**farm_data_row)
+            checker = TranscriptionChecker(transcription, row_number)
+            transcription.warnings = checker.run_validation_checks()
+            update_farms_db(transcription, row_number, test_mode=test_mode)
+        
+        except TranscriptionDataError:
+            logging.error()
             continue
-        
-        if row_is_cover_form(farm_data_row['document_type'], pattern_matches): 
-            warnings = has_cover_issues(farm_data_row, pattern_matches, row_prefix)
-            if warnings is None:
-                continue
-        
-        warnings = check_for_other_row_data_issues(farm_data_row, row_prefix, pattern_matches, warnings)
 
-        candidate_farm = Farm(**farm_data_row)
-        candidate_farm.warnings = warnings
-        update_farms_db(candidate_farm, farm_data_row, row_number, test_mode=test_mode)
-        
-
+       
 def process_csv_files(test_mode: bool = False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
     for csv_file in input_files:
