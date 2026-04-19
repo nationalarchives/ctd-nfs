@@ -70,6 +70,7 @@ def update_farms_db(transcription: Transcription, row_number: int, test_mode: bo
     # NOTE: THIS IS INEFFICIENT BECAUSE IT COPIES THE WHOLE COUNTY FOR EACH TRANSCRIPTION
     # TODO: FIX THIS BY SWITCHING TO TINY DB AND JUST CREATING OR UPSERTING INDIVIDUAL FARMS
     # TODO: Initialise the db with all the counties
+
     row_info = f"Processed row {row_number}:"
     candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
     form_type = transcription.document_type.name
@@ -82,13 +83,13 @@ def update_farms_db(transcription: Transcription, row_number: int, test_mode: bo
 
         if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
             candidate_farm.source_data[form_type].append(transcription)
-            county[candidate_farm.catalogue_reference] = {'Farm': candidate_farm}
+            county[candidate_farm.catalogue_reference] = {'farm': candidate_farm}
             logger.info(f"{row_info} NEW FARM: '{candidate_farm.catalogue_reference}' created from '{form_type}'")
 
         else:
-            existing_farm = county[candidate_farm.catalogue_reference]['Farm']
+            existing_farm = county[candidate_farm.catalogue_reference]['farm']
             existing_farm.source_data[form_type].append(transcription)
-            county[candidate_farm.catalogue_reference]['Farm'] = existing_farm
+            county[candidate_farm.catalogue_reference]['farm'] = existing_farm
             logger.info(f"{row_info}{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
 
         farm_db[candidate_farm.county] = county.copy()
