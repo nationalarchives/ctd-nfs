@@ -7,8 +7,8 @@ from src._dataclasses.transcription_model import Transcription
 
 
 class TranscriptionsProcessor:
-    def __init__(self, transcriptions: list):
-        self.transcriptions: Transcription = transcriptions
+    def __init__(self, transcriptions: list[Transcription]):
+        self.transcriptions = transcriptions
 
     def _normalize_date(self, candi_date: str) -> str:
         """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
