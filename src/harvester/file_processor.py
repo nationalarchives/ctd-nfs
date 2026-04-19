@@ -26,9 +26,9 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
     """
 
     try:
-        logger.info(f"Processing file: {csv_file.stem}")
         with open(csv_file, newline='') as file_obj:
             raw_csv_data = csv.DictReader(file_obj, skipinitialspace=True)
+            logger.info(f" ===== PROCESSING FILE: {csv_file.stem} ===== ")
             for row in raw_csv_data:
                 yield row
     
