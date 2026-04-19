@@ -112,10 +112,15 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             continue
 
        
+def process_transcriptions(test_mode: bool) -> None:
+    pass
+
+
 def process_csv_files(test_mode: bool = False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
     for csv_file in input_files:
         raw_farm_data: list[dict] = load_data_from_file(csv_file)
         normalised_farm_data = normalise_csv_data(raw_farm_data)
         create_farms(normalised_farm_data, test_mode=test_mode)
+        process_transcriptions(test_mode=test_mode)
 
