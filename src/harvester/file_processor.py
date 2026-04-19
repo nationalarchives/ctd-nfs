@@ -43,6 +43,7 @@ def split_list_values(field_value: str) -> list[str]:
 
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
+    logger.info(" ===== NORMALIZING CSV DATA ===== ")
     for row in raw_csv_data:
         normalised_data_row = {}
         for key, value in row.items():
@@ -95,6 +96,7 @@ def update_farms_db(transcription: Transcription, row_number: int, test_mode: bo
 
 def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
+    logger.info(" ===== LOADING TRANSCRIPTIONS & CREATING FARMS ===== ")
     for row_number, farm_data_row in enumerate(csv_data, start=2):
         try: 
             transcription = Transcription(**farm_data_row)
