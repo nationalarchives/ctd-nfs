@@ -10,6 +10,7 @@ from src._dataclasses.transcription_model import Transcription
 from src._tools.helpers import TranscriptionDataError
 from src.harvester.transcription_checker import TranscriptionChecker
 from src._dataclasses.farm_model import Farm
+from src.harvester.transcriptions_processor import TranscriptionsProcessor
 
 
 logger = logging.getLogger(__name__)
@@ -115,8 +116,30 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             continue
 
        
-def process_transcriptions(test_mode: bool) -> None:
-    pass
+def process_transcriptions(county: str, test_mode: bool) -> None:
+    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
+        logger.info(" ===== PROCESSING FARMS ===== ")
+        farms_in_county = farm_db[county].copy()
+        total_farms = len(farms_in_county.values())
+
+        for index, data in enumerate(farms_in_county.values(), start=1):
+            farm = data['farm']
+            transcriptions = [
+                item
+                for element in farm.source_data.values()
+                for item in element
+            ]
+            processor = TranscriptionsProcessor(transcriptions)
+            results = processor.process_transcriptions()
+
+            farm.forms = results['forms']
+
+            for field, value in results['for output'].items():
+                setattr(farm, field, value)
+
+            logger.info(f"Processing {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
+
+        farm_db[county] = farms_in_county.copy()
 
 
 def process_csv_files(test_mode: bool = False) -> None:
@@ -125,5 +148,5 @@ def process_csv_files(test_mode: bool = False) -> None:
         raw_farm_data: list[dict] = load_data_from_file(csv_file)
         normalised_farm_data = normalise_csv_data(raw_farm_data)
         create_farms(normalised_farm_data, test_mode=test_mode)
-        process_transcriptions(test_mode=test_mode)
+    process_transcriptions('RD Rutland', test_mode=test_mode)
 
