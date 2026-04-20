@@ -62,6 +62,36 @@ class Transcription:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
+    __slots__ = (
+        'filename_1',
+        'filename_2',
+        'document_type',
+        'county',
+        'parish',
+        'primary_farm_number',
+        'additional_farms',
+        'farm_name',
+        'addressee_title',
+        'addressee_individual_name',
+        'addressee_group_names',
+        'address',
+        'owner_title',
+        'owner_individual_name',
+        'owner_group_names',
+        'owner_address',
+        'farmer_title',
+        'farmer_individual_name',
+        'farmer_group_names',
+        'farmer_address',
+        'acreage',
+        'OS_map_sheet',
+        'field_info_date',
+        'primary_record_date',
+        'file1',
+        'file2',
+        'warnings',
+    )
+    
     filename_1: str
     filename_2: str
     document_type: str
@@ -86,13 +116,12 @@ class Transcription:
     OS_map_sheet: str
     field_info_date: str
     primary_record_date: str
-    warnings: dict | None = None
 
     @property
     def has_data(self) -> bool:
         return any([
             getattr(self, field_name) != "[not specified]"
-            for field_name in self.__dict__
+            for field_name in self.__dataclass_fields__
             if field_name in DATA.FARM_DATA_FIELDS
         ])
     
@@ -115,6 +144,8 @@ class Transcription:
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
         self.document_type = FormType(self.document_type)
+        self.warnings: dict | None = None
+
 
         if self.file2 and (not self.file1.is_cover) and (self.document_type.name != "Cover") and not self.has_data:
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
