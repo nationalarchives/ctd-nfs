@@ -120,3 +120,7 @@ class Farm:
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
 
+
+    # TODO: add warning for multiple B496/EI forms
+
+    
