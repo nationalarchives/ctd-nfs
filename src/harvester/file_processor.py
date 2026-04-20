@@ -59,7 +59,7 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
                 normalised_data_row[key] = "[not specified]"
             
             elif "*" in value:
-                normalised_data_row[key] = value.replace("*", "[not specified]")
+                normalised_data_row[key] = value.replace("*", "_not transcribed_")
             
             else:
                 normalised_data_row[key] = value.strip()
