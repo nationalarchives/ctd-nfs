@@ -137,7 +137,7 @@ def process_transcriptions(county: str, test_mode: bool) -> None:
             for field, value in results['for output'].items():
                 setattr(farm, field, value)
 
-            logger.info(f"Processing {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
+            logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
 
         farm_db[county] = farms_in_county.copy()
 
