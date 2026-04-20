@@ -28,7 +28,7 @@ def create_description(row_data: dict) -> str:
 def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
     record = Record(
             iaid=farm_iaid,
-            citableReference=row['catalogue_reference'],
+            citableReference=row['Catalogue Reference'],
         )
     record.scopeContent['description'] = create_description(row)
 
@@ -58,7 +58,7 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
 
     documents = []
     for row in cleaned_data:
-        if test_mode and row['catalogue_reference'] != "MAF 32/348/40/3a":
+        if test_mode and row['Catalogue Reference'] != "MAF 32/348/40/3a":
             continue
 
         farm = _get_farm_instance(row['catalogue_reference'])
