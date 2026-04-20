@@ -50,6 +50,7 @@ class Form:
 class Details:
     name: str
     address: str
+    full_address: str = field(init=False)
 
 
 @dataclass
