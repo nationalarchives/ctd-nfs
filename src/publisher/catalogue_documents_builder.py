@@ -61,7 +61,15 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
         if test_mode and row['Catalogue Reference'] != "MAF 32/348/40/3a":
             continue
 
-        farm = _get_farm_instance(row['catalogue_reference'])
+        farm = _get_farm_instance(row['Catalogue Reference'])
+        farm.farm_name = row['Farm Name']
+        farm.landowner.full_address = row['Landowner(s)']
+        farm.farmer.full_address = row['Farmer']
+        farm.addressee.full_address = row['Addressee']
+        farm.acreage = row['Acreage']
+        farm.OS_map_sheet = row['OS Sheet Number']
+        farm.field_info_date = row['Field Info Date']
+        farm.primary_record_date = row['Primary Record Date']
 
         record = build_record_subdocument(farm.iaid, row)
         record: dict = eval(repr(record))      
