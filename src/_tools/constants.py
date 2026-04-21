@@ -114,6 +114,25 @@ class DataNamespace():
 		'field_info_date',
 		'primary_record_date',
     ]
+    DESCRIPTION_FIELDS = {
+        'farm_reference': 'Farm Reference',
+        'farm_name': 'Farm Name',
+        'addressee':'Addressee(s)',
+        'farmer': 'Farmer(s) or occupier(s)',
+        'landowner': 'Landowner(s)',
+        'acreage': 'Acreage',
+        'os_sheet_number': 'OS Sheet Number',
+        'field_info_date': 'Field Info Date',
+        'primary_record_date': 'Primary Record Date',
+        'forms': 'Record consists of',
+        'additional_farms': 'Forms present on other Records',
+        # 'addressee_name',
+        # 'addressee_address',
+        # 'farmer_name',
+        # 'farmer_address',
+        # 'landowner_name',
+        # 'landowner_address',
+    }
     DATE_FORMATS = [
         "%d %B %Y",
         "%d %B %y",
