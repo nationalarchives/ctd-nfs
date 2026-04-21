@@ -35,18 +35,15 @@ def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
     return record
 
 
-def build_replica_subdocument(forms: dict, replica_id: str) -> Replica:
+def build_replica_subdocument(forms: list, replica_id: str) -> Replica:
     replica_files = []
-    for list_of_forms in forms.values():
-        if not list_of_forms:
-            continue
-        files = [
-            Image(originalName=image.name, id=image.id)
-            for form in list_of_forms
-            for image in form.images
-        ]
-        replica_files.extend(files)
-            
+    files = [
+        Image(originalName=image.name, id=image.id)
+        for each_form in forms
+        for image in each_form.images
+    ]
+    replica_files.extend(files)
+        
     return Replica(
         replicaId=replica_id,
         files=replica_files
