@@ -13,7 +13,7 @@ def _get_farm_instance(catalogue_reference: str) -> Farm:
     # TODO: parse county from filename
     county_name = "RD Rutland"
     with shelve.open(PATH.FARMS_DB, "r") as farms_db:
-        return farms_db[county_name][catalogue_reference]['Farm']
+        return farms_db[county_name][catalogue_reference]['farm']
 
 
 def create_description(row_data: dict) -> str:
