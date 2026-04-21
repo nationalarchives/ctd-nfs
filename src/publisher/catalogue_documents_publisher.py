@@ -53,7 +53,7 @@ def write_catalogue_documents(documents: list[dict]) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     for document in documents:
         with open(PATH.PUBLISH / f"{document['record']['iaid']}.json", 'w') as final_file:
-            logger.info(f"{final_file.name}")
+            logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
             json.dump(document, final_file)   
            
             
