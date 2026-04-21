@@ -2,7 +2,7 @@ import shelve
 import logging
 
 from src._tools.constants import PATH, DATA, DISCOVERY
-from src._dataclasses.farm_model import Farm
+from src._dataclasses.farm_model import Farm, Details
 from src.publisher.record_setup import Image, Record, Replica
 
 
@@ -55,18 +55,15 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
 
     documents = []
     for row in cleaned_data:
-        if test_mode and row['Catalogue Reference'] != "MAF 32/348/40/3a":
-            continue
-
-        farm = _get_farm_instance(row['Catalogue Reference'])
-        farm.farm_name = row['Farm Name']
-        farm.landowner.full_address = row['Landowner(s)']
-        farm.farmer.full_address = row['Farmer']
-        farm.addressee.full_address = row['Addressee']
-        farm.acreage = row['Acreage']
-        farm.OS_map_sheet = row['OS Sheet Number']
-        farm.field_info_date = row['Field Info Date']
-        farm.primary_record_date = row['Primary Record Date']
+        farm = _get_farm_instance(row['catalogue_reference'])
+        farm.farm_name = row['farm_name']
+        farm.landowner = Details(full_address=row['landowner'])
+        farm.farmer = Details(full_address=row['farmer'])
+        farm.addressee = Details(full_address=row['addressee'])
+        farm.acreage = row['acreage']
+        farm.OS_map_sheet = row['os_sheet_number']
+        farm.field_info_date = row['field_info_date']
+        farm.primary_record_date = row['primary_record_date']
 
         record = build_record_subdocument(farm.iaid, row)
         record: dict = eval(repr(record))      
