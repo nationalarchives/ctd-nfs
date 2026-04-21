@@ -71,7 +71,7 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
         replica = build_replica_subdocument(farm.forms, record['replicaId'])
         replica: dict = eval(repr(replica))
         
-        logger.info(f"--- Built record {record['iaid']} with {len(replica['files'])} images")
+        logger.info(f"Farm {farm.catalogue_reference} --> Built record {record['iaid']} with {len(replica['files'])} images")
         documents.append({'record': record, 'replica': replica})
 
     return documents
