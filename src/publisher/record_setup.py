@@ -12,7 +12,7 @@ from src._tools.helpers import create_uuid_str
 def scope_and_content():
     return {
         'description': "",
-        'schema': """<colltype id="FarmSurvey">,</colltype>"""}
+        }
 
 
 def _get_parent_id(catalague_reference: str) -> str:
