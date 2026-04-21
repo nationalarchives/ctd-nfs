@@ -28,7 +28,7 @@ def create_description(row_data: dict) -> str:
 def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
     record = Record(
             iaid=farm_iaid,
-            citableReference=row['Catalogue Reference'],
+            citableReference=row['catalogue_reference'],
         )
     record.scopeContent['description'] = create_description(row)
 
