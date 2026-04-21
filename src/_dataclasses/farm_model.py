@@ -101,7 +101,7 @@ class Farm:
         return reference_record['Catalogue ref']
         
     @property
-    def iaid() -> str:
+    def iaid(self) -> str:
         return create_uuid_str()
 
     @property
