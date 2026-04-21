@@ -17,12 +17,12 @@ def _get_farm_instance(catalogue_reference: str) -> Farm:
 
 
 def create_description(row_data: dict) -> str:
-    description_values = {
-        key: row_data[key]
-        for key in DISCOVERY.DESCRIPTION_FIELDS
-    }
+    description = [
+        f"{description_key}: {row_data[proof_key]}<p>"
+        for proof_key, description_key in DATA.DESCRIPTION_FIELDS.items()
+    ]
 
-    return DISCOVERY.DESCRIPTION_TEMPLATE.substitute(description_values)
+    return "".join(description)
 
 
 def build_record_subdocument(farm_iaid: str, row: dict) -> Record:
