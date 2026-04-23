@@ -29,17 +29,18 @@ def _get_parent_id(catalague_reference: str) -> str:
 @dataclass
 class Record:    
     iaid: str # must be same as iaid from farm instance
-    citableReference: str # catalogue reference e.g. "MAF 32/348/56/12"
-    replicaId: str = field(default_factory=create_uuid_str)
-    scopeContent: dict = field(default_factory=scope_and_content)
+    citable_reference: str # catalogue reference e.g. "MAF 32/348/56/12"
+    replica_id: str = field(default_factory=create_uuid_str)
+
+    scope_and_content: dict = field(default_factory=scope_and_content)
 
     def __post_init__(self):
-        self.parentId = _get_parent_id(self.citableReference)
+        self.parent_id = _get_parent_id(self.citable_reference)
         
 
 @dataclass
 class Image:
-    originalName: str
+    original_name: str
     id: InitVar[str] = ""
     
     def __post_init__(self, id):
@@ -48,7 +49,7 @@ class Image:
 
 @dataclass
 class Replica:
-    replicaId: str # must be same as replicaId in record instance
+    replica_id: str # must be same as replicaId in record instance
     files: list[Image]
     
 
@@ -56,28 +57,28 @@ class Replica:
 class Discovery:
     record: Record
     replica: Replica
-    updateScope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
+    update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
     
     def to_dict(self) -> dict:
         { 
             'record': {
                 'iaid': self.record.iaid,
-                'citableReference': self.record.citableReference,
-                'replicaId': self.record.replicaId,
-                'parentId': self.record.parentId,
-                'scopeContent': self.record.scopeContent,
+                'citableReference': self.record.citable_reference,
+                'replicaId': self.record.replica_id,
+                'parentId': self.record.parent_id,
+                'scopeContent': self.record.scope_and_content,
             } | DISCOVERY.RECORD_CONSTANTS,
-            'updateScope': self.updateScope,
+            'updateScope': self.update_scope,
             'replica': {
                 'files': [
                     {
-                    'originalName': image.originalName,
+                    'originalName': image.original_name,
                     'format': "jpg",
                     'name': image.name,
                     }
                     for image in self.replica.files
                 ],
-                'replicaId': self.replica.replicaId,
+                'replicaId': self.replica.replica_id,
                 'origination': "DigitalSurrogate",
                 'totalSize': None,
             }
