@@ -32,7 +32,7 @@ class Discovery:
         description_fields = {
             'Farm Reference': self.farm.farm_reference,
             'Farm Name': self.farm.farm_name,
-            'addressee':'Addressee(s)',
+            'addressee': self.farm.addressee,
             'Farmer(s) or occupier(s)': self.farm.farmer,
             'Landowner(s)': self.farm.landowner,
             'Acreage': self.farm.acreage,
