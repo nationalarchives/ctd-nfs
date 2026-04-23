@@ -82,5 +82,5 @@ class Replica:
 class Discovery:
     record: Record
     replica: Replica
-    updateScope: str
+    updateScope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
     
