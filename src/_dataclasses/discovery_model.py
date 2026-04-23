@@ -85,6 +85,26 @@ class Discovery:
     updateScope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
     
     def to_dict(self) -> dict:
-        pass
-
-    
+        { 
+            'record': {
+                'iaid': self.record.iaid,
+                'citableReference': self.record.citableReference,
+                'replicaId': self.record.replicaId,
+                'parentId': self.record.parentId,
+                'scopeContent': self.record.scopeContent,
+            } | DISCOVERY.RECORD_CONSTANTS,
+            'updateScope': self.updateScope,
+            'replica': {
+                'files': [
+                    {
+                    'originalName': image.originalName,
+                    'format': "jpg",
+                    'name': image.name,
+                    }
+                    for image in self.replica.files
+                ],
+                'replicaId': self.replica.replicaId,
+                'origination': "DigitalSurrogate",
+                'totalSize': None,
+            }
+        }
