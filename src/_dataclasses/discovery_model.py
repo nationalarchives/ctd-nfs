@@ -35,15 +35,6 @@ class Record:
 
     def __post_init__(self):
         self.parentId = _get_parent_id(self.citableReference)
-
-    def to_dict(self) -> dict:       
-        return {
-            'iaid': self.iaid,
-            'citableReference': self.citableReference,
-            'replicaId': self.replicaId,
-            'parentId': self.parentId,
-            'scopeContent': self.scopeContent,
-        } | DISCOVERY.RECORD_CONSTANTS
         
 
 @dataclass
@@ -59,23 +50,6 @@ class Image:
 class Replica:
     replicaId: str # must be same as replicaId in record instance
     files: list[Image]
-
-    def to_dict(self) -> dict:
-        images = [
-            {
-            'originalName': image.originalName,
-            'format': "jpg",
-            'name': image.name,
-            }
-            for image in self.files
-        ]
-        
-        return {
-        'files': images,
-        'replicaId': self.replicaId,
-        'origination': "DigitalSurrogate",
-        'totalSize': None,
-        }
     
 
 @dataclass
