@@ -78,4 +78,9 @@ class Replica:
         }
     
 
-
+@dataclass
+class Discovery:
+    record: dict
+    replica: dict
+    updateScope: str
+    
