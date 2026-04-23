@@ -192,6 +192,14 @@ class DiscoveryNamespace():
         'Open Document, Open Description': "O",
         'Partially Closed… not currently used': "P",
     }
+    UPDATE_SCOPE = {
+        'new_record_with_digital_files': 'RecordAndReplica',
+        'updated_digital_files': 'RecordAndReplica',
+        'update_metadata_and_digital_files': 'RecordAndReplica',
+        'new_metadata_only_record': 'RecordOnly',
+        'update_metadata_not_digital_files': 'RecordOnly',
+        'update_metadata_only_record': 'RecordOnly',
+    }
     RECORD_CONSTANTS = {
         'catalogueLevel': 8,
         'coveringFromDate': 19410101,
