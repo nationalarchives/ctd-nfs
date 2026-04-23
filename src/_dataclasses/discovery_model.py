@@ -84,3 +84,7 @@ class Discovery:
     replica: Replica
     updateScope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
     
+    def to_dict(self) -> dict:
+        pass
+
+    
