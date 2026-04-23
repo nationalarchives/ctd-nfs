@@ -80,7 +80,7 @@ class Replica:
 
 @dataclass
 class Discovery:
-    record: dict
-    replica: dict
+    record: Record
+    replica: Replica
     updateScope: str
     
