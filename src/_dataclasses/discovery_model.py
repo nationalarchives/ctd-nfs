@@ -18,7 +18,7 @@ class Discovery:
 
     @property
     def parent_id (self) -> str:
-        ref = self.farm.catalague_reference.rsplit("/", maxsplit=1)[0]
+        ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
         api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
