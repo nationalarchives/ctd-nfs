@@ -15,7 +15,7 @@ pretty = pprint.PrettyPrinter(indent=4)
 
 def load_excel_data() -> list[dict]:
     # TODO: read file from INPUT folder without hardcoding and parse county from filename
-    data_file = PATH.HARVEST / "RD Rutland Final Proof.xlsx"
+    data_file = PATH.HARVEST / "RD Rutland final for JSON.xlsx"
     logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
     excel_data = read_file(data_file)
 
