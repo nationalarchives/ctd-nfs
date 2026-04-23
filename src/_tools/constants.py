@@ -114,25 +114,6 @@ class DataNamespace():
 		'field_info_date',
 		'primary_record_date',
     ]
-    DESCRIPTION_FIELDS = {
-        'farm_reference': 'Farm Reference',
-        'farm_name': 'Farm Name',
-        'addressee':'Addressee(s)',
-        'farmer': 'Farmer(s) or occupier(s)',
-        'landowner': 'Landowner(s)',
-        'acreage': 'Acreage',
-        'os_sheet_number': 'OS Sheet Number',
-        'field_info_date': 'Field Info Date',
-        'primary_record_date': 'Primary Record Date',
-        'forms': 'Record consists of',
-        'additional_farms': 'Forms present on other Records',
-        # 'addressee_name',
-        # 'addressee_address',
-        # 'farmer_name',
-        # 'farmer_address',
-        # 'landowner_name',
-        # 'landowner_address',
-    }
     DATE_FORMATS = [
         "%d %B %Y",
         "%d %B %y",
@@ -231,43 +212,6 @@ class DiscoveryNamespace():
         'source': "FS",
         'title': None,
     }
-
-    # TODO: publlisher to use separate name and address fields instead of concatenated
-    DESCRIPTION_FIELDS = [
-        'catalogue_reference',
-        'farm_reference',
-        'filenames',
-        'forms',
-        'farm_name',
-        # 'addressee_name',
-        # 'addressee_address',
-        'addressee',
-        # 'farmer_name',
-        # 'farmer_address',
-        'farmer',
-        # 'landowner_name',
-        # 'landowner_address',
-        'landowners',
-        'acreage',
-        'os_sheet_number',
-        'field_info_date',
-        'primary_record_date',
-        'additional_farms',
-    ]
-    DESCRIPTION_TEMPLATE = Template(
-       """<emph altrender="doctype">FS</emph>""" +
-       """<emph altrender="farmNumber">$farm_reference</emph>""" +
-       """<emph altrender="farmName">$farm_name</emph>""" +
-       """<emph altrender="addressee">$addressee</emph>""" +
-       """<emph altrender="farmer">$farmer</emph>""" +
-       """<emph altrender="landowner">$landowners</emph>""" +
-       """<emph altrender="acreage">$acreage</emph>""" +
-       """<emph altrender="os_sheet_number">$os_sheet_number</emph>""" +
-       """<emph altrender="field_info_date">$field_info_date</emph>""" +
-       """<emph altrender="primary_record_date">$primary_record_date</emph>""" +
-       """<emph altrender="forms">$forms</emph>""" +
-       """<emph altrender="additional_farms">$additional_farms</emph>"""
-    )
 
 
 PATH = PathNamespace()
