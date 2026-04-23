@@ -4,26 +4,32 @@ import re
 def resolve_single_name_and_address(title: str, name: str, address: str) -> str:
     full_name = resolve_single_title_and_name(title, name)
 
-    if (full_name == "[not specified]" == address):
+    has_address = address not in ["[not specified]", "_not transcribed_"]
+    has_full_name = full_name not in ["[not specified]", "_not transcribed_"]
+
+    if not (has_full_name and has_address):
         return "[not specified]"
 
-    if address == "[not specified]":
+    if not has_address:
         return f"{full_name}"
 
-    if (full_name != "[not specified]" != address) or (full_name == "[not specified]"):
+    if (has_full_name and has_address) or not has_full_name:
         return f"{full_name}, {address}"
 
 
 def resolve_single_title_and_name(title: str, name: str) -> str:
-    if (title == "[not specified]" == name) or (name == "[not specified]"):
+    has_title = title not in ["[not specified]", "_not transcribed_"]
+    has_name = name not in ["[not specified]", "_not transcribed_"]
+
+    if not (has_title and has_name) or not has_name:
         return "[not specified]"
 
-    if (title != "[not specified]" != name):
+    if (has_title and has_name):
         if title.startswith(("Esq", "KC")):
             return f"{name}, {title}"
         return f"{title} {name}"
     
-    if (title == "[not specified]"):
+    if not has_title:
         return f"{name}"
 
 
