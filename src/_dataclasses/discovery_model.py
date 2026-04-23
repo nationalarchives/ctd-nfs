@@ -8,12 +8,6 @@ from urllib import parse
 from src._dataclasses.farm_model import Farm
 from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
-
-
-def scope_and_content():
-    return {
-        'description': "",
-        }
         
 
 @dataclass
@@ -34,8 +28,7 @@ class Replica:
 @dataclass
 class Discovery:
     farm: Farm
-    replica: Replica
-    scope_and_content: dict = field(default_factory=scope_and_content)
+    replica_id: Replica
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
     def _get_parent_id(self) -> str:
@@ -50,7 +43,33 @@ class Discovery:
 
     def __post_init__(self):
         self.parent_id = self._get_parent_id()
-    
+
+    @property
+    def scope_and_content(self) -> dict:
+        description_fields = {
+            'Farm Reference': self.farm.farm_reference,
+            'Farm Name': self.farm.farm_name,
+            'addressee':'Addressee(s)',
+            'Farmer(s) or occupier(s)': self.farm.farmer,
+            'Landowner(s)': self.farm.landowner,
+            'Acreage': self.farm.acreage,
+            'OS Sheet Number': self.farm.os_sheet_number,
+            'Field Info Date': self.farm.field_info_date,
+            'Primary Record Date': self.farm.primary_record_date,
+            'Record consists of': self.farm.forms,
+        }
+        if self.farm.additional_farms:
+            description_fields['Forms present on other Records'] = self.farm.additional_farms
+
+        description = [
+            f"{key}: {value}<p>"
+            for key, value in description_fields.items()
+        ]
+
+        return {
+            'description': "".join(description),
+        }
+
     def to_dict(self) -> dict:
         { 
             'record': {
