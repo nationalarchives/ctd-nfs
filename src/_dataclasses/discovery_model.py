@@ -16,7 +16,8 @@ class Discovery:
     replica_id: str = field(default_factory=create_uuid_str)
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
-    def _get_parent_id(self) -> str:
+    @property
+    def parent_id (self) -> str:
         ref = self.farm.catalague_reference.rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
@@ -25,9 +26,6 @@ class Discovery:
         parent_record = result.json()
 
         return parent_record['records'][0]['id']
-
-    def __post_init__(self):
-        self.parent_id = self._get_parent_id()
 
     @property
     def scope_and_content(self) -> dict:
