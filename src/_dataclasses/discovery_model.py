@@ -30,8 +30,6 @@ def _get_parent_id(catalague_reference: str) -> str:
 class Record:    
     iaid: str # must be same as iaid from farm instance
     citable_reference: str # catalogue reference e.g. "MAF 32/348/56/12"
-    replica_id: str = field(default_factory=create_uuid_str)
-
     scope_and_content: dict = field(default_factory=scope_and_content)
 
     def __post_init__(self):
@@ -49,7 +47,7 @@ class Image:
 
 @dataclass
 class Replica:
-    replica_id: str # must be same as replicaId in record instance
+    id: str = field(default_factory=create_uuid_str)
     files: list[Image]
     
 
@@ -64,7 +62,7 @@ class Discovery:
             'record': {
                 'iaid': self.record.iaid,
                 'citableReference': self.record.citable_reference,
-                'replicaId': self.record.replica_id,
+                'replicaId': self.replica.id,
                 'parentId': self.record.parent_id,
                 'scopeContent': self.record.scope_and_content,
             } | DISCOVERY.RECORD_CONSTANTS,
@@ -78,7 +76,7 @@ class Discovery:
                     }
                     for image in self.replica.files
                 ],
-                'replicaId': self.replica.replica_id,
+                'replicaId': self.replica.id,
                 'origination': "DigitalSurrogate",
                 'totalSize': None,
             }
