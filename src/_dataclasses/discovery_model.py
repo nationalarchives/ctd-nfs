@@ -15,25 +15,24 @@ def scope_and_content():
         }
 
 
-def _get_parent_id(catalague_reference: str) -> str:
-    ref = catalague_reference.rsplit("/", maxsplit=1)[0]
-    ref_url_safe = parse.quote(ref)
-
-    api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-    result = requests.get(api_query)
-    parent_record = result.json()
-
-    return parent_record['records'][0]['id']
-
-
 @dataclass
 class Record:    
     iaid: str # must be same as iaid from farm instance
-    catalogue_reference: str # catalogue reference e.g. "MAF 32/348/56/12"
+    catalogue_reference: str
     scope_and_content: dict = field(default_factory=scope_and_content)
 
+    def _get_parent_id(self) -> str:
+        ref = self.catalague_reference.rsplit("/", maxsplit=1)[0]
+        ref_url_safe = parse.quote(ref)
+
+        api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+        result = requests.get(api_query)
+        parent_record = result.json()
+
+        return parent_record['records'][0]['id']
+
     def __post_init__(self):
-        self.parent_id = _get_parent_id(self.catalogue_reference)
+        self.parent_id = self._get_parent_id()
         
 
 @dataclass
@@ -81,3 +80,4 @@ class Discovery:
                 'totalSize': None,
             }
         }
+
