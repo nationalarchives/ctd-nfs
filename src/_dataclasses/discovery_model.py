@@ -82,7 +82,7 @@ class Discovery:
         ]
 
     def to_dict(self) -> dict:
-        { 
+        return { 
             'record': {
                 'iaid': self.farm.iaid,
                 'citableReference': self.farm.catalogue_reference,
