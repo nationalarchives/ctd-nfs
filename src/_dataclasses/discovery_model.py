@@ -55,7 +55,7 @@ class Discovery:
             'OS Sheet Number': self.farm.os_sheet_number,
             'Field Info Date': self.farm.field_info_date,
             'Primary Record Date': self.farm.primary_record_date,
-            'Record consists of': self.farm.forms,
+            'Record consists of': self.forms_list,
         }
         if self.farm.additional_farms:
             description_fields['Forms present on other Records'] = self.farm.additional_farms
