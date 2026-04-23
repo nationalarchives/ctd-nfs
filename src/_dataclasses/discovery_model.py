@@ -29,11 +29,11 @@ def _get_parent_id(catalague_reference: str) -> str:
 @dataclass
 class Record:    
     iaid: str # must be same as iaid from farm instance
-    citable_reference: str # catalogue reference e.g. "MAF 32/348/56/12"
+    catalogue_reference: str # catalogue reference e.g. "MAF 32/348/56/12"
     scope_and_content: dict = field(default_factory=scope_and_content)
 
     def __post_init__(self):
-        self.parent_id = _get_parent_id(self.citable_reference)
+        self.parent_id = _get_parent_id(self.catalogue_reference)
         
 
 @dataclass
@@ -61,7 +61,7 @@ class Discovery:
         { 
             'record': {
                 'iaid': self.record.iaid,
-                'citableReference': self.record.citable_reference,
+                'citableReference': self.record.catalogue_reference,
                 'replicaId': self.replica.id,
                 'parentId': self.record.parent_id,
                 'scopeContent': self.record.scope_and_content,
