@@ -5,7 +5,6 @@ module for defining constants and constant namespaces.
 from pathlib import Path
 import re
 import calendar
-from string import Template
 
 
 class CSVandExcelNamespace():
