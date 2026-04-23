@@ -1,34 +1,19 @@
 """
 Dataclasses and factories used to create Discovery JSON records
 """
-from dataclasses import dataclass, field, InitVar
-import requests
+from dataclasses import dataclass, field
 from urllib import parse
+import requests
 
 from src._dataclasses.farm_model import Farm
 from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
-        
-
-@dataclass
-class Image:
-    original_name: str
-    id: InitVar[str] = ""
-    
-    def __post_init__(self, id):
-        self.name = f"66/MAF/32/{id}.jpg"
-
-
-@dataclass
-class Replica:
-    id: str = field(default_factory=create_uuid_str)
-    files: list[Image]
     
 
 @dataclass
 class Discovery:
     farm: Farm
-    replica_id: Replica
+    replica_id: str = field(default_factory=create_uuid_str)
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
     def _get_parent_id(self) -> str:
@@ -69,27 +54,32 @@ class Discovery:
         return {
             'description': "".join(description),
         }
+    
+    @property
+    def files(self) -> list:
+        return [
+            {
+                'originalName': image.name,
+                'format': "jpg",
+                'name': f"66/MAF/32/{image.id}.jpg",
+            }
+            for each_form in self.farm.forms
+            for image in each_form.images
+        ]
 
     def to_dict(self) -> dict:
         { 
             'record': {
                 'iaid': self.farm.iaid,
                 'citableReference': self.farm.catalogue_reference,
-                'replicaId': self.replica.id,
+                'replicaId': self.replica_id,
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
             } | DISCOVERY.RECORD_CONSTANTS,
             'updateScope': self.update_scope,
             'replica': {
-                'files': [
-                    {
-                    'originalName': image.original_name,
-                    'format': "jpg",
-                    'name': image.name,
-                    }
-                    for image in self.replica.files
-                ],
-                'replicaId': self.replica.id,
+                'files': self.files,
+                'replicaId': self.replica_id,
                 'origination': "DigitalSurrogate",
                 'totalSize': None,
             }
