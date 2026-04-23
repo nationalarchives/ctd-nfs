@@ -5,6 +5,7 @@ from dataclasses import dataclass, field, InitVar
 import requests
 from urllib import parse
 
+from src._dataclasses.farm_model import Farm
 from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
 
@@ -13,26 +14,6 @@ def scope_and_content():
     return {
         'description': "",
         }
-
-
-@dataclass
-class Record:    
-    iaid: str # must be same as iaid from farm instance
-    catalogue_reference: str
-    scope_and_content: dict = field(default_factory=scope_and_content)
-
-    def _get_parent_id(self) -> str:
-        ref = self.catalague_reference.rsplit("/", maxsplit=1)[0]
-        ref_url_safe = parse.quote(ref)
-
-        api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
-        result = requests.get(api_query)
-        parent_record = result.json()
-
-        return parent_record['records'][0]['id']
-
-    def __post_init__(self):
-        self.parent_id = self._get_parent_id()
         
 
 @dataclass
@@ -52,18 +33,32 @@ class Replica:
 
 @dataclass
 class Discovery:
-    record: Record
+    farm: Farm
     replica: Replica
+    scope_and_content: dict = field(default_factory=scope_and_content)
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
+
+    def _get_parent_id(self) -> str:
+        ref = self.farm.catalague_reference.rsplit("/", maxsplit=1)[0]
+        ref_url_safe = parse.quote(ref)
+
+        api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+        result = requests.get(api_query)
+        parent_record = result.json()
+
+        return parent_record['records'][0]['id']
+
+    def __post_init__(self):
+        self.parent_id = self._get_parent_id()
     
     def to_dict(self) -> dict:
         { 
             'record': {
-                'iaid': self.record.iaid,
-                'citableReference': self.record.catalogue_reference,
+                'iaid': self.farm.iaid,
+                'citableReference': self.farm.catalogue_reference,
                 'replicaId': self.replica.id,
-                'parentId': self.record.parent_id,
-                'scopeContent': self.record.scope_and_content,
+                'parentId': self.parent_id,
+                'scopeContent': self.scope_and_content,
             } | DISCOVERY.RECORD_CONSTANTS,
             'updateScope': self.update_scope,
             'replica': {
