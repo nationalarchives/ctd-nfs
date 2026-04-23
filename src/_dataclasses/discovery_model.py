@@ -30,7 +30,7 @@ class Discovery:
     @property
     def forms_list(self) -> str:
         forms_ouptut = []
-        for form_type, transcriptions in self.source_data.items():
+        for form_type, transcriptions in self.farm.source_data.items():
             if not transcriptions:
                 continue
 
@@ -48,11 +48,11 @@ class Discovery:
         description_fields = {
             'Farm Reference': self.farm.farm_reference,
             'Farm Name': self.farm.farm_name,
-            'addressee': self.farm.addressee,
-            'Farmer(s) or occupier(s)': self.farm.farmer,
-            'Landowner(s)': self.farm.landowner,
+            'addressee': self.farm.addressee.full_address,
+            'Farmer(s) or occupier(s)': self.farm.farmer.full_address,
+            'Landowner(s)': self.farm.landowner.full_address,
             'Acreage': self.farm.acreage,
-            'OS Sheet Number': self.farm.os_sheet_number,
+            'OS Sheet Number': self.farm.OS_map_sheet,
             'Field Info Date': self.farm.field_info_date,
             'Primary Record Date': self.farm.primary_record_date,
             'Record consists of': self.forms_list,
