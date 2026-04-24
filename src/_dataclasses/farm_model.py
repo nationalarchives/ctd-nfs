@@ -51,6 +51,9 @@ class Details:
     name: str
     address: str
     full_address: str = field(init=False)
+    # name: str = field(init=False)
+    # address: str = field(init=False)
+    # full_address: str
 
 
 @dataclass
