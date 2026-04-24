@@ -11,7 +11,7 @@ from src._tools.helpers import create_uuid_str
     
 
 @dataclass
-class Discovery:
+class DiscoveryMAF32:
     farm: Farm
     replica_id: str = field(default_factory=create_uuid_str)
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']

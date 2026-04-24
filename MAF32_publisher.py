@@ -7,7 +7,7 @@ import shelve
 from src._tools.constants import PATH
 from src._tools.xlreader import read_file
 from src._tools.logging_setup import create_logger
-from src._dataclasses.discovery_model import Discovery
+from src._dataclasses.discovery_model import DiscoveryMAF32
 from src._dataclasses.farm_model import Details, Farm
 
 
@@ -76,7 +76,7 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
         farm.primary_record_date = row['primary_record_date']
         farm.additional_farms = row['additional_farms']
 
-        discovery_document = Discovery(farm)
+        discovery_document = DiscoveryMAF32(farm)
         logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.iaid} with {len(discovery_document.files)} images")
 
         documents.append(discovery_document.to_dict())
