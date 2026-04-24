@@ -1,3 +1,4 @@
+import re
 import uuid
 
 
@@ -11,4 +12,9 @@ class TranscriptionDataError(Exception):
 
 class ValueObject:
     """A base class for all value objects"""
+
+
+def split_list_values(field_value: str) -> list[str]:
+    """Utility method to split a field value by commas and strip whitespace, and remove surrounding quotes."""
+    return [re.sub(r'"', "", item).strip() for item in re.split(r"; *", field_value) if item != "*"]
 
