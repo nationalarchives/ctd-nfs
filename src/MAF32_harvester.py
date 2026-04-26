@@ -63,7 +63,7 @@ def update_farms_db(transcription: Transcription, row_number: int, test_mode: bo
         if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
             candidate_farm.source_data[form_type].append(transcription)
             county[candidate_farm.catalogue_reference] = {'farm': candidate_farm}
-            logger.info(f"{row_info} NEW FARM: '{candidate_farm.catalogue_reference}' created from '{form_type}'")
+            logger.info(f"{row_info} NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
 
         else:
             existing_farm = county[candidate_farm.catalogue_reference]['farm']
@@ -90,7 +90,7 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
             update_farms_db(transcription, row_number, test_mode=test_mode)
 
         except TranscriptionDataError as error_message:
-            logging.error(f"Row {row_number} not processed because {error_message}")
+            logger.error(f"Row {row_number} not processed because {error_message}")
             continue
 
 
@@ -146,7 +146,7 @@ def process_csv_files(test_mode: bool = False) -> None:
         raw_farm_data: list[dict] = load_data_from_file(csv_file)
         normalised_farm_data = normalise_csv_data(raw_farm_data)
         create_farms(normalised_farm_data, test_mode=test_mode)
-    process_transcriptions('KT Kent', test_mode=test_mode)
+    process_transcriptions('RD Rutland', test_mode=test_mode)
 
 
 def main():
