@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field, InitVar
 import shelve
+import uuid
 
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
@@ -74,6 +75,7 @@ class Farm:
     field_info_date: str = field(init=False)
     primary_record_date: str = field(init=False)
 
+    _id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: list[Form] = field(default_factory=list)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
@@ -81,6 +83,14 @@ class Farm:
     def __post_init__(self):
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
+
+    @property
+    def id(self) -> str:
+       return self._id
+
+    @id.setter
+    def id(self, value: uuid.UUID) -> None:
+        self._id = value
 
     def _get_catalogue_reference_stem(self) -> str:
         """
@@ -102,10 +112,6 @@ class Farm:
         reference_record = next(all_references, None)
         
         return reference_record['Catalogue ref']
-        
-    @property
-    def iaid(self) -> str:
-        return create_uuid_str()
 
     @property
     def catalogue_reference(self) -> str:
