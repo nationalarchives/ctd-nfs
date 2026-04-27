@@ -149,7 +149,7 @@ class Transcription:
         self.warnings: dict | None = None
 
 
-        if self.file2 and (not self.file1.is_cover) and (self.document_type.name != "Cover") and not self.has_data:
+        if not (self.is_form or self.is_cover_page):
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name} have valid file patterns but no farm data provided.")
         
     def __repr__(self):
