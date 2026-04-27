@@ -31,11 +31,15 @@ def initialise_forms_mapping() -> dict:
 @dataclass
 class ImageFile:
     filename: InitVar[Filename]
-    id: str = field(default_factory=create_uuid_str) 
+    _id: uuid.UUID = field(default_factory=create_uuid_str) 
     
     def __post_init__(self, filename):
         self.name = filename.name
         self.image_number = filename.image_number
+
+    @property
+    def id(self) -> str:
+       return self._id
 
 
 @dataclass
