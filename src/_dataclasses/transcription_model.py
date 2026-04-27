@@ -130,10 +130,12 @@ class Transcription:
         if self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data:
             return True
         return False
-    
+ 
     @property
     def is_form(self) -> bool:
-        if (not self.file1.is_cover) and (self.document_type.name != "Cover") and self.has_data:
+        completed_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
+        other_form: bool = self.document_type.name == "Other" and not self.has_data
+        if (not self.file1.is_cover) and (completed_form or other_form):
             return True
         return False
     
