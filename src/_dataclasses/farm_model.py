@@ -88,10 +88,6 @@ class Farm:
     def id(self) -> str:
        return self._id
 
-    @id.setter
-    def id(self, value: uuid.UUID) -> None:
-        self._id = value
-
     def _get_catalogue_reference_stem(self) -> str:
         """
         Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
