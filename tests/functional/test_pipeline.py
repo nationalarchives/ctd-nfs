@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from src._tools.constants import PATH
-from src.harvester import process_csv_files
+from src.MAF32_harvester import process_csv_files
 from src.harvester.catalogue_proofs_builder import create_proof_files
 from src._dataclasses.farm_model import Farm
 from src._tools.logging_setup import create_logger
