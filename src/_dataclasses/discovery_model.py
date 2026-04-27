@@ -84,7 +84,7 @@ class DiscoveryMAF32:
     def to_dict(self) -> dict:
         return { 
             'record': {
-                'iaid': self.farm.iaid,
+                'iaid': self.farm.id,
                 'citableReference': self.farm.catalogue_reference,
                 'replicaId': self.replica_id,
                 'parentId': self.parent_id,
