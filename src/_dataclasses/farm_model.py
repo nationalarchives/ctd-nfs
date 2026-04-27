@@ -92,16 +92,16 @@ class Farm:
     def id(self) -> str:
        return self._id
 
-    def _get_catalogue_reference_stem(self) -> str:
+    @property
+    def catalogue_reference(self) -> str:
         """
-        Retrieve the catalogue reference and county & parish values - county & parish value will be add to primary farm number to create farm reference
-
-        Args:
-            county_code (str):  
-            parish_number (str): 
+        Calculates the full catalogue reference by retrieving the partial catalogue reference corresponding to the county & parish values from a lookup table,
+        and adding this to the primary farm number
+        The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
+        Each farm must have a unique catalogue reference.
 
         Returns:
-            str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
+        str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
         """ 
         with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
             all_references = (
@@ -111,19 +111,7 @@ class Farm:
             )
         reference_record = next(all_references, None)
         
-        return reference_record['Catalogue ref']
-
-    @property
-    def catalogue_reference(self) -> str:
-        """The full catalogue reference will be displayed in Discovery, and mirrors the catalogue taxonomy in the format: "MAF 32/<piece>/<parish number>/<farm number>"
-       Each farm must have a unique catalogue reference.
-
-        Returns:
-            str: catalogue reference for the farm
-        """
-        _catalogue_reference = self._get_catalogue_reference_stem()
-
-        return f"{_catalogue_reference}/{self.primary_farm_number}"
+        return f"{reference_record['Catalogue ref']}/{self.primary_farm_number}"
 
     @property
     def farm_reference(self) -> str:
