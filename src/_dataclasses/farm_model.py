@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field, InitVar
 import shelve
 import uuid
+from functools import cached_property
 
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
@@ -37,7 +38,7 @@ class ImageFile:
         self.name = filename.name
         self.image_number = filename.image_number
 
-    @property
+    @cached_property
     def id(self) -> str:
        return self._id
 
@@ -88,11 +89,11 @@ class Farm:
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
 
-    @property
+    @cached_property
     def id(self) -> str:
        return self._id
 
-    @property
+    @cached_property
     def catalogue_reference(self) -> str:
         """
         Calculates the full catalogue reference by retrieving the partial catalogue reference corresponding to the county & parish values from a lookup table,
@@ -113,10 +114,9 @@ class Farm:
         
         return f"{reference_record['Catalogue ref']}/{self.primary_farm_number}"
 
-    @property
+    @cached_property
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
-
 
     # TODO: add warning for multiple B496/EI forms
 
