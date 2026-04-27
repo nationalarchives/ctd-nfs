@@ -54,12 +54,11 @@ class Form:
 
 @dataclass
 class Details:
-    name: str
-    address: str
-    full_address: str = field(init=False)
-    # name: str = field(init=False)
-    # address: str = field(init=False)
-    # full_address: str
+    name: str = ""
+    address: str = ""
+    
+    def __post_init__(self):
+    	self.full_address: str = f"{self.name}, {self.address}"
 
 
 @dataclass
