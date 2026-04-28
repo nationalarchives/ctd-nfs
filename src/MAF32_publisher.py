@@ -59,9 +59,12 @@ def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_
     for row in cleaned_data:
         farm = farms_store[row['catalogue_reference']]
         farm.farm_name = row['farm_name']
-        farm.landowner = Details(full_address=row['landowner'])
-        farm.farmer = Details(full_address=row['farmer'])
-        farm.addressee = Details(full_address=row['addressee'])
+        farm.landowner = Details()
+        farm.landowner.full_address = row['landowner']
+        farm.farmer = Details()
+        farm.farmer.full_address = row['farmer']
+        farm.addressee = Details()
+        farm.addressee.full_address = row['addressee']
         farm.acreage = row['acreage']
         farm.OS_map_sheet = row['os_sheet_number']
         farm.field_info_date = row['field_info_date']
