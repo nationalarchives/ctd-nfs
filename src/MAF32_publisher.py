@@ -3,6 +3,7 @@
 import json
 import pprint
 import shelve
+from pathlib import Path
 
 from src._tools.constants import PATH
 from src._tools.xlreader import read_file
@@ -17,9 +18,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def load_excel_data() -> list[dict]:
-    # TODO: read file from INPUT folder without hardcoding and parse county from filename
-    data_file = PATH.HARVEST / "RD Rutland final for JSON.xlsx"
+def load_excel_data(data_file: Path) -> list[dict]:
     logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
     excel_data = read_file(data_file)
 
