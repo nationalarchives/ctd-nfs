@@ -92,14 +92,26 @@ def write_catalogue_documents(documents: list[dict]) -> None:
             json.dump(document, final_file)   
            
             
-def main(test_mode=False):
-    excel_data = load_excel_data()
-    cleaned_data = clean_excel_data(excel_data)
-    final_documents = build_catalogue_documents(cleaned_data, test_mode)
-    if test_mode:
-        for document in final_documents:
-            pretty.pprint(document)
-    write_catalogue_documents(final_documents)
+def process_proof_files(test_mode: bool=False) -> None:
+    proof_files = PATH.TEST_PUBLISH.glob("*.xlsx") if test_mode else PATH.PUBLISH.glob("*.xlsx")
+
+
+    for excel_file in proof_files:
+        county, _ = excel_file.name.split("_")
+        with shelve.open(PATH.FARMS_DB, "r") as farms_db:
+            farms_store = farms_db[county]
+        proof_data = load_excel_data(excel_file)
+        cleaned_data = clean_excel_data(proof_data)
+        final_documents = build_catalogue_documents(cleaned_data, farms_store, test_mode)
+        if test_mode:
+            for document in final_documents:
+                pretty.pprint(document)
+        write_catalogue_documents(final_documents)
+
+
+def main(test_mode: bool=False):
+    logger.info(" ===== PROCESSING PROOF FILES ===== ")
+    process_proof_files()
 
 
 if __name__ == "__main__":
