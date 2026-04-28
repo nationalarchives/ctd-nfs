@@ -126,8 +126,9 @@ class TranscriptionsProcessor:
                     continue
             
             image_files = [
-                ImageFile(transcription.file1),
-                ImageFile(transcription.file2),
+                ImageFile(file)
+                for file in [transcription.file1, transcription.file2]
+                if file
             ]
             collated_forms.append(Form(
                 document_type=transcription.document_type, 
