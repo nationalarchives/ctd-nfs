@@ -72,7 +72,7 @@ def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_
         # TODO: write farm back to farm_store and return farm_store to update shelf
 
         discovery_document = DiscoveryMAF32(farm)
-        logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.iaid} with {len(discovery_document.files)} images")
+        logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
 
         documents.append(discovery_document.to_dict())
 
