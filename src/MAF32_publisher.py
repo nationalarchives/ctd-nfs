@@ -53,19 +53,12 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     return discovery_data
 
 
-def _get_farm_instance(catalogue_reference: str) -> Farm:
-    # TODO: parse county from filename
-    county_name = "RD Rutland"
-    with shelve.open(PATH.FARMS_DB, "r") as farms_db:
-        return farms_db[county_name][catalogue_reference]['farm']
-
-
-def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list[dict]:
+def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_mode=False) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
     for row in cleaned_data:
-        farm = _get_farm_instance(row['catalogue_reference'])
+        farm = farms_store[row['catalogue_reference']]
         farm.farm_name = row['farm_name']
         farm.landowner = Details(full_address=row['landowner'])
         farm.farmer = Details(full_address=row['farmer'])
