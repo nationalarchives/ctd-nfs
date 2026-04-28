@@ -2,6 +2,7 @@ import csv
 import shelve
 from pathlib import Path
 from typing import Generator, Iterator
+import os
 
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
@@ -16,65 +17,59 @@ from src.harvester.transcriptions_processor import TranscriptionsProcessor
 logger = create_logger("src._config", "logging.yaml")
 
 
-def process_transcriptions(county: str, test_mode: bool) -> None:
+def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> dict[str, dict[str, Farm]]:
+    logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
+    total_farms = len(farms_store)
+
+    for index, farm in enumerate(farms_store.values(), start=1):
+        logger.info(f"Processsing: '{farm.catalogue_reference}'")
+        transcriptions = [
+            item
+            for element in farm.source_data.values()
+            for item in element
+        ]
+        processor = TranscriptionsProcessor(transcriptions)
+        results = processor.process_transcriptions()
+
+        farm.forms = results['forms']
+
+        for field, value in results['for output'].items():
+            setattr(farm, field, value)
+
+        farms_store[farm.catalogue_reference] = farm
+
+        distilled_data = results['for_processing']
+
+        logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
+    
+    return farms_store
+
+
+def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool = False) -> None:
     with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
-        logger.info(" ===== PROCESSING FARMS ===== ")
-        farms_in_county = farm_db[county].copy()
-        total_farms = len(farms_in_county.values())
-
-        for index, data in enumerate(farms_in_county.values(), start=1):
-            farm = data['farm']
-            transcriptions = [
-                item
-                for element in farm.source_data.values()
-                for item in element
-            ]
-            processor = TranscriptionsProcessor(transcriptions)
-            results = processor.process_transcriptions()
-
-            farm.forms = results['forms']
-
-            for field, value in results['for output'].items():
-                setattr(farm, field, value)
-
-            farms_in_county[farm.catalogue_reference]['farm'] = farm
-
-            distilled_data = results['for_processing']
-
-            logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
-        farm_db[county] = farms_in_county.copy()
+        farm_db[county] = farms_store.copy()
 
 
-def update_farms_db(transcription: Transcription, row_number: int, test_mode: bool = False) -> None:
-    # NOTE: THIS IS INEFFICIENT BECAUSE IT COPIES THE WHOLE COUNTY FOR EACH TRANSCRIPTION
-    # TODO: FIX THIS BY SWITCHING TO TINY DB AND JUST CREATING OR UPSERTING INDIVIDUAL FARMS
-    # TODO: Initialise the db with all the counties
+def create_farms(farms_store: dict[str, Farm], transcriptions: Iterator[Transcription]) -> dict[str, dict[str, Farm]]:
+    for xscription in transcriptions:
+        candidate_farm = Farm(xscription.county, xscription.parish, xscription.primary_farm_number)
+        form_type = xscription.document_type.name
 
-    row_info = f"Processed row {row_number}:"
-    candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
-    form_type = transcription.document_type.name
-
-    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
-        if candidate_farm.county not in farm_db:
-            farm_db.update({candidate_farm.county: {}})
-
-        county = farm_db[candidate_farm.county].copy()
-
-        if candidate_farm.catalogue_reference not in farm_db[candidate_farm.county]:
-            candidate_farm.source_data[form_type].append(transcription)
-            county[candidate_farm.catalogue_reference] = {'farm': candidate_farm}
-            logger.info(f"{row_info} NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
+        if candidate_farm.catalogue_reference not in farms_store:
+            candidate_farm.source_data[form_type].append(xscription)
+            farms_store[candidate_farm.catalogue_reference] = candidate_farm
+            logger.info(f"NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
 
         else:
-            existing_farm = county[candidate_farm.catalogue_reference]['farm']
-            existing_farm.source_data[form_type].append(transcription)
-            county[candidate_farm.catalogue_reference]['farm'] = existing_farm
-            logger.info(f"{row_info}{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
+            existing_farm = farms_store[candidate_farm.catalogue_reference]
+            existing_farm.source_data[form_type].append(xscription)
+            farms_store[candidate_farm.catalogue_reference] = existing_farm
+            logger.info(f"{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
 
-        farm_db[candidate_farm.county] = county.copy()
+    return farms_store
 
 
-def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
+def create_transcriptions(csv_data: Iterator[dict]) -> Generator[Transcription, None, None]:
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
     logger.info(" ===== LOADING TRANSCRIPTIONS & CREATING FARMS ===== ")
     for row_number, farm_data_row in enumerate(csv_data, start=2):
@@ -87,12 +82,13 @@ def create_farms(csv_data: Iterator[dict], test_mode: bool = False) -> None:
 
             checker = TranscriptionChecker(transcription, row_number)
             transcription.warnings = checker.run_validation_checks()
-            update_farms_db(transcription, row_number, test_mode=test_mode)
+            logger.info(f"Transcription created from row {row_number}")
+            yield transcription
 
         except TranscriptionDataError as error_message:
             logger.error(f"Row {row_number} not processed because {error_message}")
             continue
-
+        
 
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
     """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
@@ -140,13 +136,19 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def process_csv_files(test_mode: bool = False) -> None:
+def process_csv_files(test_mode: bool=False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
+
     for csv_file in input_files:
-        raw_farm_data: list[dict] = load_data_from_file(csv_file)
-        normalised_farm_data = normalise_csv_data(raw_farm_data)
-        create_farms(normalised_farm_data, test_mode=test_mode)
-    process_transcriptions('RD Rutland', test_mode=test_mode)
+        county, _ = csv_file.name.split("_")
+        farms_store = {}   
+        raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
+        normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
+        transcriptions: Iterator[Transcription] = create_transcriptions(normalised_farm_data)
+        farms_store: dict = create_farms(farms_store, transcriptions)
+        write_farms_to_db(farms_store, county, test_mode)
+        farms_store: dict = process_transcriptions(farms_store)
+        write_farms_to_db(farms_store, county, test_mode)
 
 
 def main():
@@ -158,5 +160,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    for file in Path(PATH.DB / "TEST").glob("*"):
+        os.remove(file)
+
+    process_csv_files()
 
