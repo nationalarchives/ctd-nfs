@@ -74,7 +74,7 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
         farm.OS_map_sheet = row['os_sheet_number']
         farm.field_info_date = row['field_info_date']
         farm.primary_record_date = row['primary_record_date']
-        farm.additional_farms = row['additional_farms']
+        # TODO: write farm back to farm_store and return farm_store to update shelf
 
         discovery_document = DiscoveryMAF32(farm)
         logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.iaid} with {len(discovery_document.files)} images")

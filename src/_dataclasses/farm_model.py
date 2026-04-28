@@ -68,8 +68,6 @@ class Farm:
     primary_farm_number: str
 
     farm_name: str = field(init=False)   
-    additional_farms: str = field(init=False)
-
     addressee: Details = field(init=False)
     farmer: Details = field(init=False)
     landowner: Details = field(init=False)

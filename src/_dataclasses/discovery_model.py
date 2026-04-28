@@ -57,8 +57,6 @@ class DiscoveryMAF32:
             'Primary Record Date': self.farm.primary_record_date,
             'Record consists of': self.forms_list,
         }
-        if self.farm.additional_farms:
-            description_fields['Forms present on other Records'] = self.farm.additional_farms
 
         description = [
             f"{key}: {value}<p>"
