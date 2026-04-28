@@ -179,6 +179,8 @@ class PathNamespace():
     TEST_OUTPUT = HARVEST / "TEST"
     
     PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
+    TEST_PUBLISH = PUBLISH / "TEST"
+    
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
 
