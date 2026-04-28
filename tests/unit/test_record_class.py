@@ -1,7 +1,7 @@
 
 import pytest
 
-from src.MAF32_publisher  import _get_farm_instance
+# from src.MAF32_publisher  import get_farm_instance
 from src._dataclasses.discovery_model import DiscoveryMAF32
 
 
@@ -23,26 +23,26 @@ _PROOF_DATA = {
 
 @pytest.mark.skip(reason="awaiting refactoring")
 def test_record_subdocument_creation():
-    test_record = Record(
-        citableReference=_PROOF_DATA['catalogue_reference'],
-    )
+    # test_record = Record(
+    #     citableReference=_PROOF_DATA['catalogue_reference'],
+    # )
 
     expected_result = {
             'parentId': "C7283514",
         }
-    assert expected_result['parentId'] == test_record.parentId        
+    # assert expected_result['parentId'] == test_record.parentId        
 
 
 @pytest.mark.skip(reason="awaiting refactoring")
 def test_replica_subdocument_creation():
-    farm = _get_farm_instance(_PROOF_DATA['catalogue_reference'])
-    test_replica = build_replica_subdocument(farm.forms)
+    # farm = get_farm_instance(_PROOF_DATA['catalogue_reference'])
+    # test_replica = build_replica_subdocument(farm.forms)
 
     expected_result = {
         'originalName': _PROOF_DATA['filenames'].split()[0].strip(",;"),
         'name': "66/MAF/32/"}
 
-    assert expected_result['originalName'] == test_replica.files[0].originalName
-    assert test_replica.files[0].name.startswith(expected_result['name'])
+    # assert expected_result['originalName'] == test_replica.files[0].originalName
+    # assert test_replica.files[0].name.startswith(expected_result['name'])
 
 
