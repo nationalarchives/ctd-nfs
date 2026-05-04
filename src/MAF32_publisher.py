@@ -45,6 +45,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
             value = value.strip()
             value = value.replace(f"{non_breaking_space}", " ")
             value = value.replace("\n", "")
+            value = re.sub(r";\s*", "; ", value)
             cleaned_data_row[key] = value
 
         discovery_data.append(cleaned_data_row)
