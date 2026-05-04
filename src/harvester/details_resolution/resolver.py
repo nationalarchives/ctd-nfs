@@ -1,20 +1,20 @@
 import re
 
 
-def resolve_single_name_and_address(title: str, name: str, address: str) -> str:
+def resolve_single_name_and_address(title: str, name: str, address: str) -> dict:
     full_name = resolve_single_title_and_name(title, name)
 
     has_address = address not in ["[not specified]", "_not transcribed_"]
     has_full_name = full_name not in ["[not specified]", "_not transcribed_"]
 
     if not (has_full_name and has_address):
-        return "[not specified]"
+        return {'name': "[not specified]", 'address': "[not specified]"}
 
     if not has_address:
-        return f"{full_name}"
-
+       return {'name': full_name, 'address': "[not specified]"}
+    
     if (has_full_name and has_address) or not has_full_name:
-        return f"{full_name}, {address}"
+        return {'name': full_name, 'address': address}
 
 
 def resolve_single_title_and_name(title: str, name: str) -> str:
