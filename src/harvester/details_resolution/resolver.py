@@ -33,16 +33,13 @@ def resolve_single_title_and_name(title: str, name: str) -> str:
         return f"{name}"
 
 
-def resolve_multiple_details(titles: str, names: str, address: str) -> str:
+def resolve_multiple_details(titles: str, names: str, address: str) -> list[dict]:
     separated_titles = re.split("; *", titles)
     separated_names = re.split("; *", names)
     separated_addresses = re.split("; *", address)
 
-    details = [
+    return [
         resolve_single_name_and_address(title, name, address)
         for title, name, address in zip(separated_titles, separated_names, separated_addresses)
     ]
-
-    return "; ".join(details)
-
 
