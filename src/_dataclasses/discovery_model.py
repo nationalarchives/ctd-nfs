@@ -47,14 +47,14 @@ class DiscoveryMAF32:
     def scope_and_content(self) -> dict:
         description_fields = {
             'Farm Reference': self.farm.farm_reference,
-            'Farm Name': self.farm.farm_name,
-            'addressee': self.farm.addressee.full_address,
-            'Farmer(s) or occupier(s)': self.farm.farmer.full_address,
+            'Farm Name(s)': self.farm.farm_name,
+            'Addressee(s)': self.farm.addressee.full_address,
+            'Farmer(s) or Occupier(s)': self.farm.farmer.full_address,
             'Landowner(s)': self.farm.landowner.full_address,
-            'Acreage': self.farm.acreage,
-            'OS Sheet Number': self.farm.OS_map_sheet,
-            'Field Info Date': self.farm.field_info_date,
-            'Primary Record Date': self.farm.primary_record_date,
+            'Acreage(s)': self.farm.acreage,
+            'OS Sheet Number(s)': self.farm.OS_map_sheet,
+            'Field Information Date(s)': self.farm.field_info_date,
+            'Primary Record Date(s)': self.farm.primary_record_date,
             'Record consists of': self.forms_list,
         }
 
