@@ -217,7 +217,6 @@ class DiscoveryNamespace():
             }
         ],
         'legalStatus': "Public Record(s)",
-        'referencePart': "0",
         'source': "FS",
         'title': None,
     }

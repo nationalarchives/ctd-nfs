@@ -80,6 +80,7 @@ class DiscoveryMAF32:
         ]
 
     def to_dict(self) -> dict:
+        _, reference_part = self.farm.catalogue_reference.rsplit("/", maxsplit=1)
         return { 
             'record': {
                 'iaid': self.farm.id,
@@ -87,6 +88,7 @@ class DiscoveryMAF32:
                 'replicaId': self.replica_id,
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
+                'referencePart': reference_part,
             } | DISCOVERY.RECORD_CONSTANTS,
             'updateScope': self.update_scope,
             'replica': {
