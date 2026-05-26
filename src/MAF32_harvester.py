@@ -161,6 +161,7 @@ def process_csv_files(test_mode: bool=False) -> None:
         when only running Harvester to view changes to the proof output
         """
         farms_store = read_farms_db(county)
+        farms_with_collated_attributes = process_all_transcriptions(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
 
 
