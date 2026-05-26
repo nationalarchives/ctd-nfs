@@ -18,7 +18,7 @@ from src.harvester.transcriptions_processor import TranscriptionsProcessor
 logger = create_logger("src._config", "logging.yaml")
 
 
-def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> dict[str, dict[str, Farm]]:
+def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
 
