@@ -1,8 +1,8 @@
 import re
 from datetime import datetime
+import dbm
 
-from src._dataclasses.farm_model import Form, ImageFile
-from src._tools.constants import DATA, REGEX
+from src._tools.constants import DATA, REGEX, PATH
 from src._dataclasses.transcription_model import Transcription
 
 
@@ -128,6 +128,13 @@ class TranscriptionsProcessor:
                 for file in [transcription.file1, transcription.file2]
                 if file
             ]
+            for index, image in enumerate(image_files):
+                with dbm.open(PATH.FILE_IDS, 'c') as file_ids_db:
+                    db_id = file_ids_db.get(image.name, "")
+                    if db_id:
+                        image_files[index].id = db_id.decode()
+                    else:
+                        file_ids_db[image.name] = image.id
 
             collated_forms[current_form_name].append(image_files)
 
