@@ -146,6 +146,24 @@ class Farm:
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
 
-    # TODO: add warning for multiple B496/EI forms
+    def _process_forms_for_proof(self) -> dict:
+        forms_in_proof_format = []
+        files_in_proof_format = []
+        ids_in_proof_format = []
 
+        for form_type, images in self.forms.items():
+            if len(images) == 1:
+                forms_in_proof_format.append(form_type)
+            else:
+                for index in range(len(images)):
+                    forms_in_proof_format.append(f"{form_type} ({index + 1})")
+            for imageset in images:
+                files_in_proof_format.append(", ".join([image.name for image in imageset]))
+                ids_in_proof_format.append(", ".join([image.id for image in imageset]))
+
+        return {
+            'forms': forms_in_proof_format,
+            'file_names': files_in_proof_format,
+            'file_ids': ids_in_proof_format,
+        }
     
