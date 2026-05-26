@@ -104,9 +104,13 @@ class Farm:
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
 
-    @cached_property
+    @property
     def id(self) -> str:
        return self._id
+    
+    @id.setter
+    def id(self, value: uuid.UUID):
+        self._id = value
 
     @cached_property
     def catalogue_reference(self) -> str:
