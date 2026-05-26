@@ -85,15 +85,15 @@ class Farm:
     parish: str
     primary_farm_number: str
 
-    farm_name: str = field(init=False)   
-    addressee: Details = field(init=False)
-    farmer: Details = field(init=False)
-    landowner: Details = field(init=False)
+    farm_name: list[str] = field(init=False)   
+    addressee: list[Details] = field(init=False)
+    farmer: list[Details] = field(init=False)
+    landowner: list[Details] = field(init=False)
 
-    acreage: str = field(init=False)
-    OS_map_sheet: str = field(init=False)
-    field_info_date: str = field(init=False)
-    primary_record_date: str = field(init=False)
+    acreage: list[str] = field(init=False)
+    OS_map_sheet: list[str] = field(init=False)
+    field_info_date: list[str] = field(init=False)
+    primary_record_date: list[str] = field(init=False)
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: list[Form] = field(default_factory=list)
