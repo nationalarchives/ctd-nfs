@@ -106,23 +106,8 @@ class TranscriptionsProcessor:
                 for transcription in self.transcriptions
             ]
             for field_name in DATA.FARM_DATA_FIELDS
-    
-    def _collate_attributes_for_final_output(self) -> dict:
-        collated_attributes = {
-            'additional_farms': "",
-            'acreage': "",
-            'OS_map_sheet': "",
         }
-            
-        for field_name in collated_attributes:
-            values = [
-                getattr(transcription, field_name)
-                for transcription in self.transcriptions
-            ]
-            collated_attributes[field_name] = "; ".join(values)
-
-        return collated_attributes
-
+    
     def _collate_forms(self) -> list[Form]:
         collated_forms: list[Form] = []
 
