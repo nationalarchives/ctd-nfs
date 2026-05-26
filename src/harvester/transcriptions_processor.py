@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 import dbm
 
+from src._dataclasses.farm_model import ImageFile
 from src._tools.constants import DATA, REGEX, PATH
 from src._dataclasses.transcription_model import Transcription
 
