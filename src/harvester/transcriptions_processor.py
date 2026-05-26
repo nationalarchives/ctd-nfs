@@ -113,9 +113,8 @@ class TranscriptionsProcessor:
 
         for transcription in self.transcriptions:
             current_form_name = transcription.document_type.name
-            if last_form := (collated_forms[-1] if collated_forms else None):
-                is_same_form_name: bool = current_form_name == last_form.name
-                is_consecutive: bool = (transcription.file1.image_number == last_form.images[-1].image_number + 1)
+            if current_form_name not in collated_forms:
+                collated_forms[current_form_name] = []
 
                 if not transcription.file2 and is_same_form_name and is_consecutive:
                     collated_forms[-1].images.append(ImageFile(transcription.file1))
