@@ -22,6 +22,7 @@ def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tupl
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
 
+    updated_farms = []
     for index, farm in enumerate(farms_store.values(), start=1):
         logger.info(f"Processsing: '{farm.catalogue_reference}'")
         transcriptions = [
