@@ -27,6 +27,22 @@ def collate_attributes(values: list[str]) -> str:
     return output or ["[not specified]",]
 
 
+def set_details_attribute(values: list[dict]) -> list[Details]:
+    if len(values) > 1:
+        final_values = [
+            item
+            for item in values
+            if (item['name'], item['address']) not in product(['[not specified]', '[not specified]'], repeat=2)
+        ]
+    else:
+        final_values = values
+
+    return [
+        Details(name=item['name'], address=item['address'])
+        for item in final_values
+    ]
+
+
 def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
