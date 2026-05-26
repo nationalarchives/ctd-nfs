@@ -166,4 +166,13 @@ class Farm:
             'file_names': files_in_proof_format,
             'file_ids': ids_in_proof_format,
         }
-    
+
+    @staticmethod
+    def _consolidate_full_addresses(full_addresses: list[str]) -> list[str]:
+
+        return full_addresses if full_addresses == ["[not specified]",] else \
+            [
+                address
+                for address in full_addresses
+                if address != "[not specified]"
+            ]
