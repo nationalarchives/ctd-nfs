@@ -80,7 +80,7 @@ class TranscriptionsProcessor:
 
         return f"{int(day)} {month} {re.sub(r"^20", "19", year)}"
 
-    def _process_dates(self) -> dict[str, str]:        
+    def _collate_dates(self) -> dict[str, str]:        
         processed_dates = {
             'field_info_date': "",
             'primary_record_date': "",
