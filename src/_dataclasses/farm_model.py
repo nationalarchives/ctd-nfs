@@ -96,6 +96,7 @@ class Farm:
     primary_record_date: list[str] = field(init=False)
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
+    _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: dict[str, list[ImageFile]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
@@ -111,6 +112,14 @@ class Farm:
     @id.setter
     def id(self, value: uuid.UUID):
         self._id = value
+
+    @property
+    def replica_id(self) -> str:
+       return self._replica_id
+    
+    @replica_id.setter
+    def replica_id(self, value: uuid.UUID):
+        self._replica_id = value
 
     @cached_property
     def catalogue_reference(self) -> str:
