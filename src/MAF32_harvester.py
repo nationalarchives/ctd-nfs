@@ -24,6 +24,7 @@ def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tupl
 
     updated_farms = []
     for index, farm in enumerate(farms_store.values(), start=1):
+
         logger.info(f"Processsing: '{farm.catalogue_reference}'")
         transcriptions = [
             item
@@ -31,16 +32,7 @@ def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tupl
             for item in element
         ]
         processor = TranscriptionsProcessor(transcriptions)
-        results = processor.process_transcriptions()
-
-        farm.forms = results['forms']
-
-        for field, value in results['for output'].items():
-            setattr(farm, field, value)
-
-        farms_store[farm.catalogue_reference] = farm
-
-        distilled_data = results['for_processing']
+        updated_farms.append((farm, processor.process_transcriptions()))
 
         logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
     
