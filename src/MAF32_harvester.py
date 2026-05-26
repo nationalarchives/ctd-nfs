@@ -140,7 +140,7 @@ def process_csv_files(test_mode: bool=False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
 
     for csv_file in input_files:
-        county, _ = csv_file.name.split("_")
+        county, _ = csv_file.stem.split("_", maxsplit=1)
         farms_store = {}   
         raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
         normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
