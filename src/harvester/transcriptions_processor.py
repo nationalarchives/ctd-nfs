@@ -108,8 +108,8 @@ class TranscriptionsProcessor:
             for field_name in DATA.FARM_DATA_FIELDS
         }
     
-    def _collate_forms(self) -> list[Form]:
-        collated_forms: list[Form] = []
+    def _collate_forms(self) -> dict:
+        collated_forms = {}
 
         for transcription in self.transcriptions:
             current_form_name = transcription.document_type.name
@@ -126,10 +126,8 @@ class TranscriptionsProcessor:
                 for file in [transcription.file1, transcription.file2]
                 if file
             ]
-            collated_forms.append(Form(
-                document_type=transcription.document_type, 
-                images=image_files
-                ))
+
+            collated_forms[current_form_name].append(image_files)
 
         return collated_forms
 
