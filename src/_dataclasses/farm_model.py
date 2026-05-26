@@ -183,4 +183,42 @@ class Farm:
             _ = ";\n".join(values)
             return ";\n".join(_.split("; "))
         return "; ".join(values)
+
+    def to_proof(self) -> list:
+        forms_and_files = self._process_forms_for_proof()
+        return [
+            self.catalogue_reference,
+            self._join(self.warnings.get('Reference Warnings', "")),
+            self.id,
+            # ========================
+            self.replica_id,
+            self._join(forms_and_files['file_ids']),
+            self._join(forms_and_files['file_names']),
+            self._join(self.warnings.get('Filename Warnings', "")),
+            # ========================
+            self._join(forms_and_files['forms']),
+            self._join(self.warnings.get('Type Warnings', "")),
+            self.farm_reference,
+            self._join(self.farm_name),
+            # ========================
+            self._join([detail.name for detail in self.addressee]),
+            self.warnings.get('Addressee name warnings', ""),
+            self._join([detail.address for detail in self.addressee]),
+            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.addressee])),
+            # ========================
+            self._join([detail.name for detail in self.farmer]),
+            self.warnings.get('Farmer name warnings', ""),
+            self._join([detail.address for detail in self.farmer]),
+            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.farmer])),
+            # ========================
+            self._join([detail.name for detail in self.landowner]),
+            self.warnings.get('Landowner name warnings', ""),
+            self._join([detail.address for detail in self.landowner]),
+            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.landowner])),
+            # ========================
+            self._join(self.acreage),
+            self._join(self.OS_map_sheet),
+            self._join(self.field_info_date),
+            self._join(self.primary_record_date),
+        ]
     
