@@ -183,6 +183,9 @@ class PathNamespace():
     
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
+    FARM_IDS = DB / "Farm_IDs.db"
+    FILE_IDS = DB / "File_IDs.db"
+
 
 class DiscoveryNamespace():
     API_URI = r"https://discovery.nationalarchives.gov.uk/API"
