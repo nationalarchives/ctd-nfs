@@ -19,6 +19,25 @@ class TranscriptionsProcessor:
         if len(b496_forms) > 1:
             return "Multiple B496/EI forms"
 
+    def _collate_warnings(self) -> dict:
+        farm_warnings = {}
+        for transcription in self.transcriptions:
+            if not transcription.warnings:
+                continue
+            for warning_type, warnings in transcription.warnings.items():
+                if warning_type in warnings:
+                    farm_warnings[warning_type].extend(warnings)
+                else:
+                    farm_warnings[warning_type] = warnings
+        
+        if b496_warning := self._check_for_multiple_B496():
+            if 'Type Warnings' in farm_warnings:
+                farm_warnings['Type Warnings'].append(b496_warning)
+            else:
+                farm_warnings['Type Warnings'] = [b496_warning]
+
+        return farm_warnings
+
     def _normalize_date(self, candi_date: str) -> str:
         """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
         Note: day must not have leading zeros.
