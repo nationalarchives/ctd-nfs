@@ -38,9 +38,13 @@ class ImageFile:
         self.name = filename.name
         self.image_number = filename.image_number
 
-    @cached_property
+    @property
     def id(self) -> str:
-       return self._id
+        return self._id
+
+    @id.setter
+    def id(self, value: uuid.UUID):
+        self._id = value
 
 
 @dataclass
