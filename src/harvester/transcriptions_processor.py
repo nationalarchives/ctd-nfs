@@ -141,10 +141,10 @@ class TranscriptionsProcessor:
         return collated_forms
 
     def process_transcriptions(self) -> dict:
-        data_for_final_output = self._process_dates() | self._collate_attributes_for_final_output()
         return {
             'forms': self._collate_forms(),
-            'for output': data_for_final_output,
-            'for_processing': self._collate_attributes_for_further_processing(),
+            'dates': self._collate_dates(),
+            'for_processing': self._collate_non_date_attributes(),
+            'warnings': self._collate_warnings(),
         }
 
