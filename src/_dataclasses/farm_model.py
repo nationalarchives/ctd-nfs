@@ -96,7 +96,7 @@ class Farm:
     primary_record_date: list[str] = field(init=False)
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
-    forms: list[Form] = field(default_factory=list)
+    forms: dict[str, list[ImageFile]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
