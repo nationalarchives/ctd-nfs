@@ -99,7 +99,7 @@ class TranscriptionsProcessor:
 
         return processed_dates
 
-    def _collate_attributes_for_further_processing(self) -> dict:
+    def _collate_non_date_attributes(self) -> dict:
         transcription_fields = [
             'farm_name',
         	'addressee_title',
