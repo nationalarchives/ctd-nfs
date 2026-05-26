@@ -3,6 +3,7 @@ import shelve
 from pathlib import Path
 from typing import Generator, Iterator
 import os
+import dbm
 
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
@@ -53,6 +54,14 @@ def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool
 def create_farms(farms_store: dict[str, Farm], transcriptions: Iterator[Transcription]) -> dict[str, dict[str, Farm]]:
     for xscription in transcriptions:
         candidate_farm = Farm(xscription.county, xscription.parish, xscription.primary_farm_number)
+        with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
+            db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
+            if db_ids:
+                db_ids = eval(db_ids.decode())
+                candidate_farm.id = db_ids['id']
+                candidate_farm.replica_id = db_ids['replica_id']
+            else:
+                farm_ids_db[candidate_farm.catalogue_reference] = "{'id': '%s', 'replica_id': '%s'}" % (candidate_farm.id, create_uuid_str())
         form_type = xscription.document_type.name
 
         if candidate_farm.catalogue_reference not in farms_store:
