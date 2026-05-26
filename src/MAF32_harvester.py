@@ -35,8 +35,8 @@ def process_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tupl
         updated_farms.append((farm, processor.process_transcriptions()))
 
         logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
-    
-    return farms_store
+
+    return updated_farms
 
 
 def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool = False) -> None:
