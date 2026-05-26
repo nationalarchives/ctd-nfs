@@ -127,7 +127,7 @@ class TranscriptionChecker:
             Returns:
                 warning/error message string if issues found, else None
         '''
-        if candi_date == "[not specified]":
+        if candi_date in ["[not specified]", "_not transcribed_"]:
             return
         
         date_match: dict[re.Match] = {
