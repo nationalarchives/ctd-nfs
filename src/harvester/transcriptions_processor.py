@@ -10,6 +10,15 @@ class TranscriptionsProcessor:
     def __init__(self, transcriptions: list[Transcription]):
         self.transcriptions = transcriptions
 
+    def _check_for_multiple_B496(self) -> str | None:
+        b496_forms = [
+            "B496/EI"
+            for transcription in self.transcriptions
+            if transcription.document_type.name == "B496/EI"
+        ]
+        if len(b496_forms) > 1:
+            return "Multiple B496/EI forms"
+
     def _normalize_date(self, candi_date: str) -> str:
         """Normalize date strings to a standard format day month year format e.g. 1 January 1941.
         Note: day must not have leading zeros.
