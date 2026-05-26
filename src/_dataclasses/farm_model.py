@@ -61,8 +61,22 @@ class Details:
     name: str = ""
     address: str = ""
     
-    def __post_init__(self):
-    	self.full_address: str = f"{self.name}, {self.address}"
+    @property
+    def full_address(self) -> str:
+        has_address = self.address not in ["[not specified]", "_not transcribed_"]
+        has_name = self.name not in ["[not specified]", "_not transcribed_"]
+
+        if (has_name and has_address):
+            return f"{self.name}, {self.address}"
+        
+        if has_name and not has_address:
+            return self.name
+
+        if not has_name and has_address:
+            return self.address
+        
+        if not (has_name or has_address):
+            return "[not specified]"
 
 
 @dataclass
