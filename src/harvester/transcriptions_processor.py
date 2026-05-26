@@ -116,8 +116,11 @@ class TranscriptionsProcessor:
             if current_form_name not in collated_forms:
                 collated_forms[current_form_name] = []
 
-                if not transcription.file2 and is_same_form_name and is_consecutive:
-                    collated_forms[-1].images.append(ImageFile(transcription.file1))
+            if last_image := (collated_forms[current_form_name][-1][-1] if collated_forms[current_form_name] else None):
+                is_consecutive: bool = (transcription.file1.image_number == last_image.image_number + 1)
+
+                if not transcription.file2 and is_consecutive:
+                    collated_forms[current_form_name][-1].append(ImageFile(transcription.file1))
                     continue
             
             image_files = [
