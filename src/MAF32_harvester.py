@@ -51,6 +51,13 @@ def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool
         farm_db[county] = farms_store.copy()
 
 
+def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
+    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'r') as farm_db:
+        farms_store = farm_db[county].copy()
+
+    return farms_store
+
+
 def create_farms(farms_store: dict[str, Farm], transcriptions: Iterator[Transcription]) -> dict[str, dict[str, Farm]]:
     for xscription in transcriptions:
         candidate_farm = Farm(xscription.county, xscription.parish, xscription.primary_farm_number)
@@ -156,7 +163,11 @@ def process_csv_files(test_mode: bool=False) -> None:
         transcriptions: Iterator[Transcription] = create_transcriptions(normalised_farm_data)
         farms_store: dict = create_farms(farms_store, transcriptions)
         write_farms_to_db(farms_store, county, test_mode)
-        farms_store: dict = process_transcriptions(farms_store)
+        """ read from farm store - 
+        this means that can comment out the loading and creation steps of the orchestration
+        when only running Harvester to view changes to the proof output
+        """
+        farms_store = read_farms_db(county)
         write_farms_to_db(farms_store, county, test_mode)
 
 
