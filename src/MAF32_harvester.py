@@ -18,6 +18,15 @@ from src.harvester.transcriptions_processor import TranscriptionsProcessor
 logger = create_logger("src._config", "logging.yaml")
 
 
+def collate_attributes(values: list[str]) -> str:
+    output = []
+    for item in values:
+        if item not in output and item not in ["[not specified]", "_not transcribed_"]:
+            output.append(item)
+
+    return output or ["[not specified]",]
+
+
 def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
