@@ -176,3 +176,11 @@ class Farm:
                 for address in full_addresses
                 if address != "[not specified]"
             ]
+            
+    @staticmethod
+    def _join(values: list, newline=True) -> str:
+        if newline:
+            _ = ";\n".join(values)
+            return ";\n".join(_.split("; "))
+        return "; ".join(values)
+    
