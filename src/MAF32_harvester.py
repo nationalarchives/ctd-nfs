@@ -43,6 +43,26 @@ def set_details_attribute(values: list[dict]) -> list[Details]:
     ]
 
 
+def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
+    logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
+   
+    for index, (farm, results) in enumerate(farms_to_update, start=1):
+        farm.forms = results['forms']
+        farm.field_info_date = results['dates']['field_info_date']
+        farm.primary_record_date = results['dates']['primary_record_date']
+
+        for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
+            value = results['for_processing'][field]
+            output_value = collate_attributes(value)
+            setattr(farm, field, output_value)
+
+        farms_store[farm.catalogue_reference] = farm
+
+        logger.info(f"Collating {index: 5d} for {farm.farm_reference}")
+
+    return farms_store
+
+
 def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
