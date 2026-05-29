@@ -6,7 +6,9 @@ import string
 
 
 class ExcelWriter:
-    column_letters = string.ascii_uppercase
+    # TODO: create function to create Excel column letters for more than 26 columns
+    column_letters = list(string.ascii_uppercase)
+    column_letters.append('AA')
 
     def __init__(self):
         self._workbook = openpyxl.Workbook()
