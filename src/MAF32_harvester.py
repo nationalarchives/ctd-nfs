@@ -82,10 +82,18 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
             results['for_processing']['farmer_group_names'], 
             results['for_processing']['farmer_address'],
         )
-        
+
         farm.addressee = set_details_attribute(addressee_details)
         farm.farmer = set_details_attribute(farmer_details)
         farm.landowner = set_details_attribute(landowner_details)
+
+        farm.warnings = results['warnings']
+        if addressee_warning:
+            farm.warnings.update({'Addressee name warnings': addressee_warning})
+        if landowner_warning:
+            farm.warnings.update({'Landowner name warnings': landowner_warning})
+        if farmer_warning:
+            farm.warnings.update({'Farmer name warnings': farmer_warning})
 
         farms_store[farm.catalogue_reference] = farm
 
