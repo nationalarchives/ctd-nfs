@@ -15,9 +15,27 @@ from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
 from src.harvester.details_resolver import resolve_details
+from src._tools.xlwriter import ExcelWriter
 
 
 logger = create_logger("src._config", "logging.yaml")
+
+
+def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
+    proof_data = [
+            farm.to_proof()
+            for farm in farms_store.values()
+        ]
+            
+    excel_data = [{
+        'sheet_name': "Proof data",
+        'row_data': proof_data,
+        'column_settings': CSVEXCEL.PROOF_COLUMNS,
+    }]
+    
+    proof_file_name = PATH.HARVEST / f"{input_file_name.replace('forHarvester', 'proof')}.xlsx"
+    xlwriter = ExcelWriter()
+    xlwriter.write_excel(excel_data, proof_file_name)
 
 
 def collate_attributes(values: list[str]) -> str:
