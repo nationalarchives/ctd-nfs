@@ -246,6 +246,7 @@ def process_csv_files(test_mode: bool=False) -> None:
         """
         farms_store = read_farms_db(county)
         farms_with_collated_attributes = process_all_transcriptions(farms_store)
+        farms_store = update_farms(farms_store, farms_with_collated_attributes)
         write_farms_to_db(farms_store, county, test_mode)
 
 
