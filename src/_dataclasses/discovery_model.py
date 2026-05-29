@@ -12,14 +12,14 @@ from src._tools.helpers import create_uuid_str
 
 @dataclass
 class DiscoveryMAF32:
-    farm: Farm
+    farm: dict
     replica_id: str = field(default_factory=create_uuid_str)
     update_scope: str = DISCOVERY.UPDATE_SCOPE['update_metadata_not_digital_files']
     # update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
     @property
     def parent_id (self) -> str:
-        ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
+        ref = self.farm['catalogue_reference'].rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
         api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
@@ -47,16 +47,16 @@ class DiscoveryMAF32:
     @property
     def scope_and_content(self) -> dict:
         description_fields = {
-            'Farm Reference': self.farm.farm_reference,
-            'Farm Name(s)': self.farm.farm_name,
-            'Addressee(s)': self.farm.addressee.full_address,
-            'Farmer(s) or Occupier(s)': self.farm.farmer.full_address,
-            'Landowner(s)': self.farm.landowner.full_address,
-            'Acreage(s)': self.farm.acreage,
-            'OS Sheet Number(s)': self.farm.OS_map_sheet,
-            'Field Information Date(s)': self.farm.field_info_date,
-            'Primary Record Date(s)': self.farm.primary_record_date,
-            'Record consists of': self.forms_list,
+            'Farm Reference': f"{self.farm['farm_number']}",
+            'Farm Name(s)': f"{self.farm['farm_name']}",
+            'Addressee(s)': f"{self.farm['addressee']}",
+            'Farmer(s) or Occupier(s)': f"{self.farm['farmer']}",
+            'Landowner(s)': f"{self.farm['landowner']}",
+            'Acreage(s)': f"{self.farm['acreage']}",
+            'OS Sheet Number(s)': f"{self.farm['os_sheet_number']}",
+            'Field Information Date(s)': f"{self.farm['field_info_date']}",
+            'Primary Record Date(s)': f"{self.farm['primary_record_date']}",
+            'Record consists of': f"{self.farm['forms']}",
         }
 
         description = [
@@ -81,12 +81,12 @@ class DiscoveryMAF32:
         ]
 
     def to_dict(self) -> dict:
-        _, reference_part = self.farm.catalogue_reference.rsplit("/", maxsplit=1)
+        _, reference_part = self.farm['catalogue_reference'].rsplit("/", maxsplit=1)
         return { 
             'record': {
-                'iaid': self.farm.id,
-                'citableReference': self.farm.catalogue_reference,
-                'replicaId': self.replica_id,
+                'iaid': self.farm['farm_id'],
+                'citableReference': self.farm['catalogue_reference'],
+                'replicaId': self.farm['replica_id'],
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
                 'referencePart': reference_part,
@@ -94,7 +94,7 @@ class DiscoveryMAF32:
             'updateScope': self.update_scope,
             'replica': {
                 'files': self.files,
-                'replicaId': self.replica_id,
+                'replicaId': self.farm['replica_id'],
                 'origination': "DigitalSurrogate",
                 'totalSize': None,
             }
