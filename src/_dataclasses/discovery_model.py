@@ -69,12 +69,11 @@ class DiscoveryMAF32:
     def files(self) -> list:
         return [
             {
-                'originalName': image.name,
+                'originalName': name,
                 'format': "jpg",
-                'name': f"66/MAF/32/{image.id}.jpg",
+                'name': f"66/MAF/32/{id}.jpg",
             }
-            for each_form in self.farm.forms
-            for image in each_form.images
+            for (id, name) in zip(re.split(r"[;,] *", self.farm['file_ids']), re.split(r"[;,] *", self.farm['file_names']))
         ]
 
     def to_dict(self) -> dict:
