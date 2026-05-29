@@ -207,7 +207,7 @@ class DiscoveryNamespace():
         'update_metadata_not_digital_files': 'RecordOnly',
         'update_metadata_only_record': 'RecordOnly',
     }
-    RECORD_CONSTANTS = {
+    MAF32_RECORD_CONSTANTS = {
         'catalogueLevel': 8,
         'coveringFromDate': 19410101,
         'coveringToDate': 19431231,

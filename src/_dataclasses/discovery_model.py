@@ -87,7 +87,7 @@ class DiscoveryMAF32:
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
                 'referencePart': reference_part,
-            } | DISCOVERY.RECORD_CONSTANTS,
+            } | DISCOVERY.MAF32_RECORD_CONSTANTS,
             'updateScope': self.update_scope,
             'replica': {
                 'files': self.files,
