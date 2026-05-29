@@ -56,6 +56,14 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
             output_value = collate_attributes(value)
             setattr(farm, field, output_value)
 
+        unique_farm_names = []
+        for names in farm.farm_name:
+            for _name in re.split("; *", names):
+                if _name in unique_farm_names:
+                    continue
+                unique_farm_names.append(_name)
+        farm.farm_name = unique_farm_names
+
         farms_store[farm.catalogue_reference] = farm
 
         logger.info(f"Collating {index: 5d} for {farm.farm_reference}")
