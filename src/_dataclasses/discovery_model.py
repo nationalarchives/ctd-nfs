@@ -44,16 +44,16 @@ class DiscoveryMAF32:
     @property
     def scope_and_content(self) -> dict:
         description_fields = {
-            'Farm Reference': f"{self.farm['farm_number']}",
-            'Farm Name(s)': f"{self.farm['farm_name']}",
-            'Addressee(s)': f"{self.farm['addressee']}",
-            'Farmer(s) or Occupier(s)': f"{self.farm['farmer']}",
-            'Landowner(s)': f"{self.farm['landowner']}",
-            'Acreage(s)': f"{self.farm['acreage']}",
-            'OS Sheet Number(s)': f"{self.farm['os_sheet_number']}",
-            'Field Information Date(s)': f"{self.farm['field_info_date']}",
-            'Primary Record Date(s)': f"{self.farm['primary_record_date']}",
-            'Record consists of': f"{self.farm['forms']}",
+            'Farm Reference': f"{self.farm['farm_number']}.",
+            'Farm Name(s)': f"{self.farm['farm_name']}.",
+            'Addressee(s)': f"{self.farm['addressee']}.",
+            'Farmer(s) or Occupier(s)': f"{self.farm['farmer']}.",
+            'Landowner(s)': f"{self.farm['landowner']}.",
+            'Acreage(s)': f"{self.farm['acreage']}.",
+            'OS Sheet Number(s)': f"{self.farm['os_sheet_number']}.",
+            'Field Information Date(s)': f"{self.farm['field_info_date']}.",
+            'Primary Record Date(s)': f"{self.farm['primary_record_date']}.",
+            'Record consists of': f"{self.farm['forms']}.",
         }
 
         description = [
