@@ -4,15 +4,17 @@ from pathlib import Path
 from typing import Generator, Iterator
 import os
 import dbm
+from itertools import product
+import re
 
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
-from src._tools.helpers import TranscriptionDataError
-from src._dataclasses.farm_model import Farm
+from src._tools.helpers import TranscriptionDataError, create_uuid_str
+from src._dataclasses.farm_model import Farm, Details
 from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
-# from src.harvester.catalogue_proofs_builder import create_proof_files
+from src.harvester.details_resolver import resolve_details
 
 
 logger = create_logger("src._config", "logging.yaml")
