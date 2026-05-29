@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from urllib import parse
 import requests
 
-from src._dataclasses.farm_model import Farm
 from src._tools.constants import DISCOVERY
 from src._tools.helpers import create_uuid_str
     
