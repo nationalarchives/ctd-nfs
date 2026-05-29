@@ -57,7 +57,7 @@ class DiscoveryMAF32:
         }
 
         description = [
-            f"{key}: {value}<p>"
+            f"<p>{key}: {value}"
             for key, value in description_fields.items()
         ]
 
