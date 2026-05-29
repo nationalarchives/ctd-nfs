@@ -64,6 +64,25 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
                 unique_farm_names.append(_name)
         farm.farm_name = unique_farm_names
 
+        addressee_details, addressee_warning = resolve_details(
+            results['for_processing']['addressee_title'], 
+            results['for_processing']['addressee_individual_name'], 
+            results['for_processing']['addressee_group_names'], 
+            results['for_processing']['address'],
+        )
+        landowner_details, landowner_warning = resolve_details(
+            results['for_processing']['owner_title'], 
+            results['for_processing']['owner_individual_name'], 
+            results['for_processing']['owner_group_names'], 
+            results['for_processing']['owner_address'],
+        )
+        farmer_details, farmer_warning = resolve_details(
+            results['for_processing']['farmer_title'], 
+            results['for_processing']['farmer_individual_name'], 
+            results['for_processing']['farmer_group_names'], 
+            results['for_processing']['farmer_address'],
+        )
+
         farms_store[farm.catalogue_reference] = farm
 
         logger.info(f"Collating {index: 5d} for {farm.farm_reference}")
