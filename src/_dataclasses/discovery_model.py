@@ -12,8 +12,7 @@ from src._tools.helpers import create_uuid_str
 @dataclass
 class DiscoveryMAF32:
     farm: dict
-    update_scope: str = DISCOVERY.UPDATE_SCOPE['update_metadata_not_digital_files']
-    # update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
+    update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
     @property
     def parent_id (self) -> str:
