@@ -268,14 +268,13 @@ def process_csv_files(test_mode: bool=False) -> None:
         farms_with_collated_attributes = process_all_transcriptions(farms_store)
         farms_store = update_farms(farms_store, farms_with_collated_attributes)
         write_farms_to_db(farms_store, county, test_mode)
+        logger.info(" ===== CREATING PROOF FILES ===== ")
+        create_proof_files(farms_store, county, csv_file.stem)
 
 
 def main():
     logger.info(" ===== HARVESTING FARMS ===== ")
     process_csv_files()
-
-    # logger.info(" ===== CREATING PROOF FILES ===== ")
-    # create_proof_files()
 
 
 if __name__ == "__main__":
