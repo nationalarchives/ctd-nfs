@@ -76,7 +76,7 @@ def process_proof_files(test_mode: bool=False) -> None:
     xlsx_files = PATH.TEST_PUBLISH.glob("*.xlsx") if test_mode else PATH.PUBLISH.glob("*.xlsx")
 
     for proof_file in xlsx_files:
-        county, _ = proof_file.name.split("_")
+        county, _ = proof_file.name.split("_", maxsplit=1)
         with shelve.open(PATH.FARMS_DB, "r") as farms_db:
             farms_store = farms_db[county]
         proof_data = load_excel_data(proof_file)
