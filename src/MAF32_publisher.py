@@ -8,7 +8,6 @@ from src._tools.constants import PATH
 from src._tools.xlreader import read_file
 from src._tools.logging_setup import create_logger
 from src._dataclasses.discovery_model import DiscoveryMAF32
-from src._dataclasses.farm_model import Details, Farm
 
 
 logger = create_logger("src._config", "logging.yaml")
@@ -56,23 +55,9 @@ def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for row in cleaned_data:
-        farm = farms_store[row['catalogue_reference']]
-        farm.farm_name = row['farm_name']
-        farm.landowner = Details()
-        farm.landowner.full_address = row['landowner']
-        farm.farmer = Details()
-        farm.farmer.full_address = row['farmer']
-        farm.addressee = Details()
-        farm.addressee.full_address = row['addressee']
-        farm.acreage = row['acreage']
-        farm.OS_map_sheet = row['os_sheet_number']
-        farm.field_info_date = row['field_info_date']
-        farm.primary_record_date = row['primary_record_date']
-        # TODO: write farm back to farm_store and return farm_store to update shelf
-
-        discovery_document = DiscoveryMAF32(farm)
-        logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
+    for farm_proof in cleaned_data:
+        discovery_document = DiscoveryMAF32(farm_proof)
+        logger.info(f"Farm {farm_proof['catalogue_reference']} --> Built record {farm_proof['farm_id']} with {len(discovery_document.files)} images")
 
         documents.append(discovery_document.to_dict())
 
