@@ -73,14 +73,13 @@ def write_catalogue_documents(documents: list[dict]) -> None:
            
             
 def process_proof_files(test_mode: bool=False) -> None:
-    proof_files = PATH.TEST_PUBLISH.glob("*.xlsx") if test_mode else PATH.PUBLISH.glob("*.xlsx")
+    xlsx_files = PATH.TEST_PUBLISH.glob("*.xlsx") if test_mode else PATH.PUBLISH.glob("*.xlsx")
 
-
-    for excel_file in proof_files:
-        county, _ = excel_file.name.split("_")
+    for proof_file in xlsx_files:
+        county, _ = proof_file.name.split("_")
         with shelve.open(PATH.FARMS_DB, "r") as farms_db:
             farms_store = farms_db[county]
-        proof_data = load_excel_data(excel_file)
+        proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
         final_documents = build_catalogue_documents(cleaned_data, farms_store, test_mode)
         if test_mode:
