@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Generator, Iterator
 import os
 import dbm
-from itertools import product
 import re
 
 from src._tools.logging_setup import create_logger
