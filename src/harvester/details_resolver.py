@@ -8,12 +8,15 @@ def resolve_title_name_and_address(title: str, name: str, address: str) -> dict:
 
     if (has_title and has_name):
         full_name = f"{name} {title}" if title.startswith(("Esq", "KC")) else f"{title} {name}"
-    
-    elif not has_title:
-        full_name = name
 
     elif not (has_title or has_name) or not has_name:
         full_name = "[not specified]"
+    
+    elif not has_title:
+        full_name = name
+    
+    if address in ["_null_", "_not transcribed_"]:
+        address = "[not specified]"
 
     return {'name': full_name, 'address': address}
 
