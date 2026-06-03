@@ -65,23 +65,6 @@ class CSVandExcelNamespace():
         ('field_info_date', 25),
         ('primary_record_date', 25),
     ]
-    AXIELL_COLUMNS = [   
-        'Reference',
-        'Filenames',
-        'Record consists of',
-        'Farm number',
-        'Farm or holding',
-        'Addressee name',
-        'Addressee address',
-        'Farmer name',
-        'Farmer address',
-        'Landowner name',
-        'Landowner address',
-        'Acreage',
-        'Appears on Ordnance Survey sheet(s)',
-        'Field information date',
-        'Primary farm record date',
-    ]
 
 
 class DataNamespace():
