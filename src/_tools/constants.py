@@ -226,6 +226,24 @@ class DiscoveryNamespace():
         'source': "FS",
         'title': None,
     }
+    MAF73_RECORD_CONSTANTS = {
+        'coveringFromDate': 19410101,
+        'coveringToDate': 19431231,
+        'chargeType': 1,
+        'coveringDates': "1941-1943",
+        'closureStatus': _closure_status['Open Document, Open Description'],
+        'digitised': True,
+        'heldBy': [
+            {
+                "xReferenceId": "A13530124",
+                "xReferenceCode": "66",
+                "xReferenceName": "The National Archives, Kew",
+            }
+        ],
+        'legalStatus': "Public Record(s)",
+        'source': "FS",
+        'title': None,
+    }
 
 
 PATH = PathNamespace()
