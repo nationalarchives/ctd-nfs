@@ -7,7 +7,7 @@ import re
 from src._tools.constants import PATH
 from src._tools.xlreader import read_file
 from src._tools.logging_setup import create_logger
-from src._dataclasses.discovery_model import DiscoveryMAF32
+from src._dataclasses.MAF32_model import DiscoveryMAF32
 
 
 logger = create_logger("src._config", "logging.yaml")
