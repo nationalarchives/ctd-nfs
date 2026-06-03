@@ -63,8 +63,8 @@ class Details:
     
     @property
     def full_address(self) -> str:
-        has_address = self.address not in ["[not specified]", "_not transcribed_"]
-        has_name = self.name not in ["[not specified]", "_not transcribed_"]
+        has_address = self.address != "[not specified]"
+        has_name = self.name != "[not specified]"
 
         if (has_name and has_address):
             return f"{self.name}, {self.address}"
