@@ -1,9 +1,6 @@
 
 import pytest
 
-# from src.MAF32_publisher  import get_farm_instance
-from src._dataclasses.discovery_model import DiscoveryMAF32
-
 
 _PROOF_DATA = {
     'catalogue_reference': "MAF 32/346/7/18",
