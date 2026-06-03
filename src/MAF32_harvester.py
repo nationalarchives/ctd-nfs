@@ -41,7 +41,7 @@ def create_proof_files(farms_store: dict, county: str, input_file_name: str, tes
 def collate_attributes(values: list[str]) -> str:
     output = []
     for item in values:
-        if item not in output and item not in ["[not specified]", "_not transcribed_"]:
+        if item not in output and item not in ["_null_", "_not transcribed_"]:
             output.append(item)
 
     return output or ["[not specified]",]
@@ -52,7 +52,7 @@ def set_details_attribute(values: list[dict]) -> list[Details]:
         final_values = [
             item
             for item in values
-            if (item['name'], item['address']) not in product(['[not specified]', '[not specified]'], repeat=2)
+            if (item['name'], item['address']) != ('[not specified]', '[not specified]')
         ]
     else:
         final_values = values
@@ -217,7 +217,7 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
                 continue
 
             if value == "":
-                normalised_data_row[key] = "[not specified]"
+                normalised_data_row[key] = "_null_"
 
             elif "*" in value:
                 normalised_data_row[key] = value.replace("*", "_not transcribed_")

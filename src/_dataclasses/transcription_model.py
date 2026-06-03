@@ -120,7 +120,7 @@ class Transcription:
     @property
     def has_data(self) -> bool:
         return any([
-            getattr(self, field_name) != "[not specified]"
+            getattr(self, field_name) != "_null_"
             for field_name in self.__dataclass_fields__
             if field_name in DATA.FARM_DATA_FIELDS
         ])

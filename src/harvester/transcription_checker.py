@@ -127,7 +127,7 @@ class TranscriptionChecker:
             Returns:
                 warning/error message string if issues found, else None
         '''
-        if candi_date in ["[not specified]", "_not transcribed_"]:
+        if candi_date in ["_null_", "_not transcribed_"]:
             return
         
         date_match: dict[re.Match] = {
@@ -190,7 +190,7 @@ class TranscriptionChecker:
 
         for key in ['field_info_date', 'primary_record_date']:
             date_value = getattr(self.transcription, key)
-            if date_value == "[not specified]":
+            if date_value == "_null_":
                 continue
             warning_key = 'Field Date Warnings' if key == 'field_info_date' else 'Primary Date Warnings'
             if check_result := self._vali_dates(date_value):

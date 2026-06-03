@@ -3,8 +3,8 @@ from itertools import zip_longest
 
 
 def resolve_title_name_and_address(title: str, name: str, address: str) -> dict:
-    has_title = title not in ["", "[not specified]", "_not transcribed_"]
-    has_name = name not in ["[not specified]", "_not transcribed_"]
+    has_title = title not in ["", "_null_", "_not transcribed_"]
+    has_name = name not in ["_null_", "_not transcribed_"]
 
     if (has_title and has_name):
         full_name = f"{name} {title}" if title.startswith(("Esq", "KC")) else f"{title} {name}"
@@ -28,11 +28,11 @@ def is_existing_detail(new_detail: dict, existing_details: list[dict]) -> bool:
 def resolve_details(titles: list[str], individual_names: list[str], group_names: list[str], addresses: list[str]) -> tuple[list[dict], str]:
     warning = ""
     has_individual_names = any(
-        name not in ["[not specified]", "_not transcribed_"]
+        name not in ["_null_", "_not transcribed_"]
         for name in individual_names
     )
     has_group_names = any(
-        name not in ["[not specified]", "_not transcribed_"]
+        name not in ["_null_", "_not transcribed_"]
         for name in group_names
     )
 
@@ -42,7 +42,7 @@ def resolve_details(titles: list[str], individual_names: list[str], group_names:
     details = []
     for item in zip(titles, individual_names, group_names, addresses):
         title, name, group_name, address = item
-        if group_name not in ["[not specified]", "_not transcribed_"]:
+        if group_name not in ["_null_", "_not transcribed_"]:
             name = group_name
             title = ""
 
