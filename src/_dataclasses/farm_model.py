@@ -80,6 +80,19 @@ class PostalDetails:
 
 
 @dataclass
+class Respondent:
+    details: list[PostalDetails]
+
+    @property
+    def names(self) -> list[str]:
+        return [detail.name for detail in self.details]
+
+    @property
+    def addresses(self) -> list[str]:
+        return [detail.address for detail in self.details]
+
+
+@dataclass
 class Farm:
     county: str
     parish: str
