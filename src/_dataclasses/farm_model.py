@@ -108,9 +108,9 @@ class Farm:
     primary_farm_number: str
 
     farm_name: list[str] = field(init=False)   
-    addressee: list[PostalDetails] = field(init=False)
-    farmer: list[PostalDetails] = field(init=False)
-    landowner: list[PostalDetails] = field(init=False)
+    addressee: Respondent = field(init=False)
+    farmer: Respondent = field(init=False)
+    landowner: Respondent = field(init=False)
 
     acreage: list[str] = field(init=False)
     OS_map_sheet: list[str] = field(init=False)
