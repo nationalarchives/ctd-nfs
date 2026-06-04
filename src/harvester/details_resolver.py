@@ -51,9 +51,9 @@ def resolve_details(titles: list[str], individual_names: list[str], group_names:
 
         for _item in zip_longest(re.split("; *", title), re.split("; *", name), re.split("; *", address), fillvalue=""):
             _title, _name, _address = _item
-            full_address: dict = resolve_title_name_and_address(_title, _name, _address)
-            if not is_existing_detail(full_address, details):
-                details.append(full_address)
+            name_and_address: dict = resolve_title_name_and_address(_title, _name, _address)
+            if not is_existing_detail(name_and_address, details):
+                details.append(name_and_address)
 
     return details, warning
    
