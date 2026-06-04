@@ -91,6 +91,15 @@ class Respondent:
     def addresses(self) -> list[str]:
         return [detail.address for detail in self.details]
 
+    @property
+    def names_and_addresses(self) -> list[str]:
+        final = [
+            detail.name_and_address
+            for detail in self.details
+            if detail.name_and_address != "[not specified]"
+            ]
+        return final if final else ["[not specified]",]
+
 
 @dataclass
 class Farm:
@@ -179,16 +188,6 @@ class Farm:
             'file_names': files_in_proof_format,
             'file_ids': ids_in_proof_format,
         }
-
-    @staticmethod
-    def _consolidate_full_addresses(full_addresses: list[str]) -> list[str]:
-
-        return full_addresses if full_addresses == ["[not specified]",] else \
-            [
-                address
-                for address in full_addresses
-                if address != "[not specified]"
-            ]
             
     @staticmethod
     def _join(values: list, newline=True) -> str:
