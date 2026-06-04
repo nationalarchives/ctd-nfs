@@ -62,7 +62,7 @@ class PostalDetails:
     address: str = ""
     
     @property
-    def full_address(self) -> str:
+    def name_and_address(self) -> str:
         has_address = self.address != "[not specified]"
         has_name = self.name != "[not specified]"
 
@@ -204,17 +204,17 @@ class Farm:
             self._join([detail.name for detail in self.addressee]),
             self.warnings.get('Addressee name warnings', ""),
             self._join([detail.address for detail in self.addressee]),
-            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.addressee])),
+            self._join(self._consolidate_full_addresses([detail.name_and_address for detail in self.addressee])),
             # ========================
             self._join([detail.name for detail in self.farmer]),
             self.warnings.get('Farmer name warnings', ""),
             self._join([detail.address for detail in self.farmer]),
-            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.farmer])),
+            self._join(self._consolidate_full_addresses([detail.name_and_address for detail in self.farmer])),
             # ========================
             self._join([detail.name for detail in self.landowner]),
             self.warnings.get('Landowner name warnings', ""),
             self._join([detail.address for detail in self.landowner]),
-            self._join(self._consolidate_full_addresses([detail.full_address for detail in self.landowner])),
+            self._join(self._consolidate_full_addresses([detail.name_and_address for detail in self.landowner])),
             # ========================
             self._join(self.acreage),
             self._join(self.OS_map_sheet),
