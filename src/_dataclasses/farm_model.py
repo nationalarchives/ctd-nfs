@@ -57,7 +57,7 @@ class Form:
 
 
 @dataclass
-class Details:
+class PostalDetails:
     name: str = ""
     address: str = ""
     
@@ -86,9 +86,9 @@ class Farm:
     primary_farm_number: str
 
     farm_name: list[str] = field(init=False)   
-    addressee: list[Details] = field(init=False)
-    farmer: list[Details] = field(init=False)
-    landowner: list[Details] = field(init=False)
+    addressee: list[PostalDetails] = field(init=False)
+    farmer: list[PostalDetails] = field(init=False)
+    landowner: list[PostalDetails] = field(init=False)
 
     acreage: list[str] = field(init=False)
     OS_map_sheet: list[str] = field(init=False)
@@ -221,4 +221,4 @@ class Farm:
             self._join(self.field_info_date),
             self._join(self.primary_record_date),
         ]
-    
+

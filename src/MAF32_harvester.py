@@ -9,7 +9,7 @@ import re
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
-from src._dataclasses.farm_model import Farm, Details
+from src._dataclasses.farm_model import Farm, PostalDetails
 from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
@@ -46,7 +46,7 @@ def collate_attributes(values: list[str]) -> str:
     return output or ["[not specified]",]
 
 
-def set_details_attribute(values: list[dict]) -> list[Details]:
+def set_details_attribute(values: list[dict]) -> list[PostalDetails]:
     if len(values) > 1:
         final_values = [
             item
@@ -57,7 +57,7 @@ def set_details_attribute(values: list[dict]) -> list[Details]:
         final_values = values
 
     return [
-        Details(name=item['name'], address=item['address'])
+        PostalDetails(name=item['name'], address=item['address'])
         for item in final_values
     ]
 
