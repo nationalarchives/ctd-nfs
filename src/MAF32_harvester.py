@@ -9,7 +9,7 @@ import re
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
-from src._dataclasses.farm_model import Farm, PostalDetails
+from src._dataclasses.farm_model import Farm, PostalDetails, Respondent
 from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
@@ -102,9 +102,9 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
             results['for_processing']['farmer_address'],
         )
 
-        farm.addressee = set_details_attribute(addressee_details)
-        farm.farmer = set_details_attribute(farmer_details)
-        farm.landowner = set_details_attribute(landowner_details)
+        farm.addressee = Respondent(set_details_attribute(addressee_details))
+        farm.farmer = Respondent(set_details_attribute(farmer_details))
+        farm.landowner = Respondent(set_details_attribute(landowner_details))
 
         farm.warnings = results['warnings']
         if addressee_warning:
