@@ -60,9 +60,10 @@ class DiscoveryMAF73:
 
         api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
         result = requests.get(api_query)
-        parent_record = result.json()
 
-        return parent_record['records'][0]['id']
+        for record in result.json()['records']:
+            if record['reference'] == ref:
+                return record['id']
 
     @property
     def scope_and_content(self) -> dict:
