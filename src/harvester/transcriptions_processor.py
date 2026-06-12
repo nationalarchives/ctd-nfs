@@ -87,13 +87,13 @@ class TranscriptionsProcessor:
             'primary_record_date': "",
         }
         for date_field in processed_dates:
-            values = [
+            date_values = [
                 getattr(transcription, date_field)
                 for transcription in self.transcriptions
             ]
             normalized_dates = [
                 self._normalize_date(date)
-                for value in values
+                for value in date_values
                 for date in value.split(";")
             ]
             processed_dates[date_field] = "; ".join(normalized_dates)
