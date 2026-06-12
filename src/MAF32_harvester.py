@@ -67,11 +67,11 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
    
     for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
         farm.forms = farm_data['forms']
-        farm.field_info_date = farm_data['dates']['field_info_date']
-        farm.primary_record_date = farm_data['dates']['primary_record_date']
+        farm.field_info_date = farm_data['attributes']['field_info_date']
+        farm.primary_record_date = farm_data['attributes']['primary_record_date']
 
         for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-            value = farm_data['for_processing'][field]
+            value = farm_data['attributes'][field]
             output_value = collate_attributes(value)
             setattr(farm, field, output_value)
 
@@ -84,22 +84,22 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
         farm.farm_name = unique_farm_names
 
         addressee_details, addressee_warning = resolve_postal_details(
-            farm_data['for_processing']['addressee_title'], 
-            farm_data['for_processing']['addressee_individual_name'], 
-            farm_data['for_processing']['addressee_group_names'], 
-            farm_data['for_processing']['address'],
+            farm_data['attributes']['addressee_title'], 
+            farm_data['attributes']['addressee_individual_name'], 
+            farm_data['attributes']['addressee_group_names'], 
+            farm_data['attributes']['address'],
         )
         landowner_details, landowner_warning = resolve_postal_details(
-            farm_data['for_processing']['owner_title'], 
-            farm_data['for_processing']['owner_individual_name'], 
-            farm_data['for_processing']['owner_group_names'], 
-            farm_data['for_processing']['owner_address'],
+            farm_data['attributes']['owner_title'], 
+            farm_data['attributes']['owner_individual_name'], 
+            farm_data['attributes']['owner_group_names'], 
+            farm_data['attributes']['owner_address'],
         )
         farmer_details, farmer_warning = resolve_postal_details(
-            farm_data['for_processing']['farmer_title'], 
-            farm_data['for_processing']['farmer_individual_name'], 
-            farm_data['for_processing']['farmer_group_names'], 
-            farm_data['for_processing']['farmer_address'],
+            farm_data['attributes']['farmer_title'], 
+            farm_data['attributes']['farmer_individual_name'], 
+            farm_data['attributes']['farmer_group_names'], 
+            farm_data['attributes']['farmer_address'],
         )
 
         farm.addressee = Respondent(set_postal_details(addressee_details))
