@@ -107,6 +107,25 @@ def resolve_postal_details_of_respondents(attributes: dict) -> dict:
         "warnings": {'addressee': addressee_warning, 'farmer': farmer_warning, 'landowner': landowner_warning},
     }
 
+def set_values_of_non_respondent_attributes(farm: Farm, attributes: dict) -> Farm:
+    for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
+        if field == 'farm_name':
+            unique_farm_names = []
+            for names in attributes[field]:
+                for _name in re.split("; *", names):
+                    if _name in unique_farm_names:
+                        continue
+                    unique_farm_names.append(_name)
+            value = unique_farm_names
+
+        else:
+            value = attributes[field]
+
+        output_value = collate_attributes(value)
+        setattr(farm, field, output_value)
+
+    return farm
+
 
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
@@ -114,21 +133,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
     for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
         farm.forms = farm_data['forms']
 
-        for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-            if field == 'farm_name':
-                unique_farm_names = []
-                for names in farm_data['attributes'][field]:
-                    for _name in re.split("; *", names):
-                        if _name in unique_farm_names:
-                            continue
-                        unique_farm_names.append(_name)
-                value = unique_farm_names
-
-            else:
-                value = farm_data['attributes'][field]
-
-            output_value = collate_attributes(value)
-            setattr(farm, field, output_value)
+        farm = set_values_of_non_respondent_attributes(farm, farm_data['attributes'])
 
         resolution = resolve_postal_details_of_respondents(farm_data['attributes'])
         farm = create_respondents(farm, resolution['details'])
