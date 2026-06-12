@@ -28,7 +28,7 @@ def is_existing_detail(new_detail: dict, existing_details: list[dict]) -> bool:
         )
 
 
-def resolve_details(titles: list[str], individual_names: list[str], group_names: list[str], addresses: list[str]) -> tuple[list[dict], str]:
+def resolve_postal_details(titles: list[str], individual_names: list[str], group_names: list[str], addresses: list[str]) -> tuple[list[dict], str]:
     warning = ""
     has_individual_names = any(
         name not in ["_null_", "_not transcribed_"]
