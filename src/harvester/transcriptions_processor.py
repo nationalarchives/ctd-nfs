@@ -112,6 +112,7 @@ class TranscriptionsProcessor:
             field_name: [
                 getattr(transcription, field_name)
                 for transcription in self.transcriptions
+                if field_name not in ['field_info_date', 'primary_record_date']
             ]
             for field_name in DATA.FARM_DATA_FIELDS
         }
