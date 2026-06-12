@@ -152,8 +152,7 @@ class TranscriptionsProcessor:
     def process_transcriptions(self) -> dict:
         return {
             'forms': self._collate_forms(),
-            'dates': self._collate_dates(),
-            'for_processing': self._collate_non_date_attributes(),
+            'attributes': self._collate_non_date_attributes() | self._collate_dates(),
             'warnings': self._collate_warnings(),
         }
 
