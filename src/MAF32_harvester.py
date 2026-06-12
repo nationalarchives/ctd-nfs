@@ -65,13 +65,13 @@ def set_postal_details(values: list[dict]) -> list[PostalDetails]:
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
    
-    for index, (farm, results) in enumerate(farms_to_update, start=1):
-        farm.forms = results['forms']
-        farm.field_info_date = results['dates']['field_info_date']
-        farm.primary_record_date = results['dates']['primary_record_date']
+    for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
+        farm.forms = farm_data['forms']
+        farm.field_info_date = farm_data['dates']['field_info_date']
+        farm.primary_record_date = farm_data['dates']['primary_record_date']
 
         for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-            value = results['for_processing'][field]
+            value = farm_data['for_processing'][field]
             output_value = collate_attributes(value)
             setattr(farm, field, output_value)
 
@@ -84,29 +84,29 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
         farm.farm_name = unique_farm_names
 
         addressee_details, addressee_warning = resolve_postal_details(
-            results['for_processing']['addressee_title'], 
-            results['for_processing']['addressee_individual_name'], 
-            results['for_processing']['addressee_group_names'], 
-            results['for_processing']['address'],
+            farm_data['for_processing']['addressee_title'], 
+            farm_data['for_processing']['addressee_individual_name'], 
+            farm_data['for_processing']['addressee_group_names'], 
+            farm_data['for_processing']['address'],
         )
         landowner_details, landowner_warning = resolve_postal_details(
-            results['for_processing']['owner_title'], 
-            results['for_processing']['owner_individual_name'], 
-            results['for_processing']['owner_group_names'], 
-            results['for_processing']['owner_address'],
+            farm_data['for_processing']['owner_title'], 
+            farm_data['for_processing']['owner_individual_name'], 
+            farm_data['for_processing']['owner_group_names'], 
+            farm_data['for_processing']['owner_address'],
         )
         farmer_details, farmer_warning = resolve_postal_details(
-            results['for_processing']['farmer_title'], 
-            results['for_processing']['farmer_individual_name'], 
-            results['for_processing']['farmer_group_names'], 
-            results['for_processing']['farmer_address'],
+            farm_data['for_processing']['farmer_title'], 
+            farm_data['for_processing']['farmer_individual_name'], 
+            farm_data['for_processing']['farmer_group_names'], 
+            farm_data['for_processing']['farmer_address'],
         )
 
         farm.addressee = Respondent(set_postal_details(addressee_details))
         farm.farmer = Respondent(set_postal_details(farmer_details))
         farm.landowner = Respondent(set_postal_details(landowner_details))
 
-        farm.warnings = results['warnings']
+        farm.warnings = farm_data['warnings']
         if addressee_warning:
             farm.warnings.update({'Addressee name warnings': addressee_warning})
         if landowner_warning:
