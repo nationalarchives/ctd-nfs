@@ -13,7 +13,7 @@ from src._dataclasses.farm_model import Farm, PostalDetails, Respondent
 from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
-from src.harvester.details_resolver import resolve_details
+from src.harvester.details_resolver import resolve_postal_details
 from src._tools.xlwriter import ExcelWriter
 
 
@@ -83,19 +83,19 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
                 unique_farm_names.append(_name)
         farm.farm_name = unique_farm_names
 
-        addressee_details, addressee_warning = resolve_details(
+        addressee_details, addressee_warning = resolve_postal_details(
             results['for_processing']['addressee_title'], 
             results['for_processing']['addressee_individual_name'], 
             results['for_processing']['addressee_group_names'], 
             results['for_processing']['address'],
         )
-        landowner_details, landowner_warning = resolve_details(
+        landowner_details, landowner_warning = resolve_postal_details(
             results['for_processing']['owner_title'], 
             results['for_processing']['owner_individual_name'], 
             results['for_processing']['owner_group_names'], 
             results['for_processing']['owner_address'],
         )
-        farmer_details, farmer_warning = resolve_details(
+        farmer_details, farmer_warning = resolve_postal_details(
             results['for_processing']['farmer_title'], 
             results['for_processing']['farmer_individual_name'], 
             results['for_processing']['farmer_group_names'], 
