@@ -46,6 +46,14 @@ def collate_attributes(values: list[str]) -> str:
     return output or ["[not specified]",]
 
 
+def create_respondents(farm: Farm, addressee_details: dict, farmer_details: dict, landowner_details: dict) -> Farm:
+    farm.addressee = Respondent(set_postal_details(addressee_details))
+    farm.farmer = Respondent(set_postal_details(farmer_details))
+    farm.landowner = Respondent(set_postal_details(landowner_details))
+    
+    return farm
+
+
 def set_postal_details(values: list[dict]) -> list[PostalDetails]:
     if len(values) > 1:
         final_values = [
@@ -102,9 +110,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
             farm_data['attributes']['farmer_address'],
         )
 
-        farm.addressee = Respondent(set_postal_details(addressee_details))
-        farm.farmer = Respondent(set_postal_details(farmer_details))
-        farm.landowner = Respondent(set_postal_details(landowner_details))
+        farm = create_respondents(farm, addressee_details, landowner_details, farmer_details)
 
         farm.warnings = farm_data['warnings']
         if addressee_warning:
