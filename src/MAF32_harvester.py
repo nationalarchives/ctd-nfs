@@ -46,6 +46,18 @@ def collate_attributes(values: list[str]) -> str:
     return output or ["[not specified]",]
 
 
+def get_postal_details_warnings(addressee_warning: str, farmer_warning: str, landowner_warning: str) -> dict:
+    farm_warnings = {}
+    if addressee_warning:
+        farm_warnings.update({'Addressee name warnings': addressee_warning})
+    if farmer_warning:
+        farm_warnings.update({'Farmer name warnings': farmer_warning})
+    if landowner_warning:
+        farm_warnings.update({'Landowner name warnings': landowner_warning})
+
+    return farm_warnings
+
+
 def create_respondents(farm: Farm, addressee_details: dict, farmer_details: dict, landowner_details: dict) -> Farm:
     farm.addressee = Respondent(set_postal_details(addressee_details))
     farm.farmer = Respondent(set_postal_details(farmer_details))
@@ -113,12 +125,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
         farm = create_respondents(farm, addressee_details, landowner_details, farmer_details)
 
         farm.warnings = farm_data['warnings']
-        if addressee_warning:
-            farm.warnings.update({'Addressee name warnings': addressee_warning})
-        if landowner_warning:
-            farm.warnings.update({'Landowner name warnings': landowner_warning})
-        if farmer_warning:
-            farm.warnings.update({'Farmer name warnings': farmer_warning})
+        farm.warnings.update(get_postal_details_warnings(addressee_warning, farmer_warning, landowner_warning))
 
         farms_store[farm.catalogue_reference] = farm
 
