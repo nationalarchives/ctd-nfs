@@ -91,12 +91,19 @@ class TranscriptionsProcessor:
                 getattr(transcription, date_field)
                 for transcription in self.transcriptions
             ]
-            normalized_dates = [
-                self._normalize_date(date)
-                for value in date_values
-                for date in value.split(";")
-            ]
-            processed_dates[date_field] = "; ".join(normalized_dates)
+
+            normalized_dates = []
+            for value in date_values:
+                if ";" in value:
+                    normalized_items = [
+                        self._normalize_date(_date)
+                        for _date in re.split("; *", value)
+                    ]
+                    normalized_dates.append("; ".join(normalized_items))
+                else:
+                    normalized_dates.append(self._normalize_date(value))
+
+            processed_dates[date_field] = normalized_dates
 
         return processed_dates
 
