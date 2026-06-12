@@ -115,17 +115,20 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
         farm.forms = farm_data['forms']
 
         for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-            value = farm_data['attributes'][field]
+            if field == 'farm_name':
+                unique_farm_names = []
+                for names in farm_data['attributes'][field]:
+                    for _name in re.split("; *", names):
+                        if _name in unique_farm_names:
+                            continue
+                        unique_farm_names.append(_name)
+                value = unique_farm_names
+
+            else:
+                value = farm_data['attributes'][field]
+
             output_value = collate_attributes(value)
             setattr(farm, field, output_value)
-
-        unique_farm_names = []
-        for names in farm.farm_name:
-            for _name in re.split("; *", names):
-                if _name in unique_farm_names:
-                    continue
-                unique_farm_names.append(_name)
-        farm.farm_name = unique_farm_names
 
         resolution = resolve_postal_details_of_respondents(farm_data['attributes'])
         farm = create_respondents(farm, resolution['details'])
