@@ -58,10 +58,10 @@ def get_postal_details_warnings(addressee_warning: str, farmer_warning: str, lan
     return farm_warnings
 
 
-def create_respondents(farm: Farm, addressee_details: dict, farmer_details: dict, landowner_details: dict) -> Farm:
-    farm.addressee = Respondent(set_postal_details(addressee_details))
-    farm.farmer = Respondent(set_postal_details(farmer_details))
-    farm.landowner = Respondent(set_postal_details(landowner_details))
+def create_respondents(farm: Farm, details: dict) -> Farm:
+    farm.addressee = Respondent(set_postal_details(details['addressee']))
+    farm.farmer = Respondent(set_postal_details(details['farmer']))
+    farm.landowner = Respondent(set_postal_details(details['landowner']))
     
     return farm
 
@@ -130,7 +130,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
         farm.farm_name = unique_farm_names
 
         resolution = resolve_postal_details_of_respondents(farm_data['attributes'])
-        farm = create_respondents(farm, addressee_details, landowner_details, farmer_details)
+        farm = create_respondents(farm, resolution['details'])
 
         farm.warnings = farm_data['warnings']
         farm.warnings.update(get_postal_details_warnings(addressee_warning, farmer_warning, landowner_warning))
