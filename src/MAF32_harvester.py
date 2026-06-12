@@ -82,6 +82,32 @@ def set_postal_details(values: list[dict]) -> list[PostalDetails]:
     ]
 
 
+def resolve_postal_details_of_respondents(attributes: dict) -> dict:
+    addressee_details, addressee_warning = resolve_postal_details(
+            attributes['addressee_title'], 
+            attributes['addressee_individual_name'], 
+            attributes['addressee_group_names'], 
+            attributes['address'],
+        )
+    landowner_details, landowner_warning = resolve_postal_details(
+            attributes['owner_title'], 
+            attributes['owner_individual_name'], 
+            attributes['owner_group_names'], 
+            attributes['owner_address'],
+        )
+    farmer_details, farmer_warning = resolve_postal_details(
+            attributes['farmer_title'], 
+            attributes['farmer_individual_name'], 
+            attributes['farmer_group_names'],
+            attributes['farmer_address'],
+        )
+    
+    return {
+        "details": {'addressee': addressee_details, 'farmer': farmer_details, 'landowner': landowner_details},
+        "warnings": {'addressee': addressee_warning, 'farmer': farmer_warning, 'landowner': landowner_warning},
+    }
+
+
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
    
@@ -103,25 +129,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
                 unique_farm_names.append(_name)
         farm.farm_name = unique_farm_names
 
-        addressee_details, addressee_warning = resolve_postal_details(
-            farm_data['attributes']['addressee_title'], 
-            farm_data['attributes']['addressee_individual_name'], 
-            farm_data['attributes']['addressee_group_names'], 
-            farm_data['attributes']['address'],
-        )
-        landowner_details, landowner_warning = resolve_postal_details(
-            farm_data['attributes']['owner_title'], 
-            farm_data['attributes']['owner_individual_name'], 
-            farm_data['attributes']['owner_group_names'], 
-            farm_data['attributes']['owner_address'],
-        )
-        farmer_details, farmer_warning = resolve_postal_details(
-            farm_data['attributes']['farmer_title'], 
-            farm_data['attributes']['farmer_individual_name'], 
-            farm_data['attributes']['farmer_group_names'], 
-            farm_data['attributes']['farmer_address'],
-        )
-
+        resolution = resolve_postal_details_of_respondents(farm_data['attributes'])
         farm = create_respondents(farm, addressee_details, landowner_details, farmer_details)
 
         farm.warnings = farm_data['warnings']
