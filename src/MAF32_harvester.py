@@ -4,17 +4,16 @@ from pathlib import Path
 from typing import Generator, Iterator
 import os
 import dbm
-import re
 
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
-from src._dataclasses.farm_model import Farm, PostalDetails, Respondent
+from src._tools.xlwriter import ExcelWriter
+from src._dataclasses.farm_model import Farm
 from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
-from src.harvester.details_resolver import resolve_postal_details
-from src._tools.xlwriter import ExcelWriter
+from src.harvester.farm_attributiser import set_farm_attributes
 
 
 logger = create_logger("src._config", "logging.yaml")
@@ -37,116 +36,17 @@ def create_proof_files(farms_store: dict, county: str, input_file_name: str, tes
     xlwriter.write_excel(excel_data, proof_file_name)
 
 
-def collate_attributes(values: list[str]) -> str:
-    output = []
-    for item in values:
-        if item not in output and item not in ["_null_", "_not transcribed_"]:
-            output.append(item)
-
-    return output or ["[not specified]",]
-
-
-def get_postal_details_warnings(warnings: dict) -> dict:
-    farm_warnings = {}
-    if warnings['addressee']:
-        farm_warnings.update({'Addressee name warnings': warnings['addressee']})
-    if warnings['farmer']:
-        farm_warnings.update({'Farmer name warnings': warnings['farmer']})
-    if warnings['landowner']:
-        farm_warnings.update({'Landowner name warnings': warnings['landowner']})
-
-    return farm_warnings
-
-
-def create_respondents(farm: Farm, details: dict) -> Farm:
-    farm.addressee = Respondent(set_postal_details(details['addressee']))
-    farm.farmer = Respondent(set_postal_details(details['farmer']))
-    farm.landowner = Respondent(set_postal_details(details['landowner']))
-    
-    return farm
-
-
-def set_postal_details(values: list[dict]) -> list[PostalDetails]:
-    if len(values) > 1:
-        final_values = [
-            item
-            for item in values
-            if (item['name'], item['address']) != ('[not specified]', '[not specified]')
-        ]
-    else:
-        final_values = values
-
-    return [
-        PostalDetails(name=item['name'], address=item['address'])
-        for item in final_values
-    ]
-
-
-def resolve_postal_details_of_respondents(attributes: dict) -> dict:
-    addressee_details, addressee_warning = resolve_postal_details(
-            attributes['addressee_title'], 
-            attributes['addressee_individual_name'], 
-            attributes['addressee_group_names'], 
-            attributes['address'],
-        )
-    landowner_details, landowner_warning = resolve_postal_details(
-            attributes['owner_title'], 
-            attributes['owner_individual_name'], 
-            attributes['owner_group_names'], 
-            attributes['owner_address'],
-        )
-    farmer_details, farmer_warning = resolve_postal_details(
-            attributes['farmer_title'], 
-            attributes['farmer_individual_name'], 
-            attributes['farmer_group_names'],
-            attributes['farmer_address'],
-        )
-    
-    return {
-        "details": {'addressee': addressee_details, 'farmer': farmer_details, 'landowner': landowner_details},
-        "warnings": {'addressee': addressee_warning, 'farmer': farmer_warning, 'landowner': landowner_warning},
-    }
-
-def set_values_of_non_respondent_attributes(farm: Farm, attributes: dict) -> Farm:
-    for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
-        if field == 'farm_name':
-            unique_farm_names = []
-            for names in attributes[field]:
-                for _name in re.split("; *", names):
-                    if _name in unique_farm_names:
-                        continue
-                    unique_farm_names.append(_name)
-            value = unique_farm_names
-
-        else:
-            value = attributes[field]
-
-        output_value = collate_attributes(value)
-        setattr(farm, field, output_value)
-
-    return farm
-
-
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
    
     for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
-        farm.forms = farm_data['forms']
-
-        farm = set_values_of_non_respondent_attributes(farm, farm_data['attributes'])
-
-        resolution = resolve_postal_details_of_respondents(farm_data['attributes'])
-        farm = create_respondents(farm, resolution['details'])
-
-        farm.warnings = farm_data['warnings']
-        farm.warnings.update(get_postal_details_warnings(resolution['warnings']))
+        farm = set_farm_attributes(farm, farm_data)
 
         farms_store[farm.catalogue_reference] = farm
 
         logger.info(f"Collating {index: 5d} for {farm.farm_reference}")
 
     return farms_store
-
 
 def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
