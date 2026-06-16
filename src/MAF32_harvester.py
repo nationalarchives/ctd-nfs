@@ -48,6 +48,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
 
     return farms_store
 
+
 def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
@@ -177,6 +178,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
 
 def process_csv_files(test_mode: bool=False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
+    logger.info(" ===== HARVESTING FARMS ===== ")
 
     for csv_file in input_files:
         county, _ = csv_file.stem.split("_", maxsplit=1)
@@ -196,11 +198,6 @@ def process_csv_files(test_mode: bool=False) -> None:
         write_farms_to_db(farms_store, county, test_mode)
         logger.info(" ===== CREATING PROOF FILES ===== ")
         create_proof_files(farms_store, county, csv_file.stem)
-
-
-def main():
-    logger.info(" ===== HARVESTING FARMS ===== ")
-    process_csv_files()
 
 
 if __name__ == "__main__":
