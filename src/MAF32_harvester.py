@@ -49,11 +49,10 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
     return farms_store
 
 
-def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[tuple]:
+def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Farm]]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
 
-    updated_farms = []
     for index, farm in enumerate(farms_store.values(), start=1):
 
         logger.info(f"Processsing: '{farm.catalogue_reference}'")
@@ -63,11 +62,11 @@ def process_all_transcriptions(farms_store: dict[str, dict[str, Farm]]) -> list[
             for item in element
         ]
         processor = TranscriptionsProcessor(transcriptions)
-        updated_farms.append((farm, processor.process_transcriptions()))
-
+        farm = set_farm_attributes(farm, processor.process_transcriptions())
+        farms_store[farm.catalogue_reference] = farm
         logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference}")
 
-    return updated_farms
+    return farms_store
 
 
 def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool = False) -> None:
@@ -82,52 +81,65 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
     return farms_store
 
 
-def create_farms(farms_store: dict[str, Farm], transcriptions: Iterator[Transcription]) -> dict[str, dict[str, Farm]]:
-    for xscription in transcriptions:
-        candidate_farm = Farm(xscription.county, xscription.parish, xscription.primary_farm_number)
-        with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
-            db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
-            if db_ids:
-                db_ids = eval(db_ids.decode())
-                candidate_farm.id = db_ids['id']
-                candidate_farm.replica_id = db_ids['replica_id']
-            else:
-                farm_ids_db[candidate_farm.catalogue_reference] = "{'id': '%s', 'replica_id': '%s'}" % (candidate_farm.id, create_uuid_str())
-        form_type = xscription.document_type.name
+def collate_transcription_by_farm(candidate_farm: Farm, transcription: Transcription, farms_store: dict) -> Farm:
+    form_type = transcription.document_type.name
+    if candidate_farm.catalogue_reference not in farms_store:
+        candidate_farm.source_data[form_type].append(transcription)
+        logger.info(f"NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
+        return candidate_farm
 
-        if candidate_farm.catalogue_reference not in farms_store:
-            candidate_farm.source_data[form_type].append(xscription)
-            farms_store[candidate_farm.catalogue_reference] = candidate_farm
-            logger.info(f"NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
+    else:
+        existing_farm = farms_store[candidate_farm.catalogue_reference]
+        existing_farm.source_data[form_type].append(transcription)
+        logger.info(f"{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
+        return existing_farm
 
+
+def initialise_farm(transcription: Transcription) -> Farm:
+    candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
+    with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
+        db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
+        if db_ids:
+            db_ids = eval(db_ids.decode())
+            candidate_farm.id = db_ids['id']
+            candidate_farm.replica_id = db_ids['replica_id']
         else:
-            existing_farm = farms_store[candidate_farm.catalogue_reference]
-            existing_farm.source_data[form_type].append(xscription)
-            farms_store[candidate_farm.catalogue_reference] = existing_farm
-            logger.info(f"{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
+            farm_ids_db[candidate_farm.catalogue_reference] = "{'id': '%s', 'replica_id': '%s'}" % (candidate_farm.id, create_uuid_str())
 
-    return farms_store
+    return candidate_farm
 
 
-def create_transcriptions(csv_data: Iterator[dict]) -> Generator[Transcription, None, None]:
+def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Transcription | None:
+    try:
+        transcription = Transcription(**farm_data_row)
+        if transcription.is_cover_page:
+            msg = f"Row {row_number} is a cover so will not be processed."
+            logger.info(f" {msg:->80}")
+            return
+
+        checker = TranscriptionChecker(transcription, row_number)
+        transcription.warnings = checker.run_validation_checks()
+        logger.info(f"Transcription created from row {row_number}")
+        return transcription
+
+    except TranscriptionDataError as error_message:
+        logger.error(f"Row {row_number} not processed because {error_message}")
+        return
+
+
+def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str, Farm]]:
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
-    logger.info(" ===== LOADING TRANSCRIPTIONS & CREATING FARMS ===== ")
+    logger.info(" ===== TRANSFORMING ROWS TO FARMS ===== ")
+    initialised_farms = {}   
     for row_number, farm_data_row in enumerate(csv_data, start=2):
-        try:
-            transcription = Transcription(**farm_data_row)
-            if transcription.is_cover_page:
-                msg = f"Row {row_number} is a cover so will not be processed."
-                logger.info(f" {msg:->80}")
-                continue
-
-            checker = TranscriptionChecker(transcription, row_number)
-            transcription.warnings = checker.run_validation_checks()
-            logger.info(f"Transcription created from row {row_number}")
-            yield transcription
-
-        except TranscriptionDataError as error_message:
-            logger.error(f"Row {row_number} not processed because {error_message}")
+        if not (transcription := transform_row_to_transcription(farm_data_row, row_number)):
             continue
+
+        candidate_farm = initialise_farm(transcription)
+        candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms)
+        initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
+
+    return initialised_farms
         
 
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
@@ -182,19 +194,16 @@ def process_csv_files(test_mode: bool=False) -> None:
 
     for csv_file in input_files:
         county, _ = csv_file.stem.split("_", maxsplit=1)
-        farms_store = {}   
         raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
         normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-        transcriptions: Iterator[Transcription] = create_transcriptions(normalised_farm_data)
-        farms_store: dict = create_farms(farms_store, transcriptions)
+        farms_store: dict = transform_row_data_to_farms(normalised_farm_data)
         write_farms_to_db(farms_store, county, test_mode)
         """ read from farm store - 
         this means that can comment out the loading and creation steps of the orchestration
         when only running Harvester to view changes to the proof output
         """
         farms_store = read_farms_db(county)
-        farms_with_collated_attributes = process_all_transcriptions(farms_store)
-        farms_store = update_farms(farms_store, farms_with_collated_attributes)
+        farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
         logger.info(" ===== CREATING PROOF FILES ===== ")
         create_proof_files(farms_store, county, csv_file.stem)
