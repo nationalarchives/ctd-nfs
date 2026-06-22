@@ -188,7 +188,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def process_csv_files(test_mode: bool=False) -> None:
+def run_pipeline(test_mode: bool=False) -> None:
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
     logger.info(" ===== HARVESTING FARMS ===== ")
 
@@ -213,5 +213,5 @@ if __name__ == "__main__":
     for file in Path(PATH.DB / "TEST").glob("*"):
         os.remove(file)
 
-    process_csv_files()
+    run_pipeline()
 
