@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 
 from src._tools.constants import PATH
-from src.MAF32_harvester import process_csv_files
-from src.harvester.catalogue_proofs_builder import create_proof_files
+from src.MAF32_harvester import run_pipeline
+from src.MAF32_harvester import create_proof_files
 from src._dataclasses.farm_model import Farm
 from src._tools.logging_setup import create_logger
 
@@ -18,7 +18,7 @@ def test_file_processor():
     for file in Path(PATH.DB / "TEST").glob("*"):
         os.remove(file)
 
-    process_csv_files(test_mode=True)
+    run_pipeline(test_mode=True)
 
     with shelve.open(PATH.TEST_DB, 'r') as test_db:
         for reference in test_db.values():
