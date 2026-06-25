@@ -4,30 +4,26 @@ Code developed to support the National Farm Survey QA and transformation process
 The repo contains the following files:
 * The main library is nfs_document_checks.py. This file contains the code to read in the CSVs from the processing folder, processes the data and save the results into a new spreadsheet in the outputs folder 
 * The above is supported by the data normalisation library (data_normalisation.py) which has the methods to support the string integration. 
+
+NOTES:
+Information Asset ID (IAID) is the unique identifier of the record. Replica ID (RID) is the unique identifier of the set of digital files associated with the record. 
+For IAID, we discussed that whoever is transferring the data holds the source of truth of the IAIDs, i.e. they manage them, it is not Discovery that manages the IAIDs. 
+e.g. for the Catalogue transfer process, the IAIDs are generated and managed through an EAV database; 
+for the Parliamentary Archives records the IAIDs are an existing UUID field in Axiell, for DRI and TDR those systems generate and manage the IAIDs. 
+So what I'm saying is, your system will have to generate and manage the IAIDs. 
+By manage I mean, if a record changes, when it gets resent to Discovery it has to be with the same IAID 
+otherwise Discovery would create a new record rather than update the existing. 
+
+Replica ID (RID) is a bit easier as it doesn't have to be persistent. 
+When a record is resent to Discovery we delete the existing and insert a new (with same IAID) so the RID could be different to the original sent.
+
+Source depicts the type of record being sent. e.g. "PA" for Parliamentary Archives. 
+Discovery uses this to identify the type of record and present it in whatever fashion required. For Farm Survey can you use "FS" please. 
+Discovery needs this in order to know it has to deal with records at Cataloguing level 8 - SubItem. 
+Title can be blank if no value exists for Farm Survey records. 
+If there is no title the Discovery code takes the first 128 characters of the Scope Content and presents that as the Title. (Something like 128 chars.)
+
  
-## Anaconda
-
-These instructions assume you have [Anaconda](https://www.anaconda.com/products/distribution) installed.
-
-The relevant packages can be installed using pip install, if Anaconda is not available.
-
-## Creating the nfs Anaconda environment
-
-[General docs on managing environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
-
-To create the conda environment for the first time, run the following three commands in Command Prompt or in Anaconda Powershell :
-
-    conda create -n nfs python openpyxl rapidfuzz pyinstaller
-    conda activate ape
-
-The following instructions assume the nfs environment has been activated.
-
-Optional - the environment can be kept up to date in future using:
-
-    conda activate nfs
-    conda update --all
-
-If you are using MS Code to edit or run the APE code, you should associate the ape environment with the workspace. How to [Assign the ape conda environment to the workspace in MS VS Code](https://code.visualstudio.com/docs/python/environments)
 
 ## Building the application for distribution
 

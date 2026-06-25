@@ -1,0 +1,38 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  standard:
+    style: "{"
+    datefmt: "%Y-%m-%d %H:%M"
+    format: "{asctime} - {levelname}: {message}"
+  violation:
+    style: "{"
+    datefmt: "%Y-%m-%d"
+    format: "{asctime}{message}"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+
+  info_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    formatter: standard
+    filename: Pipeline//#ADMIN//LOGS//harvester_pipeline.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 20
+    encoding: utf8
+
+  error_file_handler:
+    class: logging.FileHandler
+    level: WARNING
+    formatter: violation
+    filename: Pipeline//#ADMIN//LOGS//harvester_pipeline_error.log
+    mode: w
+    encoding: utf8
+
+root:
+  level: INFO
+  handlers: [console,  info_file_handler, error_file_handler]
