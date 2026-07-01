@@ -1,0 +1,17 @@
+body {{
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+}}
+
+.snippet {{
+    margin-bottom: 1rem;
+}}
+
+.hidden {{
+    display: none;
+}}
+
+.highlight {{
+    background-color: yellow;
+    font-weight: bold;
+}}
