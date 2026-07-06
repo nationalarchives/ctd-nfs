@@ -56,6 +56,11 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         )
     previews_template = environment.get_template("farms_preview.html")
     previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
+    context = {
+        'descriptions_list': descriptions,
+        'county': county,
+        'references': farm_references,
+    }
 
 
 
