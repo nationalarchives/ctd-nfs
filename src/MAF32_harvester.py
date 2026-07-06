@@ -49,7 +49,12 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         for farm in farm_instances
     ]
     
-    environment = Environment(loader=FileSystemLoader("src/_html/"), autoescape=select_autoescape(enabled_extensions=('html', 'xml'), default_for_string=True,))
+    environment = Environment(
+        loader=FileSystemLoader("src/_html/"), 
+        autoescape=select_autoescape(enabled_extensions=('html', 'xml'), 
+                                     default_for_string=True,)
+        )
+    previews_template = environment.get_template("farms_preview.html")
 
 
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
