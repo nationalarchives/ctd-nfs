@@ -5,6 +5,8 @@ from typing import Generator, Iterator
 import os
 import dbm
 
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
 from src._tools.logging_setup import create_logger
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
@@ -47,6 +49,7 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         for farm in farm_instances
     ]
     
+    environment = Environment(loader=FileSystemLoader("src/_html/"), autoescape=select_autoescape(enabled_extensions=('html', 'xml'), default_for_string=True,))
 
 
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
