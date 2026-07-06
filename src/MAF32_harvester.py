@@ -19,6 +19,16 @@ from src.harvester.farm_attributiser import set_farm_attributes
 logger = create_logger("src._config", "logging.yaml")
 
 
+def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
+    """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
+
+    Arguments:
+        farm_instances -- farm instances retrieved from the farms db
+        county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
+    """
+    pass
+
+
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
     proof_data = [
             farm.to_proof()
