@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<title>{{ county }}</title>
+		<link rel="stylesheet" href="style.css"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<script src="descriptions.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<main>
+			<h1 id="top">{{ county }}</h1>
+			<input type="text" id="searchBox" onkeyup="searchDescriptions()" placeholder="Search Farm Reference"/>
+			<br/><br/>
+			<select onchange="jumpToRef(this.value)">
+				<option value="">-- Select Farm Reference --</option>
+				{% for farm_ref in references %}
+				<option value="{{ farm_ref }}">{{ farm_ref }}</option>
+				{% endfor %}  
+			</select>			
+			<br/><br/>
+			<div class="navigation">
+				<button onclick="goToPreviousPage()">◀ Previous</button>
+				<span id="pageInfoTop">Page 1 of 1</span>			
+				<button onclick="goToNextPage()">Next ▶</button>
+			</div>
+			<hr>
+			<!-- Description records  -->
+			{% for description in descriptions_list %}
+			<div class="description" data-ref="{{ description.farm_reference }}">
+				<div class="title">{{ description.farm_reference }}</div>
+				<section id="{{ description.farm_reference }}">
+					<p>Farm Reference: {{ description.farm_reference }}.</p>
+					<p>Farm Name(s): {{ description.farm_name }}.</p>
+					<p>Addressee(s): {{ description.addressee }}.</p>
+					<p>Farmer(s) or Occupier(s): {{ description.farmer }}.</p>
+					<p>Landowner(s): {{ description.landowner }}.</p>
+					<p>Acreage(s): {{ description.acreage }}.</p>
+					<p>OS Sheet Number(s): {{ description.OS_map_sheet }}.</p>
+					<p>Field Information Date(s): {{ description.field_info_date }}.</p>
+					<p>Primary Record Date(s): {{ description.primary_record_date }}.</p>
+					<p>Record consists of: {{ description.forms }}.</p>
+					<a href="#top">↑ Back to top</a>
+				</section>
+				<br/><br/>
+			</div>
+			{% endfor %}  
+			<hr>
+			<div class="navigation">
+				<button onclick="goToPreviousPage()">◀ Previous</button>
+				<span id="pageInfoTop">Page 1 of 1</span>			
+				<button onclick="goToNextPage()">Next ▶</button>
+				<a href="#top">↑ Back to top</a>
+			</div>
+		</main>
+	</body>
+</html>
