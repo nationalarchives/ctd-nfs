@@ -55,6 +55,8 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
                                      default_for_string=True,)
         )
     previews_template = environment.get_template("farms_preview.html")
+    previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
+
 
 
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
