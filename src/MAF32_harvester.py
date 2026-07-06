@@ -42,6 +42,11 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         for farm in farm_instances
     ]
     
+    farm_references = [
+        farm.farm_reference
+        for farm in farm_instances
+    ]
+    
 
 
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
