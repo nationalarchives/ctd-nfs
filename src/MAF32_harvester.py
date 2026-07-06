@@ -61,6 +61,9 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         'county': county,
         'references': farm_references,
     }
+    with open(previews_file, mode="w", encoding="utf-8") as results:
+        results.write(previews_template.render(context))
+        logger.info(f"... wrote {county}_scopeAndContent previews.html")
 
 
 
