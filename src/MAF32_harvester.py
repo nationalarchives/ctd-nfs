@@ -26,7 +26,22 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
         farm_instances -- farm instances retrieved from the farms db
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
-    pass
+    descriptions = [
+        {
+            'farm_reference': farm.farm_reference,
+            'farm_name': farm.farm_name,
+            'addressee': farm.addressee,
+            'farmer': farm.farmer,
+            'landowner': farm.landowner,
+            'acreage': farm.acreage,
+            'OS_map_sheet': farm.OS_map_sheet,
+            'field_info_date': farm.field_info_date,
+            'primary_record_date': farm.primary_record_date,
+            'forms': farm.forms,
+        }
+        for farm in farm_instances
+    ]
+    
 
 
 def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
