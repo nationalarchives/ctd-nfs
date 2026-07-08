@@ -21,7 +21,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def create_html_preview_page(cleaned_data: list[dict], county: str) -> dict:
+def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
