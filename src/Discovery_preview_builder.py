@@ -47,12 +47,12 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
             'primary_record_date': proof.farm['primary_record_date'],
             'forms': proof.farm['forms'],
         }
-        for proof in cleaned_data
+        for proof in MAF32_instances
     ]
 
     farm_references = [
         proof.farm['farm_number']
-        for proof in cleaned_data
+        for proof in MAF32_instances
     ]
 
     return {
