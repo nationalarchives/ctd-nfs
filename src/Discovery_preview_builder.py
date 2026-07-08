@@ -21,7 +21,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
+def create_html_preview_page(cleaned_data: list[dict], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
@@ -50,6 +50,13 @@ def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
         for proof in cleaned_data
     ]
 
+    return {
+        'descriptions_list': descriptions,
+        'county': county,
+        'references': farm_references,
+    }
+
+
     environment = Environment(
         loader=FileSystemLoader("src/_html/"),
         autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
@@ -57,11 +64,6 @@ def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
         )
     previews_template = environment.get_template("previews.html")
     previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
-    context = {
-        'descriptions_list': descriptions,
-        'county': county,
-        'references': farm_references,
-    }
     with open(previews_file, mode="w", encoding="utf-8") as results:
         results.write(previews_template.render(context))
         logger.info(f"... wrote {county}_scopeAndContent previews.html")
