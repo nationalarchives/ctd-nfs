@@ -34,7 +34,7 @@ def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
     ]
 
     farm_references = [
-        proof.farm_reference
+        proof.farm['farm_number']
         for proof in cleaned_data
     ]
 
