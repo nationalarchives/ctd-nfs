@@ -131,15 +131,10 @@ def process_proof_files(test_mode: bool=False) -> None:
 
     for proof_file in xlsx_files:
         county, _ = proof_file.name.split("_", maxsplit=1)
-        with shelve.open(PATH.FARMS_DB, "r") as farms_db:
-            farms_store = farms_db[county]
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
-        final_documents = build_catalogue_documents(cleaned_data, farms_store, test_mode)
-        if test_mode:
-            for document in final_documents:
-                pretty.pprint(document)
-        write_catalogue_documents(final_documents)
+        context = create_html_preview_context(cleaned_data, county)
+        write_html_page(context, county)
 
 
 def main(test_mode: bool=False):
