@@ -21,7 +21,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
+def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
@@ -41,12 +41,12 @@ def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
             'primary_record_date': farm.primary_record_date,
             'forms': farm.forms,
         }
-        for farm in farm_instances
+        for farm in cleaned_data
     ]
 
     farm_references = [
         farm.farm_reference
-        for farm in farm_instances
+        for farm in cleaned_data
     ]
 
     environment = Environment(
