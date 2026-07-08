@@ -21,6 +21,19 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
+def write_html_page(context: dict, county: str) -> None:
+    environment = Environment(
+        loader=FileSystemLoader("src/_html/"),
+        autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
+                                     default_for_string=True,)
+        )
+    previews_template = environment.get_template("previews.html")
+    previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
+    with open(previews_file, mode="w", encoding="utf-8") as results:
+        results.write(previews_template.render(context))
+        logger.info(f"... wrote {county}_scopeAndContent previews.html")
+
+
 def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
@@ -62,32 +75,6 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     }
 
 
-def write_html_page(context: dict, county: str) -> None:
-    environment = Environment(
-        loader=FileSystemLoader("src/_html/"),
-        autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
-                                     default_for_string=True,)
-        )
-    previews_template = environment.get_template("previews.html")
-    previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
-    with open(previews_file, mode="w", encoding="utf-8") as results:
-        results.write(previews_template.render(context))
-        logger.info(f"... wrote {county}_scopeAndContent previews.html")
-
-
-def load_excel_data(data_file: Path) -> list[dict]:
-    logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
-    excel_data = read_file(data_file)
-
-    column_names = excel_data['Proof data'][0]
-
-    return [
-        dict(zip(column_names, row_data))
-        for row_data in excel_data["Proof data"][1:]
-        if row_data[0]
-    ]
-
-
 def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
     logger.info(" ===== CLEANING PROOF DATA ===== ")
     discovery_data = []
@@ -108,6 +95,19 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
         discovery_data.append(cleaned_data_row)
     
     return discovery_data
+
+
+def load_excel_data(data_file: Path) -> list[dict]:
+    logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
+    excel_data = read_file(data_file)
+
+    column_names = excel_data['Proof data'][0]
+
+    return [
+        dict(zip(column_names, row_data))
+        for row_data in excel_data["Proof data"][1:]
+        if row_data[0]
+    ]
            
             
 def process_proof_files(test_mode: bool=False) -> None:
