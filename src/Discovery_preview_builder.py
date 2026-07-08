@@ -35,24 +35,24 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
 
     descriptions = [
         {
-            'catalogue_reference': proof.farm['catalogue_reference'],
-            'farm_reference': proof.farm['farm_number'],
-            'farm_name': proof.farm['farm_name'],
-            'addressee': proof.farm['addressee'],
-            'farmer': proof.farm['farmer'],
-            'landowner': proof.farm['landowner'],
-            'acreage': proof.farm['acreage'],
-            'OS_map_sheet': proof.farm['os_sheet_number'],
-            'field_info_date': proof.farm['field_info_date'],
-            'primary_record_date': proof.farm['primary_record_date'],
-            'forms': proof.farm['forms'],
+            'catalogue_reference': _inst.farm['catalogue_reference'],
+            'farm_reference': _inst.farm['farm_number'],
+            'farm_name': _inst.farm['farm_name'],
+            'addressee': _inst.farm['addressee'],
+            'farmer': _inst.farm['farmer'],
+            'landowner': _inst.farm['landowner'],
+            'acreage': _inst.farm['acreage'],
+            'OS_map_sheet': _inst.farm['os_sheet_number'],
+            'field_info_date': _inst.farm['field_info_date'],
+            'primary_record_date': _inst.farm['primary_record_date'],
+            'forms': _inst.farm['forms'],
         }
-        for proof in MAF32_instances
+        for _inst in MAF32_instances
     ]
 
     farm_references = [
-        proof.farm['farm_number']
-        for proof in MAF32_instances
+        _inst.farm['farm_number']
+        for _inst in MAF32_instances
     ]
 
     return {
