@@ -57,6 +57,7 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     }
 
 
+def write_html_page(context: dict, county: str) -> None:
     environment = Environment(
         loader=FileSystemLoader("src/_html/"),
         autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
