@@ -5,6 +5,9 @@ import pprint
 import shelve
 from pathlib import Path
 import re
+from typing import Iterator
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from src._tools.constants import PATH
 from src._tools.xlreader import read_file
@@ -16,6 +19,51 @@ logger = create_logger("src._config", "logging.yaml")
 
 
 pretty = pprint.PrettyPrinter(indent=4)
+
+
+def create_html_preview_page(farm_instances: Iterator, county: str) -> None:
+    """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
+
+    Arguments:
+        farm_instances -- farm instances retrieved from the farms db
+        county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
+    """
+    descriptions = [
+        {
+            'farm_reference': farm.farm_reference,
+            'farm_name': farm.farm_name,
+            'addressee': farm.addressee.names_and_addresses,
+            'farmer': farm.farmer.names_and_addresses,
+            'landowner': farm.landowner.names_and_addresses,
+            'acreage': farm.acreage,
+            'OS_map_sheet': farm.OS_map_sheet,
+            'field_info_date': farm.field_info_date,
+            'primary_record_date': farm.primary_record_date,
+            'forms': farm.forms,
+        }
+        for farm in farm_instances
+    ]
+
+    farm_references = [
+        farm.farm_reference
+        for farm in farm_instances
+    ]
+
+    environment = Environment(
+        loader=FileSystemLoader("src/_html/"),
+        autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
+                                     default_for_string=True,)
+        )
+    previews_template = environment.get_template("previews.html")
+    previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
+    context = {
+        'descriptions_list': descriptions,
+        'county': county,
+        'references': farm_references,
+    }
+    with open(previews_file, mode="w", encoding="utf-8") as results:
+        results.write(previews_template.render(context))
+        logger.info(f"... wrote {county}_scopeAndContent previews.html")
 
 
 def load_excel_data(data_file: Path) -> list[dict]:
