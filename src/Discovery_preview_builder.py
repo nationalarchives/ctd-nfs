@@ -29,13 +29,13 @@ def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
     descriptions = [
-        DiscoveryMAF32(farm).scope_and_content
-        for farm in cleaned_data
+        DiscoveryMAF32(proof).scope_and_content
+        for proof in cleaned_data
     ]
 
     farm_references = [
-        farm.farm_reference
-        for farm in cleaned_data
+        proof.farm_reference
+        for proof in cleaned_data
     ]
 
     environment = Environment(
