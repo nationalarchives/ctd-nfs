@@ -29,8 +29,8 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
     MAF32_instances = [
-        DiscoveryMAF32(MAF32_instances)
-        for MAF32_instances in cleaned_data
+        DiscoveryMAF32(proof)
+        for proof in cleaned_data
     ]
 
     descriptions = [
