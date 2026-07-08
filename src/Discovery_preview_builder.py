@@ -103,27 +103,6 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
         discovery_data.append(cleaned_data_row)
     
     return discovery_data
-
-
-def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_mode=False) -> list[dict]:
-    logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
-
-    documents = []
-    for farm_proof in cleaned_data:
-        discovery_document = DiscoveryMAF32(farm_proof)
-        logger.info(f"Farm {farm_proof['catalogue_reference']} --> Built record {farm_proof['farm_id']} with {len(discovery_document.files)} images")
-
-        documents.append(discovery_document.to_dict())
-
-    return documents
-
-
-def write_catalogue_documents(documents: list[dict]) -> None:
-    logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    for document in documents:
-        with open(PATH.PUBLISH / f"{document['record']['iaid']}.json", 'w') as final_file:
-            logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
-            json.dump(document, final_file)   
            
             
 def process_proof_files(test_mode: bool=False) -> None:
