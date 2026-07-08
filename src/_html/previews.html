@@ -27,9 +27,9 @@
 			<hr>
 			<!-- Description records  -->
 			{% for description in descriptions_list %}
-			<div class="description" data-ref="{{ description.farm_reference }}">
-				<div class="title">{{ description.farm_reference }}</div>
-				<section id="{{ description.farm_reference }}">
+			<div class="description" data-ref="{{ description.catalogue_reference }}">
+				<div class="title">{{ description.catalogue_reference }}</div>
+				<section id="{{ description.catalogue_reference }}">
 					<p>Farm Reference: {{ description.farm_reference }}.</p>
 					<p>Farm Name(s): {{ description.farm_name }}.</p>
 					<p>Addressee(s): {{ description.addressee }}.</p>
