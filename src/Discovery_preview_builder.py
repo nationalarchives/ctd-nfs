@@ -30,6 +30,7 @@ def create_html_preview_page(cleaned_data: list[dict], county: str) -> None:
     """
     descriptions = [
         {
+            'catalogue_reference': proof.farm['catalogue_reference'],
             'farm_reference': proof.farm['farm_number'],
             'farm_name': proof.farm['farm_name'],
             'addressee': proof.farm['addressee'],
