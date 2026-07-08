@@ -12,7 +12,7 @@ function getDescriptions() {
 
 /**
  * Highlight matching portion of a reference.
- * @param {string} ref Farm reference.
+ * @param {string} ref Catalogue reference.
  * @param {string} query Search term.
  * @returns {string} HTML with highlighted match.
  */
@@ -151,7 +151,7 @@ function goToPreviousPage() {
 
 /**
  * Scroll to selected reference.
- * @param {string} ref Farm reference.
+ * @param {string} ref Catalogue reference.
  */
 function jumpToRef(ref) {
 
