@@ -28,10 +28,10 @@ def write_html_page(context: dict, county: str) -> None:
                                      default_for_string=True,)
         )
     previews_template = environment.get_template("previews.html")
-    previews_file = PATH.HARVEST / f"{county}_scopeAndContent previews.html"
+    previews_file = PATH.HARVEST / f"{county}_MAF32 previews.html"
     with open(previews_file, mode="w", encoding="utf-8") as results:
         results.write(previews_template.render(context))
-        logger.info(f"... wrote {county}_scopeAndContent previews.html")
+        logger.info(f"... wrote {county}_MAF32 previews.html")
 
 
 def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
