@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 import dbm
+from collections import Counter
 
 from src._dataclasses.farm_model import ImageFile
 from src._tools.constants import DATA, REGEX, PATH
@@ -11,14 +12,17 @@ class TranscriptionsProcessor:
     def __init__(self, transcriptions: list[Transcription]):
         self.transcriptions = transcriptions
 
-    def _check_for_multiple_B496(self) -> str | None:
-        b496_forms = [
-            "B496/EI"
+    def _check_for_multiple_forms(self) -> str | None:
+        form_totals = Counter([
+            transcription.document_type.name
             for transcription in self.transcriptions
-            if transcription.document_type.name == "B496/EI"
-        ]
-        if len(b496_forms) > 1:
-            return "Multiple B496/EI forms"
+        ])
+        warning = ""
+        for form, total in form_totals.items():
+            if total > 1:
+                warning += f"Multiple {form} forms; "
+
+        return warning or None
 
     def _collate_warnings(self) -> dict:
         farm_warnings = {}
@@ -31,11 +35,11 @@ class TranscriptionsProcessor:
                 else:
                     farm_warnings[warning_type] = warnings
         
-        if b496_warning := self._check_for_multiple_B496():
+        if multiple_forms_warning := self._check_for_multiple_forms():
             if 'Type Warnings' in farm_warnings:
-                farm_warnings['Type Warnings'].append(b496_warning)
+                farm_warnings['Type Warnings'].append(multiple_forms_warning)
             else:
-                farm_warnings['Type Warnings'] = [b496_warning]
+                farm_warnings['Type Warnings'] = [multiple_forms_warning]
 
         return farm_warnings
 
