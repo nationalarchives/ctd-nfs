@@ -10,10 +10,10 @@
 	<body>
 		<main>
 			<h1 id="top">{{ county }}</h1>
-			<input type="text" id="searchBox" onkeyup="searchDescriptions()" placeholder="Search Farm Reference"/>
+			<input type="text" id="searchBox" onkeyup="searchDescriptions()" placeholder="Search Catalogue Reference"/>
 			<br/><br/>
 			<select onchange="jumpToRef(this.value)">
-				<option value="">-- Select Farm Reference --</option>
+				<option value="">-- Select Catalogue Reference --</option>
 				{% for cat_ref in references %}
 				<option value="{{ cat_ref }}">{{ cat_ref }}</option>
 				{% endfor %}  
