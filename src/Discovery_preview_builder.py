@@ -28,6 +28,11 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
         farm_instances -- farm instances retrieved from the farms db
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
+    MAF32_instances = [
+        DiscoveryMAF32(MAF32_instances)
+        for MAF32_instances in cleaned_data
+    ]
+
     descriptions = [
         {
             'catalogue_reference': proof.farm['catalogue_reference'],
