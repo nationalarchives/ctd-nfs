@@ -71,7 +71,7 @@ def create_proof_files(farms_store: dict, county: str, input_file_name: str, tes
         'column_settings': CSVEXCEL.PROOF_COLUMNS,
     }]
     
-    proof_file_name = PATH.HARVEST / f"{input_file_name.replace('forHarvester', 'proof')}.xlsx"
+    proof_file_name = PATH.HARVEST / f"{input_file_name.replace('_forHarvester_', '_MAF32 proof_')}.xlsx"
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
 
