@@ -1,3 +1,22 @@
+"""MAF32_Publisher
+
+This module runs the second stage of the ETL pipeline for the Farm Survey data analysis work. 
+The stage starts with the proof file for a single county initially returned by MAF32_Harvester after it has been reviewed, and possibly edited, by the CTD team. 
+The proof data is transformed into JSON documents in the Discovery schema
+The image size information required to complete the JSON documents is not available to to this application, so the JOSN documents partially complete.
+The documents are manually sent to the Digital Archiving team, who will add the image sizes and the drop the final JSONs in an S3 bucket for ingest by Discovery
+
+The ETL stages in this module are:
+Extract:
+* extract and clean the farm proof data
+Transform:
+* convert each proof Excel row into a DiscoveryMAF32 dataclass instance
+Load
+* output each farm as a Discovery JSON document (without the image size values)
+
+Yields:
+    a set of JSON documents in the Pipeline/#3-PUBLISH folder
+"""
 import json
 import pprint
 import shelve
