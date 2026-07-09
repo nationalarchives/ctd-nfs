@@ -1,11 +1,8 @@
 """
 """
-import json
 import pprint
-import shelve
 from pathlib import Path
 import re
-from typing import Iterator
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
