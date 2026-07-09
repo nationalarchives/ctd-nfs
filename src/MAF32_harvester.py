@@ -1,3 +1,32 @@
+"""MAF32_Publisher
+
+This module runs the first stage of the ETL pipeline for the Farm Survey data analysis work. 
+The pipeline starts with a csv file of all the transcribed forms for a single county, which is then collated & transformed into individual farms,
+and finally output in proof file of the data for each farm that will appear in the catalogue. 
+This file will be sent to the CTD team to for review and possible edit.
+The data for each farm is also stored in a JSON format in a document store
+
+The ETL stages in this module are:
+Extract:
+* extract and normalize the transcription csv files
+Transform:
+* convert each transcription csv row into a Transcription dataclass instance
+* collate transcription instances by farm
+* create farm instances using the transcription data
+Load
+* load the farm instances, farm ids and image ids into databases
+* output the farms in an Excel file in a format which allows easy review by the CTD team
+    
+Returns:
+    Excel file containing representations of the farm instances. The Excel will serve two purposes:
+    1. allow easy review of the resolution of the names & addresses
+    2. contain all the data required to create the JSONs for Discovery (this will be used by MAF32_Publisher.py)
+
+Yields:
+    the module adds the farm instances to a database (in version 2.01 this is pickled data) and two key-value stores
+    1. Farm_IDs maps each farm's catalogue reference to its iaID & replicaID
+    2. File_IDs maps each form image file name to its image id
+"""
 import csv
 import shelve
 from pathlib import Path
