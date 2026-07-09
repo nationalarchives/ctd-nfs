@@ -159,6 +159,7 @@ class Transcription:
             'county': self.county,
             'parish': self.parish,
             'primary_farm_number': self.primary_farm_number,
+            'additional_farms': self.additional_farms,
             'farm_name': self.farm_name,
             'addressee_title': self.addressee_title,
             'addressee_individual_name': self.addressee_individual_name,
@@ -176,6 +177,7 @@ class Transcription:
             'OS_map_sheet': self.OS_map_sheet,
             'field_info_date': self.field_info_date,
             'primary_record_date': self.primary_record_date,
+            'notes': self.notes,
             'warnings': self.warnings,
         }
 
