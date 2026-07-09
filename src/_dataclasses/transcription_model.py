@@ -85,6 +85,7 @@ class Transcription:
         'OS_map_sheet',
         'field_info_date',
         'primary_record_date',
+        'notes',
         'file1',
         'file2',
         'warnings',
