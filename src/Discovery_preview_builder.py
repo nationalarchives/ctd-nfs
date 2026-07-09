@@ -63,15 +63,15 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
         for _inst in MAF32_instances
     ]
 
-    farm_references = [
-        _inst.farm['farm_number']
+    catalogue_references = [
+        _inst.farm['catalogue_reference']
         for _inst in MAF32_instances
     ]
 
     return {
         'descriptions_list': descriptions,
         'county': county,
-        'references': farm_references,
+        'references': catalogue_references,
     }
 
 
