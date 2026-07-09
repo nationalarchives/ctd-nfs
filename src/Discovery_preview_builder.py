@@ -111,7 +111,7 @@ def load_excel_data(data_file: Path) -> list[dict]:
            
             
 def process_proof_files(test_mode: bool=False) -> None:
-    xlsx_files = PATH.HARVEST.glob("TEST/*MAF32*.xlsx") if test_mode else PATH.HARVEST.glob("*MAF32*.xlsx")
+    xlsx_files = PATH.HARVEST.glob("TEST/*_MAF32 proof_*.xlsx") if test_mode else PATH.HARVEST.glob("*_MAF32 proof_*.xlsx")
 
     for proof_file in xlsx_files:
         county, _ = proof_file.name.split("_", maxsplit=1)
