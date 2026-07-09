@@ -20,11 +20,9 @@ Yields:
 import json
 import pprint
 import shelve
-from pathlib import Path
-import re
 
+from src._tools.helpers import load_excel_data, clean_excel_data
 from src._tools.constants import PATH
-from src._tools.xlreader import read_file
 from src._tools.logging_setup import create_logger
 from src._dataclasses.MAF32_model import DiscoveryMAF32
 
@@ -33,41 +31,6 @@ logger = create_logger("src._config", "logging.yaml")
 
 
 pretty = pprint.PrettyPrinter(indent=4)
-
-
-def load_excel_data(data_file: Path) -> list[dict]:
-    logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
-    excel_data = read_file(data_file)
-
-    column_names = excel_data['Proof data'][0]
-
-    return [
-        dict(zip(column_names, row_data))
-        for row_data in excel_data["Proof data"][1:]
-        if row_data[0]
-    ]
-
-
-def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
-    logger.info(" ===== CLEANING PROOF DATA ===== ")
-    discovery_data = []
-    non_breaking_space = "\xa0"
-    for row in raw_csv_data:
-        cleaned_data_row = {}
-        for key, value in row.items():
-            if not value or type(value) is not str:
-                cleaned_data_row[key] = value
-                continue
-
-            value = value.strip()
-            value = value.replace(f"{non_breaking_space}", " ")
-            value = value.replace("\n", "")
-            value = re.sub(r";\s*", "; ", value)
-            cleaned_data_row[key] = value
-
-        discovery_data.append(cleaned_data_row)
-    
-    return discovery_data
 
 
 def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_mode=False) -> list[dict]:
