@@ -35,6 +35,7 @@ class CSVandExcelNamespace():
         'OS_map_sheet',
         'field_info_date',
         'primary_record_date',
+        'notes',
     ]
     PROOF_COLUMNS = [   
         ('catalogue_reference', 20),
