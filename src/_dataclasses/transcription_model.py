@@ -114,6 +114,7 @@ class Transcription:
     OS_map_sheet: str
     field_info_date: str
     primary_record_date: str
+    notes: str
 
     @property
     def has_data(self) -> bool:
