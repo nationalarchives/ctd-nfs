@@ -99,6 +99,7 @@ class DataNamespace():
 		'OS_map_sheet',
 		'field_info_date',
 		'primary_record_date',
+        'notes',
     ]
     DATE_FORMATS = [
         "%d %B %Y",
