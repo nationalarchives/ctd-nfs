@@ -49,7 +49,7 @@ from src.harvester.farm_attributiser import set_farm_attributes
 logger = create_logger("src._config", "logging.yaml")
 
 
-def create_proof_files(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False):
+def create_proof_file(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False) -> Path:
     """_summary_
 
     Arguments:
@@ -74,6 +74,7 @@ def create_proof_files(farms_store: dict, county: str, input_file_name: str, tes
     proof_file_name = PATH.HARVEST / f"{input_file_name.replace('_forHarvester_', '_MAF32 proof_')}.xlsx"
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
+    return proof_file_name
 
 
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
@@ -245,8 +246,9 @@ def run_pipeline(test_mode: bool=False) -> None:
         farms_store = read_farms_db(county)
         farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
+
         logger.info(" ===== CREATING PROOF FILES ===== ")
-        create_proof_files(farms_store, county, csv_file.stem)
+        proof_file = create_proof_file(farms_store, county, csv_file.stem)
 
 
 if __name__ == "__main__":
