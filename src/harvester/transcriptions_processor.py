@@ -142,21 +142,21 @@ class TranscriptionsProcessor:
                 self._does_B496_have_3rd_image(transcription.file1, transcription.file2, collated_forms['B496/EI'][-1]):
                     collated_forms[current_form_name][-1].append(ImageFile(transcription.file1))
                     continue
-            
-            image_files = [
+           
+            image_set = [
                 ImageFile(file)
                 for file in [transcription.file1, transcription.file2]
                 if file
             ]
-            for index, image in enumerate(image_files):
+            for index, image in enumerate(image_set):
                 with dbm.open(PATH.FILE_IDS, 'c') as file_ids_db:
                     db_id = file_ids_db.get(image.name, "")
                     if db_id:
-                        image_files[index].id = db_id.decode()
+                        image_set[index].id = db_id.decode()
                     else:
                         file_ids_db[image.name] = image.id
 
-            collated_forms[current_form_name].append(image_files)
+            collated_forms[current_form_name].append(image_set)
 
         return collated_forms
 
