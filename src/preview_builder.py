@@ -1,6 +1,7 @@
 """
 """
 import pprint
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -70,20 +71,20 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     }
            
             
-def process_proof_files(test_mode: bool=False) -> None:
-    xlsx_files = PATH.HARVEST.glob("TEST/*_MAF32 proof_*.xlsx") if test_mode else PATH.HARVEST.glob("*_MAF32 proof_*.xlsx")
-
-    for proof_file in xlsx_files:
-        county, _ = proof_file.name.split("_", maxsplit=1)
-        proof_data = load_excel_data(proof_file)
-        cleaned_data = clean_excel_data(proof_data)
-        context = create_html_preview_context(cleaned_data, county)
-        write_html_page(context, county)
+def create_html_preview(proof_file: Path, test_mode: bool=False) -> None:
+    county, _ = proof_file.name.split("_", maxsplit=1)
+    proof_data = load_excel_data(proof_file)
+    cleaned_data = clean_excel_data(proof_data)
+    context = create_html_preview_context(cleaned_data, county)
+    write_html_page(context, county)
 
 
 def main(test_mode: bool=False):
     logger.info(" ===== PROCESSING PROOF FILES ===== ")
-    process_proof_files()
+    xlsx_files = PATH.HARVEST.glob("TEST/*_MAF32 proof_*.xlsx") if test_mode else PATH.HARVEST.glob("*_MAF32 proof_*.xlsx")
+
+    for proof_file in xlsx_files:
+        create_html_preview(proof_file)
 
 
 if __name__ == "__main__":
