@@ -5,7 +5,8 @@ from collections import Counter
 
 from src._dataclasses.farm_model import ImageFile
 from src._tools.constants import DATA, REGEX, PATH
-from src._dataclasses.transcription_model import Transcription
+from src._dataclasses.transcription_model import Transcription, Filename
+from src._dataclasses.farm_model import ImageSet
 
 
 class TranscriptionsProcessor:
@@ -120,7 +121,14 @@ class TranscriptionsProcessor:
             ]
             for field_name in DATA.FARM_DATA_FIELDS
         }
-    
+
+    @staticmethod
+    def _does_B496_have_3rd_image(file1: Filename, file2: Filename, last_image_set: ImageSet) -> bool:
+        last_image = last_image_set[-1]
+        is_consecutive: bool = (file1.image_number == last_image.image_number + 1)
+
+        return (not file2 and is_consecutive)
+
     def _collate_forms(self) -> dict:
         collated_forms = {}
 
@@ -129,10 +137,9 @@ class TranscriptionsProcessor:
             if current_form_name not in collated_forms:
                 collated_forms[current_form_name] = []
 
-            if last_image := (collated_forms[current_form_name][-1][-1] if collated_forms[current_form_name] else None):
-                is_consecutive: bool = (transcription.file1.image_number == last_image.image_number + 1)
-
-                if not transcription.file2 and is_consecutive:
+            if current_form_name == 'B496/EI' and \
+                collated_forms['B496/EI'] and \
+                self._does_B496_have_3rd_image(transcription.file1, transcription.file2, collated_forms['B496/EI'][-1]):
                     collated_forms[current_form_name][-1].append(ImageFile(transcription.file1))
                     continue
             
