@@ -47,13 +47,7 @@ class ImageFile:
         self._id = value
 
 
-@dataclass
-class Form:
-    document_type: InitVar[FormType]
-    images: list[ImageFile]
-    
-    def __post_init__(self, document_type):
-        self.name = document_type.name
+ImageSet = list[ImageFile]
 
 
 @dataclass
