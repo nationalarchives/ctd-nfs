@@ -167,15 +167,15 @@ class Farm:
         files_in_proof_format = []
         ids_in_proof_format = []
 
-        for form_type, images in self.forms.items():
-            if len(images) == 1:
+        for form_type, image_sets in self.forms.items():
+            if len(image_sets) == 1:
                 forms_in_proof_format.append(form_type)
             else:
-                for index in range(len(images)):
+                for index in range(len(image_sets)):
                     forms_in_proof_format.append(f"{form_type} ({index + 1})")
-            for imageset in images:
-                files_in_proof_format.append(", ".join([image.name for image in imageset]))
-                ids_in_proof_format.append(", ".join([image.id for image in imageset]))
+            for images in image_sets:
+                files_in_proof_format.append(", ".join([_img.name for _img in images]))
+                ids_in_proof_format.append(", ".join([_img.id for _img in images]))
 
         return {
             'forms': forms_in_proof_format,
