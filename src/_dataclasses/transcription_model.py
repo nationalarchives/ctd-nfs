@@ -133,9 +133,9 @@ class Transcription:
  
     @property
     def is_form(self) -> bool:
-        completed_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
-        other_form: bool = self.document_type.name == "Other" and not self.has_data
-        if (not self.file1.is_cover) and (completed_form or other_form):
+        standard_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
+        other_form: bool = self.document_type.name == "Other"
+        if (not self.is_cover_page) and (standard_form or other_form):
             return True
         return False
     
