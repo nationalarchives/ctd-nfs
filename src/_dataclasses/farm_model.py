@@ -7,7 +7,7 @@ from functools import cached_property
 
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
-from src._dataclasses.transcription_model import Transcription, Filename, FormType
+from src._dataclasses.transcription_model import Transcription, Filename
 
 
 def initialise_forms_mapping() -> dict:
