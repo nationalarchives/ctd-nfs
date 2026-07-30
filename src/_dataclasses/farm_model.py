@@ -56,7 +56,7 @@ class PostalDetails:
     address: str = ""
     
     @property
-    def name_and_address(self) -> str:
+    def full_address(self) -> str:
         has_address = self.address != "[not specified]"
         has_name = self.name != "[not specified]"
 
@@ -88,9 +88,9 @@ class Respondent:
     @property
     def names_and_addresses(self) -> list[str]:
         final = [
-            detail.name_and_address
+            detail.full_address
             for detail in self.details
-            if detail.name_and_address != "[not specified]"
+            if detail.full_address != "[not specified]"
             ]
         return final if final else ["[not specified]",]
 
