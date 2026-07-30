@@ -113,7 +113,7 @@ class Farm:
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
-    forms: dict[str, list[ImageFile]] = field(default_factory=dict)
+    forms: dict[str, list[ImageSet]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
