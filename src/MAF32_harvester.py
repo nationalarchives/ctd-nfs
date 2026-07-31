@@ -60,17 +60,17 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
-    proof_data = [
+    farms_in_proof_format = [
             farm.to_proof()
             for farm in farms_store.values()
         ]
             
     excel_data = [{
         'sheet_name': "Proof data",
-        'row_data': proof_data,
+        'row_data': farms_in_proof_format,
         'column_settings': CSVEXCEL.PROOF_COLUMNS,
     }]
-    
+  
     proof_file_name = PATH.HARVEST / f"{input_file_name.replace('_forHarvester_', '_MAF32 proof_')}.xlsx"
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
@@ -82,7 +82,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
                 header_name: row[index]
                 for index, (header_name, _) in enumerate(CSVEXCEL.PROOF_COLUMNS)
             }
-            for row in proof_data
+            for row in farms_in_proof_format
         ]
         )
 
