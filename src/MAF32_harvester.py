@@ -44,6 +44,7 @@ from src._dataclasses.transcription_model import Transcription
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
 from src.harvester.farm_attributiser import set_farm_attributes
+from src.preview_builder import create_html_preview
 
 
 logger = create_logger("src._config", "logging.yaml")
@@ -258,6 +259,9 @@ def run_pipeline(test_mode: bool=False) -> None:
 
         logger.info(" ===== CREATING PROOF FILE ===== ")
         proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem)
+
+        logger.info(" ===== CREATING HTML PREVIEW ===== ")
+        create_html_preview(proof_file, excel_data=preview_data)
 
 
 if __name__ == "__main__":
