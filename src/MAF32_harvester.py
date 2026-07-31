@@ -30,7 +30,7 @@ Yields:
 import csv
 import shelve
 from pathlib import Path
-from typing import Generator, Iterator
+from collections.abc import Generator, Iterator
 import os
 import dbm
 
