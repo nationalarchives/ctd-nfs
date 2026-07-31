@@ -256,8 +256,8 @@ def run_pipeline(test_mode: bool=False) -> None:
         farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
 
-        logger.info(" ===== CREATING PROOF FILES ===== ")
-        proof_file = create_proof_file(farms_store, county, csv_file.stem)
+        logger.info(" ===== CREATING PROOF FILE ===== ")
+        proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem)
 
 
 if __name__ == "__main__":
