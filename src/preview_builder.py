@@ -71,9 +71,11 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     }
            
             
-def create_html_preview(proof_file: Path, test_mode: bool=False) -> None:
+def create_html_preview(proof_file: Path, excel_data=None, test_mode: bool=False) -> None:
     county, _ = proof_file.name.split("_", maxsplit=1)
-    proof_data = load_excel_data(proof_file)
+    
+    proof_data = load_excel_data(proof_file) if not excel_data else excel_data
+    
     cleaned_data = clean_excel_data(proof_data)
     context = create_html_preview_context(cleaned_data, county)
     write_html_page(context, county)
