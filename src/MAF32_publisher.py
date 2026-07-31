@@ -48,8 +48,10 @@ def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_
 
 def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
+    publish_dir = PATH.PUBLISH / f"{county}/MAF 32/"
+    publish_dir.mkdir(exist_ok=True, parents=True)
     for document in documents:
-        with open(PATH.PUBLISH / f"{document['record']['iaid']}.json", 'w') as final_file:
+        with open(publish_dir / f"{document['record']['iaid']}.json", 'w') as final_file:
             logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
             json.dump(document, final_file)   
            
