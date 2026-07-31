@@ -57,7 +57,7 @@ def write_catalogue_documents(documents: list[dict], county: str) -> None:
            
             
 def process_proof_files(test_mode: bool=False) -> None:
-    xlsx_files = PATH.TEST_PUBLISH.glob("*.xlsx") if test_mode else PATH.PUBLISH.glob("*.xlsx")
+    xlsx_files = PATH.HARVEST.glob("TEST/*.xlsx") if test_mode else PATH.HARVEST.glob("*.xlsx")
 
     for proof_file in xlsx_files:
         county, _ = proof_file.name.split("_", maxsplit=1)
