@@ -46,7 +46,7 @@ def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_
     return documents
 
 
-def write_catalogue_documents(documents: list[dict]) -> None:
+def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     for document in documents:
         with open(PATH.PUBLISH / f"{document['record']['iaid']}.json", 'w') as final_file:
@@ -67,7 +67,7 @@ def process_proof_files(test_mode: bool=False) -> None:
         if test_mode:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents)
+        write_catalogue_documents(final_documents, county)
 
 
 def main(test_mode: bool=False):
