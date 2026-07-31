@@ -49,7 +49,7 @@ from src.harvester.farm_attributiser import set_farm_attributes
 logger = create_logger("src._config", "logging.yaml")
 
 
-def create_proof_file(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False) -> Path:
+def create_proof_file(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False) -> tuple:
     """_summary_
 
     Arguments:
@@ -74,8 +74,17 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
     proof_file_name = PATH.HARVEST / f"{input_file_name.replace('_forHarvester_', '_MAF32 proof_')}.xlsx"
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
-    return proof_file_name
 
+    return (
+        proof_file_name,
+        [
+            {
+                header_name: row[index]
+                for index, (header_name, _) in enumerate(CSVEXCEL.PROOF_COLUMNS)
+            }
+            for row in proof_data
+        ]
+        )
 
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
