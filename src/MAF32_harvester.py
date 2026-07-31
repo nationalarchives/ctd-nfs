@@ -230,8 +230,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
         with open(csv_file, newline='') as file_obj:
             raw_csv_data = csv.DictReader(file_obj, skipinitialspace=True)
             logger.info(f" ===== PROCESSING FILE: {csv_file.stem} ===== ")
-            for row in raw_csv_data:
-                yield row
+            yield from raw_csv_data
 
     except csv.Error as csv_error_message:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
