@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
+from src._tools.constants import DATA, REGEX
 from src._tools.helpers import TranscriptionDataError, ValueObject
-from src._tools.constants import REGEX, DATA
 
 
 def _page_pattern_match(filename: str) -> re.Match[str] | None:

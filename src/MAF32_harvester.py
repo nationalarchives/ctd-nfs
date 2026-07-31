@@ -28,24 +28,22 @@ Yields:
     2. File_IDs maps each form image file name to its image id
 """
 import csv
-import shelve
-from pathlib import Path
-from collections.abc import Generator, Iterator
-import os
 import dbm
+import os
+import shelve
+from collections.abc import Generator, Iterator
+from pathlib import Path
 
-
-from src._tools.logging_setup import create_logger
-from src._tools.constants import CSVEXCEL, PATH
-from src._tools.helpers import TranscriptionDataError, create_uuid_str
-from src._tools.xlwriter import ExcelWriter
 from src._dataclasses.farm_model import Farm
 from src._dataclasses.transcription_model import Transcription
+from src._tools.constants import CSVEXCEL, PATH
+from src._tools.helpers import TranscriptionDataError, create_uuid_str
+from src._tools.logging_setup import create_logger
+from src._tools.xlwriter import ExcelWriter
+from src.harvester.farm_attributiser import set_farm_attributes
 from src.harvester.transcription_checker import TranscriptionChecker
 from src.harvester.transcriptions_processor import TranscriptionsProcessor
-from src.harvester.farm_attributiser import set_farm_attributes
 from src.preview_builder import create_html_preview
-
 
 logger = create_logger("src._config", "logging.yaml")
 

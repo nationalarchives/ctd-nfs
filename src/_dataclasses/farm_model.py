@@ -1,13 +1,11 @@
-# TODO: split out Farm initialization attributes to new Form dataclass module
-
-from dataclasses import dataclass, field, InitVar
 import shelve
 import uuid
+from dataclasses import InitVar, dataclass, field
 from functools import cached_property
 
+from src._dataclasses.transcription_model import Filename, Transcription
 from src._tools.constants import PATH
 from src._tools.helpers import create_uuid_str
-from src._dataclasses.transcription_model import Transcription, Filename
 
 
 def initialise_forms_mapping() -> dict:
