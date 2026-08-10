@@ -20,7 +20,7 @@ class DiscoveryMAF32:
         ref = self.farm['catalogue_reference'].rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
-        api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+        api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
         result = requests.get(api_query)
         parent_record = result.json()
 
