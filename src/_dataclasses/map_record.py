@@ -59,11 +59,14 @@ class DiscoveryMAF73:
         ref = self.map_data['Reference'].rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
-        api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+        # api_query = fr"{DISCOVERY.API_URI}/search/records?sps.searchQuery={ref_url_safe}"
+        api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
+        # https://discovery.nationalarchives.gov.uk/API/records/v1/collection/MAF%2073%2F34%2F1
         result = requests.get(api_query)
 
-        for record in result.json()['records']:
-            if record['reference'] == ref:
+        # for record in result.json()['records']:
+        for record in result.json()['assets']:
+            if record['citableReference'] == ref:
                 return record['id']
 
     @property
@@ -126,4 +129,28 @@ class DiscoveryMAF73:
                 'totalSize': None,
             }
         }
+
+    def for_index(self) -> dict:
+        _, reference_part = self.map_data['Reference'].rsplit("/", maxsplit=1)
+        possible_note = {'note': self.map_data['Note']} if self.map_data['Note'] else {}
+        return {
+            'record': {
+                'iaid': self.id,
+                'citableReference': self.map_data['Reference'],
+                'replicaId': self.replica_id,
+                'parentId': self.parent_id,
+                'scopeContent': {'description': self.map_data['Miscellaneous Comments']},
+                'referencePart': reference_part,
+                'catalogueLevel': 7,
+                'accessConditions': "Closed for 50 years",
+            } | possible_note | DISCOVERY.MAF73_RECORD_CONSTANTS,
+            'updateScope': self.update_scope,
+            'replica': {
+                'files': self.files,
+                'replicaId': self.replica_id,
+                'origination': "DigitalSurrogate",
+                'totalSize': None,
+            }
+        }
+
     

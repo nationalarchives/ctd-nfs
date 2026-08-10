@@ -1,7 +1,7 @@
 import json
 import pprint
 
-from src._dataclasses.MAF73_model import DiscoveryMAF73
+from _dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import PATH
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
