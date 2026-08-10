@@ -264,7 +264,7 @@ def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str,
     return initialised_farms
         
 
-def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
+def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict]:
     """_summary_
 
     Arguments:
@@ -297,7 +297,7 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, No
         yield normalised_data_row
 
 
-def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
+def load_data_from_file(csv_file: Path) -> Generator[dict]:
     """_summary_
 
     Args:
