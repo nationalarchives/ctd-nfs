@@ -9,13 +9,12 @@ Checks preformed:
 * confirm form type is valid for filename(s) provided
 """
     
+import logging
 import re
 from datetime import datetime
-import logging
 
-from src._tools.constants import REGEX, DATA
 from src._dataclasses.transcription_model import Transcription
-
+from src._tools.constants import DATA, REGEX
 
 logger = logging.getLogger(__name__)
 

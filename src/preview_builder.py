@@ -5,11 +5,10 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from src._tools.constants import PATH
-from src._tools.helpers import load_excel_data, clean_excel_data
-from src._tools.logging_setup import create_logger
 from src._dataclasses.MAF32_model import DiscoveryMAF32
-
+from src._tools.constants import PATH
+from src._tools.helpers import clean_excel_data, load_excel_data
+from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
 

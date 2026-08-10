@@ -1,13 +1,14 @@
 """
 Dataclasses and factories used to create Discovery JSON records
 """
+import re
 from dataclasses import dataclass
 from urllib import parse
+
 import requests
-import re
 
 from src._tools.constants import DISCOVERY
-    
+
 
 @dataclass
 class DiscoveryMAF32:

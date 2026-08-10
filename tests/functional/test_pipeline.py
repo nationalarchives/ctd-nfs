@@ -1,14 +1,13 @@
-import shelve
 import os
+import shelve
 from pathlib import Path
+
 import pytest
 
+from src._dataclasses.farm_model import HarvestedFarm
 from src._tools.constants import PATH
-from src.MAF32_harvester import run_pipeline
-from src.MAF32_harvester import create_proof_files
-from src._dataclasses.farm_model import Farm
 from src._tools.logging_setup import create_logger
-
+from src.farm_harvester import create_proof_file, run_pipeline
 
 logger = create_logger("src._config", "logging.yaml")
 

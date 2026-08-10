@@ -1,12 +1,11 @@
-import re
-from datetime import datetime
 import dbm
+import re
 from collections import Counter
+from datetime import datetime
 
-from src._dataclasses.farm_model import ImageFile
-from src._tools.constants import DATA, REGEX, PATH
-from src._dataclasses.transcription_model import Transcription, Filename
-from src._dataclasses.farm_model import ImageSet
+from src._dataclasses.farm_model import ImageFile, ImageSet
+from src._dataclasses.transcription_model import Filename, Transcription
+from src._tools.constants import DATA, PATH, REGEX
 
 
 class TranscriptionsProcessor:
