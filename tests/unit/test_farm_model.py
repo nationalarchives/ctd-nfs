@@ -1,6 +1,7 @@
 import pytest
 
-from src._dataclasses.farm_model import HarvestedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
+
 
 def test_farm_dataclass_instantiation(capsys, farms):
 	"""_summary_
