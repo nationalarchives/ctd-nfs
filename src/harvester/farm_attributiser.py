@@ -1,6 +1,6 @@
 import re
 
-from src._dataclasses.farm_model import HarvestedFarm, PostalDetails, Respondent
+from src._dataclasses.farm_combine import HarvestedFarm, PostalDetails, Respondent
 from src.harvester.details_resolver import resolve_postal_details
 
 

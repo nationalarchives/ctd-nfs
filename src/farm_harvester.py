@@ -35,7 +35,7 @@ import shelve
 from collections.abc import Generator, Iterator
 from pathlib import Path
 
-from src._dataclasses.farm_model import HarvestedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from src._dataclasses.farm_model import HarvestedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._tools.constants import PATH
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import create_proof_file, run_pipeline
