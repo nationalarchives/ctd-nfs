@@ -94,7 +94,7 @@ class Respondent:
 
 
 @dataclass
-class Farm:
+class HarvestedFarm:
     county: str
     parish: str
     primary_farm_number: str

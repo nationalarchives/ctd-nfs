@@ -22,7 +22,7 @@ def test_file_processor():
     with shelve.open(PATH.TEST_DB, 'r') as test_db:
         for reference in test_db.values():
             for farm in reference.values(): 
-                assert isinstance(farm['farm'], Farm)
+                assert isinstance(farm['farm'], HarvestedFarm)
                 # assert farm['source']
 
 

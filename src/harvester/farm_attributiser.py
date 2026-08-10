@@ -1,6 +1,6 @@
 import re
 
-from src._dataclasses.farm_model import Farm, PostalDetails, Respondent
+from src._dataclasses.farm_model import HarvestedFarm, PostalDetails, Respondent
 from src.harvester.details_resolver import resolve_postal_details
 
 
@@ -13,7 +13,7 @@ def collate_attributes(values: list[str]) -> str:
     return output or ["[not specified]",]
 
 
-def set_values_of_non_respondent_attributes(farm: Farm, attributes: dict) -> Farm:
+def set_values_of_non_respondent_attributes(farm: HarvestedFarm, attributes: dict) -> HarvestedFarm:
     for field in ['farm_name', 'acreage', 'OS_map_sheet', 'field_info_date', 'primary_record_date']:
         if field == 'farm_name':
             unique_farm_names = []
@@ -75,7 +75,7 @@ def set_postal_details(values: list[dict]) -> list[PostalDetails]:
     ]
 
 
-def create_respondents(farm: Farm, details: dict) -> Farm:
+def create_respondents(farm: HarvestedFarm, details: dict) -> HarvestedFarm:
     farm.addressee = Respondent(set_postal_details(details['addressee']))
     farm.farmer = Respondent(set_postal_details(details['farmer']))
     farm.landowner = Respondent(set_postal_details(details['landowner']))

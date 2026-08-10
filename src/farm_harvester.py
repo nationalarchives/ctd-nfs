@@ -35,7 +35,7 @@ import shelve
 from collections.abc import Generator, Iterator
 from pathlib import Path
 
-from src._dataclasses.farm_model import Farm
+from src._dataclasses.farm_model import HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, PATH
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
@@ -86,7 +86,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         ]
         )
 
-def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
+def update_farms(farms_store: dict[str, dict[str, HarvestedFarm]], farms_to_update: list[tuple]) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:
@@ -108,7 +108,7 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
     return farms_store
 
 
-def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Farm]]) -> dict[str, dict[str, Farm]]:
+def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, HarvestedFarm]]) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:
@@ -136,7 +136,7 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Farm]]
     return farms_store
 
 
-def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool = False) -> None:
+def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, test_mode: bool = False) -> None:
     """_summary_
 
     Arguments:
@@ -150,7 +150,7 @@ def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool
         farm_db[county] = farms_store.copy()
 
 
-def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
+def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
     """_summary_
 
     Arguments:
@@ -168,7 +168,7 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
     return farms_store
 
 
-def collate_transcription_by_farm(candidate_farm: Farm, transcription: Transcription, farms_store: dict) -> Farm:
+def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: Transcription, farms_store: dict) -> HarvestedFarm:
     """_summary_
 
     Arguments:
@@ -192,7 +192,7 @@ def collate_transcription_by_farm(candidate_farm: Farm, transcription: Transcrip
         return existing_farm
 
 
-def initialise_farm(transcription: Transcription) -> Farm:
+def initialise_farm(transcription: Transcription) -> HarvestedFarm:
     """_summary_
 
     Arguments:
@@ -201,7 +201,7 @@ def initialise_farm(transcription: Transcription) -> Farm:
     Returns:
         _description_
     """    
-    candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
+    candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
     with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
         db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
         if db_ids:
@@ -241,7 +241,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         return
 
 
-def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str, Farm]]:
+def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:

@@ -1,6 +1,6 @@
 import pytest
 
-from src._dataclasses.farm_model import Farm
+from src._dataclasses.farm_model import HarvestedFarm
 
 def test_farm_dataclass_instantiation(capsys, farms):
 	"""_summary_
@@ -13,11 +13,11 @@ def test_farm_dataclass_instantiation(capsys, farms):
 	the capture fixtures have a disabled() method that can be used as a context manager, disabling capture inside the with block
 	"""	
 	for farm_fixture in farms:
-		new_farm = Farm(**farm_fixture)
+		new_farm = HarvestedFarm(**farm_fixture)
 		with capsys.disabled():
 			print(f"{new_farm.catalogue_reference}")
 			print(new_farm.forms)
-		assert isinstance(new_farm, Farm)
+		assert isinstance(new_farm, HarvestedFarm)
 
 
 
