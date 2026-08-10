@@ -1,14 +1,14 @@
 import json
 from importlib.resources import as_file, files
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import yaml
 
 from src._tools.xlreader import read_file
 
 
-def get_data_from_file(_data_file: Union[str, Path], _csv_fieldnames=None) -> Any:
+def get_data_from_file(_data_file: str | Path, _csv_fieldnames=None) -> Any:
     if _data_file.suffix in [".xls", ".xlsx"]:
         return read_file(_data_file)
 

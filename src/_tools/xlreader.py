@@ -5,7 +5,6 @@ Data is extracted as a dictionary where key: value refers to sheet_name: [rows o
 """
 import io
 import logging
-from typing import Union
 
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -15,7 +14,7 @@ from xlrd.biffh import XLRDError
 logger = logging.getLogger(__name__)
 
 
-def read_excel_2007(xls_file: Union[str, bytes]) -> dict[list[tuple]]:
+def read_excel_2007(xls_file: str | bytes) -> dict[list[tuple]]:
     """
     uses xlrd module to read data from 2003/2007 Excel (i.e. ending in .xls)
     :param xls_file:
@@ -31,7 +30,7 @@ def read_excel_2007(xls_file: Union[str, bytes]) -> dict[list[tuple]]:
         }
 
 
-def read_excel_2010(xlsx_file: Union[str, bytes]) -> dict[list[tuple]]:
+def read_excel_2010(xlsx_file: str | bytes) -> dict[list[tuple]]:
     """
     uses openpyxl module to read data from 2010 Excel (i.e. ending in .xlsx)
     :param xlsx_file:
@@ -45,7 +44,7 @@ def read_excel_2010(xlsx_file: Union[str, bytes]) -> dict[list[tuple]]:
 
 
 # @log_decorator()
-def read_file(excel_file: Union[str, bytes]) -> dict[list[tuple]]:
+def read_file(excel_file: str | bytes) -> dict[list[tuple]]:
     """
     
     :param excel_file:
