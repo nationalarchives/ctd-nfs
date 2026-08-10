@@ -226,3 +226,25 @@ class Farm:
             self._join(self.primary_record_date),
         ]
 
+
+@dataclass
+class ArchivedFarm:
+	id: str
+	replica_id: str
+	catalogue_reference: str
+	farm_reference: str
+	county: str
+	parish: str
+	primary_farm_number: str
+	farm_name: str
+	addressee: dict
+	farmer: dict
+	landowner: dict
+	acreage: str
+	OS_map_sheet: str
+	field_info_date: str
+	primary_record_date: str
+	forms: dict
+	warnings: dict
+	source_data: dict
+
