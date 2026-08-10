@@ -1,7 +1,7 @@
 import dbm
 import re
 from collections import Counter
-from datetime import datetime
+from datetime import UTC, datetime
 
 from src._dataclasses.farm_model import ImageFile, ImageSet
 from src._dataclasses.transcription_model import Filename, Transcription
@@ -77,7 +77,7 @@ class TranscriptionsProcessor:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                parsed_date = datetime.strptime(candi_date, fmt).astimezone()
+                parsed_date = datetime.strptime(candi_date, fmt).replace(tzinfo=UTC)
                 day, month, year = parsed_date.strftime("%d %B %Y").split()
                 break
             except ValueError:

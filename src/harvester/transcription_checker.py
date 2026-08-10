@@ -11,7 +11,7 @@ Checks preformed:
     
 import logging
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import DATA, REGEX
@@ -175,7 +175,7 @@ class TranscriptionChecker:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                datetime.strptime(candi_date, fmt).astimezone()
+                datetime.strptime(candi_date, fmt).replace(tzinfo=UTC)
             except ValueError as ve:
                 if "day is out of range for month" in str(ve):
                     return f"[ERROR] '{candi_date}' is not a valid calendar date."
