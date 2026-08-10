@@ -36,7 +36,7 @@ def get_map_ids(reference: str) -> dict[str, uuid.UUID]:
                 'replica_id': db_ids['replica_id'],
             }
         else:
-            _ids = "{'id': '%s', 'replica_id': '%s'}" % (create_uuid_str(), create_uuid_str())
+            _ids = f"{{'id': '{create_uuid_str()}', 'replica_id': '{create_uuid_str()}'}}"
             farm_ids_db[reference] = _ids
             map_ids = eval(_ids)
 

@@ -209,7 +209,7 @@ def initialise_farm(transcription: Transcription) -> Farm:
             candidate_farm.id = db_ids['id']
             candidate_farm.replica_id = db_ids['replica_id']
         else:
-            farm_ids_db[candidate_farm.catalogue_reference] = "{'id': '%s', 'replica_id': '%s'}" % (candidate_farm.id, create_uuid_str())
+            farm_ids_db[candidate_farm.catalogue_reference] = f"{{'id': '{candidate_farm.id}', 'replica_id': '{create_uuid_str()}'}}"
 
     return candidate_farm
 
