@@ -82,7 +82,6 @@ class TranscriptionChecker:
 
         msg = f"{self.row_prefix}is a cover so will not be processed."
         logger.info(f" {msg:->80}")
-        return None
 
     def _check_values_between_filenames(self) -> None:
         """
