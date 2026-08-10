@@ -11,7 +11,7 @@ from pathlib import Path
 class CSVandExcelNamespace():
     __slots__ = ()
 
-    CSV_HEADERS = [
+    CSV_HEADERS: typing.ClassVar = [
         'filename_1',
         'filename_2',
         'document_type',
@@ -38,7 +38,7 @@ class CSVandExcelNamespace():
         'primary_record_date',
         'notes',
     ]
-    PROOF_COLUMNS = [   
+    PROOF_COLUMNS: typing.ClassVar = [   
         ('catalogue_reference', 20),
         ('Reference Warnings', 40),
         ('farm_id', 50),
@@ -71,7 +71,7 @@ class CSVandExcelNamespace():
 
 class DataNamespace():
     __slots__ = ()
-    FORM_TYPES = [
+    FORM_TYPES: typing.ClassVar = [
 		'C 47/SSY',
 		'C 49/SSY',
 		'C51/SSY',
@@ -81,7 +81,7 @@ class DataNamespace():
 		'Other',
 		'Cover',
     ]   
-    FARM_DATA_FIELDS = [
+    FARM_DATA_FIELDS: typing.ClassVar = [
 		'additional_farms',
 		'farm_name',
 		'addressee_title',
@@ -102,7 +102,7 @@ class DataNamespace():
 		'primary_record_date',
         'notes',
     ]
-    DATE_FORMATS = [
+    DATE_FORMATS: typing.ClassVar = [
         "%d %B %Y",
         "%d %B %y",
         "%d %b %Y",
@@ -117,8 +117,8 @@ class DataNamespace():
         "%b",
         "%B",
     ]
-    MONTH_NAMES: list = list(calendar.month_name)
-    ABBR_MONTH_NAMES: list = list(calendar.month_abbr)
+    MONTH_NAMES: typing.ClassVar = list(calendar.month_name)
+    ABBR_MONTH_NAMES: typing.ClassVar = list(calendar.month_abbr)
 
 
 class RegexNamespace():
@@ -180,13 +180,13 @@ class PathNamespace():
 class DiscoveryNamespace():
     API_URI = r"https://discovery.nationalarchives.gov.uk/API"
 
-    _closure_status = {
+    _closure_status: typing.ClassVar = {
         'Closed Or Retained Document, Closed Description': "C",
         'Closed Or Retained Document, Open Description': "D",
         'Open Document, Open Description': "O",
         'Partially Closed… not currently used': "P",
     }
-    UPDATE_SCOPE = {
+    UPDATE_SCOPE: typing.ClassVar = {
         'new_record_with_digital_files': 'RecordAndReplica',
         'updated_digital_files': 'RecordAndReplica',
         'update_metadata_and_digital_files': 'RecordAndReplica',
@@ -194,7 +194,7 @@ class DiscoveryNamespace():
         'update_metadata_not_digital_files': 'RecordOnly',
         'update_metadata_only_record': 'RecordOnly',
     }
-    MAF32_RECORD_CONSTANTS = {
+    MAF32_RECORD_CONSTANTS: typing.ClassVar = {
         'catalogueLevel': 8,
         'coveringFromDate': 19410101,
         'coveringToDate': 19431231,
@@ -213,7 +213,7 @@ class DiscoveryNamespace():
         'source': "FS",
         'title': None,
     }
-    MAF73_RECORD_CONSTANTS = {
+    MAF73_RECORD_CONSTANTS: typing.ClassVar = {
         'coveringFromDate': 19410101,
         'coveringToDate': 19431231,
         'chargeType': 1,
