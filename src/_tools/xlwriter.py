@@ -1,8 +1,9 @@
+import string
 from operator import itemgetter
+from pathlib import Path
+
 import openpyxl
 from openpyxl.styles import Alignment
-from pathlib import Path
-import string
 
 
 class ExcelWriter:

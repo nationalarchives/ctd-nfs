@@ -2,9 +2,10 @@
 module for defining constants and constant namespaces.
 """
 
-from pathlib import Path
-import re
 import calendar
+import re
+import typing
+from pathlib import Path
 
 
 class CSVandExcelNamespace():

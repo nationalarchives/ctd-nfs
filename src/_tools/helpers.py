@@ -1,10 +1,9 @@
-from pathlib import Path
+import logging
 import re
 import uuid
-import logging
+from pathlib import Path
 
 from src._tools.xlreader import read_file
-
 
 logger = logging.getLogger(__name__)
 

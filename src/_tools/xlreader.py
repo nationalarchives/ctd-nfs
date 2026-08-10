@@ -3,15 +3,14 @@ xlreader.py
 Extracts data from xls and xlsx files
 Data is extracted as a dictionary where key: value refers to sheet_name: [rows of data as a list of tuples]
 """
-from typing import Union
 import io
 import logging
+from typing import Union
 
-from xlrd import open_workbook
-from xlrd.biffh import XLRDError
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
-
+from xlrd import open_workbook
+from xlrd.biffh import XLRDError
 
 logger = logging.getLogger(__name__)
 
