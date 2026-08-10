@@ -44,6 +44,13 @@ class ImageFile:
     def id(self, value: uuid.UUID):
         self._id = value
 
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'name': self.name,
+            'image_number': self.image_number,
+        }
+
 
 ImageSet = list[ImageFile]
 
@@ -69,6 +76,13 @@ class PostalDetails:
         
         if not (has_name or has_address):
             return "[not specified]"
+    
+    def to_dict(self) -> dict:
+        return {
+            'name': self.name,
+            'address': self.address,
+            'full_address': self.full_address,
+        }
 
 
 @dataclass
@@ -91,6 +105,12 @@ class Respondent:
             if detail.full_address != "[not specified]"
             ]
         return final if final else ["[not specified]",]
+    
+    def to_dict(self) -> dict:
+        return {
+            'details': [detail.to_dict() for detail in self.details],
+            'names_and_addresses': self.names_and_addresses,
+        }
 
 
 @dataclass
@@ -225,6 +245,27 @@ class HarvestedFarm:
             self._join(self.field_info_date),
             self._join(self.primary_record_date),
         ]
+
+    def convert_forms_to_dict(self) -> dict:
+        return {
+            form_type: [
+                image.to_dict() 
+                for image_file in list_of_imageFiles 
+                for image in image_file
+            ]
+            for form_type, list_of_imageFiles in self.forms.items()
+            if list_of_imageFiles
+        }
+
+    def convert_source_data_to_dict(self) -> dict:
+        return {
+            form_type: [
+                transcription.to_dict() 
+                for transcription in list_of_transcriptions
+            ]
+            for form_type, list_of_transcriptions in self.source_data.items()
+            if list_of_transcriptions
+        }
 
 
 @dataclass
