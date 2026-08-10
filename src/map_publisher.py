@@ -20,29 +20,37 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
         logger.info(f"Farm {map_proof['Reference']} --> Built record {map_document.id} with {len(map_document.files)} images")
 
         documents.append(map_document.to_dict())
+        # documents.append(map_document.for_index())
 
     return documents
 
 
-def write_catalogue_documents(documents: list[dict]) -> None:
+def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
+    publish_dir = PATH.PUBLISH / f"{county}/MAF 73/"
+    # publish_dir = PATH.PUBLISH 
+    publish_dir.mkdir(exist_ok=True, parents=True)
     for document in documents:
-        with open(PATH.PUBLISH / f"{document['record']['iaid']}.json", 'w') as final_file:
+        with open(publish_dir / f"{document['record']['iaid']}.json", 'w') as final_file:
             logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
             json.dump(document, final_file)   
            
             
 def process_proof_files(test_mode: bool=False) -> None:
-    xlsx_files = PATH.TEST_INPUT.glob("*MAF73*.xlsx") if test_mode else PATH.INPUT.glob("*MAF73*.xlsx")
+    xlsx_files = PATH.INPUT.glob("TEST/*MAF73*.xlsx") if test_mode else PATH.INPUT.glob("*MAF73*.xlsx")
 
     for proof_file in xlsx_files:
+        if proof_file.name.startswith("Index"):
+            continue
+        # county = ""
+        county, _ = proof_file.name.split("_", maxsplit=1)
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
         final_documents = build_catalogue_documents(cleaned_data, test_mode)
         if test_mode:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents)
+        write_catalogue_documents(final_documents, county)
 
 
 def main(test_mode: bool=False):

@@ -1,4 +1,5 @@
-"""MAF32_Publisher
+"""
+farm_Publisher
 
 This module runs the first stage of the ETL pipeline for the Farm Survey data analysis work. 
 The pipeline starts with a csv file of all the transcribed forms for a single county, which is then collated & transformed into individual farms,
@@ -86,6 +87,15 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         )
 
 def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[tuple]) -> dict[str, dict[str, Farm]]:
+    """_summary_
+
+    Arguments:
+        farms_store -- _description_
+        farms_to_update -- _description_
+
+    Returns:
+        _description_
+    """
     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
    
     for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
@@ -99,6 +109,14 @@ def update_farms(farms_store: dict[str, dict[str, Farm]], farms_to_update: list[
 
 
 def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Farm]]) -> dict[str, dict[str, Farm]]:
+    """_summary_
+
+    Arguments:
+        farms_store -- _description_
+
+    Returns:
+        _description_
+    """    
     logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
 
@@ -119,11 +137,31 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Farm]]
 
 
 def write_farms_to_db(farms_store: dict[str, Farm], county: str, test_mode: bool = False) -> None:
+    """_summary_
+
+    Arguments:
+        farms_store -- _description_
+        county -- _description_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+    """    
     with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
         farm_db[county] = farms_store.copy()
 
 
 def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
+    """_summary_
+
+    Arguments:
+        county -- _description_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+
+    Returns:
+        _description_
+    """    
     with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'r') as farm_db:
         farms_store = farm_db[county].copy()
 
@@ -131,6 +169,16 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, Farm]:
 
 
 def collate_transcription_by_farm(candidate_farm: Farm, transcription: Transcription, farms_store: dict) -> Farm:
+    """_summary_
+
+    Arguments:
+        candidate_farm -- _description_
+        transcription -- _description_
+        farms_store -- _description_
+
+    Returns:
+        _description_
+    """    
     form_type = transcription.document_type.name
     if candidate_farm.catalogue_reference not in farms_store:
         candidate_farm.source_data[form_type].append(transcription)
@@ -145,6 +193,14 @@ def collate_transcription_by_farm(candidate_farm: Farm, transcription: Transcrip
 
 
 def initialise_farm(transcription: Transcription) -> Farm:
+    """_summary_
+
+    Arguments:
+        transcription -- _description_
+
+    Returns:
+        _description_
+    """    
     candidate_farm = Farm(transcription.county, transcription.parish, transcription.primary_farm_number)
     with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
         db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
@@ -159,6 +215,15 @@ def initialise_farm(transcription: Transcription) -> Farm:
 
 
 def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Transcription | None:
+    """_summary_
+
+    Arguments:
+        farm_data_row -- _description_
+        row_number -- _description_
+
+    Returns:
+        _description_
+    """    
     try:
         transcription = Transcription(**farm_data_row)
         if transcription.is_cover_page:
@@ -177,6 +242,14 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
 
 
 def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str, Farm]]:
+    """_summary_
+
+    Arguments:
+        csv_data -- _description_
+
+    Returns:
+        _description_
+    """    
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
     logger.info(" ===== TRANSFORMING ROWS TO FARMS ===== ")
     initialised_farms = {}   
@@ -192,6 +265,14 @@ def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str,
         
 
 def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict, None, None]:
+    """_summary_
+
+    Arguments:
+        raw_csv_data -- _description_
+
+    Yields:
+        _description_
+    """    
     """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
     logger.info(" ===== NORMALIZING CSV DATA ===== ")
     for row in raw_csv_data:
@@ -237,6 +318,11 @@ def load_data_from_file(csv_file: Path) -> Generator[dict, None, None]:
 
 
 def run_pipeline(test_mode: bool=False) -> None:
+    """_summary_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+    """    
     input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
     logger.info(" ===== HARVESTING FARMS ===== ")
 

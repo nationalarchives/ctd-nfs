@@ -1,4 +1,5 @@
-"""MAF32_Publisher
+"""
+farm_Publisher
 
 This module runs the second stage of the ETL pipeline for the Farm Survey data analysis work. 
 The stage starts with the proof file for a single county initially returned by MAF32_Harvester after it has been reviewed, and possibly edited, by the CTD team. 
