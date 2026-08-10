@@ -77,7 +77,7 @@ class TranscriptionsProcessor:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                parsed_date = datetime.strptime(candi_date, fmt)
+                parsed_date = datetime.strptime(candi_date, fmt).astimezone()
                 day, month, year = parsed_date.strftime("%d %B %Y").split()
                 break
             except ValueError:

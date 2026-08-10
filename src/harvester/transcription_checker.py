@@ -176,7 +176,7 @@ class TranscriptionChecker:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                datetime.strptime(candi_date, fmt)
+                datetime.strptime(candi_date, fmt).astimezone()
             except ValueError as ve:
                 if "day is out of range for month" in str(ve):
                     return f"[ERROR] '{candi_date}' is not a valid calendar date."
