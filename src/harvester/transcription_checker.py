@@ -63,7 +63,7 @@ class TranscriptionChecker:
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-        elif not self.transcription.document_type.name == "Cover" and self.transcription.file1.is_cover:
+        elif self.transcription.document_type.name != "Cover" and self.transcription.file1.is_cover:
             self.warnings['Filename Warnings'].append(
                 f"{self.row_prefix}{self.transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{self.transcription.document_type.name}'."
             )
