@@ -23,9 +23,7 @@ class Filename(ValueObject):
 
     @property   
     def is_cover(self) -> bool:
-        if _cover_pattern_match(self.name):
-            return True
-        return False
+        return bool(_cover_pattern_match(self.name))
     
     @property
     def image_number(self) -> int | None:
@@ -127,17 +125,13 @@ class Transcription:
     
     @property
     def is_cover_page(self) -> bool:
-        if self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data:
-            return True
-        return False
+        return self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data
  
     @property
     def is_form(self) -> bool:
         standard_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
         other_form: bool = self.document_type.name == "Other"
-        if (not self.is_cover_page) and (standard_form or other_form):
-            return True
-        return False
+        return (not self.is_cover_page) and (standard_form or other_form)
     
     def __post_init__(self):
         """
