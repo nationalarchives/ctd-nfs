@@ -140,7 +140,7 @@ class TranscriptionChecker:
             'mon': REGEX.MON.match(candi_date),
         }
 
-        date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
+        date_type = (match_key for match_key in date_match if date_match[match_key])
         if not (date_type := next(date_type, None)):
             return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
 
