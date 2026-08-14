@@ -86,6 +86,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         ]
         )
 
+
 def update_farms(farms_store: dict[str, dict[str, HarvestedFarm]], farms_to_update: list[tuple]) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
@@ -323,7 +324,7 @@ def run_pipeline(test_mode: bool=False) -> None:
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
-    input_files = PATH.TEST_INPUT.glob("*.csv") if test_mode else PATH.INPUT.glob("*.csv")
+    input_files = PATH.INPUT.glob("TEST/*.csv") if test_mode else PATH.INPUT.glob("*.csv")
     logger.info(" ===== HARVESTING FARMS ===== ")
 
     for csv_file in input_files:
