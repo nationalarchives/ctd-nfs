@@ -151,15 +151,12 @@ class PathNamespace():
     
     _PIPELINE_ROOT = Path(r"Pipeline")
   
-    _FARMS_CACHE = Path("NFS_Production_Cache.db")
-    _TEST_CACHE = Path("NFS_Test_Cache.db")
-    
     DB = _PIPELINE_ROOT / "0-DB"
     EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
     PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
     
-    FARMS_DB = DB / _FARMS_CACHE
-    TEST_DB = DB / "TEST" / _TEST_CACHE
+    FARMS_DB = DB / Path("NFS_Production_Cache.db")
+    TEST_DB = DB / "TEST" / Path("NFS_Test_Cache.db")
 
     INPUT = _PIPELINE_ROOT / "1-INPUT"
     TEST_INPUT = INPUT / "TEST"
