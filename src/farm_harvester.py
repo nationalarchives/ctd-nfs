@@ -337,7 +337,7 @@ def run_pipeline(test_mode: bool=False) -> None:
         this means that can comment out the loading and creation steps of the orchestration
         when only running Harvester to view changes to the proof output
         """
-        farms_store = read_farms_db(county)
+        farms_store = read_farms_db(county, test_mode)
         farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
 
