@@ -159,13 +159,10 @@ class PathNamespace():
     TEST_DB = DB / "TEST" / Path("NFS_Test_Cache.db")
 
     INPUT = _PIPELINE_ROOT / "1-INPUT"
-    TEST_INPUT = INPUT / "TEST"
     
     HARVEST = _PIPELINE_ROOT / "2-HARVEST"
-    TEST_OUTPUT = HARVEST / "TEST"
     
     PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
-    TEST_PUBLISH = PUBLISH / "TEST"
     
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
