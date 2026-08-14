@@ -151,9 +151,8 @@ class PathNamespace():
     
     _PIPELINE_ROOT = Path(r"Pipeline")
   
-
-    _FARMS_CACHE = Path("MAF 32 Farms.db")
-    _TEST_CACHE = Path("Test Farms.db")
+    _FARMS_CACHE = Path("NFS_Production_Cache.db")
+    _TEST_CACHE = Path("NFS_Test_Cache.db")
     
     DB = _PIPELINE_ROOT / "0-DB"
     EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
