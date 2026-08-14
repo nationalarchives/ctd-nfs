@@ -28,7 +28,7 @@ def test_file_processor():
 
 @pytest.mark.skip(reason="names and address distillation functions have been changed")
 def test_proof_creation():
-    create_proof_files(test_mode=True)
+    create_proof_file(test_mode=True)
 
 
 
