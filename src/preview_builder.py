@@ -16,7 +16,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def write_html_page(context: dict, county: str) -> None:
+def write_html_page(context: dict, county: str, previews_file: str) -> None:
     environment = Environment(
         loader=FileSystemLoader("src/_html/"),
         autoescape=select_autoescape(enabled_extensions=('html', 'xml'),
