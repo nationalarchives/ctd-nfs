@@ -354,5 +354,5 @@ if __name__ == "__main__":
     for file in Path(PATH.DB / "TEST").glob("*"):
         os.remove(file)
 
-    run_pipeline()
+    run_pipeline(test_mode=True)
 
