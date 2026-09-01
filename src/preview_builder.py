@@ -25,7 +25,7 @@ def write_html_page(context: dict, county: str, previews_file: str) -> None:
     previews_template = environment.get_template("previews.html")
     with open(PATH.HARVEST / previews_file, mode="w", encoding="utf-8") as results:
         results.write(previews_template.render(context))
-        logger.info(f"... wrote {county}_MAF32 previews.html")
+        logger.info(f"... wrote {previews_file}")
 
 
 def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
