@@ -155,8 +155,11 @@ class PathNamespace:
     EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
     PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
     
-    FARMS_DB = DB / Path("NFS_Production_Cache.db")
-    TEST_DB = DB / "TEST" / Path("NFS_Test_Cache.db")
+    FARMS_DB = DB / Path("NFS_Production.db")
+    TEST_DB = DB / "TEST" / Path("NFS_Test.db")
+
+    FARM_IDS = DB / "Farm_IDs.db"
+    FILE_IDS = DB / "File_IDs.db"
 
     INPUT = _PIPELINE_ROOT / "1-INPUT"
     
@@ -166,8 +169,6 @@ class PathNamespace:
     
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
-    FARM_IDS = DB / "Farm_IDs.db"
-    FILE_IDS = DB / "File_IDs.db"
 
 class DiscoveryNamespace:
     API_URI = r"https://discovery.nationalarchives.gov.uk/API"
