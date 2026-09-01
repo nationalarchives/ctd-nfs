@@ -161,12 +161,9 @@ class PathNamespace:
     FARM_IDS = DB / "Farm_IDs.db"
     FILE_IDS = DB / "File_IDs.db"
 
-    INPUT = _PIPELINE_ROOT / "1-INPUT"
-    
+    INPUT = _PIPELINE_ROOT / "1-INPUT"   
     HARVEST = _PIPELINE_ROOT / "2-HARVEST"
-    
     PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
-    
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
 
 
