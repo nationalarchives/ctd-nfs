@@ -70,8 +70,10 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         'row_data': farms_in_proof_format,
         'column_settings': CSVEXCEL.PROOF_COLUMNS,
     }]
+    harvest_dir = PATH.HARVEST / "TEST" / f"{county}" if test_mode else PATH.HARVEST / f"{county}"
+    harvest_dir.mkdir(exist_ok=True, parents=True)
   
-    proof_file_name = PATH.HARVEST / f"{input_file_name.replace('_HarvesterIN_', '_HarvesterOUT_')}.xlsx"
+    proof_file_name = harvest_dir / f"{input_file_name.replace('_HarvesterIN_', '_HarvesterOUT_')}.xlsx"
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
 
