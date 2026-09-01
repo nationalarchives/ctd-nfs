@@ -77,6 +77,8 @@ def create_html_preview(proof_file_name: str, excel_data=None, test_mode: bool=F
     
     cleaned_data = clean_excel_data(proof_data)
     context = create_html_preview_context(cleaned_data, county)
+
+    previews_file_name = f"{proof_file_name.replace('_HarvesterOUT_', '_DiscoveryPreviews_')}.html"
     write_html_page(context, county)
 
 
