@@ -347,7 +347,7 @@ def run_pipeline(test_mode: bool=False) -> None:
         proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem, test_mode)
 
         logger.info(" ===== CREATING HTML PREVIEW ===== ")
-        create_html_preview(proof_file, excel_data=preview_data)
+        create_html_preview(proof_file.stem, excel_data=preview_data)
 
 
 if __name__ == "__main__":
