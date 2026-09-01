@@ -326,7 +326,7 @@ def run_pipeline(test_mode: bool=False) -> None:
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
-    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_V0*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_V*.csv")
+    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
     logger.info(" ===== HARVESTING FARMS ===== ")
 
     for csv_file in input_files:
