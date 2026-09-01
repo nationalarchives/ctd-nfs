@@ -8,7 +8,7 @@ import typing
 from pathlib import Path
 
 
-class CSVandExcelNamespace():
+class CSVandExcelNamespace:
     __slots__ = ()
 
     CSV_HEADERS: typing.ClassVar = [
@@ -69,7 +69,7 @@ class CSVandExcelNamespace():
     ]
 
 
-class DataNamespace():
+class DataNamespace:
     __slots__ = ()
     FORM_TYPES: typing.ClassVar = [
 		'C 47/SSY',
@@ -121,7 +121,7 @@ class DataNamespace():
     ABBR_MONTH_NAMES: typing.ClassVar = list(calendar.month_abbr)
 
 
-class RegexNamespace():
+class RegexNamespace:
     __slots__ = ()
 
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?_+(?P<image_number>\d+)\.tif$""")
@@ -146,7 +146,7 @@ class RegexNamespace():
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
 
 
-class PathNamespace():
+class PathNamespace:
     __slots__ = ()
     
     _PIPELINE_ROOT = Path(r"Pipeline")
@@ -169,8 +169,7 @@ class PathNamespace():
     FARM_IDS = DB / "Farm_IDs.db"
     FILE_IDS = DB / "File_IDs.db"
 
-
-class DiscoveryNamespace():
+class DiscoveryNamespace:
     API_URI = r"https://discovery.nationalarchives.gov.uk/API"
 
     _closure_status: typing.ClassVar = {
