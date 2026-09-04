@@ -63,12 +63,14 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 
 @lru_cache
-def get_catalogue_reference_stem(county_code: str, parish_number: str) -> dict:
+def get_piece_value(county_code: str, parish_number: str) -> str:
     with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
         all_references = (
             reference
             for reference in piece_lookup_db['pieces lookup table']
             if reference['County & Parish'] == f"{county_code}/{parish_number}"
         )
-    return next(all_references, None)
+    reference = next(all_references, None)
+
+    return reference['Piece Number']
 
