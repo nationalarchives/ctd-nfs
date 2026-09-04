@@ -1,11 +1,9 @@
-import shelve
 import uuid
 from dataclasses import InitVar, dataclass, field
 from functools import cached_property
 
 from src._dataclasses.transcription_model import Filename, Transcription
-from src._tools.constants import PATH
-from src._tools.helpers import create_uuid_str
+from src._tools.helpers import create_uuid_str, get_catalogue_reference_stem
 
 
 def initialise_forms_mapping() -> dict:
@@ -166,13 +164,7 @@ class HarvestedFarm:
         Returns:
         str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
         """ 
-        with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
-            all_references = (
-                reference
-                for reference in piece_lookup_db['pieces lookup table']
-                if reference['County & Parish'] == f"{self._county_code}/{self._parish_number}"
-            )
-        reference_record = next(all_references, None)
+        reference_record = get_catalogue_reference_stem(self._county_code, self._parish_number)
         
         return f"{reference_record['Catalogue ref']}/{self.primary_farm_number}"
 

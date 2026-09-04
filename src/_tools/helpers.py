@@ -1,8 +1,11 @@
 import logging
 import re
+import shelve
 import uuid
+from functools import lru_cache
 from pathlib import Path
 
+from src._tools.constants import PATH
 from src._tools.xlreader import read_file
 
 logger = logging.getLogger(__name__)
@@ -57,4 +60,15 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
         discovery_data.append(cleaned_data_row)
 
     return discovery_data
+
+
+@lru_cache
+def get_catalogue_reference_stem(county_code: str, parish_number: str) -> dict:
+    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+        all_references = (
+            reference
+            for reference in piece_lookup_db['pieces lookup table']
+            if reference['County & Parish'] == f"{county_code}/{parish_number}"
+        )
+    return next(all_references, None)
 
