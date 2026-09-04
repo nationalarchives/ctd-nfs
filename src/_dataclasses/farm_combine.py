@@ -3,7 +3,7 @@ from dataclasses import InitVar, dataclass, field
 from functools import cached_property
 
 from src._dataclasses.transcription_model import Filename, Transcription
-from src._tools.helpers import create_uuid_str, get_catalogue_reference_stem
+from src._tools.helpers import create_uuid_str, get_piece_value
 
 
 def initialise_forms_mapping() -> dict:
@@ -164,9 +164,9 @@ class HarvestedFarm:
         Returns:
         str: Catalogue reference stem e.g. "MAF 32/1/8" (full catalogue reference will be "MAF 32/1/8/<I>" where <I> is the primary farm number)
         """ 
-        reference_record = get_catalogue_reference_stem(self._county_code, self._parish_number)
+        piece_value = get_piece_value(self._county_code, self._parish_number)
         
-        return f"{reference_record['Catalogue ref']}/{self.primary_farm_number}"
+        return f"MAF 32/{piece_value}/{self._parish_number}/{self.primary_farm_number}"
 
     @cached_property
     def farm_reference(self) -> str:
