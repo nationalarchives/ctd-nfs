@@ -125,6 +125,7 @@ class RegexNamespace:
     __slots__ = ()
 
     FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?_+(?P<image_number>\d+)\.tif$""")
+    #TODO updated regex ^MAF32-(?P<piece>\d{1,4}(?:part\d)?)-(?P<parish_number>\d{1,3}A?)(-[0-9]|-10)?_(?P<image_number>\d{1,4}[A-z]{0,2})?\.((tiff?)|(TIFF?))$
     COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?\.tif$""")   
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
