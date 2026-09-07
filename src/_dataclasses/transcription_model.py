@@ -67,6 +67,7 @@ class Transcription:
         'addressee_individual_name',
         'addressee_title',
         'county',
+        'county_code',
         'document_type',
         'farm_name',
         'farmer_address',
@@ -139,6 +140,7 @@ class Transcription:
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
         self.document_type = FormType(self.document_type)
         self.warnings: dict | None = None
+        self.county_code, *_ = self.county.split()
 
 
         if not (self.is_form or self.is_cover_page):
