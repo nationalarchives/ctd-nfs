@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 
 from src._tools.constants import DATA, REGEX
-from src._tools.helpers import TranscriptionDataError, ValueObject
+from src._tools.helpers import TranscriptionDataError, ValueObject, get_piece_value
 
 
 def _page_pattern_match(filename: str) -> re.Match[str] | None:
@@ -86,6 +86,7 @@ class Transcription:
         'owner_title',
         'parish',
         'parish_number',
+        'piece',
         'primary_farm_number',
         'primary_record_date',
         'warnings',
@@ -143,8 +144,7 @@ class Transcription:
         self.warnings: dict | None = None
         self.county_code, *_ = self.county.split()
         self.parish_number, *_ = self.parish.split()
-
-
+        self.piece = get_piece_value(self.county_code, self.parish_number)
 
         if not (self.is_form or self.is_cover_page):
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name if self.file2 else 'No file 2'} have valid file patterns but no farm data provided.")
