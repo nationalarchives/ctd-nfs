@@ -85,6 +85,7 @@ class Transcription:
         'owner_individual_name',
         'owner_title',
         'parish',
+        'parish_number',
         'primary_farm_number',
         'primary_record_date',
         'warnings',
@@ -141,6 +142,8 @@ class Transcription:
         self.document_type = FormType(self.document_type)
         self.warnings: dict | None = None
         self.county_code, *_ = self.county.split()
+        self.parish_number, *_ = self.parish.split()
+
 
 
         if not (self.is_form or self.is_cover_page):
