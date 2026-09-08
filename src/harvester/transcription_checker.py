@@ -114,6 +114,14 @@ class TranscriptionChecker:
         image2 = self.transcription.file2.image_number
         if image2 != image1 + 1:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} are either not consecutive images or in the wrong order.")
+        """
+
+    def _check_filename_values_against_catalogue_reference(self) -> None:
+        if self.transcription.file1.piece != self.transcription.piece:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{self.transcription.file1.name} piece value does not match the catalogue reference.")
+
+        if self.transcription.file1.parish_number != self.transcription.parish_number:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{self.transcription.file1.name} parish number does not match the catalogue reference.")
 
     @staticmethod
     def _vali_dates(candi_date: str) -> str | None:    
