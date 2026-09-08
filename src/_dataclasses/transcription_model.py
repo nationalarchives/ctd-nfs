@@ -28,7 +28,7 @@ class Filename(ValueObject):
     @property
     def image_number(self) -> int | None:
         if match := _page_pattern_match(self.name):
-            return int(match['image_number'])
+            return match['image_number']
     
     @property
     def piece(self) -> str | None:
