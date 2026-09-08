@@ -138,6 +138,9 @@ class TranscriptionChecker:
         '''
         if candi_date in ["_null_", "_not transcribed_"]:
             return
+
+        if candi_date.endswith("[sic]"):
+            return
         
         date_match: dict[re.Match] = {
             'daymonthyear': REGEX.DAYMONTHYEAR.match(candi_date),
