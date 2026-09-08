@@ -136,11 +136,14 @@ class TranscriptionsProcessor:
             if current_form_name not in collated_forms:
                 collated_forms[current_form_name] = []
 
+            """
+            NOTE: this check is disabled until can determine if it's necessary because filenames now contain letters, so harder to calculate consecutive values
             if current_form_name == 'B496/EI' and \
                 collated_forms['B496/EI'] and \
                 self._does_B496_have_3rd_image(transcription.file1, transcription.file2, collated_forms['B496/EI'][-1]):
                     collated_forms[current_form_name][-1].append(ImageFile(transcription.file1))
                     continue
+            """
            
             image_set = [
                 ImageFile(file)

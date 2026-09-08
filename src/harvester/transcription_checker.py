@@ -109,7 +109,10 @@ class TranscriptionChecker:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different parish numbers.")
         elif self.transcription.file1.parish_number != parish_number:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have a different parish number from parish name '{self.transcription.parish}'.")
-        
+
+        """
+        NOTE: this check is disabled until can determine if it's necessary because filenames now contain letters, so harder to calculate consecutive values
+
         image1 = self.transcription.file1.image_number
         image2 = self.transcription.file2.image_number
         if image2 != image1 + 1:
