@@ -183,13 +183,13 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
     form_type = transcription.document_type.name
     if candidate_farm.catalogue_reference not in farms_store:
         candidate_farm.source_data[form_type].append(transcription)
-        logger.info(f"NEW FARM: '{candidate_farm.catalogue_reference}' {candidate_farm.id} created from '{form_type}'")
+        logger.info(f"NEW FARM {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) created from transcription instance {row_number} (form {form_type})")
         return candidate_farm
 
     else:
         existing_farm = farms_store[candidate_farm.catalogue_reference]
         existing_farm.source_data[form_type].append(transcription)
-        logger.info(f"{' '*50} '{candidate_farm.catalogue_reference}' {'.'*10} updated from '{form_type}'")
+        logger.info(f"{'='*8} {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) updated {'.'*4} from transcription instance {row_number} (form {form_type})")
         return existing_farm
 
 
@@ -234,7 +234,6 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
 
         checker = TranscriptionChecker(transcription, row_number)
         transcription.warnings = checker.run_validation_checks()
-        logger.info(f"Transcription created from row {row_number}")
         return transcription
 
     except TranscriptionDataError as error_message:
