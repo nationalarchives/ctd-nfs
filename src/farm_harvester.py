@@ -202,14 +202,18 @@ def initialise_farm(transcription: Transcription) -> HarvestedFarm:
         _description_
     """    
     candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
-    with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
-        db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
-        if db_ids:
-            db_ids = eval(db_ids.decode())
-            candidate_farm.id = db_ids['id']
-            candidate_farm.replica_id = db_ids['replica_id']
-        else:
-            farm_ids_db[candidate_farm.catalogue_reference] = f"{{'id': '{candidate_farm.id}', 'replica_id': '{create_uuid_str()}'}}"
+    """NOTE
+    The FARM_IDS db will be deleted after Rutland (RD) and Isle of Wight (IW) have been archived
+    """
+    if transcription.county.startswith(("RD", "IW")):
+        with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
+            db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
+            if db_ids:
+                db_ids = eval(db_ids.decode())
+                candidate_farm.id = db_ids['id']
+                candidate_farm.replica_id = db_ids['replica_id']
+            else:
+                farm_ids_db[candidate_farm.catalogue_reference] = f"{{'id': '{candidate_farm.id}', 'replica_id': '{create_uuid_str()}'}}"
 
     return candidate_farm
 
