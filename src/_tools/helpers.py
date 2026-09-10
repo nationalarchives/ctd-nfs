@@ -44,7 +44,6 @@ def load_excel_data(data_file: Path) -> list[dict]:
 
 
 def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
-    logger.info(" ===== CLEANING PROOF DATA ===== ")
     discovery_data = []
     non_breaking_space = "\xa0"
     for row in raw_csv_data:
