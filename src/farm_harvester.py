@@ -170,7 +170,7 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFa
     return farms_store
 
 
-def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: Transcription, farms_store: dict) -> HarvestedFarm:
+def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: Transcription, farms_store: dict, row_number: int) -> HarvestedFarm:
     """_summary_
 
     Arguments:
@@ -260,7 +260,7 @@ def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str,
             continue
 
         candidate_farm = initialise_farm(transcription)
-        candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms)
+        candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
         initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
 
     return initialised_farms
