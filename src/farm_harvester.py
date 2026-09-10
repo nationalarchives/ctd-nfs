@@ -229,7 +229,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         transcription = Transcription(**farm_data_row)
         if transcription.is_cover_page:
             msg = f"Row {row_number} is a cover so will not be processed."
-            logger.info(f" {msg:->80}")
+            logger.info(f"{'!'*17} {msg}")
             return
 
         checker = TranscriptionChecker(transcription, row_number)
