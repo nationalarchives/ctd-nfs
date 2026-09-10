@@ -120,7 +120,6 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Harves
     Returns:
         _description_
     """    
-    logger.info(" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
     total_farms = len(farms_store)
 
     for index, farm in enumerate(farms_store.values(), start=1):
@@ -340,6 +339,7 @@ def run_pipeline(test_mode: bool=False) -> None:
         when only running Harvester to view changes to the proof output
         """
         farms_store = read_farms_db(county, test_mode)
+        logger.info(f" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
         farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
 
