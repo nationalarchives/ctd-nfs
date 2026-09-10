@@ -132,7 +132,7 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Harves
         processor = TranscriptionsProcessor(transcriptions)
         farm = set_farm_attributes(farm, processor.process_transcriptions())
         farms_store[farm.catalogue_reference] = farm
-        logger.info(f"Processed reference {farm.catalogue_reference} (farm {farm.farm_reference}); {index: 5d} of {total_farms: 5d}")
+        logger.info(f"Processed {index: 5d} of {total_farms: 5d}: {farm.farm_reference} ({farm.catalogue_reference})")
 
     return farms_store
 
