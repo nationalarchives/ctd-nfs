@@ -81,7 +81,7 @@ def create_html_preview(proof_file_name: str, excel_data=None, test_mode: bool=F
 
 
 def main(test_mode: bool=False):
-    logger.info(" ===== PROCESSING PROOF FILES ===== ")
+    logger.info("*** PROCESSING PROOF FILES ***")
     xlsx_files = PATH.HARVEST.glob("TEST/*_HarvesterOUT_*.xlsx") if test_mode else PATH.HARVEST.glob("*_HarvesterOUT_*.xlsx")
 
     for proof_file in xlsx_files:

@@ -323,7 +323,7 @@ def run_pipeline(test_mode: bool=False) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
-        logger.info(f" ===== HARVESTING FILE: {csv_file.stem} ===== ")
+        logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
         county, _ = csv_file.stem.split("_", maxsplit=1)
         raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
         normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
@@ -334,14 +334,14 @@ def run_pipeline(test_mode: bool=False) -> None:
         when only running Harvester to view changes to the proof output
         """
         farms_store = read_farms_db(county, test_mode)
-        logger.info(f" ===== PROCESSING TRANSCRIPTIONS for {county} ===== ")
+        logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
         farms_store = process_transcriptions_for_each_farm(farms_store)
         write_farms_to_db(farms_store, county, test_mode)
 
-        logger.info(" ===== CREATING PROOF FILE ===== ")
+        logger.info("*** CREATING PROOF FILE ***")
         proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem, test_mode)
 
-        logger.info(" ===== CREATING HTML PREVIEW ===== ")
+        logger.info("*** CREATING HTML PREVIEW ***")
         create_html_preview(proof_file.stem, excel_data=preview_data)
 
 
