@@ -251,7 +251,6 @@ def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str,
         _description_
     """    
     """ rownumber is 1-indexed to match Excel row numbers, so start=2 to account for header row """
-    logger.info(" ===== TRANSFORMING ROWS TO FARMS ===== ")
     initialised_farms = {}   
     for row_number, farm_data_row in enumerate(csv_data, start=2):
         if not (transcription := transform_row_to_transcription(farm_data_row, row_number)):
