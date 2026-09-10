@@ -274,7 +274,6 @@ def normalise_csv_data(raw_csv_data: Iterator[dict]) -> Generator[dict]:
         _description_
     """    
     """Utility method to normalise raw csv data by setting default values, splitting fields with multiple entries and stripping whitespace."""
-    logger.info(" ===== NORMALIZING CSV DATA ===== ")
     for row in raw_csv_data:
         normalised_data_row = {}
         for key, value in row.items():
