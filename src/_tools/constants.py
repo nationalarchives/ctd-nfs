@@ -145,7 +145,7 @@ class RegexNamespace:
     REMOVE_DELIMITERS = re.compile(fr"{_date_delimiters}+")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
-    TRANSCRIPTION_ID = re.compile(r"""^(?P<county_code>\d{6}$)""")
+    TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
 
 
 class PathNamespace:
