@@ -168,7 +168,7 @@ class Transcription:
         
     def to_dict(self) -> dict:
         return {
-            'ID': self.ID,
+            'ID': self.trid,
             'filename_1': self.file1.name,
             'filename_2': self.file2.name,
             'document_type': self.document_type.name,
