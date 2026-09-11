@@ -31,6 +31,7 @@ Yields:
 import csv
 import dbm
 import shelve
+import sys
 from collections.abc import Generator, Iterator
 from pathlib import Path
 
@@ -223,6 +224,9 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         return transcription
 
     except TranscriptionDataError as error_message:
+        if error_message.args[0].startswith("ID"):
+            logger.info(f"Processing aborted at row {row_number} because {error_message}")
+            sys.exit(1)
         logger.error(f"Row {row_number} not processed because {error_message}")
         return
 
