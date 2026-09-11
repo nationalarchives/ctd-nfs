@@ -165,10 +165,10 @@ class Transcription:
 
         if not (self.is_form or self.is_cover_page):
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name if self.file2 else 'No file 2'} have valid file patterns but no farm data provided.")
-        
+
     def to_dict(self) -> dict:
         return {
-            'ID': self.trid,
+            'ID': self.trid.value,
             'filename_1': self.file1.name,
             'filename_2': self.file2.name,
             'document_type': self.document_type.name,
