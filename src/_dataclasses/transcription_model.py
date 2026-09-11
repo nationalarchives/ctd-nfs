@@ -1,4 +1,5 @@
 import re
+import typing
 from dataclasses import dataclass
 
 from src._tools.constants import DATA, REGEX
@@ -133,6 +134,8 @@ class Transcription:
     field_info_date: str
     primary_record_date: str
     notes: str
+
+    all_ids: typing.ClassVar = set() 
 
     @property
     def has_data(self) -> bool:
