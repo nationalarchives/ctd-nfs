@@ -88,28 +88,6 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         )
 
 
-# def update_farms(farms_store: dict[str, dict[str, HarvestedFarm]], farms_to_update: list[tuple]) -> dict[str, dict[str, HarvestedFarm]]:
-#     """_summary_
-
-#     Arguments:
-#         farms_store -- _description_
-#         farms_to_update -- _description_
-
-#     Returns:
-#         _description_
-#     """
-#     logger.info(" ===== COLLATING ATTRIBUTES FOR FARMS {county} ===== ")
-   
-#     for index, (farm, farm_data) in enumerate(farms_to_update, start=1):
-#         farm = set_farm_attributes(farm, farm_data)
-
-#         farms_store[farm.catalogue_reference] = farm
-
-#         logger.info(f"Collating {index: 5d} for {farm.farm_reference}")
-
-#     return farms_store
-
-
 def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, HarvestedFarm]]) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
