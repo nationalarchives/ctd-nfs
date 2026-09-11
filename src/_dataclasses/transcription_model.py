@@ -50,6 +50,11 @@ class FormType(ValueObject):
             raise TranscriptionDataError(f"Form type '{self.name}' is not a recognised form.")
 
 
+@dataclass(frozen=True)
+class TranscriptionID(ValueObject):
+    value: str
+
+
 @dataclass
 class Transcription:
     """
