@@ -103,6 +103,7 @@ class Transcription:
         'piece',
         'primary_farm_number',
         'primary_record_date',
+        'trid',
         'warnings',
     )
 
