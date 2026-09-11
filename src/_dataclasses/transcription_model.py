@@ -155,6 +155,7 @@ class Transcription:
         """
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
+        self.trid = TranscriptionID(self.ID)
         self.document_type = FormType(self.document_type)
         self.warnings: dict | None = None
         self.county_code, *_ = self.county.split()
