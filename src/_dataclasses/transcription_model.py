@@ -13,6 +13,10 @@ def _cover_pattern_match(filename: str) -> re.Match[str] | None:
     return REGEX.COVER_PATTERN.match(filename)
 
 
+def _transcription_id_pattern_match(ID: str) -> re.Match[str] | None:
+    return REGEX.TRANSCRIPTION_ID.match(ID)
+
+
 @dataclass(frozen=True)
 class Filename(ValueObject):
     name: str
