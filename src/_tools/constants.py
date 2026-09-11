@@ -12,6 +12,7 @@ class CSVandExcelNamespace:
     __slots__ = ()
 
     CSV_HEADERS: typing.ClassVar = [
+        'ID',
         'filename_1',
         'filename_2',
         'document_type',
