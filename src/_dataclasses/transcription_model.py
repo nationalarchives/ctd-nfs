@@ -59,6 +59,7 @@ class Transcription:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
     __slots__ = (
+        'ID',
         'OS_map_sheet',
         'acreage',
         'additional_farms',
@@ -91,7 +92,8 @@ class Transcription:
         'primary_record_date',
         'warnings',
     )
-    
+
+    ID: str
     filename_1: str
     filename_2: str
     document_type: str
@@ -151,6 +153,7 @@ class Transcription:
         
     def to_dict(self) -> dict:
         return {
+            'ID': self.ID,
             'filename_1': self.file1.name,
             'filename_2': self.file2.name,
             'document_type': self.document_type.name,
