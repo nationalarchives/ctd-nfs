@@ -112,6 +112,19 @@ class Respondent:
 
 
 @dataclass
+class Description:
+    name: str
+    addressee: str
+    farmer: str
+    landowner: str
+    acreage: str
+    os_sheet_number: str
+    field_info_date: str
+    primary_record_date: str
+    forms: str
+
+
+@dataclass
 class HarvestedFarm:
     county: str
     parish: str
@@ -127,11 +140,14 @@ class HarvestedFarm:
     field_info_date: list[str] = field(init=False)
     primary_record_date: list[str] = field(init=False)
 
+    description: Description = field(init=False)
+
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: dict[str, list[ImageSet]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
+
 
     def __post_init__(self):
         self._county_code, *_ = self.county.split()
