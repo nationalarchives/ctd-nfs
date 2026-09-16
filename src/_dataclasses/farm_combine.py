@@ -228,7 +228,7 @@ class HarvestedFarm:
         self.description.primary_record_date = self._join(self.primary_record_date)
 
         self._forms_and_files = self._process_forms_for_proof()
-        self.description.forms = self._forms_and_files['forms']
+        self.description.forms = self._join(self._forms_and_files['forms'])
         return self.description
 
     def to_proof(self) -> list:
