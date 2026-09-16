@@ -240,30 +240,30 @@ class HarvestedFarm:
             self._join(self._forms_and_files['file_names']),
             self._join(self.warnings.get('Filename Warnings', "")),
             # ========================
-            self._join(self._forms_and_files['forms']),
+            self.description.forms,
             self._join(self.warnings.get('Type Warnings', "")),
             self.farm_reference,
-            self._join(self.farm_name),
+            self.description.name,
             # ========================
             self._join(self.addressee.names),
             self.warnings.get('Addressee name warnings', ""),
             self._join(self.addressee.addresses),
-            self._join(self.addressee.names_and_addresses),
+            self.description.addressee,
             # ========================
             self._join(self.farmer.names),
             self.warnings.get('Farmer name warnings', ""),
             self._join(self.farmer.addresses),
-            self._join(self.farmer.names_and_addresses),
+            self.description.farmer,
             # ========================
             self._join(self.landowner.names),
             self.warnings.get('Landowner name warnings', ""),
             self._join(self.landowner.addresses),
-            self._join(self.landowner.names_and_addresses),
+            self.description.landowner,
             # ========================
-            self._join(self.acreage),
-            self._join(self.OS_map_sheet),
-            self._join(self.field_info_date),
-            self._join(self.primary_record_date),
+            self.description.self.acreage,
+            self.description.self.os_sheet_number,
+            self.description.self.field_info_date,
+            self.description.self.primary_record_date,
         ]
 
     def convert_forms_to_dict(self) -> dict:
