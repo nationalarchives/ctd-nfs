@@ -113,15 +113,15 @@ class Respondent:
 
 @dataclass
 class Description:
-    name: str
-    addressee: str
-    farmer: str
-    landowner: str
-    acreage: str
-    os_sheet_number: str
-    field_info_date: str
-    primary_record_date: str
-    forms: str
+    name: str = field(init=False)
+    addressee: str = field(init=False)
+    farmer: str = field(init=False)
+    landowner: str = field(init=False)
+    acreage: str = field(init=False)
+    os_sheet_number: str = field(init=False)
+    field_info_date: str = field(init=False)
+    primary_record_date: str = field(init=False)
+    forms: str = field(init=False)
 
 
 @dataclass
