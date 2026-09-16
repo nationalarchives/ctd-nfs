@@ -226,19 +226,20 @@ class HarvestedFarm:
         self.description.field_info_date = self._join(self.field_info_date)
         self.description.primary_record_date = self._join(self.primary_record_date)
 
+        self._forms_and_files = self._process_forms_for_proof()
+
     def to_proof(self) -> list:
-        forms_and_files = self._process_forms_for_proof()
         return [
             self.catalogue_reference,
             self._join(self.warnings.get('Reference Warnings', "")),
             self.id,
             # ========================
             self.replica_id,
-            self._join(forms_and_files['file_ids']),
-            self._join(forms_and_files['file_names']),
+            self._join(self._forms_and_files['file_ids']),
+            self._join(self._forms_and_files['file_names']),
             self._join(self.warnings.get('Filename Warnings', "")),
             # ========================
-            self._join(forms_and_files['forms']),
+            self._join(self._forms_and_files['forms']),
             self._join(self.warnings.get('Type Warnings', "")),
             self.farm_reference,
             self._join(self.farm_name),
