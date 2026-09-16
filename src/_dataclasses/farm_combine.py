@@ -232,6 +232,7 @@ class HarvestedFarm:
         return self.description
 
     def to_proof(self) -> list:
+        self.description = self.set_description()
         return [
             self.catalogue_reference,
             self._join(self.warnings.get('Reference Warnings', "")),
