@@ -141,13 +141,13 @@ class HarvestedFarm:
     primary_record_date: list[str] = field(init=False)
 
     description: Description = field(init=False)
+    _forms_and_files: dict = field(init=False)
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: dict[str, list[ImageSet]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
-
 
     def __post_init__(self):
         self._county_code, *_ = self.county.split()
