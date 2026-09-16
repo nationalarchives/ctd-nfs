@@ -263,10 +263,10 @@ class HarvestedFarm:
             self._join(self.landowner.addresses),
             self.description.landowner,
             # ========================
-            self.description.self.acreage,
-            self.description.self.os_sheet_number,
-            self.description.self.field_info_date,
-            self.description.self.primary_record_date,
+            self.description.acreage,
+            self.description.os_sheet_number,
+            self.description.field_info_date,
+            self.description.primary_record_date,
         ]
 
     def convert_forms_to_dict(self) -> dict:
