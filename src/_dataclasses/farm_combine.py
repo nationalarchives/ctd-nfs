@@ -216,6 +216,16 @@ class HarvestedFarm:
             return ";\n".join(_.split("; "))
         return "; ".join(values)
 
+    def set_description(self) -> None:
+        self.description.name = self._join(self.farm_name)
+        self.description.addressee = self._join(self.addressee.names_and_addresses)
+        self.description.farmer = self._join(self.farmer.names_and_addresses)
+        self.description.landowner = self._join(self.landowner.names_and_addresses)
+        self.description.acreage = self._join(self.acreage)
+        self.description.os_sheet_number = self._join(self.OS_map_sheet)
+        self.description.field_info_date = self._join(self.field_info_date)
+        self.description.primary_record_date = self._join(self.primary_record_date)
+
     def to_proof(self) -> list:
         forms_and_files = self._process_forms_for_proof()
         return [
