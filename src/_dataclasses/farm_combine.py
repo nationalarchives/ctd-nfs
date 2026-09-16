@@ -216,7 +216,8 @@ class HarvestedFarm:
             return ";\n".join(_.split("; "))
         return "; ".join(values)
 
-    def set_description(self) -> None:
+    def set_description(self) -> Description:
+        self.description = Description()
         self.description.name = self._join(self.farm_name)
         self.description.addressee = self._join(self.addressee.names_and_addresses)
         self.description.farmer = self._join(self.farmer.names_and_addresses)
@@ -228,6 +229,7 @@ class HarvestedFarm:
 
         self._forms_and_files = self._process_forms_for_proof()
         self.description.forms = self._forms_and_files['forms']
+        return self.description
 
     def to_proof(self) -> list:
         return [
