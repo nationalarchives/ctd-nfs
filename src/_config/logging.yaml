@@ -3,7 +3,7 @@ disable_existing_loggers: False
 formatters:
   standard:
     style: "{"
-    datefmt: "%Y-%m-%d %H:%M"
+    datefmt: "%Y-%m-%d %H:%M:%S"
     format: "{asctime} - {levelname}: {message}"
   violation:
     style: "{"
