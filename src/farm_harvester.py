@@ -304,7 +304,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def run_pipeline(test_mode: bool=False) -> None:
+def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, debug: bool=False) -> None:
     """_summary_
 
     Keyword Arguments:
@@ -313,26 +313,27 @@ def run_pipeline(test_mode: bool=False) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
-        logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
-        county, _ = csv_file.stem.split("_", maxsplit=1)
-        raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
-        normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-        farms_store: dict = transform_row_data_to_farms(normalised_farm_data)
-        write_farms_to_db(farms_store, county, test_mode)
-        """ read from farm store - 
-        this means that can comment out the loading and creation steps of the orchestration
-        when only running Harvester to view changes to the proof output
-        """
-        farms_store = read_farms_db(county, test_mode)
-        logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
-        farms_store = process_transcriptions_for_each_farm(farms_store)
-        write_farms_to_db(farms_store, county, test_mode)
+        if harvest:
+            logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
+            county, _ = csv_file.stem.split("_", maxsplit=1)
+            raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
+            normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
+            farms_store: dict = transform_row_data_to_farms(normalised_farm_data)
 
-        logger.info("*** CREATING PROOF FILE ***")
-        proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem, test_mode)
+            if debug:
+                write_farms_to_db(farms_store, county, test_mode)
 
-        logger.info("*** CREATING HTML PREVIEW ***")
-        create_html_preview(proof_file.stem, excel_data=preview_data)
+        if process:
+            farms_store = read_farms_db(county, test_mode)
+            logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
+            farms_store = process_transcriptions_for_each_farm(farms_store)
+            write_farms_to_db(farms_store, county, test_mode)
+
+            logger.info("*** CREATING PROOF FILE ***")
+            proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem, test_mode)
+
+            logger.info("*** CREATING HTML PREVIEW ***")
+            create_html_preview(proof_file.stem, excel_data=preview_data)
 
 
 if __name__ == "__main__":
