@@ -293,6 +293,7 @@ class HarvestedFarm:
 
 @dataclass
 class PublishedFarm:
+    farm: HarvestedFarm
     name: str = field(init=False)
     addressee: str = field(init=False)
     farmer: str = field(init=False)
