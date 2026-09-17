@@ -296,6 +296,11 @@ class PublishedFarm:
     farm: HarvestedFarm
 
     def __post_init__(self):
+        self.id = self.farm.id
+        self.replica_id = self.farm.replica_id
+        self.catalogue_reference = self.farm.catalogue_reference
+        self.farm_reference = self.farm.farm_reference
+
         self.name = self.farm._join(self.farm.farm_name)
         self.addressee = self.farm._join(self.farm.addressee.names_and_addresses)
         self.farmer = self.farm._join(self.farm.farmer.names_and_addresses)
