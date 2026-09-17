@@ -112,6 +112,19 @@ class Respondent:
 
 
 @dataclass
+class PublishedFarm:
+    name: str = field(init=False)
+    addressee: str = field(init=False)
+    farmer: str = field(init=False)
+    landowner: str = field(init=False)
+    acreage: str = field(init=False)
+    os_sheet_number: str = field(init=False)
+    field_info_date: str = field(init=False)
+    primary_record_date: str = field(init=False)
+    forms: str = field(init=False)
+
+
+@dataclass
 class Description:
     name: str = field(init=False)
     addressee: str = field(init=False)
