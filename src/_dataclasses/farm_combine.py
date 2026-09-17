@@ -317,9 +317,9 @@ class PublishedFarm:
                 files_in_proof_format.append(", ".join([_img.name for _img in images]))
                 ids_in_proof_format.append(", ".join([_img.id for _img in images]))
 
-        self.forms = forms_in_proof_format
-        self.file_names = files_in_proof_format
-        self.file_ids = ids_in_proof_format
+        self.forms = self._join(forms_in_proof_format)
+        self.file_names = self._join(files_in_proof_format)
+        self.file_ids = self._join(ids_in_proof_format)
 
     def __post_init__(self):
         self.id = self.farm.id
