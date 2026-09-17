@@ -294,6 +294,13 @@ class HarvestedFarm:
 @dataclass
 class PublishedFarm:
     farm: HarvestedFarm
+            
+    @staticmethod
+    def _join(values: list, newline=True) -> str:
+        if newline:
+            _ = ";\n".join(values)
+            return ";\n".join(_.split("; "))
+        return "; ".join(values)
 
     def _process_forms_for_proof(self) -> None:
         forms_in_proof_format = []
@@ -313,13 +320,6 @@ class PublishedFarm:
         self.forms = forms_in_proof_format
         self.file_names = files_in_proof_format
         self.file_ids = ids_in_proof_format
-            
-    @staticmethod
-    def _join(values: list, newline=True) -> str:
-        if newline:
-            _ = ";\n".join(values)
-            return ";\n".join(_.split("; "))
-        return "; ".join(values)
 
     def __post_init__(self):
         self.id = self.farm.id
