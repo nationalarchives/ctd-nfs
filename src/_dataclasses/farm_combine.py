@@ -310,8 +310,26 @@ class PublishedFarm:
         self.field_info_date = self.farm._join(self.farm.field_info_date)
         self.primary_record_date = self.farm._join(self.farm.primary_record_date)
 
-        self._forms_and_files = self.farm._process_forms_for_proof()
-        self.forms = self.farm._join(self.farm._forms_and_files['forms'])
+        self._process_forms_for_proof()
+
+    def _process_forms_for_proof(self) -> None:
+        forms_in_proof_format = []
+        files_in_proof_format = []
+        ids_in_proof_format = []
+
+        for form_type, image_sets in self.farm.forms.items():
+            if len(image_sets) == 1:
+                forms_in_proof_format.append(form_type)
+            else:
+                for index in range(len(image_sets)):
+                    forms_in_proof_format.append(f"{form_type} ({index + 1})")
+            for images in image_sets:
+                files_in_proof_format.append(", ".join([_img.name for _img in images]))
+                ids_in_proof_format.append(", ".join([_img.id for _img in images]))
+
+        self.forms = forms_in_proof_format
+        self.file_names = files_in_proof_format
+        self.file_ids = ids_in_proof_format
 
 
 @dataclass
