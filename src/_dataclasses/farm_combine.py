@@ -294,6 +294,13 @@ class HarvestedFarm:
 @dataclass
 class PublishedFarm:
     farm: HarvestedFarm
+            
+    @staticmethod
+    def _join(values: list, newline=True) -> str:
+        if newline:
+            _ = ";\n".join(values)
+            return ";\n".join(_.split("; "))
+        return "; ".join(values)
 
     def __post_init__(self):
         self.id = self.farm.id
@@ -301,14 +308,14 @@ class PublishedFarm:
         self.catalogue_reference = self.farm.catalogue_reference
         self.farm_reference = self.farm.farm_reference
 
-        self.name = self.farm._join(self.farm.farm_name)
-        self.addressee = self.farm._join(self.farm.addressee.names_and_addresses)
-        self.farmer = self.farm._join(self.farm.farmer.names_and_addresses)
-        self.landowner = self.farm._join(self.farm.landowner.names_and_addresses)
-        self.acreage = self.farm._join(self.farm.acreage)
-        self.os_sheet_number = self.farm._join(self.farm.OS_map_sheet)
-        self.field_info_date = self.farm._join(self.farm.field_info_date)
-        self.primary_record_date = self.farm._join(self.farm.primary_record_date)
+        self.name = self._join(self.farm.farm_name)
+        self.addressee = self._join(self.farm.addressee.names_and_addresses)
+        self.farmer = self._join(self.farm.farmer.names_and_addresses)
+        self.landowner = self._join(self.farm.landowner.names_and_addresses)
+        self.acreage = self._join(self.farm.acreage)
+        self.os_sheet_number = self._join(self.farm.OS_map_sheet)
+        self.field_info_date = self._join(self.farm.field_info_date)
+        self.primary_record_date = self._join(self.farm.primary_record_date)
 
         self._process_forms_for_proof()
 
