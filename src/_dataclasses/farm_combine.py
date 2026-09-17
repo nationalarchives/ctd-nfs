@@ -338,6 +338,43 @@ class PublishedFarm:
 
         self._process_forms_for_proof()
 
+    def to_proof(self) -> list:
+         return [
+            self.catalogue_reference,
+            self._join(self.farm.warnings.get('Reference Warnings', "")),
+            self.id,
+            self.replica_id,
+            # ========================
+            self.file_ids,
+            self.file_names,
+            self._join(self.farm.warnings.get('Filename Warnings', "")),
+            # ========================
+            self.forms,
+            self._join(self.farm.warnings.get('Type Warnings', "")),
+            self.farm_reference,
+            self.name,
+            # ========================
+            self._join(self.farm.addressee.names),
+            self.farm.warnings.get('Addressee name warnings', ""),
+            self._join(self.farm.addressee.addresses),
+            self.addressee,
+            # ========================
+            self._join(self.farm.farmer.names),
+            self.farm.warnings.get('Farmer name warnings', ""),
+            self._join(self.farm.farmer.addresses),
+            self.farmer,
+            # ========================
+            self._join(self.farm.landowner.names),
+            self.farm.warnings.get('Landowner name warnings', ""),
+            self._join(self.farm.landowner.addresses),
+            self.landowner,
+            # ========================
+            self.acreage,
+            self.os_sheet_number,
+            self.field_info_date,
+            self.primary_record_date,
+        ]
+
 
 @dataclass
 class ArchivedFarm:
