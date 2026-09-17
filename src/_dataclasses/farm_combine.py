@@ -294,15 +294,19 @@ class HarvestedFarm:
 @dataclass
 class PublishedFarm:
     farm: HarvestedFarm
-    name: str = field(init=False)
-    addressee: str = field(init=False)
-    farmer: str = field(init=False)
-    landowner: str = field(init=False)
-    acreage: str = field(init=False)
-    os_sheet_number: str = field(init=False)
-    field_info_date: str = field(init=False)
-    primary_record_date: str = field(init=False)
-    forms: str = field(init=False)
+
+    def __post_init__(self):
+        self.name = self.farm._join(self.farm.farm_name)
+        self.addressee = self.farm._join(self.farm.addressee.names_and_addresses)
+        self.farmer = self.farm._join(self.farm.farmer.names_and_addresses)
+        self.landowner = self.farm._join(self.farm.landowner.names_and_addresses)
+        self.acreage = self.farm._join(self.farm.acreage)
+        self.os_sheet_number = self.farm._join(self.farm.OS_map_sheet)
+        self.field_info_date = self.farm._join(self.farm.field_info_date)
+        self.primary_record_date = self.farm._join(self.farm.primary_record_date)
+
+        self._forms_and_files = self.farm._process_forms_for_proof()
+        self.forms = self.farm._join(self.farm._forms_and_files['forms'])
 
 
 @dataclass
