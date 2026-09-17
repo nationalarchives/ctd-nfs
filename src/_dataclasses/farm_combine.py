@@ -112,19 +112,6 @@ class Respondent:
 
 
 @dataclass
-class Description:
-    name: str = field(init=False)
-    addressee: str = field(init=False)
-    farmer: str = field(init=False)
-    landowner: str = field(init=False)
-    acreage: str = field(init=False)
-    os_sheet_number: str = field(init=False)
-    field_info_date: str = field(init=False)
-    primary_record_date: str = field(init=False)
-    forms: str = field(init=False)
-
-
-@dataclass
 class HarvestedFarm:
     county: str
     parish: str
@@ -139,9 +126,6 @@ class HarvestedFarm:
     OS_map_sheet: list[str] = field(init=False)
     field_info_date: list[str] = field(init=False)
     primary_record_date: list[str] = field(init=False)
-
-    description: Description = field(init=False)
-    _forms_and_files: dict = field(init=False)
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
@@ -187,87 +171,6 @@ class HarvestedFarm:
     @cached_property
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
-
-    def _process_forms_for_proof(self) -> dict:
-        forms_in_proof_format = []
-        files_in_proof_format = []
-        ids_in_proof_format = []
-
-        for form_type, image_sets in self.forms.items():
-            if len(image_sets) == 1:
-                forms_in_proof_format.append(form_type)
-            else:
-                for index in range(len(image_sets)):
-                    forms_in_proof_format.append(f"{form_type} ({index + 1})")
-            for images in image_sets:
-                files_in_proof_format.append(", ".join([_img.name for _img in images]))
-                ids_in_proof_format.append(", ".join([_img.id for _img in images]))
-
-        return {
-            'forms': forms_in_proof_format,
-            'file_names': files_in_proof_format,
-            'file_ids': ids_in_proof_format,
-        }
-            
-    @staticmethod
-    def _join(values: list, newline=True) -> str:
-        if newline:
-            _ = ";\n".join(values)
-            return ";\n".join(_.split("; "))
-        return "; ".join(values)
-
-    def set_description(self) -> Description:
-        self.description = Description()
-        self.description.name = self._join(self.farm_name)
-        self.description.addressee = self._join(self.addressee.names_and_addresses)
-        self.description.farmer = self._join(self.farmer.names_and_addresses)
-        self.description.landowner = self._join(self.landowner.names_and_addresses)
-        self.description.acreage = self._join(self.acreage)
-        self.description.os_sheet_number = self._join(self.OS_map_sheet)
-        self.description.field_info_date = self._join(self.field_info_date)
-        self.description.primary_record_date = self._join(self.primary_record_date)
-
-        self._forms_and_files = self._process_forms_for_proof()
-        self.description.forms = self._join(self._forms_and_files['forms'])
-        return self.description
-
-    def to_proof(self) -> list:
-        self.description = self.set_description()
-        return [
-            self.catalogue_reference,
-            self._join(self.warnings.get('Reference Warnings', "")),
-            self.id,
-            # ========================
-            self.replica_id,
-            self._join(self._forms_and_files['file_ids']),
-            self._join(self._forms_and_files['file_names']),
-            self._join(self.warnings.get('Filename Warnings', "")),
-            # ========================
-            self.description.forms,
-            self._join(self.warnings.get('Type Warnings', "")),
-            self.farm_reference,
-            self.description.name,
-            # ========================
-            self._join(self.addressee.names),
-            self.warnings.get('Addressee name warnings', ""),
-            self._join(self.addressee.addresses),
-            self.description.addressee,
-            # ========================
-            self._join(self.farmer.names),
-            self.warnings.get('Farmer name warnings', ""),
-            self._join(self.farmer.addresses),
-            self.description.farmer,
-            # ========================
-            self._join(self.landowner.names),
-            self.warnings.get('Landowner name warnings', ""),
-            self._join(self.landowner.addresses),
-            self.description.landowner,
-            # ========================
-            self.description.acreage,
-            self.description.os_sheet_number,
-            self.description.field_info_date,
-            self.description.primary_record_date,
-        ]
 
     def convert_forms_to_dict(self) -> dict:
         return {
