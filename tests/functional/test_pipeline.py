@@ -1,6 +1,4 @@
-import os
 import shelve
-from pathlib import Path
 
 import pytest
 
@@ -14,9 +12,6 @@ logger = create_logger("src._config", "logging.yaml")
 
 # @pytest.mark.skip(reason="awaiting refactoring of file_processor")
 def test_file_processor():
-    for file in Path(PATH.DB / "TEST").glob("*"):
-        os.remove(file)
-
     run_pipeline(test_mode=True)
 
     with shelve.open(DB.TEST, 'r') as test_db:
