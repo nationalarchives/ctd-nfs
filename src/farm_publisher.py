@@ -22,7 +22,8 @@ import json
 import pprint
 import shelve
 
-from _dataclasses.farm_record import DiscoveryMAF32
+from src._dataclasses.farm_combine import HarvestedFarm
+from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import DB, PATH, REGEX
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
@@ -33,11 +34,11 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def build_catalogue_documents(cleaned_data: list[dict], farms_store: dict, test_mode=False) -> list[dict]:
+def build_catalogue_documents(harvested_farms: list[HarvestedFarm], test_mode=False) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for farm_proof in cleaned_data:
+    for farm_proof in harvested_farms:
         discovery_document = DiscoveryMAF32(farm_proof)
         logger.info(f"Farm {farm_proof['catalogue_reference']} --> Built record {farm_proof['farm_id']} with {len(discovery_document.files)} images")
 
