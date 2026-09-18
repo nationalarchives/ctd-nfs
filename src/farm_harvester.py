@@ -320,16 +320,16 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             county, _ = csv_file.stem.split("_", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-            initailised_farms: dict = {version: transform_row_data_to_farms(normalised_farm_data)}
+            initialised_farms: dict = {version: transform_row_data_to_farms(normalised_farm_data)}
 
             if debug:
-                write_farms_to_db(initailised_farms, county, test_mode)
+                write_farms_to_db(initialised_farms, county, test_mode)
 
         if process:
             if debug:
-                initailised_farms = read_farms_db(county, test_mode)
+                initialised_farms = read_farms_db(county, test_mode)
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
-            finalised_farms = process_transcriptions_for_each_farm(initailised_farms[version])
+            finalised_farms = process_transcriptions_for_each_farm(initialised_farms[version])
             write_farms_to_db(finalised_farms, county, test_mode)
 
             logger.info("*** CREATING PROOF FILE ***")
