@@ -326,7 +326,8 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
                 write_farms_to_db(farms_store, county, test_mode)
 
         if process:
-            farms_store = read_farms_db(county, test_mode)
+            if debug:
+                farms_store = read_farms_db(county, test_mode)
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
             farms_store = process_transcriptions_for_each_farm(farms_store[version])
             write_farms_to_db(farms_store, county, test_mode)
