@@ -68,6 +68,7 @@ class CSVandExcelNamespace:
         ('field_info_date', 25),
         ('primary_record_date', 25),
     ]
+CSVEXCEL = CSVandExcelNamespace()
 
 
 class DataNamespace:
@@ -120,6 +121,7 @@ class DataNamespace:
     ]
     MONTH_NAMES: typing.ClassVar = list(calendar.month_name)
     ABBR_MONTH_NAMES: typing.ClassVar = list(calendar.month_abbr)
+DATA = DataNamespace()
 
 
 class RegexNamespace:
@@ -147,6 +149,7 @@ class RegexNamespace:
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
     TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
     TRANSCRIPTIONS_VERSION = re.compile(r"""^.*?_HarvesterIN_(?P<version>V\d)-.*?$""")
+REGEX = RegexNamespace()
 
 
 class PathNamespace:
@@ -168,6 +171,7 @@ class PathNamespace:
     HARVEST = _PIPELINE_ROOT / "2-HARVEST"
     PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
     ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
+PATH = PathNamespace()
 
 
 class DiscoveryNamespace:
@@ -224,11 +228,7 @@ class DiscoveryNamespace:
         'source': "FS",
         'title': None,
     }
-
-
-PATH = PathNamespace()
-REGEX = RegexNamespace()
-DATA = DataNamespace()
-CSVEXCEL = CSVandExcelNamespace()
 DISCOVERY = DiscoveryNamespace()
+
+
 
