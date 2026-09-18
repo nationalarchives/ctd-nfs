@@ -5,7 +5,7 @@ import uuid
 from functools import lru_cache
 from pathlib import Path
 
-from src._tools.constants import PATH
+from src._tools.constants import DB
 from src._tools.xlreader import read_file
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 @lru_cache
 def get_piece_value(county_code: str, parish_number: str) -> str:
-    with shelve.open(PATH.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
+    with shelve.open(DB.PIECE_LOOKUP_TABLE, "r") as piece_lookup_db:   
         all_references = (
             reference
             for reference in piece_lookup_db['pieces lookup table']
