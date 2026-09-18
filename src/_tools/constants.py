@@ -30,6 +30,22 @@ class PathNamespace:
 PATH = PathNamespace()
 
 
+class DBNamespace:
+    __slots__ = ()
+
+    DB = PATH.DB
+    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
+    PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
+    
+    FARMS_DB = DB / Path("NFS_Production.db")
+    TEST_DB = DB / "TEST" / Path("NFS_Test.db")
+
+    FARM_IDS = DB / "Farm_IDs.db"
+    FILE_IDS = DB / "File_IDs.db"
+DB = DBNamespace()
+
+
+
 class CSVandExcelNamespace:
     __slots__ = ()
 
