@@ -320,20 +320,20 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             county, _ = csv_file.stem.split("_", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-            farms_store: dict = {version: transform_row_data_to_farms(normalised_farm_data)}
+            initailised_farms: dict = {version: transform_row_data_to_farms(normalised_farm_data)}
 
             if debug:
-                write_farms_to_db(farms_store, county, test_mode)
+                write_farms_to_db(initailised_farms, county, test_mode)
 
         if process:
             if debug:
-                farms_store = read_farms_db(county, test_mode)
+                initailised_farms = read_farms_db(county, test_mode)
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
-            farms_store = process_transcriptions_for_each_farm(farms_store[version])
-            write_farms_to_db(farms_store, county, test_mode)
+            finalised_farms = process_transcriptions_for_each_farm(initailised_farms[version])
+            write_farms_to_db(finalised_farms, county, test_mode)
 
             logger.info("*** CREATING PROOF FILE ***")
-            proof_file, preview_data = create_proof_file(farms_store, county, csv_file.stem, test_mode)
+            proof_file, preview_data = create_proof_file(finalised_farms, county, csv_file.stem, test_mode)
 
             logger.info("*** CREATING HTML PREVIEW ***")
             create_html_preview(proof_file.stem, excel_data=preview_data)
