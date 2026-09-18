@@ -6,7 +6,7 @@ from urllib import parse
 
 import requests
 
-from src._tools.constants import DISCOVERY, PATH
+from src._tools.constants import DB, DISCOVERY
 from src._tools.helpers import create_uuid_str
 
 
@@ -16,7 +16,7 @@ class ImageFile:
 
     @property
     def id(self) -> uuid.UUID:
-        with dbm.open(PATH.FILE_IDS, 'c') as file_ids_db:
+        with dbm.open(DB.FILE_IDS, 'c') as file_ids_db:
             db_id = file_ids_db.get(self.name, "")
             if db_id:
                 id = db_id.decode()
@@ -27,7 +27,7 @@ class ImageFile:
 
 
 def get_map_ids(reference: str) -> dict[str, uuid.UUID]:
-    with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
+    with dbm.open(DB.FARM_IDS, 'c') as farm_ids_db:
         db_ids = farm_ids_db.get(reference, "")
         if db_ids:
             db_ids = eval(db_ids.decode())

@@ -37,7 +37,7 @@ from pathlib import Path
 
 from src._dataclasses.farm_combine import HarvestedFarm, PublishedFarm
 from src._dataclasses.transcription_model import Transcription
-from src._tools.constants import CSVEXCEL, PATH, REGEX
+from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
 from src._tools.logging_setup import create_logger
 from src._tools.xlwriter import ExcelWriter
@@ -126,7 +126,7 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, test_m
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
-    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'c') as farm_db:
+    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
         farm_db[county] = farms_store.copy()
 
 
@@ -142,7 +142,7 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFa
     Returns:
         _description_
     """    
-    with shelve.open(PATH.TEST_DB if test_mode else PATH.FARMS_DB, 'r') as farm_db:
+    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
         farms_store = farm_db[county].copy()
 
     return farms_store
@@ -186,7 +186,7 @@ def initialise_farm(transcription: Transcription) -> HarvestedFarm:
     The FARM_IDS db will be deleted after Rutland (RD) and Isle of Wight (IW) have been archived
     """
     if transcription.county.startswith(("RD", "IW")):
-        with dbm.open(PATH.FARM_IDS, 'c') as farm_ids_db:
+        with dbm.open(DB.FARM_IDS, 'c') as farm_ids_db:
             db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
             if db_ids:
                 db_ids = eval(db_ids.decode())

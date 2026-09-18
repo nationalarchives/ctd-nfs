@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 
 from src._dataclasses.farm_combine import ImageFile, ImageSet
 from src._dataclasses.transcription_model import Filename, Transcription
-from src._tools.constants import DATA, PATH, REGEX
+from src._tools.constants import DATA, DB, REGEX
 
 
 class TranscriptionsProcessor:
@@ -155,7 +155,7 @@ class TranscriptionsProcessor:
             """
             if transcription.county.startswith(("RD", "IW")):
                 for index, image in enumerate(image_set):
-                    with dbm.open(PATH.FILE_IDS, 'c') as file_ids_db:
+                    with dbm.open(DB.FILE_IDS, 'c') as file_ids_db:
                         db_id = file_ids_db.get(image.name, "")
                         if db_id:
                             image_set[index].id = db_id.decode()

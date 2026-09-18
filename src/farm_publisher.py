@@ -23,7 +23,7 @@ import pprint
 import shelve
 
 from _dataclasses.farm_record import DiscoveryMAF32
-from src._tools.constants import PATH
+from src._tools.constants import DB, PATH
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
 
@@ -61,7 +61,7 @@ def process_proof_files(test_mode: bool=False) -> None:
 
     for proof_file in xlsx_files:
         county, _ = proof_file.name.split("_", maxsplit=1)
-        with shelve.open(PATH.FARMS_DB, "r") as farms_db:
+        with shelve.open(DB.PRODUCTION, "r") as farms_db:
             farms_store = farms_db[county]
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
