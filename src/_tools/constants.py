@@ -12,16 +12,6 @@ class PathNamespace:
     __slots__ = ()
     
     PIPELINE_ROOT = Path(r"Pipeline")
-  
-    DB = PIPELINE_ROOT / "0-DB"
-    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
-    PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
-    
-    FARMS_DB = DB / Path("NFS_Production.db")
-    TEST_DB = DB / "TEST" / Path("NFS_Test.db")
-
-    FARM_IDS = DB / "Farm_IDs.db"
-    FILE_IDS = DB / "File_IDs.db"
 
     INPUT = PIPELINE_ROOT / "1-INPUT"   
     HARVEST = PIPELINE_ROOT / "2-HARVEST"
