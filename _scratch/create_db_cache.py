@@ -4,12 +4,13 @@
 Returns:
     _type_: _description_
 """
-from pathlib import Path
 import shelve
+from pathlib import Path
 
+from src._tools.constants import DB
 from src._tools.xlreader import read_file
 
-from src._tools.constants import PATH
+
 def read_records_from_file(excel_file: Path) -> list[dict]:  
     """
     Reads data from file as a dictionary where each {key, value} refers to one sheet and its rows (a list of tuples) 
@@ -34,7 +35,7 @@ def read_records_from_file(excel_file: Path) -> list[dict]:
 if __name__ == "__main__":
 
     # lookup_table: list[dict] = read_records_from_file(PATH.EXCEL_LOOKUP_FILE)
-    with shelve.open(PATH.FARMS_DB, 'c') as farm_db:
+    with shelve.open(DB.FARMS_DB, 'c') as farm_db:
         for county in farm_db:
             print(f"{county=}")
             # if county == 'MX Middlesex':
