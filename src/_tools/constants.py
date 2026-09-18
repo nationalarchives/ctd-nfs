@@ -8,6 +8,28 @@ import typing
 from pathlib import Path
 
 
+class PathNamespace:
+    __slots__ = ()
+    
+    _PIPELINE_ROOT = Path(r"Pipeline")
+  
+    DB = _PIPELINE_ROOT / "0-DB"
+    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
+    PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
+    
+    FARMS_DB = DB / Path("NFS_Production.db")
+    TEST_DB = DB / "TEST" / Path("NFS_Test.db")
+
+    FARM_IDS = DB / "Farm_IDs.db"
+    FILE_IDS = DB / "File_IDs.db"
+
+    INPUT = _PIPELINE_ROOT / "1-INPUT"   
+    HARVEST = _PIPELINE_ROOT / "2-HARVEST"
+    PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
+    ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
+PATH = PathNamespace()
+
+
 class CSVandExcelNamespace:
     __slots__ = ()
 
@@ -150,28 +172,6 @@ class RegexNamespace:
     TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
     TRANSCRIPTIONS_VERSION = re.compile(r"""^.*?_HarvesterIN_(?P<version>V\d)-.*?$""")
 REGEX = RegexNamespace()
-
-
-class PathNamespace:
-    __slots__ = ()
-    
-    _PIPELINE_ROOT = Path(r"Pipeline")
-  
-    DB = _PIPELINE_ROOT / "0-DB"
-    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
-    PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
-    
-    FARMS_DB = DB / Path("NFS_Production.db")
-    TEST_DB = DB / "TEST" / Path("NFS_Test.db")
-
-    FARM_IDS = DB / "Farm_IDs.db"
-    FILE_IDS = DB / "File_IDs.db"
-
-    INPUT = _PIPELINE_ROOT / "1-INPUT"   
-    HARVEST = _PIPELINE_ROOT / "2-HARVEST"
-    PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
-    ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
-PATH = PathNamespace()
 
 
 class DiscoveryNamespace:
