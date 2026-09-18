@@ -23,7 +23,7 @@ PATH = PathNamespace()
 class DBNamespace:
     __slots__ = ()
 
-    DB = PATH.PIPELINE_ROOT
+    DB = PATH.PIPELINE_ROOT / "0-DB"
     EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
     PIECES = DB / "MAF 32 Piece Lookup Table.db"
     
