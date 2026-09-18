@@ -23,7 +23,7 @@ import pprint
 import shelve
 
 from _dataclasses.farm_record import DiscoveryMAF32
-from src._tools.constants import DB, PATH
+from src._tools.constants import DB, PATH, REGEX
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
 
@@ -61,6 +61,8 @@ def process_proof_files(test_mode: bool=False) -> None:
 
     for csv_file in input_files:
         county, _ = csv_file.name.split("_", maxsplit=1)
+        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
+
         with shelve.open(DB.PRODUCTION, "r") as farms_db:
             farms_store = farms_db[county]
         proof_data = load_excel_data(csv_file)
