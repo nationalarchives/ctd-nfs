@@ -57,13 +57,13 @@ def write_catalogue_documents(documents: list[dict], county: str) -> None:
            
             
 def process_proof_files(test_mode: bool=False) -> None:
-    xlsx_files = PATH.HARVEST.glob("TEST/*.xlsx") if test_mode else PATH.HARVEST.glob("*.xlsx")
+    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
-    for proof_file in xlsx_files:
-        county, _ = proof_file.name.split("_", maxsplit=1)
+    for csv_file in input_files:
+        county, _ = csv_file.name.split("_", maxsplit=1)
         with shelve.open(DB.PRODUCTION, "r") as farms_db:
             farms_store = farms_db[county]
-        proof_data = load_excel_data(proof_file)
+        proof_data = load_excel_data(csv_file)
         cleaned_data = clean_excel_data(proof_data)
         final_documents = build_catalogue_documents(cleaned_data, farms_store, test_mode)
         if test_mode:
