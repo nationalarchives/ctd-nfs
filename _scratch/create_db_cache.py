@@ -23,7 +23,7 @@ def read_records_from_file(excel_file: Path) -> list[dict]:
         list[dict]: 
     """
     file_data = read_file(excel_file)
-    sheet_name = list(file_data.keys())[0]
+    sheet_name = next(iter(file_data.keys()))
     data_rows = file_data[sheet_name]
     return [
         dict(zip(data_rows[0], row))
