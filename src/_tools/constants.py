@@ -11,9 +11,9 @@ from pathlib import Path
 class PathNamespace:
     __slots__ = ()
     
-    _PIPELINE_ROOT = Path(r"Pipeline")
+    PIPELINE_ROOT = Path(r"Pipeline")
   
-    DB = _PIPELINE_ROOT / "0-DB"
+    DB = PIPELINE_ROOT / "0-DB"
     EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
     PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
     
@@ -23,10 +23,10 @@ class PathNamespace:
     FARM_IDS = DB / "Farm_IDs.db"
     FILE_IDS = DB / "File_IDs.db"
 
-    INPUT = _PIPELINE_ROOT / "1-INPUT"   
-    HARVEST = _PIPELINE_ROOT / "2-HARVEST"
-    PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
-    ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
+    INPUT = PIPELINE_ROOT / "1-INPUT"   
+    HARVEST = PIPELINE_ROOT / "2-HARVEST"
+    PUBLISH = PIPELINE_ROOT / "3-PUBLISH"
+    ARCHIVE = PIPELINE_ROOT / "0-ARCHIVE"
 PATH = PathNamespace()
 
 
