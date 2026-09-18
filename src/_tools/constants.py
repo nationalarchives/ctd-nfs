@@ -146,7 +146,7 @@ class RegexNamespace:
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
     TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
-    PUBLISHING_VERSION = re.compile(r"""^.*?_HarvesterIN_(?P<version>V\d)-.*?$""")
+    TRANSCRIPTIONS_VERSION = re.compile(r"""^.*?_HarvesterIN_(?P<version>V\d)-.*?$""")
 
 
 class PathNamespace:

@@ -314,7 +314,7 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
-        version = REGEX.PUBLISHING_VERSION.match(csv_file.stem)['version']
+        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
         if harvest:
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
             county, _ = csv_file.stem.split("_", maxsplit=1)
