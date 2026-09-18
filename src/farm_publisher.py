@@ -64,10 +64,10 @@ def process_proof_files(test_mode: bool=False) -> None:
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
         with shelve.open(DB.PRODUCTION, "r") as farms_db:
-            farms_store = farms_db[county][version]
+            harvested_farms = farms_db[county][version]
         proof_data = load_excel_data(csv_file)
         cleaned_data = clean_excel_data(proof_data)
-        final_documents = build_catalogue_documents(cleaned_data, farms_store, test_mode)
+        final_documents = build_catalogue_documents(cleaned_data, harvested_farms, test_mode)
         if test_mode:
             for document in final_documents:
                 pretty.pprint(document)
