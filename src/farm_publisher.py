@@ -20,13 +20,12 @@ Yields:
 """
 import json
 import pprint
-import shelve
 
 from src._dataclasses.farm_combine import HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
-from src._tools.constants import DB, PATH, REGEX
-from src._tools.helpers import clean_excel_data, load_excel_data
+from src._tools.constants import PATH, REGEX
 from src._tools.logging_setup import create_logger
+from src.farm_harvester import read_farms_db
 
 logger = create_logger("src._config", "logging.yaml")
 
