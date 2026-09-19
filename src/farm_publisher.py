@@ -63,8 +63,8 @@ def process_proof_files(test_mode: bool=False) -> None:
         county, _ = csv_file.name.split(" ", maxsplit=1)
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
-        with shelve.open(DB.PRODUCTION, "r") as farms_db:
-            harvested_farms = farms_db[county][version].values()
+        county_data = read_farms_db(county, test_mode)
+        harvested_farms = county_data[version].values()
 
         final_documents = build_catalogue_documents(harvested_farms, test_mode)
         if test_mode:
