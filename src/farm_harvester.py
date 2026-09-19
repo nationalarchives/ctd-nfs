@@ -321,7 +321,7 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             county, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-            initialised_farms: dict = {version: transform_row_data_to_farms(normalised_farm_data)}
+            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data)
 
             if debug:
                 write_farms_to_db(initialised_farms, county, test_mode)
