@@ -70,7 +70,7 @@ def process_proof_files(test_mode: bool=False) -> None:
             for _farm in harvested_farms
         ]
 
-        final_documents = build_catalogue_documents(harvested_farms, test_mode)
+        final_documents = build_catalogue_documents(published_farms, test_mode)
         if test_mode:
             for document in final_documents:
                 pretty.pprint(document)
