@@ -60,7 +60,7 @@ def process_proof_files(test_mode: bool=False) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
-        county, _ = csv_file.name.split("_", maxsplit=1)
+        county, _ = csv_file.name.split(" ", maxsplit=1)
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
         with shelve.open(DB.PRODUCTION, "r") as farms_db:
