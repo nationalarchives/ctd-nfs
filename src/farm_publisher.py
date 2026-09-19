@@ -76,7 +76,7 @@ def process_proof_files(test_mode: bool=False) -> None:
 
 def main(test_mode: bool=False):
     logger.info(" ===== PROCESSING PROOF FILES ===== ")
-    process_proof_files()
+    process_proof_files(test_mode)
 
 
 if __name__ == "__main__":
