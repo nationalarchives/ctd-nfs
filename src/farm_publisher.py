@@ -65,6 +65,10 @@ def process_proof_files(test_mode: bool=False) -> None:
 
         county_data = read_farms_db(county, test_mode)
         harvested_farms = county_data[version].values()
+        published_farms = [
+            PublishedFarm(_farm)
+            for _farm in harvested_farms
+        ]
 
         final_documents = build_catalogue_documents(harvested_farms, test_mode)
         if test_mode:
