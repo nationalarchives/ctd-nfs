@@ -75,7 +75,7 @@ class DiscoveryMAF32:
                 'format': "jpg",
                 'name': f"66/MAF/32/{id}.jpg",
             }
-            for (id, name) in zip(re.split(r"[;,] *", self.farm.file_ids), re.split(r"[;,] *", self.farm.file_names))
+            for (id, name) in zip(re.split(r"(;\n|,) *", self.farm.file_ids), re.split(r"(;\n|,) *", self.farm.file_names))
         ]
 
     def to_dict(self) -> dict:
