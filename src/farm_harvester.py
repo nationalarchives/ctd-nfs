@@ -116,7 +116,7 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Harves
     return farms_store
 
 
-def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, test_mode: bool = False) -> None:
+def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, version: str, test_mode: bool = False) -> None:
     """_summary_
 
     Arguments:
@@ -126,8 +126,9 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, test_m
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
+    county = {version: farms_store}
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
-        farm_db[county] = farms_store.copy()
+        farm_db[county] = county.copy()
 
 
 def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
