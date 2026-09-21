@@ -25,7 +25,7 @@ class DiscoveryMAF32:
         result = requests.get(api_query)
         parent_record = result.json()
 
-        return parent_record['records'][0]['id']
+        return parent_record['assets'][0]['id']
 
     @property
     def forms_list(self) -> str:
