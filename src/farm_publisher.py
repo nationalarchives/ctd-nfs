@@ -66,7 +66,7 @@ def process_proof_files(test_mode: bool=False) -> None:
         county_data = read_farms_db(county, test_mode)
         harvested_farms = county_data[version].values()
         published_farms = [
-            PublishedFarm(_farm)
+            PublishedFarm(_farm, "Discovery")
             for _farm in harvested_farms
         ]
 
