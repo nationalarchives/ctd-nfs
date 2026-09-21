@@ -202,9 +202,8 @@ class PublishedFarm:
     farm: HarvestedFarm
     target: TargetFormat
             
-    @staticmethod
-    def _join(values: list, newline=True) -> str:
-        if newline:
+    def _join(self, values: list) -> str:
+        if self.target == "HarvesterOUT":
             _ = ";\n".join(values)
             return ";\n".join(_.split("; "))
         return "; ".join(values)
