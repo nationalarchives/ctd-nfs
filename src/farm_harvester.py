@@ -116,7 +116,7 @@ def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, Harves
     return farms_store
 
 
-def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, version: str, test_mode: bool = False) -> None:
+def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county_code: str, version: str, test_mode: bool = False) -> None:
     """_summary_
 
     Arguments:
@@ -128,7 +128,7 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county: str, versio
     """    
     county = {version: farms_store}
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
-        farm_db[county] = county.copy()
+        farm_db[county_code] = county.copy()
 
 
 def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
@@ -318,24 +318,24 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
         if harvest:
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
-            county, _ = csv_file.stem.split(" ", maxsplit=1)
+            county_code, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
             initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data)
 
             if debug:
-                write_farms_to_db(initialised_farms, county, version, test_mode)
+                write_farms_to_db(initialised_farms, county_code, version, test_mode)
 
         if process:
             if debug:
-                initialised_farms = read_farms_db(county, test_mode)
+                initialised_farms = read_farms_db(county_code, test_mode)
 
-            logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county} ***")
-            harvested_farms = process_transcriptions_for_each_farm(initialised_farms[version])
-            write_farms_to_db(harvested_farms, county, version, test_mode)
+            logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county_code} ***")
+            harvested_farms = process_transcriptions_for_each_farm(initialised_farms)
+            write_farms_to_db(harvested_farms, county_code, version, test_mode)
 
             logger.info("*** CREATING PROOF FILE ***")
-            proof_file, preview_data = create_proof_file(harvested_farms, county, csv_file.stem, test_mode)
+            proof_file, preview_data = create_proof_file(harvested_farms, county_code, csv_file.stem, test_mode)
 
             logger.info("*** CREATING HTML PREVIEW ***")
             create_html_preview(proof_file.stem, excel_data=preview_data)
