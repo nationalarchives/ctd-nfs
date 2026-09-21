@@ -3,6 +3,7 @@ Dataclasses and factories used to create Discovery JSON records
 """
 import re
 from dataclasses import dataclass
+from functools import cached_property
 from urllib import parse
 
 from src._dataclasses.farm_combine import PublishedFarm
@@ -15,7 +16,7 @@ class DiscoveryMAF32:
     farm: PublishedFarm
     update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
 
-    @property
+    @cached_property
     def parent_id (self) -> str:
         ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
