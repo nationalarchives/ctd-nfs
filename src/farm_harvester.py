@@ -63,7 +63,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
 
     farms_in_proof_format = []
     for farm in farms_store.values():
-        published_farm = PublishedFarm(farm)
+        published_farm = PublishedFarm(farm, "HarvesterOUT")
         farms_in_proof_format.append(published_farm.to_proof())
             
     excel_data = [{
