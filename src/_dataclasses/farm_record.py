@@ -5,10 +5,9 @@ import re
 from dataclasses import dataclass
 from urllib import parse
 
-import requests
-
 from src._dataclasses.farm_combine import PublishedFarm
 from src._tools.constants import DISCOVERY
+from src._tools.helpers import get_parent_discovery_record
 
 
 @dataclass
@@ -21,9 +20,7 @@ class DiscoveryMAF32:
         ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(ref)
 
-        api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
-        result = requests.get(api_query)
-        parent_record = result.json()
+        parent_record = get_parent_discovery_record(ref_url_safe)
 
         return parent_record['assets'][0]['id']
 

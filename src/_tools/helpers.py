@@ -5,7 +5,9 @@ import uuid
 from functools import lru_cache
 from pathlib import Path
 
-from src._tools.constants import DB
+import requests
+
+from src._tools.constants import DB, DISCOVERY
 from src._tools.xlreader import read_file
 
 logger = logging.getLogger(__name__)
@@ -72,4 +74,10 @@ def get_piece_value(county_code: str, parish_number: str) -> str:
     reference = next(all_references, None)
 
     return reference['Piece Number']
+
+def get_parent_discovery_record(ref_url_safe: str) -> dict:
+    api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
+    result = requests.get(api_query)
+
+    return result.json()
 
