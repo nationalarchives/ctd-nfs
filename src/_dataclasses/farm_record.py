@@ -47,7 +47,7 @@ class DiscoveryMAF32:
     def scope_and_content(self) -> dict:
         description_fields = {
             'Farm Reference': f"{self.farm.farm_reference}.",
-            'Farm Name(s)': f"{self.farm.farm.name}.",
+            'Farm Name(s)': f"{self.farm.name}.",
             'Addressee(s)': f"{self.farm.addressee}.",
             'Farmer(s) or Occupier(s)': f"{self.farm.farmer}.",
             'Landowner(s)': f"{self.farm.landowner}.",
