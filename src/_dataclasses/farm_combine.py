@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import InitVar, dataclass, field
 from functools import cached_property
+from typing import Literal
 
 from src._dataclasses.transcription_model import Filename, Transcription
 from src._tools.helpers import create_uuid_str, get_piece_value
@@ -194,9 +195,12 @@ class HarvestedFarm:
         }
 
 
+TargetFormat = Literal["HarvesterOUT", "Discovery"]
+
 @dataclass
 class PublishedFarm:
     farm: HarvestedFarm
+    target: TargetFormat
             
     @staticmethod
     def _join(values: list, newline=True) -> str:
