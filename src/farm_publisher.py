@@ -39,7 +39,7 @@ def build_catalogue_documents(published_farms: list[PublishedFarm], test_mode=Fa
     documents = []
     for farm in published_farms:   
         discovery_document = DiscoveryMAF32(farm)
-        logger.info(f"Farm {farm.catalogue_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
+        logger.info(f"Farm {farm.farm_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
 
         documents.append(discovery_document.to_dict())
 
