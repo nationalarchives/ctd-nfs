@@ -1,0 +1,3 @@
+[publisher]
+test_mode = true
+update_scope = "RecordAndReplica"
