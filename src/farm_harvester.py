@@ -49,7 +49,7 @@ from src.preview_builder import create_html_preview
 logger = create_logger("src._config", "logging.yaml")
 
 
-def create_proof_file(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False) -> tuple:
+def create_proof_file(farms_store: dict, county: str, input_file_name: str, test_mode: bool = False) -> str:
     """_summary_
 
     Arguments:
@@ -78,16 +78,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
     xlwriter = ExcelWriter()
     xlwriter.write_excel(excel_data, proof_file_name)
 
-    return (
-        proof_file_name,
-        [
-            {
-                header_name: row[index]
-                for index, (header_name, _) in enumerate(CSVEXCEL.PROOF_COLUMNS)
-            }
-            for row in farms_in_proof_format
-        ]
-        )
+    return proof_file_name
 
 
 def process_transcriptions_for_each_farm(farms_store: dict[str, dict[str, HarvestedFarm]]) -> dict[str, dict[str, HarvestedFarm]]:
@@ -335,7 +326,7 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             write_farms_to_db(harvested_farms, county_code, version, test_mode)
 
             logger.info("*** CREATING PROOF FILE ***")
-            proof_file, preview_data = create_proof_file(harvested_farms, county_code, csv_file.stem, test_mode)
+            proof_file = create_proof_file(harvested_farms, county_code, csv_file.stem, test_mode)
 
             logger.info("*** CREATING HTML PREVIEW ***")
             create_html_preview(proof_file.stem, excel_data=preview_data)
