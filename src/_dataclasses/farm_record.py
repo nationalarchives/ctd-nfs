@@ -20,7 +20,7 @@ from typing import Literal
 from urllib import parse
 
 from src._dataclasses.farm_combine import PublishedFarm
-from src._tools.constants import DISCOVERY
+from src._tools.constants import DISCOVERY, REGEX
 from src._tools.helpers import get_parent_discovery_record
 
 Scope = Literal['RecordAndReplica', 'RecordOnly']
@@ -31,10 +31,15 @@ class DiscoveryMAF32:
     farm: PublishedFarm
     update_scope: Scope 
 
+    def __post_init__(self):
+        _reference = REGEX.REFERENCE.match(self.farm.catalogue_reference)
+        self.reference_stem = _reference['stem']
+        self.reference_part = _reference['part']
+
     @cached_property
     def parent_id (self) -> str:
-        ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
-        ref_url_safe = parse.quote(ref)
+        # ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
+        ref_url_safe = parse.quote(self.reference_stem)
 
         parent_record = get_parent_discovery_record(ref_url_safe)
 
@@ -76,7 +81,7 @@ class DiscoveryMAF32:
         ]
 
     def to_dict(self) -> dict:
-        _, reference_part = self.farm.catalogue_reference.rsplit("/", maxsplit=1)
+        # _, reference_part = self.farm.catalogue_reference.rsplit("/", maxsplit=1)
         return { 
             'record': {
                 'iaid': self.farm.id,
@@ -84,7 +89,7 @@ class DiscoveryMAF32:
                 'replicaId': self.farm.replica_id,
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
-                'referencePart': reference_part,
+                'referencePart': self.reference_part,
             } | DISCOVERY.MAF32_RECORD_CONSTANTS,
             'updateScope': self.update_scope,
             'replica': {
