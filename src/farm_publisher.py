@@ -35,7 +35,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def build_catalogue_documents(published_farms: list[PublishedFarm], test_mode=False) -> list[dict]:
+def build_catalogue_documents(published_farms: list[PublishedFarm], update_scope: str) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
@@ -72,7 +72,7 @@ def process_proof_files(config: dict) -> None:
             for _farm in harvested_farms
         ]
 
-        final_documents = build_catalogue_documents(published_farms, test_mode)
+        final_documents = build_catalogue_documents(published_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county)
 
 
