@@ -4,9 +4,9 @@ import pprint
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH
-from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -27,7 +27,7 @@ def write_html_page(context: dict, county: str, previews_file: str) -> None:
         logger.info(f"... wrote {previews_file}")
 
 
-def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
+def create_html_preview_context(cleaned_data: list[HarvestedFarm], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
@@ -68,13 +68,13 @@ def create_html_preview_context(cleaned_data: list[dict], county: str) -> dict:
     }
            
             
-def create_html_preview(proof_file_name: str, excel_data=None) -> None:
+def create_html_preview(proof_file_name: str, farms: list[HarvestedFarm]) -> None:
     county, _ = proof_file_name.split("_", maxsplit=1)
     
-    proof_data = load_excel_data(proof_file_name) if not excel_data else excel_data
+    # proof_data = load_excel_data(proof_file_name) if not excel_data else excel_data
     
-    cleaned_data = clean_excel_data(proof_data)
-    context = create_html_preview_context(cleaned_data, county)
+    # cleaned_data = clean_excel_data(proof_data)
+    context = create_html_preview_context(farms, county)
 
     previews_file_name = f"{proof_file_name.replace('_HarvesterOUT_', '_DiscoveryPreviews_')}.html"
     write_html_page(context, county, previews_file_name)
