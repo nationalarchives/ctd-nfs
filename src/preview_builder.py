@@ -37,8 +37,8 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
     descriptions = [
         {
             'catalogue_reference': _farm.catalogue_reference,
-            'farm_reference': _farm.farm_number,
-            'farm_name': _farm.farm_name,
+            'farm_reference': _farm.farm_reference,
+            'farm_name': _farm.name,
             'addressee': _farm.addressee,
             'farmer': _farm.farmer,
             'landowner': _farm.landowner,
