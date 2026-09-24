@@ -59,13 +59,13 @@ def write_catalogue_documents(documents: list[dict], county: str) -> None:
            
             
 def process_proof_files(config: dict) -> None:
-    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
+    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if config['test_mode'] else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
         county, _ = csv_file.name.split(" ", maxsplit=1)
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
-        county_data = read_farms_db(county, test_mode)
+        county_data = read_farms_db(county, config['test_mode'])
         harvested_farms = county_data[version].values()
         published_farms = [
             PublishedFarm(_farm, "Discovery")
