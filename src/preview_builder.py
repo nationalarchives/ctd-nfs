@@ -41,24 +41,24 @@ def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict
 
     descriptions = [
         {
-            'catalogue_reference': _inst.farm['catalogue_reference'],
-            'farm_reference': _inst.farm['farm_number'],
-            'farm_name': _inst.farm['farm_name'],
-            'addressee': _inst.farm['addressee'],
-            'farmer': _inst.farm['farmer'],
-            'landowner': _inst.farm['landowner'],
-            'acreage': _inst.farm['acreage'],
-            'OS_map_sheet': _inst.farm['os_sheet_number'],
-            'field_info_date': _inst.farm['field_info_date'],
-            'primary_record_date': _inst.farm['primary_record_date'],
-            'forms': _inst.farm['forms'],
+            'catalogue_reference': _farm.farm['catalogue_reference'],
+            'farm_reference': _farm.farm['farm_number'],
+            'farm_name': _farm.farm['farm_name'],
+            'addressee': _farm.farm['addressee'],
+            'farmer': _farm.farm['farmer'],
+            'landowner': _farm.farm['landowner'],
+            'acreage': _farm.farm['acreage'],
+            'OS_map_sheet': _farm.farm['os_sheet_number'],
+            'field_info_date': _farm.farm['field_info_date'],
+            'primary_record_date': _farm.farm['primary_record_date'],
+            'forms': _farm.farm['forms'],
         }
-        for _inst in discovered_farms
+        for _farm in discovered_farms
     ]
 
     catalogue_references = [
-        _inst.farm['catalogue_reference']
-        for _inst in discovered_farms
+        _farm.farm['catalogue_reference']
+        for _farm in discovered_farms
     ]
 
     return {
