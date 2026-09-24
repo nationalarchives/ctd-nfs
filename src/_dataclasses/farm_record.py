@@ -29,7 +29,7 @@ Scope = Literal['RecordAndReplica', 'RecordOnly']
 @dataclass
 class DiscoveryMAF32:
     farm: PublishedFarm
-    update_scope: Scope 
+    update_scope: Scope = None
 
     def __post_init__(self):
         _reference = REGEX.REFERENCE.match(self.farm.catalogue_reference)
