@@ -34,7 +34,7 @@ def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict
         farm_instances -- farm instances retrieved from the farms db
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
-    MAF32_instances = [
+    discovered_farms = [
         DiscoveryMAF32(PublishedFarm(harvested_farm))
         for harvested_farm in farms
     ]
@@ -53,12 +53,12 @@ def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict
             'primary_record_date': _inst.farm['primary_record_date'],
             'forms': _inst.farm['forms'],
         }
-        for _inst in MAF32_instances
+        for _inst in discovered_farms
     ]
 
     catalogue_references = [
         _inst.farm['catalogue_reference']
-        for _inst in MAF32_instances
+        for _inst in discovered_farms
     ]
 
     return {
