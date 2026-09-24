@@ -4,7 +4,7 @@ import pprint
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from _dataclasses.farm_record import DiscoveryMAF32
+from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
