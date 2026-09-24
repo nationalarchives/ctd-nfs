@@ -7,11 +7,11 @@ from src._tools.helpers import TranscriptionDataError, ValueObject, get_piece_va
 
 
 def _page_pattern_match(filename: str) -> re.Match[str] | None:
-    return REGEX.FORM_PATTERN.match(filename)
+    return REGEX.FORM.match(filename)
 
 
 def _cover_pattern_match(filename: str) -> re.Match[str] | None:
-    return REGEX.COVER_PATTERN.match(filename)
+    return REGEX.COVER.match(filename)
 
 
 def _transcription_id_pattern_match(ID: str) -> re.Match[str] | None:
