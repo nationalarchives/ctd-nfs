@@ -58,7 +58,7 @@ def write_catalogue_documents(documents: list[dict], county: str) -> None:
             json.dump(document, final_file)   
            
             
-def process_proof_files(test_mode: bool=False) -> None:
+def process_proof_files(config: dict) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
@@ -81,7 +81,7 @@ def main():
     with open(Path(r"src/run_options.toml"), mode="rb") as fp:
         config = tomllib.load(fp)
 
-    process_proof_files(test_mode)
+    process_proof_files(config['publisher'])
 
 
 if __name__ == "__main__":
