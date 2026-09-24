@@ -41,23 +41,23 @@ def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict
 
     descriptions = [
         {
-            'catalogue_reference': _farm.farm['catalogue_reference'],
-            'farm_reference': _farm.farm['farm_number'],
-            'farm_name': _farm.farm['farm_name'],
-            'addressee': _farm.farm['addressee'],
-            'farmer': _farm.farm['farmer'],
-            'landowner': _farm.farm['landowner'],
-            'acreage': _farm.farm['acreage'],
-            'OS_map_sheet': _farm.farm['os_sheet_number'],
-            'field_info_date': _farm.farm['field_info_date'],
-            'primary_record_date': _farm.farm['primary_record_date'],
-            'forms': _farm.farm['forms'],
+            'catalogue_reference': _farm.catalogue_reference,
+            'farm_reference': _farm.farm_number,
+            'farm_name': _farm.farm_name,
+            'addressee': _farm.addressee,
+            'farmer': _farm.farmer,
+            'landowner': _farm.landowner,
+            'acreage': _farm.acreage,
+            'OS_map_sheet': _farm.os_sheet_number,
+            'field_info_date': _farm.field_info_date,
+            'primary_record_date': _farm.primary_record_date,
+            'forms': _farm.forms,
         }
         for _farm in discovered_farms
     ]
 
     catalogue_references = [
-        _farm.farm['catalogue_reference']
+        _farm.catalogue_reference
         for _farm in discovered_farms
     ]
 
