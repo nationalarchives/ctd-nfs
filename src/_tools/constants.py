@@ -155,8 +155,14 @@ DATA = DataNamespace()
 class RegexNamespace:
     __slots__ = ()
 
-    FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d{1,4}(?:part\d)?)-(?P<parish_number>\d{1,3}A?)(-\d|-10)?_(?P<image_number>\d{1,4}[A-z]{0,2})?\.tiff?$""", re.IGNORECASE)
-    COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d{1,4}(?:part\d)?)[-_](?P<parish_number>\d{1,3}A?)(?:-\d|-10)?\.tiff?$""", re.IGNORECASE)   
+    _piece = r"""\d{1,4}(?:part\d)?"""
+    _parish_number = r"""\d{1,3}A?"""
+    _image_number = r"""\d{1,4}[A-z]{0,2}"""
+    form_string = fr"""^MAF32-(?P<piece>{_piece})-(?P<parish_number>{_parish_number})(-\d|-10)?_(?P<image_number>{_image_number})?\.tiff?$"""
+    FORM_PATTERN = re.compile(fr"""{form_string}""", re.IGNORECASE)
+
+    cover_string = fr"""^MAF32-(?P<piece>{_piece})[-_](?P<parish_number>{_parish_number})(?:-\d|-10)?\.tiff?$"""
+    COVER_PATTERN = re.compile(fr"""{cover_string}""", re.IGNORECASE)   
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
     _month_names: str = "|".join(DataNamespace.MONTH_NAMES[1:])
