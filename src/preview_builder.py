@@ -5,7 +5,6 @@ import pprint
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from src._dataclasses.farm_combine import PublishedFarm
-from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH
 from src._tools.logging_setup import create_logger
 
@@ -34,10 +33,6 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
         farm_instances -- farm instances retrieved from the farms db
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
-    discovered_farms = [
-        DiscoveryMAF32(PublishedFarm(harvested_farm))
-        for harvested_farm in farms
-    ]
 
     descriptions = [
         {
