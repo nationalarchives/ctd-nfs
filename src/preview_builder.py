@@ -27,7 +27,7 @@ def write_html_page(context: dict, county: str, previews_file: str) -> None:
         logger.info(f"... wrote {previews_file}")
 
 
-def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict:
+def create_html_preview_context(published_farms: list[PublishedFarm], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
