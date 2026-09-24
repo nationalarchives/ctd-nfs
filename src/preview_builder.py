@@ -48,12 +48,12 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
             'primary_record_date': _farm.primary_record_date,
             'forms': _farm.forms,
         }
-        for _farm in discovered_farms
+        for _farm in published_farms
     ]
 
     catalogue_references = [
         _farm.catalogue_reference
-        for _farm in discovered_farms
+        for _farm in published_farms
     ]
 
     return {
