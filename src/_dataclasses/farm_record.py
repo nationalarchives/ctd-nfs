@@ -1,20 +1,35 @@
 """
 Dataclasses and factories used to create Discovery JSON records
+
+Update scope options and required value:
+    RecordAndReplica:
+        new record with metadata & digital files
+        existing record with updated digital files
+        updated metadata and digital files
+
+    RecordOnly
+        new metadata-only record
+        update metadata but not digital files
+        update a metadata-only record
+
 """
 import re
 from dataclasses import dataclass
 from functools import cached_property
+from typing import Literal
 from urllib import parse
 
 from src._dataclasses.farm_combine import PublishedFarm
 from src._tools.constants import DISCOVERY
 from src._tools.helpers import get_parent_discovery_record
 
+Scope = Literal['RecordAndReplica', 'RecordOnly']
+
 
 @dataclass
 class DiscoveryMAF32:
     farm: PublishedFarm
-    update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
+    update_scope: Scope 
 
     @cached_property
     def parent_id (self) -> str:
