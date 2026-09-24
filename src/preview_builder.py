@@ -27,7 +27,7 @@ def write_html_page(context: dict, county: str, previews_file: str) -> None:
         logger.info(f"... wrote {previews_file}")
 
 
-def create_html_preview_context(cleaned_data: list[HarvestedFarm], county: str) -> dict:
+def create_html_preview_context(farms: list[HarvestedFarm], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
@@ -36,7 +36,7 @@ def create_html_preview_context(cleaned_data: list[HarvestedFarm], county: str) 
     """
     MAF32_instances = [
         DiscoveryMAF32(proof)
-        for proof in cleaned_data
+        for proof in farms
     ]
 
     descriptions = [
