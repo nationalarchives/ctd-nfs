@@ -20,6 +20,8 @@ Yields:
 """
 import json
 import pprint
+import tomllib
+from pathlib import Path
 
 from src._dataclasses.farm_combine import PublishedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
@@ -74,11 +76,14 @@ def process_proof_files(test_mode: bool=False) -> None:
         write_catalogue_documents(final_documents, county)
 
 
-def main(test_mode: bool=False):
+def main():
     logger.info(" ===== PROCESSING PROOF FILES ===== ")
+    with open(Path(r"src/run_options.toml"), mode="rb") as fp:
+        config = tomllib.load(fp)
+
     process_proof_files(test_mode)
 
 
 if __name__ == "__main__":
-    main(test_mode=False)
+    main()
 
