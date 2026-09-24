@@ -74,6 +74,10 @@ def create_html_preview(proof_file_name: str, harvested_farms: dict) -> None:
     # proof_data = load_excel_data(proof_file_name) if not excel_data else excel_data
     
     # cleaned_data = clean_excel_data(proof_data)
+    farms = [
+        PublishedFarm(_farm, "Discovery")
+        for _farm in harvested_farms.values()
+    ]
     context = create_html_preview_context(farms, county)
 
     previews_file_name = f"{proof_file_name.replace('_HarvesterOUT_', '_DiscoveryPreviews_')}.html"
