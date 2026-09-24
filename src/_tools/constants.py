@@ -162,6 +162,10 @@ class RegexNamespace:
 
     cover_pattern = fr"""^MAF32-(?P<piece>{_piece})[-_](?P<parish_number>{_parish_number})(?:-\d|-10)?\.tiff?$"""
     COVER = re.compile(fr"""{cover_pattern}""", re.IGNORECASE)   
+
+    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[Aa]?|[A-Z]))"""
+    _reference_string = fr"""^(?P<stem>MAF 32\/{_piece}\/{_parish_number})\/{_reference_part}$"""
+    REFERENCE = re.compile(fr"""{_reference_string}""", re.IGNORECASE)
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
     _month_names: str = "|".join(DataNamespace.MONTH_NAMES[1:])
