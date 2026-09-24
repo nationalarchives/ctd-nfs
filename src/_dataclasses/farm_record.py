@@ -26,22 +26,6 @@ class DiscoveryMAF32:
         return parent_record['assets'][0]['id']
 
     @property
-    def forms_list(self) -> str:
-        forms_ouptut = []
-        for form_type, transcriptions in self.farm.source_data.items():
-            if not transcriptions:
-                continue
-
-            if len(transcriptions) == 1:
-                forms_ouptut.append(form_type)
-            else:
-                for index in range(len(transcriptions)):
-                    forms_ouptut.append(f"{form_type} [{index + 1}]")
-
-        return "; ".join(forms_ouptut)
-
-
-    @property
     def scope_and_content(self) -> dict:
         description_fields = {
             'Farm Reference': f"{self.farm.farm_reference}.",
