@@ -330,7 +330,7 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             proof_file = create_proof_file(harvested_farms, county_code, csv_file.stem, test_mode)
 
             logger.info("*** CREATING HTML PREVIEW ***")
-            create_html_preview(proof_file.stem, harvested_farms)
+            create_html_preview(proof_file, harvested_farms)
 
 
 if __name__ == "__main__":

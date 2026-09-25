@@ -1,6 +1,7 @@
 """
 """
 import pprint
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -63,8 +64,8 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
     }
            
             
-def create_html_preview(proof_file_name: str, harvested_farms: dict) -> None:
-    county, _ = proof_file_name.split("_", maxsplit=1)
+def create_html_preview(proof_file: Path, harvested_farms: dict) -> None:
+    county, _ = proof_file.name.split("_", maxsplit=1)
     
     # proof_data = load_excel_data(proof_file_name) if not excel_data else excel_data
     
