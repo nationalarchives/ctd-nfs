@@ -71,6 +71,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         'row_data': farms_in_proof_format,
         'column_settings': CSVEXCEL.PROOF_COLUMNS,
     }]
+    county, _ = input_file_name.split("_", maxsplit=1)
     harvest_dir = PATH.HARVEST / "TEST" / f"{county}" if test_mode else PATH.HARVEST / f"{county}"
     harvest_dir.mkdir(exist_ok=True, parents=True)
   
