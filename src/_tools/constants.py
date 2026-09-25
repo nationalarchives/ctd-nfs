@@ -3,15 +3,20 @@ module for defining constants and constant namespaces.
 """
 
 import calendar
+import os
 import re
 import typing
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class PathNamespace:
     __slots__ = ()
     
-    PIPELINE_ROOT = Path(r"Pipeline")
+    PIPELINE_ROOT = Path(fr"{os.getenv('PIPELINE')}")
 
     INPUT = PIPELINE_ROOT / "1-INPUT"   
     HARVEST = PIPELINE_ROOT / "2-HARVEST"
