@@ -72,41 +72,6 @@ class Transcription:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    __slots__ = (
-        'ID',
-        'OS_map_sheet',
-        'acreage',
-        'additional_farms',
-        'address',
-        'addressee_group_names',
-        'addressee_individual_name',
-        'addressee_title',
-        'county',
-        'county_code',
-        'document_type',
-        'farm_name',
-        'farmer_address',
-        'farmer_group_names',
-        'farmer_individual_name',
-        'farmer_title',
-        'field_info_date',
-        'file1',
-        'file2',
-        'filename_1',
-        'filename_2',
-        'notes',
-        'owner_address',
-        'owner_group_names',
-        'owner_individual_name',
-        'owner_title',
-        'parish',
-        'parish_number',
-        'piece',
-        'primary_farm_number',
-        'primary_record_date',
-        'trid',
-        'warnings',
-    )
 
     ID: str
     filename_1: str
