@@ -2,6 +2,7 @@
 """
 import pprint
 from pathlib import Path
+from shutil import copy
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -78,6 +79,8 @@ def create_html_preview(proof_file: Path, harvested_farms: dict) -> None:
 
     previews_file_name = f"{proof_file.name.replace('_HarvesterOUT_', '_DiscoveryPreviews_').replace('xlsx', 'html')}"
     write_html_page(context, county, Path(proof_file.parent/ previews_file_name))
+    copy(Path("src/_html/descriptions.js"), Path(proof_file.parent / "descriptions.js"))
+    copy(Path("src/_html/style.css"), Path(proof_file.parent / "style.css"))
 
 
 def main(test_mode: bool=False):
