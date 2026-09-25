@@ -202,7 +202,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
     """    
     try:
         transcription = Transcription(**farm_data_row)
-        if transcription.trid.value in Transcription.all_ids:
+        if transcription.ID != "_null_" and transcription.trid.value in Transcription.all_ids:
             raise TranscriptionDataError(f"ID {transcription.trid.value} is duplicated - each row must have a unique ID value")
         else:
             Transcription.all_ids.add(transcription.trid.value)

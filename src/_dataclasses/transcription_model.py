@@ -60,7 +60,7 @@ class TranscriptionID(ValueObject):
     value: str
 
     def __post_init__(self):
-        if not _transcription_id_pattern_match(self.value):
+        if self.value != "_null_" and not _transcription_id_pattern_match(self.value):
             raise TranscriptionDataError(f"{self.value} does not match expected ID pattern <county_code><zero-padded 6-digit number> e.g., 'RD012345'")
 
 
