@@ -77,7 +77,7 @@ def create_html_preview(proof_file: Path, harvested_farms: dict) -> None:
     context = create_html_preview_context(published_farms, county)
 
     previews_file_name = f"{proof_file.name.replace('_HarvesterOUT_', '_DiscoveryPreviews_').replace('xlsx', 'html')}"
-    write_html_page(context, county, previews_file_name)
+    write_html_page(context, county, Path(proof_file.parent/ previews_file_name))
 
 
 def main(test_mode: bool=False):
