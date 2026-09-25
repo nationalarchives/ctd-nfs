@@ -38,7 +38,6 @@ class DiscoveryMAF32:
 
     @cached_property
     def parent_id (self) -> str:
-        # ref = self.farm.catalogue_reference.rsplit("/", maxsplit=1)[0]
         ref_url_safe = parse.quote(self.reference_stem)
 
         parent_record = get_parent_discovery_record(ref_url_safe)
@@ -81,7 +80,6 @@ class DiscoveryMAF32:
         ]
 
     def to_dict(self) -> dict:
-        # _, reference_part = self.farm.catalogue_reference.rsplit("/", maxsplit=1)
         return { 
             'record': {
                 'iaid': self.farm.id,
