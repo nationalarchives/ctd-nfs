@@ -195,7 +195,7 @@ REGEX = RegexNamespace()
 
 
 class DiscoveryNamespace:
-    API_URI = r"https://discovery.nationalarchives.gov.uk/API"
+    API_URI = os.getenv('DISCOVERY_API')
 
     _closure_status: typing.ClassVar = {
         'Closed Or Retained Document, Closed Description': "C",
