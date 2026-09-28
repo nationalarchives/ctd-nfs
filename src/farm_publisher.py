@@ -21,6 +21,7 @@ Yields:
 import json
 import pprint
 import tomllib
+from collections.abc import Generator
 from pathlib import Path
 
 from src._dataclasses.farm_combine import PublishedFarm
@@ -35,7 +36,7 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def build_catalogue_documents(published_farms: list[PublishedFarm], update_scope: str) -> list[dict]:
+def build_catalogue_documents(published_farms: Generator[PublishedFarm], update_scope: str) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
@@ -67,10 +68,10 @@ def process_proof_files(config: dict) -> None:
 
         county_data = read_farms_db(county, config['test_mode'])
         harvested_farms = county_data[version].values()
-        published_farms = [
+        published_farms = (
             PublishedFarm(_farm, "Discovery")
             for _farm in harvested_farms
-        ]
+        )
 
         final_documents = build_catalogue_documents(published_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county)
