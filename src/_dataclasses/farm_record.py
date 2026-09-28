@@ -43,6 +43,7 @@ class DiscoveryMAF32:
         parent_record = get_parent_discovery_record(ref_url_safe)
 
         return parent_record['assets'][0]['id']
+        # return parent_record[0]['id']
 
     @property
     def scope_and_content(self) -> dict:
