@@ -38,7 +38,7 @@ class DiscoveryMAF32:
 
     @cached_property
     def parent_id (self) -> str:
-        ref_url_safe = parse.quote(self.reference_stem)
+        ref_url_safe = parse.quote(self.reference_stem, safe="")
 
         parent_record = get_parent_discovery_record(ref_url_safe)
 
