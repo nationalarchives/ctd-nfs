@@ -334,5 +334,5 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
 
 
 if __name__ == "__main__":
-    run_pipeline(test_mode=True)
+    run_pipeline(test_mode=False)
 
