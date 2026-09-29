@@ -78,7 +78,7 @@ def get_piece_value(county_code: str, parish_number: str) -> str:
 @lru_cache
 def get_parent_discovery_record(ref_url_safe: str) -> dict:
     api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
-    # api_query = fr"{DISCOVERY.API_URI}/records/byref?reference={ref_url_safe}/"
+    # api_query = fr"{DISCOVERY.API_URI}/records/byref?reference={ref_url_safe}"
     result = requests.get(api_query)
 
     return result.json()
