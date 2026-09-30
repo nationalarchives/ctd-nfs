@@ -16,7 +16,7 @@ logger = create_logger("src._config", "logging.yaml")
 Prefix = Literal['jsons-to-process', 'jsons-to-validate']
 
 
-def upload_file(file_name, bucket, object_name=None):
+def upload_files(candidate_files: Generator, bucket):
     """Upload a file to an S3 bucket
 
     :param file_name: File to upload
