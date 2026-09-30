@@ -1,8 +1,10 @@
 import os
+from collections.abc import Generator
 
 import boto3
 from botocore.exceptions import ClientError
 
+from src._tools.constants import PATH
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -29,3 +31,19 @@ def upload_file(file_name, bucket, object_name=None):
         logger.error(e)
         return False
     return True
+           
+            
+def get_candidate_files() -> Generator:
+    for json_file in PATH.PUBLISH.rglob("*.json"):
+        print(json_file)
+        yield json_file
+
+
+def main():
+    logger.info(" ===== UPLOADING JSONs ===== ")
+    candidate_files = get_candidate_files()
+
+
+if __name__ == "__main__":
+    main()
+
