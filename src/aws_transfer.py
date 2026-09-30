@@ -52,12 +52,12 @@ def get_candidate_files() -> Generator:
         config = tomllib.load(fp)
 
     for json_file in PATH.PUBLISH.rglob("*.json"):
-        print(json_file)
-        yield convert_file_name_to_bucket_name(json_file)
+        yield from convert_file_name_to_bucket_name(json_file, config['transfer']['prefix'])
 
 
 def main():
     logger.info(" ===== UPLOADING JSONs ===== ")
+
     candidate_files = get_candidate_files()
 
 
