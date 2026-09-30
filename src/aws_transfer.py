@@ -31,6 +31,9 @@ def upload_files(candidate_files: Generator, bucket):
 
     # Upload the file
     s3_client = boto3.client('s3')
+    with open(Path(r"src/run_options.toml"), mode="rb") as fp:
+        config = tomllib.load(fp)
+
     try:
         s3_client.upload_file(file_name, bucket, object_name)
     except ClientError as e:
@@ -48,11 +51,8 @@ def convert_file_name_to_bucket_name(candidate_file: Path, prefix: Prefix) -> st
 
 
 def get_candidate_files() -> Generator:
-    with open(Path(r"src/run_options.toml"), mode="rb") as fp:
-        config = tomllib.load(fp)
-
     for json_file in PATH.PUBLISH.rglob("*.json"):
-        yield from convert_file_name_to_bucket_name(json_file, config['transfer']['prefix'])
+        yield from convert_file_name_to_bucket_name(json_file)
 
 
 def main():
