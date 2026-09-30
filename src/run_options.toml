@@ -1,3 +1,6 @@
 [publisher]
 test_mode = false
 update_scope = "RecordAndReplica"
+
+[transfer]
+prefix = "jsons-to-validate"

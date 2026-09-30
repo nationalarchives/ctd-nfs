@@ -1,4 +1,5 @@
 import os
+import tomllib
 from collections.abc import Generator
 from pathlib import Path
 from typing import Literal
@@ -47,6 +48,9 @@ def convert_file_name_to_bucket_name(candidate_file: Path, prefix: Prefix) -> st
 
 
 def get_candidate_files() -> Generator:
+    with open(Path(r"src/run_options.toml"), mode="rb") as fp:
+        config = tomllib.load(fp)
+
     for json_file in PATH.PUBLISH.rglob("*.json"):
         print(json_file)
         yield convert_file_name_to_bucket_name(json_file)
