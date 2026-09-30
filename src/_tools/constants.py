@@ -195,6 +195,7 @@ REGEX = RegexNamespace()
 
 
 class DiscoveryNamespace:
+    __slots__ = ()
     API_URI = os.getenv('DISCOVERY_API')
 
     _closure_status: typing.ClassVar = {
@@ -242,4 +243,9 @@ class DiscoveryNamespace:
     }
 DISCOVERY = DiscoveryNamespace()
 
+
+class AWSNamespece:
+    __slots__ = ()
+    BUCKET = os.getenv('S3_BUCKET')
+AWS = AWSNamespece()
 
