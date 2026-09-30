@@ -31,7 +31,7 @@ def upload_files(candidate_files: Generator, bucket):
         config = tomllib.load(fp)
 
     for _file in candidate_files:
-        object_name = convert_file_name_to_bucket_name(_file, config['transfer']['prefix'])
+        object_name = convert_file_name_to_object_name(_file, config['transfer']['prefix'])
 
         try:
             s3_client.upload_file(_file, bucket, object_name)
@@ -41,7 +41,7 @@ def upload_files(candidate_files: Generator, bucket):
         return True
            
             
-def convert_file_name_to_bucket_name(candidate_file: Path, prefix: Prefix) -> str:
+def convert_file_name_to_object_name(candidate_file: Path, prefix: Prefix) -> str:
     publish_path = candidate_file.relative_to(PATH.PUBLISH)
     county = publish_path.parents[2].name
     version = publish_path.parents[0].name
