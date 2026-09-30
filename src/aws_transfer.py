@@ -1,5 +1,6 @@
 import os
 from collections.abc import Generator
+from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError
@@ -33,10 +34,18 @@ def upload_file(file_name, bucket, object_name=None):
     return True
            
             
+def convert_file_name_to_bucket_name(candidate_file: Path) -> str:
+    publish_path = candidate_file.relative_to(PATH.PUBLISH)
+    county = publish_path.parents[2].name
+    version = publish_path.parents[0].name
+    json = publish_path.name
+    return f"{county}/{version}/{json}"
+
+
 def get_candidate_files() -> Generator:
     for json_file in PATH.PUBLISH.rglob("*.json"):
         print(json_file)
-        yield json_file
+        yield convert_file_name_to_bucket_name(json_file)
 
 
 def main():
