@@ -1,6 +1,7 @@
 import os
 from collections.abc import Generator
 from pathlib import Path
+from typing import Literal
 
 import boto3
 from botocore.exceptions import ClientError
@@ -9,6 +10,9 @@ from src._tools.constants import PATH
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
+
+
+Prefix = Literal['jsons-to-process', 'jsons-to-validate']
 
 
 def upload_file(file_name, bucket, object_name=None):
@@ -34,12 +38,12 @@ def upload_file(file_name, bucket, object_name=None):
     return True
            
             
-def convert_file_name_to_bucket_name(candidate_file: Path) -> str:
+def convert_file_name_to_bucket_name(candidate_file: Path, prefix: Prefix) -> str:
     publish_path = candidate_file.relative_to(PATH.PUBLISH)
     county = publish_path.parents[2].name
     version = publish_path.parents[0].name
     json = publish_path.name
-    return f"{county}/{version}/{json}"
+    return f"{prefix}/{county}/{version}/{json}"
 
 
 def get_candidate_files() -> Generator:
