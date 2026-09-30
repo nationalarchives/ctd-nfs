@@ -7,7 +7,7 @@ from typing import Literal
 import boto3
 from botocore.exceptions import ClientError
 
-from src._tools.constants import PATH
+from src._tools.constants import AWS, PATH
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")
@@ -34,7 +34,7 @@ def upload_files(candidate_files: Generator, bucket):
         object_name = convert_file_name_to_object_name(_file, config['transfer']['prefix'])
 
         try:
-            s3_client.upload_file(_file, bucket, object_name)
+            s3_client.upload_file(_file, AWS.BUCKET, object_name)
         except ClientError as e:
             logger.error(e)
             return False
@@ -58,6 +58,7 @@ def main():
     logger.info(" ===== UPLOADING JSONs ===== ")
 
     candidate_files = get_candidate_files()
+    upload_files(candidate_files)
 
 
 if __name__ == "__main__":
