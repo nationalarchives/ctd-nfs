@@ -25,21 +25,20 @@ def upload_files(candidate_files: Generator, bucket):
     :return: True if file was uploaded, else False
     """
 
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        object_name = os.path.basename(file_name)
-
     # Upload the file
     s3_client = boto3.client('s3')
     with open(Path(r"src/run_options.toml"), mode="rb") as fp:
         config = tomllib.load(fp)
 
-    try:
-        s3_client.upload_file(file_name, bucket, object_name)
-    except ClientError as e:
-        logger.error(e)
-        return False
-    return True
+    for _file in candidate_files:
+        object_name = convert_file_name_to_bucket_name(_file, config['transfer']['prefix'])
+
+        try:
+            s3_client.upload_file(_file, bucket, object_name)
+        except ClientError as e:
+            logger.error(e)
+            return False
+        return True
            
             
 def convert_file_name_to_bucket_name(candidate_file: Path, prefix: Prefix) -> str:
