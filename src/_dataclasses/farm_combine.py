@@ -112,6 +112,22 @@ class Respondent:
         }
 
 
+TargetFormat = Literal["HarvesterOUT", "Discovery"]
+
+@dataclass
+class Description:
+    farm_name: str = field(init=False)
+    addressee: str = field(init=False)
+    farmer: str = field(init=False)
+    landowner: str = field(init=False)
+    acreage: str = field(init=False)
+    os_sheet_number: str = field(init=False)
+    field_info_date: str = field(init=False)
+    primary_record_date: str = field(init=False)
+    forms: str = field(init=False)
+    target: TargetFormat = "HarvesterOUT"
+
+
 @dataclass
 class HarvestedFarm:
     county: str
@@ -135,6 +151,7 @@ class HarvestedFarm:
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
     def __post_init__(self):
+        self.description = Description()
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
 
@@ -173,6 +190,80 @@ class HarvestedFarm:
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
 
+    def _join(self, values: list) -> str:
+        if self.description.target == "HarvesterOUT":
+            _ = ";\n".join(values)
+            return ";\n".join(_.split("; "))
+        return "; ".join(values)
+
+    def process_forms_for_output(self) -> None:
+        forms_in_output_format = []
+        files_in_output_format = []
+        ids_in_output_format = []
+
+        for form_type, image_sets in self.forms.items():
+            if len(image_sets) == 1:
+                forms_in_output_format.append(form_type)
+            else:
+                for index in range(len(image_sets)):
+                    forms_in_output_format.append(f"{form_type} ({index + 1})")
+            for images in image_sets:
+                files_in_output_format.append(", ".join([_img.name for _img in images]))
+                ids_in_output_format.append(", ".join([_img.id for _img in images]))
+
+        self.description.forms = self._join(forms_in_output_format)
+        self.replica_file_names = self._join(files_in_output_format)
+        self.replica_file_ids = self._join(ids_in_output_format)
+
+    def set_description(self) -> None:
+        self.description.farm_name = self._join(self.farm_name)
+        self.description.addressee = self._join(self.addressee.names_and_addresses)
+        self.description.farmer = self._join(self.farmer.names_and_addresses)
+        self.description.landowner = self._join(self.landowner.names_and_addresses)
+        self.description.acreage = self._join(self.acreage)
+        self.description.os_sheet_number = self._join(self.OS_map_sheet)
+        self.description.field_info_date = self._join(self.field_info_date)
+        self.description.primary_record_date = self._join(self.primary_record_date)
+
+    def to_proof(self) -> list:
+        self.set_description()
+        self.process_forms_for_output()
+        return [
+            self.catalogue_reference,
+            self._join(self.warnings.get('Reference Warnings', "")),
+            self.id,
+            # ========================
+            self.replica_id,
+            self.replica_file_ids,
+            self.replica_file_names,
+            self._join(self.warnings.get('Filename Warnings', "")),
+            # ========================
+            self.description.forms,
+            self._join(self.warnings.get('Type Warnings', "")),
+            self.farm_reference,
+            self.description.farm_name,
+            # ========================
+            self._join(self.addressee.names),
+            self.warnings.get('Addressee name warnings', ""),
+            self._join(self.addressee.addresses),
+            self.description.addressee,
+            # ========================
+            self._join(self.farmer.names),
+            self.warnings.get('Farmer name warnings', ""),
+            self._join(self.farmer.addresses),
+            self.description.farmer,
+            # ========================
+            self._join(self.landowner.names),
+            self.warnings.get('Landowner name warnings', ""),
+            self._join(self.landowner.addresses),
+            self.description.landowner,
+            # ========================
+            self.description.acreage,
+            self.description.os_sheet_number,
+            self.description.field_info_date,
+            self.description.primary_record_date,
+        ]
+    
     def convert_forms_to_dict(self) -> dict:
         return {
             form_type: [
@@ -193,93 +284,6 @@ class HarvestedFarm:
             for form_type, list_of_transcriptions in self.source_data.items()
             if list_of_transcriptions
         }
-
-
-TargetFormat = Literal["HarvesterOUT", "Discovery"]
-
-@dataclass
-class PublishedFarm:
-    farm: HarvestedFarm
-    target: TargetFormat
-            
-    def _join(self, values: list) -> str:
-        if self.target == "HarvesterOUT":
-            _ = ";\n".join(values)
-            return ";\n".join(_.split("; "))
-        return "; ".join(values)
-
-    def _process_forms_for_proof(self) -> None:
-        forms_in_proof_format = []
-        files_in_proof_format = []
-        ids_in_proof_format = []
-
-        for form_type, image_sets in self.farm.forms.items():
-            if len(image_sets) == 1:
-                forms_in_proof_format.append(form_type)
-            else:
-                for index in range(len(image_sets)):
-                    forms_in_proof_format.append(f"{form_type} ({index + 1})")
-            for images in image_sets:
-                files_in_proof_format.append(", ".join([_img.name for _img in images]))
-                ids_in_proof_format.append(", ".join([_img.id for _img in images]))
-
-        self.forms = self._join(forms_in_proof_format)
-        self.file_names = self._join(files_in_proof_format)
-        self.file_ids = self._join(ids_in_proof_format)
-
-    def __post_init__(self):
-        self.id = self.farm.id
-        self.replica_id = self.farm.replica_id
-        self.catalogue_reference = self.farm.catalogue_reference
-        self.farm_reference = self.farm.farm_reference
-
-        self.name = self._join(self.farm.farm_name)
-        self.addressee = self._join(self.farm.addressee.names_and_addresses)
-        self.farmer = self._join(self.farm.farmer.names_and_addresses)
-        self.landowner = self._join(self.farm.landowner.names_and_addresses)
-        self.acreage = self._join(self.farm.acreage)
-        self.os_sheet_number = self._join(self.farm.OS_map_sheet)
-        self.field_info_date = self._join(self.farm.field_info_date)
-        self.primary_record_date = self._join(self.farm.primary_record_date)
-
-        self._process_forms_for_proof()
-
-    def to_proof(self) -> list:
-         return [
-            self.catalogue_reference,
-            self._join(self.farm.warnings.get('Reference Warnings', "")),
-            self.id,
-            self.replica_id,
-            # ========================
-            self.file_ids,
-            self.file_names,
-            self._join(self.farm.warnings.get('Filename Warnings', "")),
-            # ========================
-            self.forms,
-            self._join(self.farm.warnings.get('Type Warnings', "")),
-            self.farm_reference,
-            self.name,
-            # ========================
-            self._join(self.farm.addressee.names),
-            self.farm.warnings.get('Addressee name warnings', ""),
-            self._join(self.farm.addressee.addresses),
-            self.addressee,
-            # ========================
-            self._join(self.farm.farmer.names),
-            self.farm.warnings.get('Farmer name warnings', ""),
-            self._join(self.farm.farmer.addresses),
-            self.farmer,
-            # ========================
-            self._join(self.farm.landowner.names),
-            self.farm.warnings.get('Landowner name warnings', ""),
-            self._join(self.farm.landowner.addresses),
-            self.landowner,
-            # ========================
-            self.acreage,
-            self.os_sheet_number,
-            self.field_info_date,
-            self.primary_record_date,
-        ]
 
 
 @dataclass

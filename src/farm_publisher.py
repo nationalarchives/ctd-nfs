@@ -24,7 +24,7 @@ import tomllib
 from collections.abc import Generator
 from pathlib import Path
 
-from src._dataclasses.farm_combine import PublishedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH, REGEX
 from src._tools.logging_setup import create_logger
@@ -36,15 +36,19 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def build_catalogue_documents(published_farms: Generator[PublishedFarm], update_scope: str) -> list[dict]:
+def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_scope: str) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for farm in published_farms:   
+    for farm in harvested_farms:
+        farm.description.target = "Discovery"
+        farm.set_description()
+        farm.process_forms_for_output()
         discovery_document = DiscoveryMAF32(farm, update_scope)
         logger.info(f"Farm {farm.farm_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
 
         documents.append(discovery_document.to_dict())
+
 
     return documents
 
@@ -67,13 +71,9 @@ def process_proof_files(config: dict) -> None:
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
         county_data = read_farms_db(county, config['test_mode'])
-        harvested_farms = county_data[version].values()
-        published_farms = (
-            PublishedFarm(_farm, "Discovery")
-            for _farm in harvested_farms
-        )
+        harvested_farms = iter(county_data[version].values())
 
-        final_documents = build_catalogue_documents(published_farms, config['update_scope'])
+        final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county)
 
 

@@ -19,7 +19,7 @@ from functools import cached_property
 from typing import Literal
 from urllib import parse
 
-from src._dataclasses.farm_combine import PublishedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._tools.constants import DISCOVERY, REGEX
 from src._tools.helpers import get_parent_discovery_record
 
@@ -28,7 +28,7 @@ Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF32:
-    farm: PublishedFarm
+    farm: HarvestedFarm
     update_scope: Scope = None
 
     def __post_init__(self):
@@ -49,15 +49,15 @@ class DiscoveryMAF32:
     def scope_and_content(self) -> dict:
         description_fields = {
             'Farm Reference': f"{self.farm.farm_reference}.",
-            'Farm Name(s)': f"{self.farm.name}.",
-            'Addressee(s)': f"{self.farm.addressee}.",
-            'Farmer(s) or Occupier(s)': f"{self.farm.farmer}.",
-            'Landowner(s)': f"{self.farm.landowner}.",
-            'Acreage(s)': f"{self.farm.acreage}.",
-            'OS Sheet Number(s)': f"{self.farm.os_sheet_number}.",
-            'Field Information Date(s)': f"{self.farm.field_info_date}.",
-            'Primary Record Date(s)': f"{self.farm.primary_record_date}.",
-            'Record consists of': f"{self.farm.forms}.",
+            'Farm Name(s)': f"{self.farm.description.farm_name}.",
+            'Addressee(s)': f"{self.farm.description.addressee}.",
+            'Farmer(s) or Occupier(s)': f"{self.farm.description.farmer}.",
+            'Landowner(s)': f"{self.farm.description.landowner}.",
+            'Acreage(s)': f"{self.farm.description.acreage}.",
+            'OS Sheet Number(s)': f"{self.farm.description.os_sheet_number}.",
+            'Field Information Date(s)': f"{self.farm.description.field_info_date}.",
+            'Primary Record Date(s)': f"{self.farm.description.primary_record_date}.",
+            'Record consists of': f"{self.farm.description.forms}.",
         }
 
         description = [
@@ -77,7 +77,7 @@ class DiscoveryMAF32:
                 'format': "jpg",
                 'name': f"66/MAF/32/{id}.jpg",
             }
-            for (id, name) in zip(re.split(r"[;,] *", self.farm.file_ids), re.split(r"[;,] *", self.farm.file_names))
+            for (id, name) in zip(re.split(r"[;,] *", self.farm.replica_file_ids), re.split(r"[;,] *", self.farm.replica_file_names))
         ]
 
     def to_dict(self) -> dict:

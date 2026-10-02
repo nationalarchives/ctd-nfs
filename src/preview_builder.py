@@ -1,12 +1,13 @@
 """
 """
 import pprint
+from collections.abc import Generator
 from pathlib import Path
 from shutil import copy
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from src._dataclasses.farm_combine import PublishedFarm
+from src._dataclasses.farm_combine import HarvestedFarm
 from src._tools.constants import PATH
 from src._tools.logging_setup import create_logger
 
@@ -28,7 +29,7 @@ def write_html_page(context: dict, county: str, previews_file: str) -> None:
         logger.info(f"... wrote {previews_file}")
 
 
-def create_html_preview_context(published_farms: list[PublishedFarm], county: str) -> dict:
+def create_html_preview_context(harvested_farms: Generator[HarvestedFarm], county: str) -> dict:
     """This will build a WYSIWYG preview page of the description portion of the Discovery record for each farm in the county
 
     Arguments:
@@ -40,22 +41,22 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
         {
             'catalogue_reference': _farm.catalogue_reference,
             'farm_reference': _farm.farm_reference,
-            'farm_name': _farm.name,
-            'addressee': _farm.addressee,
-            'farmer': _farm.farmer,
-            'landowner': _farm.landowner,
-            'acreage': _farm.acreage,
-            'OS_map_sheet': _farm.os_sheet_number,
-            'field_info_date': _farm.field_info_date,
-            'primary_record_date': _farm.primary_record_date,
-            'forms': _farm.forms,
+            'farm_name': _farm.description.farm_name,
+            'addressee': _farm.description.addressee,
+            'farmer': _farm.description.farmer,
+            'landowner': _farm.description.landowner,
+            'acreage': _farm.description.acreage,
+            'OS_map_sheet': _farm.description.os_sheet_number,
+            'field_info_date': _farm.description.field_info_date,
+            'primary_record_date': _farm.description.primary_record_date,
+            'forms': _farm.description.forms,
         }
-        for _farm in published_farms
+        for _farm in harvested_farms
     ]
 
     catalogue_references = [
         _farm.catalogue_reference
-        for _farm in published_farms
+        for _farm in harvested_farms
     ]
 
     return {
@@ -68,14 +69,7 @@ def create_html_preview_context(published_farms: list[PublishedFarm], county: st
 def create_html_preview(proof_file: Path, harvested_farms: dict) -> None:
     county, _ = proof_file.name.split("_", maxsplit=1)
     
-    # proof_data = load_excel_data(proof_file_name) if not excel_data else excel_data
-    
-    # cleaned_data = clean_excel_data(proof_data)
-    published_farms = [
-        PublishedFarm(_farm, "Discovery")
-        for _farm in harvested_farms.values()
-    ]
-    context = create_html_preview_context(published_farms, county)
+    context = create_html_preview_context(harvested_farms.values(), county)
 
     previews_file_name = f"{proof_file.name.replace('_HarvesterOUT_', '_DiscoveryPreviews_').replace('xlsx', 'html')}"
     write_html_page(context, county, Path(proof_file.parent/ previews_file_name))
