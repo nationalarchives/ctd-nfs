@@ -22,7 +22,9 @@ import json
 import pprint
 import tomllib
 from collections.abc import Generator
+from itertools import batched
 from pathlib import Path
+from time import sleep
 
 from src._dataclasses.farm_combine import HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
@@ -40,15 +42,17 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for farm in harvested_farms:
-        farm.description.target = "Discovery"
-        farm.set_description()
-        farm.process_forms_for_output()
-        discovery_document = DiscoveryMAF32(farm, update_scope)
-        logger.info(f"Farm {farm.farm_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
+    for batch in batched(harvested_farms, 1000):
+        for farm in batch:
+            farm.description.target = "Discovery"
+            farm.set_description()
+            farm.process_forms_for_output()
+            discovery_document = DiscoveryMAF32(farm, update_scope)
+            logger.info(f"Farm {farm.farm_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
 
-        documents.append(discovery_document.to_dict())
+            documents.append(discovery_document.to_dict())
 
+        sleep(5)
 
     return documents
 
