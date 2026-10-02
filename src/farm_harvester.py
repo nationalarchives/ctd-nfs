@@ -153,12 +153,16 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
     """    
     form_type = transcription.document_type.name
     if candidate_farm.catalogue_reference not in farms_store:
+        if form_type not in candidate_farm.source_data:
+            candidate_farm.source_data[form_type] = []
         candidate_farm.source_data[form_type].append(transcription)
         logger.info(f"NEW FARM {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) created from transcription instance {row_number} (form {form_type})")
         return candidate_farm
 
     else:
         existing_farm = farms_store[candidate_farm.catalogue_reference]
+        if form_type not in existing_farm.source_data:
+            existing_farm.source_data[form_type] = []
         existing_farm.source_data[form_type].append(transcription)
         logger.info(f"{'='*8} {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) updated {'.'*4} from transcription instance {row_number} (form {form_type})")
         return existing_farm

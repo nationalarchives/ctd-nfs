@@ -7,25 +7,6 @@ from src._dataclasses.transcription_model import Filename, Transcription
 from src._tools.helpers import create_uuid_str, get_piece_value
 
 
-def initialise_forms_mapping() -> dict:
-    """Create a mapping of form codes to empty lists for storing filenames.
-        The order of forms as specified is important as there is a chronological significance to the order of forms.
-        An enum was not used here as the form codes are not valid enum names .
-    Returns:
-        dict: Mapping of form codes to empty lists.
-    """
-    return {
-        'C 47/SSY': [],
-        'C 49/SSY': [],
-        'C51/SSY': [],
-        'SF': [],
-        'SF C69/SSY': [],
-        'B496/EI': [],
-        'Other': [],
-        'Cover': [],
-    }
-
-
 @dataclass
 class ImageFile:
     filename: InitVar[Filename]
@@ -148,7 +129,7 @@ class HarvestedFarm:
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
     forms: dict[str, list[ImageSet]] = field(default_factory=dict)
     warnings: dict[str, list[str]] | None = None   
-    source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
+    source_data: dict[str, list[Transcription]] = field(default_factory=dict)
 
     def __post_init__(self):
         self.description = Description()
