@@ -33,11 +33,11 @@ def load_excel_data(data_file: Path) -> list[dict]:
     logger.info(F" ===== LOADING PROOF FILE {data_file.name}===== ")
     excel_data = read_file(data_file)
 
-    column_names = excel_data['Proof data'][0]
+    column_names = excel_data['Sheet1'][0]
 
     return [
         dict(zip(column_names, row_data))
-        for row_data in excel_data["Proof data"][1:]
+        for row_data in excel_data['Sheet1'][1:]
         if row_data[0]
     ]
 
