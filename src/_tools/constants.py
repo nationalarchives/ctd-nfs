@@ -160,7 +160,7 @@ class RegexNamespace:
     __slots__ = ()
 
     _piece = r"""\d{1,4}(?:part\d)?"""
-    _parish_number = r"""\d{1,3}A?"""
+    _parish_number = r"""\d{1,3}[A-Z]*?"""
     _image_number = r"""\d{1,4}[A-z]{0,2}"""
     form_pattern = fr"""^MAF32-(?P<piece>{_piece})-(?P<parish_number>{_parish_number})(-\d|-10)?_(?P<image_number>{_image_number})?\.tiff?$"""
     FORM = re.compile(fr"""{form_pattern}""", re.IGNORECASE)
@@ -168,8 +168,8 @@ class RegexNamespace:
     cover_pattern = fr"""^MAF32-(?P<piece>{_piece})[-_](?P<parish_number>{_parish_number})(?:-\d|-10)?\.tiff?$"""
     COVER = re.compile(fr"""{cover_pattern}""", re.IGNORECASE)   
 
-    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[A-Za-z]*?|[A-Z]))"""
-    _reference_string = fr"""^(?P<stem>MAF 32\/{_piece}\/{_parish_number})\/{_reference_part}$"""
+    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[A-Za-z]*?|[A-Z]|\d+and\d+))"""
+    _reference_string = fr"""^(?P<stem>MAF (32|73)\/{_piece}\/{_parish_number})\/{_reference_part}$"""
     REFERENCE = re.compile(fr"""{_reference_string}""", re.IGNORECASE)
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
