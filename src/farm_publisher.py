@@ -86,7 +86,7 @@ def main():
     with open(Path(r"src/run_options.toml"), mode="rb") as fp:
         config = tomllib.load(fp)
 
-    process_proof_files(config['publisher'])
+    process_proof_files(config['farm_publisher'])
 
 
 if __name__ == "__main__":

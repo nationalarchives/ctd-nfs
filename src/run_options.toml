@@ -1,4 +1,4 @@
-[publisher]
+[farm_publisher]
 test_mode = false
 update_scope = "RecordAndReplica"
 
