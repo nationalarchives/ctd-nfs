@@ -35,6 +35,12 @@ with dbm.open(DB.DB.joinpath("File_IDs.db"), 'r') as files_db:
         print(f"{file_name=}, {id=}")
 
 
+def load_jsons(jsons_dir: Path) -> Iterable[dict]:
+    for input_json in jsons_dir.glob("*.json"):
+        with open(input_json) as json_file:
+            yield json.load(json_file)
+
+
 def main():
     pass
 
