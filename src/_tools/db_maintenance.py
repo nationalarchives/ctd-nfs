@@ -2,12 +2,13 @@ import dbm
 import json
 import re
 from collections.abc import Iterable
+from pathlib import Path
 
 from src._tools.constants import DB, REGEX
 
 
-def load_jsons() -> Iterable[dict]:
-    for input_json in DB.PUBLISH.joinpath("RD Rutland").glob("*.json"):
+def load_jsons(jsons_dir: Path) -> Iterable[dict]:
+    for input_json in jsons_dir.glob("*.json"):
         with open(input_json) as json_file:
             yield json.load(json_file)
 
