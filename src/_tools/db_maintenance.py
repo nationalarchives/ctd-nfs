@@ -34,3 +34,11 @@ with dbm.open(DB.DB.joinpath("File_IDs.db"), 'r') as files_db:
         print(f"{file_name=}, {id=}")
 
 
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()
+
+
