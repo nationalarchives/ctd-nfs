@@ -40,8 +40,8 @@ def get_maf73_jsons() -> Iterable[Path]:
 
 
 def main():
-    pass
-
+    json_files = get_maf73_jsons()
+    json_data = load_jsons(json_files)
 
 if __name__ == "__main__":
     main()
