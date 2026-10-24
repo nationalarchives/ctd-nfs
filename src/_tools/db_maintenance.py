@@ -4,13 +4,7 @@ import re
 from collections.abc import Iterable
 from pathlib import Path
 
-from src._tools.constants import DB, REGEX
-
-
-def load_jsons(jsons_dir: Path) -> Iterable[dict]:
-    for input_json in jsons_dir.glob("*.json"):
-        with open(input_json) as json_file:
-            yield json.load(json_file)
+from src._tools.constants import DB, PATH, REGEX
 
 
 with dbm.open(DB.DB.joinpath("Farm_IDs.db"), 'c') as farm_db, dbm.open(DB.DB.joinpath("File_IDs.db"), 'c') as files_db:
@@ -35,10 +29,10 @@ with dbm.open(DB.DB.joinpath("File_IDs.db"), 'r') as files_db:
         print(f"{file_name=}, {id=}")
 
 
-def load_jsons(jsons_dir: Path) -> Iterable[dict]:
-    for input_json in jsons_dir.glob("*.json"):
-        with open(input_json) as json_file:
-            yield json.load(json_file)
+def load_jsons(json_files: Iterable[Path]) -> Iterable[dict]:
+    for _file in json_files:
+        with open(_file) as file_obj:
+            yield json.load(file_obj)
 
 
 def main():
