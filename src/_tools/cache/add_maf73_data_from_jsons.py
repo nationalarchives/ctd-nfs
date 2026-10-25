@@ -28,6 +28,13 @@ with dbm.open(DB.DB.joinpath("File_IDs.db"), 'r') as files_db:
         print(f"{file_name=}, {id=}")
 
 
+def create_map_objects_with_ids_from_jsons(json_data: Iterable[dict]) -> dict:
+    return {
+        json_doc['record']['citableReference']: {'id': json_doc['record']['iaid'], 'replica_id': json_doc['record']['replicaId']}
+        for json_doc in json_data
+    }
+
+
 def load_jsons(json_files: Iterable[Path]) -> Iterable[dict]:
     for _file in json_files:
         with open(_file) as file_obj:
@@ -61,6 +68,7 @@ def main():
     for county in counties:
         json_files = get_maf73_jsons(county)
         json_data = load_jsons(json_files)
+        map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
 
 if __name__ == "__main__":
