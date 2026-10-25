@@ -12,9 +12,9 @@ from src._tools.constants import DB, PATH, REGEX
 pretty = pprint.PrettyPrinter(indent=4)
 
 
+"""
 with dbm.open(DB.DB.joinpath("Farm_IDs.db"), 'c') as farm_db, dbm.open(DB.DB.joinpath("File_IDs.db"), 'c') as files_db:
     for json_data in load_jsons():
-        # farm_db[json_data['record']['citableReference']] = f"""{'id': {json_data['record']['iaid']}, 'replica_id': {json_data['record']['replicaId']}}"""
         farm_db[json_data['record']['citableReference']] = "{'id': '%s', 'replica_id': '%s'}" % (json_data['record']['iaid'], json_data['record']['replicaId'])
         print(f"{farm_db[json_data['record']['citableReference']].decode()}")
         for item in json_data['replica']['files']:
@@ -32,6 +32,7 @@ with dbm.open(DB.DB.joinpath("File_IDs.db"), 'r') as files_db:
     print(f"{files_db['MAF32-348-56_69.tif']=}")
     for file_name, id in files_db.items():
         print(f"{file_name=}, {id=}")
+"""
 
 
 def create_map_objects_with_ids_from_jsons(json_data: Iterable[dict]) -> dict:
