@@ -66,16 +66,15 @@ counties = [
 
 
 def main():
-    for county_code in counties:
-        json_files = get_maf73_jsons(county_code)
-        json_data = load_jsons(json_files)
-        map_objects = create_map_objects_with_ids_from_jsons(json_data)
+    with shelve.open(DB.PRODUCTION, 'c') as disk_cache:
+        for county_code in counties:
+            json_files = get_maf73_jsons(county_code)
+            json_data = load_jsons(json_files)
+            map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
-        with shelve.open(DB.PRODUCTION, 'c') as disk_cache:
             county_cache = disk_cache[county_code].copy()
             county_cache.update({'MAF73': {'V1': map_objects}})
             disk_cache[county_code] = county_cache.copy()
-
 
 if __name__ == "__main__":
     main()
