@@ -34,8 +34,8 @@ def load_jsons(json_files: Iterable[Path]) -> Iterable[dict]:
             yield json.load(file_obj)
 
 
-def get_maf73_jsons() -> Iterable[Path]:
-    return PATH.PUBLISH.glob("*/MAF73/V1/*.json")
+def get_maf73_jsons(county_code: str) -> Iterable[Path]:
+    return PATH.PUBLISH.glob(f"{county_code}/MAF73/V1/*.json")
 
 
 def main():
