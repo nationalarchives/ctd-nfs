@@ -38,6 +38,25 @@ def get_maf73_jsons(county_code: str) -> Iterable[Path]:
     return PATH.PUBLISH.glob(f"{county_code}/MAF73/V1/*.json")
 
 
+counties = [
+    "BD",
+    "BK",
+    "CB",
+    "HD",
+    "HN",
+    "IE",
+    "IW",
+    "KT",
+    "MX",
+    "OX",
+    "RD",
+    "SK",
+    "SW",
+    "XW",
+    "YN",
+]
+
+
 def main():
     json_files = get_maf73_jsons()
     json_data = load_jsons(json_files)
