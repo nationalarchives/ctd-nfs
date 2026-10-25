@@ -73,6 +73,8 @@ def main():
 
         with shelve.open(DB.PRODUCTION, 'c') as disk_cache:
             county_cache = disk_cache[county_code].copy()
+            county_cache.update({'MAF73': {'V1': map_objects}})
+            disk_cache[county_code] = county_cache.copy()
 
 
 if __name__ == "__main__":
