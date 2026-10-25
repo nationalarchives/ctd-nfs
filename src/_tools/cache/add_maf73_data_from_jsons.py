@@ -1,11 +1,11 @@
 import dbm
 import json
 import re
+import shelve
 from collections.abc import Iterable
 from pathlib import Path
 
 from src._tools.constants import DB, PATH, REGEX
-from src.farm_harvester import read_farms_db
 
 with dbm.open(DB.DB.joinpath("Farm_IDs.db"), 'c') as farm_db, dbm.open(DB.DB.joinpath("File_IDs.db"), 'c') as files_db:
     for json_data in load_jsons():
@@ -71,7 +71,8 @@ def main():
         json_data = load_jsons(json_files)
         map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
-        county_cache = read_farms_db(county)
+        with shelve.open(DB.PRODUCTION, 'c') as disk_cache:
+            county_cache = disk_cache[county_code].copy()
 
 
 if __name__ == "__main__":
