@@ -58,8 +58,10 @@ counties = [
 
 
 def main():
-    json_files = get_maf73_jsons()
-    json_data = load_jsons(json_files)
+    for county in counties:
+        json_files = get_maf73_jsons(county)
+        json_data = load_jsons(json_files)
+
 
 if __name__ == "__main__":
     main()
