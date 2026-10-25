@@ -1,11 +1,16 @@
 import dbm
 import json
+import pprint
 import re
 import shelve
 from collections.abc import Iterable
 from pathlib import Path
+from random import choice
 
 from src._tools.constants import DB, PATH, REGEX
+
+pretty = pprint.PrettyPrinter(indent=4)
+
 
 with dbm.open(DB.DB.joinpath("Farm_IDs.db"), 'c') as farm_db, dbm.open(DB.DB.joinpath("File_IDs.db"), 'c') as files_db:
     for json_data in load_jsons():
@@ -75,6 +80,12 @@ def main():
             county_cache = disk_cache[county_code].copy()
             county_cache.update({'MAF73': {'V1': map_objects}})
             disk_cache[county_code] = county_cache.copy()
+
+    with shelve.open(DB.PRODUCTION, 'r') as disk_cache:
+        county_code = choice(counties)
+        county_cache = disk_cache[county_code].copy()
+        pretty.pprint(county_cache)
+    
 
 if __name__ == "__main__":
     main()
