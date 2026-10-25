@@ -66,8 +66,8 @@ counties = [
 
 
 def main():
-    for county in counties:
-        json_files = get_maf73_jsons(county)
+    for county_code in counties:
+        json_files = get_maf73_jsons(county_code)
         json_data = load_jsons(json_files)
         map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
