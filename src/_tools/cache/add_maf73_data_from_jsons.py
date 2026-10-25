@@ -89,7 +89,7 @@ def main():
     with shelve.open(DB.PRODUCTION, 'r') as disk_cache:
         county_code = choice(counties)
         county_cache = disk_cache[county_code].copy()
-        pretty.pprint(county_cache)
+        pretty.pprint(county_cache['MAF73']['V1'])
     
 
 if __name__ == "__main__":
