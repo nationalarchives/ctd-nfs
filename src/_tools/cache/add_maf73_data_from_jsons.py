@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from pathlib import Path
 
 from src._tools.constants import DB, PATH, REGEX
+from src.farm_harvester import read_farms_db
 
 with dbm.open(DB.DB.joinpath("Farm_IDs.db"), 'c') as farm_db, dbm.open(DB.DB.joinpath("File_IDs.db"), 'c') as files_db:
     for json_data in load_jsons():
@@ -69,6 +70,8 @@ def main():
         json_files = get_maf73_jsons(county)
         json_data = load_jsons(json_files)
         map_objects = create_map_objects_with_ids_from_jsons(json_data)
+
+        county_cache = read_farms_db(county)
 
 
 if __name__ == "__main__":
