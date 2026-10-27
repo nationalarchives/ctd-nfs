@@ -29,6 +29,22 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
     return documents
 
 
+def add_ids_to_maps(map_data: list[dict], existing_maps: dict) -> list[dict]:
+    amended_map_data: list[dict] = []
+
+    for map in map_data:
+        if map['Reference'] in existing_maps:
+            map['id'] = existing_maps[map['Reference']]['id']
+            map['replica_id'] = existing_maps[map['Reference']]['replica_id']
+        else:
+            map['id'] = create_uuid_str()
+            map['replica_id'] = create_uuid_str()
+
+        amended_map_data.append(map)
+
+    return amended_map_data
+
+
 def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     publish_dir = PATH.PUBLISH / f"{county}/MAF73/{version}/"
