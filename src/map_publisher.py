@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from _dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import PATH
-from src._tools.helpers import clean_excel_data, load_excel_data
+from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_data
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import read_farms_db
 
