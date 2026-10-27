@@ -1,8 +1,10 @@
 import json
 import pprint
 import tomllib
+from itertools import batched
 from pathlib import Path
 from shutil import rmtree
+from time import sleep
 
 from _dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import PATH
@@ -18,14 +20,16 @@ def build_catalogue_documents(map_data: list[dict], update_scope) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for map_proof in map_data:
-        map_document = DiscoveryMAF73(map_proof, update_scope)
+    for batch in batched(map_data, 1000):
+        for map_proof in batch:
+            map_document = DiscoveryMAF73(map_proof, update_scope)
 
-        logger.info(f"Farm {map_proof['Reference']} --> Built record {map_document.id} with {len(map_document.files)} images")
+            logger.info(f"Farm {map_proof['Reference']} --> Built record {map_document.id} with {len(map_document.files)} images")
 
-        documents.append(map_document.to_dict())
-        # documents.append(map_document.for_index())
-
+            documents.append(map_document.to_dict())
+        logger.info(" zzzzzzzzzzz 15 SECOND BATCH PAUSE zzzzzzzzzzz")
+        sleep(15)
+ 
     return documents
 
 
