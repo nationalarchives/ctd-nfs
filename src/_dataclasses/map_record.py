@@ -5,9 +5,7 @@ from dataclasses import dataclass, field
 from typing import Literal
 from urllib import parse
 
-import requests
-
-from src._tools.constants import DB, DISCOVERY
+from src._tools.constants import DB, DISCOVERY, REGEX
 from src._tools.helpers import create_uuid_str
 
 
@@ -17,7 +15,7 @@ class ImageFile:
     id: uuid.UUID = field(default_factory=create_uuid_str)
 
 
-type Scope = Literal['RecordAndReplica', 'RecordOnly']
+Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF73:
@@ -27,6 +25,9 @@ class DiscoveryMAF73:
     def __post_init__(self):
         self.id: uuid.UUID = self.map_data['id']
         self.replica_id: uuid.UUID = self.map_data['replica_id']
+        _reference = REGEX.REFERENCE.match(self.map_data['Reference'])
+        self.reference_stem = _reference['stem']
+        self.reference_part = _reference['part']
 
     @property
     def parent_id (self) -> str:
