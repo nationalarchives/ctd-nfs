@@ -32,6 +32,7 @@ import csv
 import dbm
 import shelve
 import sys
+import tomllib
 from collections.abc import Generator, Iterator
 from pathlib import Path
 
@@ -302,17 +303,18 @@ def load_data_from_file(csv_file: Path) -> Generator[dict]:
         logger.info(f"!!! ERROR in data loading: {csv_error_message}")
 
 
-def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, debug: bool=False) -> None:
+def run_pipeline(config: dict) -> None:
     """_summary_
 
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """    
-    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if test_mode else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
+    input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if config['test_mode'] else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
-        if harvest:
+
+        if config['harvest']:
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
             county_code, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
@@ -326,15 +328,24 @@ def run_pipeline(harvest: bool=True, process: bool=True, test_mode: bool=False, 
             if debug:
                 initialised_farms = read_farms_db(county_code, test_mode)[version]
 
+        if config['process']:
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county_code} ***")
             harvested_farms = process_transcriptions_for_each_farm(initialised_farms)
-            write_farms_to_db(harvested_farms, county_code, version, test_mode)
+            write_farms_to_db(harvested_farms, county_code, version, config['test_mode'])
 
             logger.info("*** CREATING PROOF FILE ***")
-            proof_file = create_proof_file(harvested_farms, county_code, csv_file.stem, test_mode)
+            proof_file = create_proof_file(harvested_farms, county_code, csv_file.stem, config['test_mode'])
 
             logger.info("*** CREATING HTML PREVIEW ***")
             create_html_preview(proof_file, harvested_farms)
+
+
+def main():
+    logger.info(" ===== HARVESTING TRANSCRIPTION FILES ===== ")
+    with open(Path(r"src/run_options.toml"), mode="rb") as fp:
+        config = tomllib.load(fp)
+
+    run_pipeline(config['harvester'])
 
 
 if __name__ == "__main__":

@@ -1,3 +1,9 @@
+[harvester]
+harvest = true
+process = true
+debug = false
+test_mode = true
+
 [farm_publisher]
 test_mode = false
 update_scope = "RecordAndReplica"
