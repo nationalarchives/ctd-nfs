@@ -19,7 +19,7 @@ from functools import cached_property
 from typing import Literal
 from urllib import parse
 
-from src._dataclasses.farm_combine import HarvestedFarm
+from src._dataclasses.farm_combine import FarmForDiscovery
 from src._tools.constants import DISCOVERY, REGEX
 from src._tools.helpers import get_parent_discovery_record
 
@@ -28,8 +28,8 @@ Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF32:
-    farm: HarvestedFarm
-    update_scope: Scope = None
+    farm: FarmForDiscovery
+    update_scope: Scope = "RecordAndReplica"
 
     def __post_init__(self):
         _reference = REGEX.REFERENCE.match(self.farm.catalogue_reference)
@@ -49,15 +49,15 @@ class DiscoveryMAF32:
     def scope_and_content(self) -> dict:
         description_fields = {
             'Farm Reference': f"{self.farm.farm_reference}.",
-            'Farm Name(s)': f"{self.farm.description.farm_name}.",
-            'Addressee(s)': f"{self.farm.description.addressee}.",
-            'Farmer(s) or Occupier(s)': f"{self.farm.description.farmer}.",
-            'Landowner(s)': f"{self.farm.description.landowner}.",
-            'Acreage(s)': f"{self.farm.description.acreage}.",
-            'OS Sheet Number(s)': f"{self.farm.description.os_sheet_number}.",
-            'Field Information Date(s)': f"{self.farm.description.field_info_date}.",
-            'Primary Record Date(s)': f"{self.farm.description.primary_record_date}.",
-            'Record consists of': f"{self.farm.description.forms}.",
+            'Farm Name(s)': f"{self.farm.all_farm_names}.",
+            'Addressee(s)': f"{self.farm.all_addressees}.",
+            'Farmer(s) or Occupier(s)': f"{self.farm.all_farmers}.",
+            'Landowner(s)': f"{self.farm.all_landowners}.",
+            'Acreage(s)': f"{self.farm.all_acreages}.",
+            'OS Sheet Number(s)': f"{self.farm.all_os_sheet_numbers}.",
+            'Field Information Date(s)': f"{self.farm.all_field_info_dates}.",
+            'Primary Record Date(s)': f"{self.farm.all_primary_record_dates}.",
+            'Record consists of': f"{self.farm.all_forms}.",
         }
 
         description = [

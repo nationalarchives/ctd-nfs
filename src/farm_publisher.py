@@ -26,7 +26,7 @@ from itertools import batched
 from pathlib import Path
 from time import sleep
 
-from src._dataclasses.farm_combine import HarvestedFarm
+from src._dataclasses.farm_combine import FarmForDiscovery, HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH, REGEX
 from src._tools.logging_setup import create_logger
@@ -44,11 +44,9 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     documents = []
     for batch in batched(harvested_farms, 1000):
         for farm in batch:
-            farm.description.target = "Discovery"
-            farm.set_description()
-            farm.process_forms_for_output()
-            discovery_document = DiscoveryMAF32(farm, update_scope)
-            logger.info(f"Farm {farm.farm_reference} --> Built record {farm.id} with {len(discovery_document.files)} images")
+            farm_for_discovery = FarmForDiscovery(farm)
+            discovery_document = DiscoveryMAF32(farm_for_discovery, update_scope)
+            logger.info(f"Farm {farm.farm_reference} --> Built record {farm_for_discovery.id} with {len(discovery_document.files)} images")
 
             documents.append(discovery_document.to_dict())
 

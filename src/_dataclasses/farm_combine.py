@@ -190,81 +190,7 @@ class HarvestedFarm:
     @cached_property
     def farm_reference(self) -> str:
         return f"{self._county_code}/{self._parish_number}/{self.primary_farm_number}"
-
-    def _join(self, values: list) -> str:
-        if self.description.target == "HarvesterOUT":
-            _ = ";\n".join(values)
-            return ";\n".join(_.split("; "))
-        return "; ".join(values)
-
-    def process_forms_for_output(self) -> None:
-        forms_in_output_format = []
-        files_in_output_format = []
-        ids_in_output_format = []
-
-        for form_type, image_sets in self.forms.items():
-            if len(image_sets) == 1:
-                forms_in_output_format.append(form_type)
-            else:
-                for index in range(len(image_sets)):
-                    forms_in_output_format.append(f"{form_type} ({index + 1})")
-            for images in image_sets:
-                files_in_output_format.append(", ".join([_img.name for _img in images]))
-                ids_in_output_format.append(", ".join([_img.id for _img in images]))
-
-        self.description.forms = self._join(forms_in_output_format)
-        self.replica_file_names = self._join(files_in_output_format)
-        self.replica_file_ids = self._join(ids_in_output_format)
-
-    def set_description(self) -> None:
-        self.description.farm_name = self._join(self.farm_name)
-        self.description.addressee = self._join(self.addressee.names_and_addresses)
-        self.description.farmer = self._join(self.farmer.names_and_addresses)
-        self.description.landowner = self._join(self.landowner.names_and_addresses)
-        self.description.acreage = self._join(self.acreage)
-        self.description.os_sheet_number = self._join(self.OS_map_sheet)
-        self.description.field_info_date = self._join(self.field_info_date)
-        self.description.primary_record_date = self._join(self.primary_record_date)
-
-    def to_proof(self) -> list:
-        self.set_description()
-        self.process_forms_for_output()
-        return [
-            self.catalogue_reference,
-            self._join(self.warnings.get('Reference Warnings', "")),
-            self.id,
-            # ========================
-            self.replica_id,
-            self.replica_file_ids,
-            self.replica_file_names,
-            self._join(self.warnings.get('Filename Warnings', "")),
-            # ========================
-            self.description.forms,
-            self._join(self.warnings.get('Type Warnings', "")),
-            self.farm_reference,
-            self.description.farm_name,
-            # ========================
-            self._join(self.addressee.names),
-            self.warnings.get('Addressee name warnings', ""),
-            self._join(self.addressee.addresses),
-            self.description.addressee,
-            # ========================
-            self._join(self.farmer.names),
-            self.warnings.get('Farmer name warnings', ""),
-            self._join(self.farmer.addresses),
-            self.description.farmer,
-            # ========================
-            self._join(self.landowner.names),
-            self.warnings.get('Landowner name warnings', ""),
-            self._join(self.landowner.addresses),
-            self.description.landowner,
-            # ========================
-            self.description.acreage,
-            self.description.os_sheet_number,
-            self.description.field_info_date,
-            self.description.primary_record_date,
-        ]
-    
+   
     def convert_forms_to_dict(self) -> dict:
         return {
             form_type: [
@@ -285,6 +211,120 @@ class HarvestedFarm:
             for form_type, list_of_transcriptions in self.source_data.items()
             if list_of_transcriptions
         }
+
+
+@dataclass
+class FarmOutput:
+    farm: HarvestedFarm
+
+    def _rename_attributes_to_shorten_object_path(self):
+        self.catalogue_reference = self.farm.catalogue_reference
+        self.id = self.farm.id
+        self.replica_id = self.farm.replica_id
+        self.farm_reference = self.farm.farm_reference
+
+    def _join(self, values: list) -> str:
+        if self.target == "HarvesterOUT":
+            _ = ";\n".join(values)
+            return ";\n".join(_.split("; "))
+        return "; ".join(values)
+
+    def _collate_values_from_forms(self) -> None:
+        forms_in_output_format = []
+        files_in_output_format = []
+        ids_in_output_format = []
+
+        for form_type, image_sets in self.farm.forms.items():
+            if len(image_sets) == 1:
+                forms_in_output_format.append(form_type)
+            else:
+                for index in range(len(image_sets)):
+                    forms_in_output_format.append(f"{form_type} ({index + 1})")
+            for images in image_sets:
+                files_in_output_format.append(", ".join([_img.name for _img in images]))
+                ids_in_output_format.append(", ".join([_img.id for _img in images]))
+
+        self.all_forms = self._join(forms_in_output_format)
+        self.replica_file_names = self._join(files_in_output_format)
+        self.replica_file_ids = self._join(ids_in_output_format)
+
+    def _collate_values_for_description_fields(self) -> None:
+        self.all_farm_names = self._join(self.farm.farm_name)
+        self.all_addressees = self._join(self.farm.addressee.names_and_addresses)
+        self.all_farmers = self._join(self.farm.farmer.names_and_addresses)
+        self.all_landowners = self._join(self.farm.landowner.names_and_addresses)
+        self.all_acreages = self._join(self.farm.acreage)
+        self.all_os_sheet_numbers = self._join(self.farm.OS_map_sheet)
+        self.all_field_info_dates = self._join(self.farm.field_info_date)
+        self.all_primary_record_dates = self._join(self.farm.primary_record_date)
+
+@dataclass
+class FarmForReview(FarmOutput):
+    target: TargetFormat = "HarvesterOUT"
+
+    def _collate_values_for_review_file(self) -> None:
+        self.all_reference_warnings = self._join(self.farm.warnings.get('Reference Warnings', ""))
+        self.all_filename_warnings = self._join(self.farm.warnings.get('Filename Warnings', ""))
+        self.all_type_warnings = self._join(self.farm.warnings.get('Type Warnings', ""))
+        self.all_addressee_names = self._join(self.farm.addressee.names)
+        self.all_addressee_addresses = self._join(self.farm.addressee.addresses)
+        self.all_farmer_names = self._join(self.farm.farmer.names)
+        self.all_farmer_addresses = self._join(self.farm.farmer.addresses)
+        self.all_landowner_names = self._join(self.farm.landowner.names)
+        self.all_landowner_addresses = self._join(self.farm.landowner.addresses)
+
+    def __post_init__(self):
+        self._rename_attributes_to_shorten_object_path()
+        self._collate_values_for_description_fields()
+        self._collate_values_from_forms()
+        self._collate_values_for_review_file()
+
+    def output_for_review_file(self) -> list:
+        return [
+            self.catalogue_reference,
+            self.all_reference_warnings,
+            self.id,
+            # ========================
+            self.replica_id,
+            self.replica_file_ids,
+            self.replica_file_names,
+            self.all_filename_warnings,
+            # ========================
+            self.all_forms,
+            self.all_type_warnings,
+            self.farm_reference,
+            self.all_farm_names,
+            # ========================
+            self.all_addressee_names,
+            self.farm.warnings.get('Addressee name warnings', ""),
+            self.all_addressee_addresses,
+            self.all_addressees,
+            # ========================
+            self.all_farmer_names,
+            self.farm.warnings.get('Farmer name warnings', ""),
+            self.all_farmer_addresses,
+            self.all_farmers,
+            # ========================
+            self.all_landowner_names,
+            self.farm.warnings.get('Landowner name warnings', ""),
+            self.all_landowner_addresses,
+            self.all_landowners,
+            # ========================
+            self.all_acreages,
+            self.all_os_sheet_numbers,
+            self.all_field_info_dates,
+            self.all_primary_record_dates,
+        ]
+
+
+@dataclass
+class FarmForDiscovery(FarmOutput):
+    target: TargetFormat = "Discovery"
+
+    def __post_init__(self):
+        self._rename_attributes_to_shorten_object_path()
+        self._collate_values_for_description_fields()
+        self._collate_values_from_forms()
 
 
 @dataclass

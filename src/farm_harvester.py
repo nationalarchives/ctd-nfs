@@ -35,7 +35,7 @@ import sys
 from collections.abc import Generator, Iterator
 from pathlib import Path
 
-from src._dataclasses.farm_combine import HarvestedFarm
+from src._dataclasses.farm_combine import FarmForReview, HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
 from src._tools.helpers import TranscriptionDataError, create_uuid_str
@@ -63,7 +63,8 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
 
     farms_in_proof_format = []
     for harvested_farm in farms_store.values():
-        farms_in_proof_format.append(harvested_farm.to_proof())
+        farm_for_output = FarmForReview(harvested_farm)
+        farms_in_proof_format.append(farm_for_output.output_for_review_file())
             
     excel_data = [{
         'sheet_name': "Proof data",
