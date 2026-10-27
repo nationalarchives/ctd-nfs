@@ -6,7 +6,7 @@ from typing import Literal
 from urllib import parse
 
 from src._tools.constants import DB, DISCOVERY, REGEX
-from src._tools.helpers import create_uuid_str
+from src._tools.helpers import create_uuid_str, get_parent_discovery_record
 
 
 @dataclass
@@ -15,7 +15,7 @@ class ImageFile:
     id: uuid.UUID = field(default_factory=create_uuid_str)
 
 
-Scope = Literal['RecordAndReplica', 'RecordOnly']
+type Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF73:
@@ -31,11 +31,9 @@ class DiscoveryMAF73:
 
     @property
     def parent_id (self) -> str:
-        ref = self.map_data['Reference'].rsplit("/", maxsplit=1)[0]
-        ref_url_safe = parse.quote(ref)
+        ref_url_safe = parse.quote(self.reference_stem, safe="")
 
-        api_query = fr"{DISCOVERY.API_URI}/records/v1/collection/{ref_url_safe}"
-        result = requests.get(api_query)
+        parent_record = get_parent_discovery_record(ref_url_safe)
 
         # for record in result.json()['records']:
         for record in result.json()['assets']:
