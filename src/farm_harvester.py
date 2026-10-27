@@ -118,10 +118,14 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county_code: str, v
 
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
-    """    
-    county = {version: farms_store}
+    """
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
-        farm_db[county_code] = county.copy()
+        county_store = farm_db[county_code].copy() if county_code in farm_db else {}
+        if version not in county_store:
+            county_store.update({version: farms_store})
+        else:
+            county_store[version].update(farms_store)
+        farm_db[county_code] = county_store.copy()
 
 
 def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
@@ -137,7 +141,7 @@ def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFa
         _description_
     """    
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
-        farms_store = farm_db[county].copy()
+        farms_store = farm_db[county].copy() if county in farm_db else {}
 
     return farms_store
 
@@ -155,22 +159,18 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
     """    
     form_type = transcription.document_type.name
     if candidate_farm.catalogue_reference not in farms_store:
-        if form_type not in candidate_farm.source_data:
-            candidate_farm.source_data[form_type] = []
         candidate_farm.source_data[form_type].append(transcription)
         logger.info(f"NEW FARM {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) created from transcription instance {row_number} (form {form_type})")
         return candidate_farm
 
     else:
         existing_farm = farms_store[candidate_farm.catalogue_reference]
-        if form_type not in existing_farm.source_data:
-            existing_farm.source_data[form_type] = []
         existing_farm.source_data[form_type].append(transcription)
         logger.info(f"{'='*8} {candidate_farm.farm_reference} ({candidate_farm.catalogue_reference}) updated {'.'*4} from transcription instance {row_number} (form {form_type})")
         return existing_farm
 
 
-def initialise_farm(transcription: Transcription) -> HarvestedFarm:
+def initialise_farm(transcription: Transcription, cached_farms: dict) -> HarvestedFarm:
     """_summary_
 
     Arguments:
@@ -180,18 +180,11 @@ def initialise_farm(transcription: Transcription) -> HarvestedFarm:
         _description_
     """    
     candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
-    """NOTE
-    The FARM_IDS db will be deleted after Rutland (RD) and Isle of Wight (IW) have been archived
-    """
-    if transcription.county.startswith(("RD", "IW")):
-        with dbm.open(DB.FARM_IDS, 'c') as farm_ids_db:
-            db_ids = farm_ids_db.get(candidate_farm.catalogue_reference, "")
-            if db_ids:
-                db_ids = eval(db_ids.decode())
-                candidate_farm.id = db_ids['id']
-                candidate_farm.replica_id = db_ids['replica_id']
-            else:
-                farm_ids_db[candidate_farm.catalogue_reference] = f"{{'id': '{candidate_farm.id}', 'replica_id': '{create_uuid_str()}'}}"
+
+    if candidate_farm.catalogue_reference in cached_farms:
+        template_farm = cached_farms[candidate_farm.catalogue_reference]
+        candidate_farm.id = template_farm.id
+        candidate_farm.replica_id = template_farm.replica_id
 
     return candidate_farm
 
@@ -230,7 +223,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         return
 
 
-def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str, HarvestedFarm]]:
+def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:
@@ -245,7 +238,7 @@ def transform_row_data_to_farms(csv_data: Iterator[dict]) -> dict[str, dict[str,
         if not (transcription := transform_row_to_transcription(farm_data_row, row_number)):
             continue
 
-        candidate_farm = initialise_farm(transcription)
+        candidate_farm = initialise_farm(transcription, cached_farms)
         candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
         initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
 
@@ -319,9 +312,13 @@ def run_pipeline(config: dict) -> None:
             county_code, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
-            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data)
 
-            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)            
+            existing_farms = {}           
+            if county_code not in ["LH", "LK"] and (county_from_db := read_farms_db(county_code, config['test_mode'])):
+                existing_farms = county_from_db[version]
+
+            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)
+            
 
         if config['process']:
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county_code} ***")
