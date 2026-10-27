@@ -2,6 +2,7 @@ import dbm
 import re
 import uuid
 from dataclasses import dataclass, field
+from functools import cached_property
 from typing import Literal
 from urllib import parse
 
@@ -29,7 +30,7 @@ class DiscoveryMAF73:
         self.reference_stem = _reference['stem']
         self.reference_part = _reference['part']
 
-    @property
+    @cached_property
     def parent_id (self) -> str:
         ref_url_safe = parse.quote(self.reference_stem, safe="")
 
