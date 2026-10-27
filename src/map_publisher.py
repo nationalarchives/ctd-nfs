@@ -47,6 +47,7 @@ def process_proof_files(config: dict) -> None:
         if proof_file.name.startswith("Index"):
             continue
         county_code, _ = proof_file.name.split(" ", maxsplit=1)
+        version = REGEX.TRANSCRIPTIONS_VERSION.match(proof_file.stem)['version']
 
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
