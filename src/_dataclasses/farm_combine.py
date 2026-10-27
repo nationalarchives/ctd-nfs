@@ -92,9 +92,6 @@ class Respondent:
         }
 
 
-type TargetFormat = Literal["HarvesterOUT", "Discovery"]
-
-
 def initialise_forms_mapping() -> dict:
     """Create a mapping of form codes to empty lists for storing filenames.
         The order of forms as specified is important as there is a chronological significance to the order of forms.
@@ -241,6 +238,9 @@ class FarmOutput:
         self.all_os_sheet_numbers = self._join(self.farm.OS_map_sheet)
         self.all_field_info_dates = self._join(self.farm.field_info_date)
         self.all_primary_record_dates = self._join(self.farm.primary_record_date)
+
+
+type TargetFormat = Literal["HarvesterOUT", "Discovery"]
 
 @dataclass
 class FarmForReview(FarmOutput):
