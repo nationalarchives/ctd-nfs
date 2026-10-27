@@ -2,6 +2,7 @@ import dbm
 import re
 import uuid
 from dataclasses import dataclass, field
+from typing import Literal
 from urllib import parse
 
 import requests
@@ -32,6 +33,8 @@ def get_map_ids(reference: str) -> dict[str, uuid.UUID]:
 
     return map_ids
 
+
+type Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF73:
