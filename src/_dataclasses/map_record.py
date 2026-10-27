@@ -1,4 +1,3 @@
-import dbm
 import re
 import uuid
 from dataclasses import dataclass, field
