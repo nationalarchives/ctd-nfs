@@ -321,12 +321,7 @@ def run_pipeline(config: dict) -> None:
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
             initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data)
 
-            if debug:
-                write_farms_to_db(initialised_farms, county_code, version, test_mode)
-
-        if process:
-            if debug:
-                initialised_farms = read_farms_db(county_code, test_mode)[version]
+            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)            
 
         if config['process']:
             logger.info(f"*** PROCESSING TRANSCRIPTIONS for {county_code} ***")
