@@ -68,7 +68,7 @@ def create_proof_file(farms_store: dict, county: str, input_file_name: str, test
         farms_in_proof_format.append(farm_for_output.output_for_review_file())
             
     excel_data = [{
-        'sheet_name': "Proof data",
+        'sheet_name': "Sheet1",
         'row_data': farms_in_proof_format,
         'column_settings': CSVEXCEL.PROOF_COLUMNS,
     }]
