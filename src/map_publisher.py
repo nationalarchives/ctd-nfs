@@ -8,6 +8,7 @@ from _dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import PATH
 from src._tools.helpers import clean_excel_data, load_excel_data
 from src._tools.logging_setup import create_logger
+from src.farm_harvester import read_farms_db
 
 logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
@@ -51,6 +52,10 @@ def process_proof_files(config: dict) -> None:
 
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
+        if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
+            existing_maps = county_from_db['MAF73'][version]
+        else:
+            existing_maps = {}
         final_documents = build_catalogue_documents(cleaned_data, config['test_mode'])
         if config['test_mode']:
             for document in final_documents:
