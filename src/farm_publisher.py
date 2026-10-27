@@ -56,7 +56,7 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     return documents
 
 
-def write_catalogue_documents(documents: list[dict], county: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     publish_dir = PATH.PUBLISH / f"{county}/MAF32/{version}/"
 
@@ -80,7 +80,7 @@ def process_proof_files(config: dict) -> None:
         harvested_farms = iter(county_data[version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
-        write_catalogue_documents(final_documents, county)
+        write_catalogue_documents(final_documents, county, version)
 
 
 def main():
