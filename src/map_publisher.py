@@ -14,11 +14,11 @@ logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list[dict]:
+def build_catalogue_documents(map_data: list[dict], test_mode=False) -> list[dict]:
     logger.info(" ===== BUILDING DISCOVERY RECORDS ===== ")
 
     documents = []
-    for map_proof in cleaned_data:
+    for map_proof in map_data:
         map_document = DiscoveryMAF73(map_proof)
 
         logger.info(f"Farm {map_proof['Reference']} --> Built record {map_document.id} with {len(map_document.files)} images")
