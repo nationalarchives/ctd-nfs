@@ -23,8 +23,7 @@ from src._dataclasses.farm_combine import FarmForDiscovery
 from src._tools.constants import DISCOVERY, REGEX
 from src._tools.helpers import get_parent_discovery_record
 
-Scope = Literal['RecordAndReplica', 'RecordOnly']
-
+type Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
 class DiscoveryMAF32:
