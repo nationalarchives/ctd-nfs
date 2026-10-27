@@ -39,8 +39,7 @@ type Scope = Literal['RecordAndReplica', 'RecordOnly']
 @dataclass
 class DiscoveryMAF73:
     map_data: dict
-    # update_scope: str = DISCOVERY.UPDATE_SCOPE['update_metadata_not_digital_files']
-    update_scope: str = DISCOVERY.UPDATE_SCOPE['new_record_with_digital_files']
+    update_scope: Scope = "RecordAndReplica"
 
     def __post_init__(self):
         self._map_ids = get_map_ids(self.map_data['Reference'])
