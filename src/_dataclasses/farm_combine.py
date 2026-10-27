@@ -116,20 +116,6 @@ def initialise_forms_mapping() -> dict:
 
 
 @dataclass
-class Description:
-    farm_name: str = field(init=False)
-    addressee: str = field(init=False)
-    farmer: str = field(init=False)
-    landowner: str = field(init=False)
-    acreage: str = field(init=False)
-    os_sheet_number: str = field(init=False)
-    field_info_date: str = field(init=False)
-    primary_record_date: str = field(init=False)
-    forms: str = field(init=False)
-    target: TargetFormat = "HarvesterOUT"
-
-
-@dataclass
 class HarvestedFarm:
     county: str
     parish: str
@@ -152,7 +138,6 @@ class HarvestedFarm:
     source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
     def __post_init__(self):
-        self.description = Description()
         self._county_code, *_ = self.county.split()
         self._parish_number, *_ = self.parish.split()
 
