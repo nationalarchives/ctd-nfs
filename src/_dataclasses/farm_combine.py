@@ -95,6 +95,26 @@ class Respondent:
 
 TargetFormat = Literal["HarvesterOUT", "Discovery"]
 
+
+def initialise_forms_mapping() -> dict:
+    """Create a mapping of form codes to empty lists for storing filenames.
+        The order of forms as specified is important as there is a chronological significance to the order of forms.
+        An enum was not used here as the form codes are not valid enum names .
+    Returns:
+        dict: Mapping of form codes to empty lists.
+    """
+    return {
+        'C 47/SSY': [],
+        'C 49/SSY': [],
+        'C51/SSY': [],
+        'SF': [],
+        'SF C69/SSY': [],
+        'B496/EI': [],
+        'Other': [],
+        'Cover': [],
+    }
+
+
 @dataclass
 class Description:
     farm_name: str = field(init=False)
@@ -127,9 +147,9 @@ class HarvestedFarm:
 
     _id: uuid.UUID = field(default_factory=create_uuid_str)
     _replica_id: uuid.UUID = field(default_factory=create_uuid_str)
-    forms: dict[str, list[ImageSet]] = field(default_factory=dict)
+    forms: dict[str, list[ImageSet]] = field(default_factory=initialise_forms_mapping)
     warnings: dict[str, list[str]] | None = None   
-    source_data: dict[str, list[Transcription]] = field(default_factory=dict)
+    source_data: dict[str, list[Transcription]] = field(default_factory=initialise_forms_mapping)
 
     def __post_init__(self):
         self.description = Description()
