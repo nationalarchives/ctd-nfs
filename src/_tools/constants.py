@@ -168,8 +168,8 @@ class RegexNamespace:
     cover_pattern = fr"""^MAF32-(?P<piece>{_piece})[-_](?P<parish_number>{_parish_number})(?:-\d|-10)?\.tiff?$"""
     COVER = re.compile(fr"""{cover_pattern}""", re.IGNORECASE)   
 
-    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[A-Za-z]*?|[A-Z]|\d+and\d+))"""
-    _reference_string = fr"""^(?P<stem>MAF (32|73)\/{_piece}\/{_parish_number})\/{_reference_part}$"""
+    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[A-Za-z]*?|[A-Z]|\d+(and|-)\d+))"""
+    _reference_string = fr"""^(?P<stem>MAF (32|73)\/{_piece}\/{_parish_number})\/(?P<part>.*?)$"""
     REFERENCE = re.compile(fr"""{_reference_string}""", re.IGNORECASE)
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
