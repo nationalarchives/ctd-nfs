@@ -50,8 +50,8 @@ def process_proof_files(config: dict) -> None:
         county, _ = proof_file.name.split("_", maxsplit=1)
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
-        final_documents = build_catalogue_documents(cleaned_data, test_mode)
-        if test_mode:
+        final_documents = build_catalogue_documents(cleaned_data, config['test_mode'])
+        if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
         write_catalogue_documents(final_documents, county)
