@@ -50,8 +50,9 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
             logger.info(f"Farm {farm.farm_reference} --> Built record {farm_for_discovery.id} with {len(discovery_document.files)} images")
 
             documents.append(discovery_document.to_dict())
-
-        sleep(5)
+        
+        logger.info(" zzzzzzzzzzz 15 SECOND BATCH PAUSE zzzzzzzzzzz")
+        sleep(15)
 
     return documents
 
@@ -95,6 +96,8 @@ def process_proof_files(config: dict) -> None:
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county, version)
         write_jsons_to_zip_archive(county, version)
+        logger.info("--- pausing for two minutes before next file ---")
+        sleep(120)
 
 
 def main():
