@@ -2,7 +2,7 @@ import shelve
 
 import pytest
 
-from src._dataclasses.farm_combine import HarvestedFarm
+from src._dataclasses.farm_combine import FarmForDiscovery
 from src._tools.constants import DB
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import create_proof_file, run_pipeline
@@ -17,7 +17,7 @@ def test_file_processor():
     with shelve.open(DB.TEST, 'r') as test_db:
         for reference in test_db.values():
             for farm in reference.values(): 
-                assert isinstance(farm['farm'], HarvestedFarm)
+                assert isinstance(farm['farm'], FarmForDiscovery)
                 # assert farm['source']
 
 
