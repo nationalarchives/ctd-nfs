@@ -1,5 +1,6 @@
 import json
 import pprint
+import shelve
 import tomllib
 from itertools import batched
 from pathlib import Path
@@ -7,13 +8,37 @@ from shutil import make_archive, rmtree
 from time import sleep
 
 from src._dataclasses.map_record import DiscoveryMAF73
-from src._tools.constants import PATH
+from src._tools.constants import DB, PATH, REGEX
 from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_data
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import read_farms_db
 
 logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
+
+
+def write_maps_to_db(map_data: list[dict], county_code: str, version: str, test_mode: bool = False) -> None:
+    """_summary_
+
+    Arguments:
+        maps_store -- _description_
+        county -- _description_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+    """    
+    maps_cache = {
+        map_proof['Reference']: map_proof
+        for map_proof in map_data
+    }
+
+    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
+        county_store = farm_db[county_code].copy()
+        if version not in county_store:
+            county_store.update({'MAF73': {version: maps_cache}})
+        else:
+            county_store['MAF73'].update({version: maps_cache})
+        farm_db[county_code] = county_store.copy()
 
 
 def build_catalogue_documents(map_data: list[dict], update_scope) -> list[dict]:
