@@ -44,24 +44,24 @@ def create_html_preview_context(harvested_farms: Generator[HarvestedFarm], count
 
     descriptions = [
         {
-            'catalogue_reference': _farm.catalogue_reference,
-            'farm_reference': _farm.farm_reference,
-            'farm_name': _farm.description.farm_name,
-            'addressee': _farm.description.addressee,
-            'farmer': _farm.description.farmer,
-            'landowner': _farm.description.landowner,
-            'acreage': _farm.description.acreage,
-            'OS_map_sheet': _farm.description.os_sheet_number,
-            'field_info_date': _farm.description.field_info_date,
-            'primary_record_date': _farm.description.primary_record_date,
-            'forms': _farm.description.forms,
+            'catalogue_reference': preview_farm.catalogue_reference,
+            'farm_reference': preview_farm.farm_reference,
+            'farm_name': preview_farm.all_farm_names,
+            'addressee': preview_farm.all_addressees,
+            'farmer': preview_farm.all_farmers,
+            'landowner': preview_farm.all_landowners,
+            'acreage': preview_farm.all_acreages,
+            'OS_map_sheet': preview_farm.all_os_sheet_numbers,
+            'field_info_date': preview_farm.all_field_info_dates,
+            'primary_record_date': preview_farm.all_primary_record_dates,
+            'forms': preview_farm.all_forms,
         }
-        for _farm in harvested_farms
+        for preview_farm in farms_for_preview
     ]
 
     catalogue_references = [
-        _farm.catalogue_reference
-        for _farm in harvested_farms
+        preview_farm.catalogue_reference
+        for preview_farm in farms_for_preview
     ]
 
     return {
