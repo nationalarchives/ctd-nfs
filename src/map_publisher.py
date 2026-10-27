@@ -96,6 +96,8 @@ def process_proof_files(config: dict) -> None:
                 pretty.pprint(document)
         write_catalogue_documents(final_documents, county_code, version)
         write_jsons_to_zip_archive(county_code, version)
+        logger.info("--- pausing for two minutes before next file ---")
+        sleep(120)
 
 
 def main(test_mode: bool=False):
