@@ -1,7 +1,7 @@
 import dbm
 import re
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from urllib import parse
 
 import requests
@@ -13,17 +13,7 @@ from src._tools.helpers import create_uuid_str
 @dataclass
 class ImageFile:
     name: str
-
-    @property
-    def id(self) -> uuid.UUID:
-        with dbm.open(DB.FILE_IDS, 'c') as file_ids_db:
-            db_id = file_ids_db.get(self.name, "")
-            if db_id:
-                id = db_id.decode()
-            else:
-                id = create_uuid_str()
-                file_ids_db[self.name] = id
-        return id
+    id: uuid.UUID = field(default_factory=create_uuid_str)
 
 
 def get_map_ids(reference: str) -> dict[str, uuid.UUID]:
