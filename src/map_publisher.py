@@ -2,6 +2,7 @@ import json
 import pprint
 import tomllib
 from pathlib import Path
+from shutil import rmtree
 
 from _dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import PATH
@@ -29,9 +30,11 @@ def build_catalogue_documents(cleaned_data: list[dict], test_mode=False) -> list
 
 def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF 73/"
-    # publish_dir = PATH.PUBLISH 
-    publish_dir.mkdir(exist_ok=True, parents=True)
+    publish_dir = PATH.PUBLISH / f"{county}/MAF73/{version}/"
+
+    if publish_dir.exists():
+        rmtree(publish_dir)
+    publish_dir.mkdir(parents=True)
     for document in documents:
         with open(publish_dir / f"{document['record']['iaid']}.json", 'w') as final_file:
             logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")

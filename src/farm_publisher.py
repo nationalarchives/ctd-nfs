@@ -24,6 +24,7 @@ import tomllib
 from collections.abc import Generator
 from itertools import batched
 from pathlib import Path
+from shutil import rmtree
 from time import sleep
 
 from src._dataclasses.farm_combine import FarmForDiscovery, HarvestedFarm
@@ -57,8 +58,11 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
 
 def write_catalogue_documents(documents: list[dict], county: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF 32/"
-    publish_dir.mkdir(exist_ok=True, parents=True)
+    publish_dir = PATH.PUBLISH / f"{county}/MAF32/{version}/"
+
+    if publish_dir.exists():
+        rmtree(publish_dir)
+    publish_dir.mkdir(parents=True)
     for document in documents:
         with open(publish_dir / f"{document['record']['iaid']}.json", 'w') as final_file:
             logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
