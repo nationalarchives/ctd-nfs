@@ -46,15 +46,15 @@ def process_proof_files(config: dict) -> None:
     for proof_file in xlsx_files:
         if proof_file.name.startswith("Index"):
             continue
-        # county = ""
-        county, _ = proof_file.name.split("_", maxsplit=1)
+        county_code, _ = proof_file.name.split(" ", maxsplit=1)
+
         proof_data = load_excel_data(proof_file)
         cleaned_data = clean_excel_data(proof_data)
         final_documents = build_catalogue_documents(cleaned_data, config['test_mode'])
         if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents, county)
+        write_catalogue_documents(final_documents, county_code)
 
 
 def main(test_mode: bool=False):
