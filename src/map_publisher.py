@@ -3,7 +3,7 @@ import pprint
 import tomllib
 from itertools import batched
 from pathlib import Path
-from shutil import rmtree
+from shutil import make_archive, rmtree
 from time import sleep
 
 from src._dataclasses.map_record import DiscoveryMAF73
@@ -60,6 +60,19 @@ def write_catalogue_documents(documents: list[dict], county: str, version: str) 
         with open(publish_dir / f"{document['record']['iaid']}.json", 'w') as final_file:
             logger.info(f"Record for farm {document['record']['citableReference']}: {final_file.name} DONE")
             json.dump(document, final_file)   
+
+
+def write_jsons_to_zip_archive(county: str, version: str):
+    logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
+    
+    directory = PATH.PUBLISH / f"{county}/"
+    archive_name = f"{directory}_MAF73"
+    make_archive(
+        archive_name,
+        'zip',
+        root_dir=PATH.PUBLISH,
+        base_dir=f"{county}/MAF73/{version}",
+    )
             
 def process_proof_files(config: dict) -> None:
     xlsx_files = PATH.INPUT.glob("TEST/*MAF73*.xlsx") if config['test_mode'] else PATH.INPUT.glob("*MAF73*.xlsx")
@@ -82,6 +95,7 @@ def process_proof_files(config: dict) -> None:
             for document in final_documents:
                 pretty.pprint(document)
         write_catalogue_documents(final_documents, county_code, version)
+        write_jsons_to_zip_archive(county_code, version)
 
 
 def main(test_mode: bool=False):
