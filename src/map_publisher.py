@@ -49,7 +49,7 @@ def add_ids_to_maps(map_data: list[dict], existing_maps: dict) -> list[dict]:
     return amended_map_data
 
 
-def write_catalogue_documents(documents: list[dict], county: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     publish_dir = PATH.PUBLISH / f"{county}/MAF73/{version}/"
 
@@ -81,7 +81,7 @@ def process_proof_files(config: dict) -> None:
         if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents, county_code)
+        write_catalogue_documents(final_documents, county_code, version)
 
 
 def main(test_mode: bool=False):
