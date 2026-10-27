@@ -31,8 +31,7 @@ class ImageFile:
             'image_number': self.image_number,
         }
 
-
-ImageSet = list[ImageFile]
+type ImageSet = list[ImageFile]
 
 
 @dataclass
@@ -93,7 +92,7 @@ class Respondent:
         }
 
 
-TargetFormat = Literal["HarvesterOUT", "Discovery"]
+type TargetFormat = Literal["HarvesterOUT", "Discovery"]
 
 
 def initialise_forms_mapping() -> dict:
