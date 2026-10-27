@@ -24,7 +24,7 @@ import tomllib
 from collections.abc import Generator
 from itertools import batched
 from pathlib import Path
-from shutil import rmtree
+from shutil import make_archive, rmtree
 from time import sleep
 
 from src._dataclasses.farm_combine import FarmForDiscovery, HarvestedFarm
@@ -56,6 +56,19 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     return documents
 
 
+def write_jsons_to_zip_archive(county: str, version: str):
+    logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
+    
+    directory = PATH.PUBLISH / f"{county}/"
+    archive_name = f"{directory}_MAF32"
+    make_archive(
+        archive_name,
+        'zip',
+        root_dir=PATH.PUBLISH,
+        base_dir=f"{county}/MAF32/{version}",
+    )
+
+
 def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
     publish_dir = PATH.PUBLISH / f"{county}/MAF32/{version}/"
@@ -81,6 +94,7 @@ def process_proof_files(config: dict) -> None:
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county, version)
+        write_jsons_to_zip_archive(county, version)
 
 
 def main():
