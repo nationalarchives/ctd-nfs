@@ -17,23 +17,6 @@ class ImageFile:
     id: uuid.UUID = field(default_factory=create_uuid_str)
 
 
-def get_map_ids(reference: str) -> dict[str, uuid.UUID]:
-    with dbm.open(DB.FARM_IDS, 'c') as farm_ids_db:
-        db_ids = farm_ids_db.get(reference, "")
-        if db_ids:
-            db_ids = eval(db_ids.decode())
-            map_ids = {
-                'id': db_ids['id'],
-                'replica_id': db_ids['replica_id'],
-            }
-        else:
-            _ids = f"{{'id': '{create_uuid_str()}', 'replica_id': '{create_uuid_str()}'}}"
-            farm_ids_db[reference] = _ids
-            map_ids = eval(_ids)
-
-    return map_ids
-
-
 type Scope = Literal['RecordAndReplica', 'RecordOnly']
 
 @dataclass
@@ -42,9 +25,8 @@ class DiscoveryMAF73:
     update_scope: Scope = "RecordAndReplica"
 
     def __post_init__(self):
-        self._map_ids = get_map_ids(self.map_data['Reference'])
-        self.id: uuid.UUID = self._map_ids['id']
-        self.replica_id: uuid.UUID = self._map_ids['replica_id']
+        self.id: uuid.UUID = self.map_data['id']
+        self.replica_id: uuid.UUID = self.map_data['replica_id']
 
     @property
     def parent_id (self) -> str:
