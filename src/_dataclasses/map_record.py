@@ -36,10 +36,7 @@ class DiscoveryMAF73:
 
         parent_record = get_parent_discovery_record(ref_url_safe)
 
-        # for record in result.json()['records']:
-        for record in result.json()['assets']:
-            if record['citableReference'] == ref:
-                return record['id']
+        return parent_record['assets'][0]['id']
 
     @property
     def scope_and_content(self) -> dict:
