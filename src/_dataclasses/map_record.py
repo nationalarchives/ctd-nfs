@@ -65,7 +65,6 @@ class DiscoveryMAF73:
         ]
 
     def to_dict(self) -> dict:
-        _, reference_part = self.map_data['Reference'].rsplit("/", maxsplit=1)
         possible_optional = {
             'note': self.map_data['Note'],
             'formerReferenceDep': str(self.map_data['Former reference in its original department']),
@@ -85,7 +84,7 @@ class DiscoveryMAF73:
                 'replicaId': self.replica_id,
                 'parentId': self.parent_id,
                 'scopeContent': self.scope_and_content,
-                'referencePart': reference_part,
+                'referencePart': self.reference_part,
                 'catalogueLevel': 7,
                 'accessConditions': "Closed for 50 years",
             } | actual_optional | DISCOVERY.MAF73_RECORD_CONSTANTS,
@@ -99,7 +98,6 @@ class DiscoveryMAF73:
         }
 
     def for_index(self) -> dict:
-        _, reference_part = self.map_data['Reference'].rsplit("/", maxsplit=1)
         possible_note = {'note': self.map_data['Note']} if self.map_data['Note'] else {}
         return {
             'record': {
@@ -108,7 +106,7 @@ class DiscoveryMAF73:
                 'replicaId': self.replica_id,
                 'parentId': self.parent_id,
                 'scopeContent': {'description': self.map_data['Miscellaneous Comments']},
-                'referencePart': reference_part,
+                'referencePart': self.reference_part,
                 'catalogueLevel': 7,
                 'accessConditions': "Closed for 50 years",
             } | possible_note | DISCOVERY.MAF73_RECORD_CONSTANTS,
