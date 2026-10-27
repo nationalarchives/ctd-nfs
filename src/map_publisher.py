@@ -72,6 +72,7 @@ def process_proof_files(config: dict) -> None:
             existing_maps = county_from_db['MAF73'][version]
         else:
             existing_maps = {}
+        map_data_with_ids = add_ids_to_maps(cleaned_data, existing_maps)          
         final_documents = build_catalogue_documents(cleaned_data, config['test_mode'])
         if config['test_mode']:
             for document in final_documents:
