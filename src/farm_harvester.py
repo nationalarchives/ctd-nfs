@@ -29,7 +29,6 @@ Yields:
     2. File_IDs maps each form image file name to its image id
 """
 import csv
-import dbm
 import shelve
 import sys
 import tomllib
@@ -39,7 +38,7 @@ from pathlib import Path
 from src._dataclasses.farm_combine import FarmForReview, HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
-from src._tools.helpers import TranscriptionDataError, create_uuid_str
+from src._tools.helpers import TranscriptionDataError
 from src._tools.logging_setup import create_logger
 from src._tools.xlwriter import ExcelWriter
 from src.harvester.farm_attributiser import set_farm_attributes

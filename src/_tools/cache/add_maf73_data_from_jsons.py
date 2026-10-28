@@ -1,13 +1,11 @@
-import dbm
 import json
 import pprint
-import re
 import shelve
 from collections.abc import Iterable
 from pathlib import Path
 from random import choice
 
-from src._tools.constants import DB, PATH, REGEX
+from src._tools.constants import DB, PATH
 from src._tools.logging_setup import create_logger
 
 logger = create_logger("src._config", "logging.yaml")

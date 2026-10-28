@@ -1,11 +1,10 @@
-import dbm
 import re
 from collections import Counter
 from datetime import UTC, datetime
 
 from src._dataclasses.farm_combine import ImageFile, ImageSet
 from src._dataclasses.transcription_model import Filename, Transcription
-from src._tools.constants import DATA, DB, REGEX
+from src._tools.constants import DATA, REGEX
 
 
 class TranscriptionsProcessor:

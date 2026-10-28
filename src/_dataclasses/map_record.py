@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Literal
 from urllib import parse
 
-from src._tools.constants import DB, DISCOVERY, REGEX
+from src._tools.constants import DISCOVERY, REGEX
 from src._tools.helpers import create_uuid_str, get_parent_discovery_record
 
 
