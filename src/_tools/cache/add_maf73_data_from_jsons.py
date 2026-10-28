@@ -92,8 +92,7 @@ def main():
                 break
         print(f"{county_code=}")
         county_cache = disk_cache[county_code].copy()
-        pretty.pprint(county_cache['MAF73']['V1'])
-    
+        pretty.pprint(object=choice(list(county_cache['MAF73']['V1'].values())))
 
 if __name__ == "__main__":
     main()
