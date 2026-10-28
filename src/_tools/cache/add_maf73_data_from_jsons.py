@@ -81,12 +81,16 @@ def main():
             map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
             logger.info("--- Caching MAF3 data")
-            county_cache = disk_cache[county_code].copy()
+            county_cache = disk_cache[county_code].copy() if county_code in disk_cache else {}
             county_cache.update({'MAF73': {'V1': map_objects}})
             disk_cache[county_code] = county_cache.copy()
 
     with shelve.open(DB.PRODUCTION, 'r') as disk_cache:
-        county_code = choice(counties)
+        while True:
+            county_code = choice(counties)
+            if county_code != 'AY':
+                break
+        print(f"{county_code=}")
         county_cache = disk_cache[county_code].copy()
         pretty.pprint(county_cache['MAF73']['V1'])
     
