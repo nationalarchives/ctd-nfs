@@ -53,21 +53,22 @@ def get_maf73_jsons(county_code: str) -> Iterable[Path]:
 
 
 counties = [
-    "BD",
-    "BK",
-    "CB",
-    "HD",
-    "HN",
-    "IE",
-    "IW",
-    "KT",
-    "MX",
-    "OX",
-    "RD",
-    "SK",
-    "SW",
-    "XW",
-    "YN",
+	"AY",
+	"BM",
+	"DY",
+	"HP",
+	"LH",
+	"LK",
+	"LL",
+	"LR",
+	"NK",
+	"NM",
+	"NN",
+	"SE",
+	"SY",
+	"XE",
+	"YE",
+	"YW",
 ]
 
 
