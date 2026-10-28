@@ -1,13 +1,15 @@
+import string
+import typing
 from operator import itemgetter
+from pathlib import Path
+
 import openpyxl
 from openpyxl.styles import Alignment
-from pathlib import Path
-import string
 
 
 class ExcelWriter:
     # TODO: create function to create Excel column letters for more than 26 columns
-    column_letters = list(string.ascii_uppercase)
+    column_letters: typing.ClassVar = list(string.ascii_uppercase)
     column_letters.append('AA')
 
     def __init__(self):
@@ -21,7 +23,7 @@ class ExcelWriter:
         """
         for row_idx, record in enumerate(_records, start=1):
             self._sheet.append(record)
-            for col_idx in list(range(0, 25)):
+            for col_idx in list(range(25)):
                 column = ExcelWriter.column_letters[col_idx]            
                 self._sheet[f"{column}{row_idx + 1}"].alignment = Alignment(wrap_text=True, vertical='top')
 

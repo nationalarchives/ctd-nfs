@@ -2,15 +2,49 @@
 module for defining constants and constant namespaces.
 """
 
-from pathlib import Path
-import re
 import calendar
+import os
+import re
+import typing
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-class CSVandExcelNamespace():
+class PathNamespace:
+    __slots__ = ()
+    
+    PIPELINE_ROOT = Path(fr"{os.getenv('PIPELINE')}")
+
+    INPUT = PIPELINE_ROOT / "1-INPUT"   
+    HARVEST = PIPELINE_ROOT / "2-HARVEST"
+    PUBLISH = PIPELINE_ROOT / "3-PUBLISH"
+    ARCHIVE = PIPELINE_ROOT / "0-ARCHIVE"
+PATH = PathNamespace()
+
+
+class DBNamespace:
     __slots__ = ()
 
-    CSV_HEADERS = [
+    DB = PATH.PIPELINE_ROOT / "0-DB"
+    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
+    PIECES = DB / "MAF 32 Piece Lookup Table.db"
+    
+    PRODUCTION = DB / Path("NFS_Production.db")
+    TEST = DB / "TEST" / Path("NFS_Test.db")
+
+    FARM_IDS = DB / "Farm_IDs.db"
+    FILE_IDS = DB / "File_IDs.db"
+DB = DBNamespace()
+
+
+class CSVandExcelNamespace:
+    __slots__ = ()
+
+    CSV_HEADERS: typing.ClassVar = [
+        'ID',
         'filename_1',
         'filename_2',
         'document_type',
@@ -35,8 +69,9 @@ class CSVandExcelNamespace():
         'OS_map_sheet',
         'field_info_date',
         'primary_record_date',
+        'notes',
     ]
-    PROOF_COLUMNS = [   
+    PROOF_COLUMNS: typing.ClassVar = [   
         ('catalogue_reference', 20),
         ('Reference Warnings', 40),
         ('farm_id', 50),
@@ -65,11 +100,12 @@ class CSVandExcelNamespace():
         ('field_info_date', 25),
         ('primary_record_date', 25),
     ]
+CSVEXCEL = CSVandExcelNamespace()
 
 
-class DataNamespace():
+class DataNamespace:
     __slots__ = ()
-    FORM_TYPES = [
+    FORM_TYPES: typing.ClassVar = [
 		'C 47/SSY',
 		'C 49/SSY',
 		'C51/SSY',
@@ -79,7 +115,7 @@ class DataNamespace():
 		'Other',
 		'Cover',
     ]   
-    FARM_DATA_FIELDS = [
+    FARM_DATA_FIELDS: typing.ClassVar = [
 		'additional_farms',
 		'farm_name',
 		'addressee_title',
@@ -98,8 +134,9 @@ class DataNamespace():
 		'OS_map_sheet',
 		'field_info_date',
 		'primary_record_date',
+        'notes',
     ]
-    DATE_FORMATS = [
+    DATE_FORMATS: typing.ClassVar = [
         "%d %B %Y",
         "%d %B %y",
         "%d %b %Y",
@@ -114,15 +151,26 @@ class DataNamespace():
         "%b",
         "%B",
     ]
-    MONTH_NAMES: list = list(calendar.month_name)
-    ABBR_MONTH_NAMES: list = list(calendar.month_abbr)
+    MONTH_NAMES: typing.ClassVar = list(calendar.month_name)
+    ABBR_MONTH_NAMES: typing.ClassVar = list(calendar.month_abbr)
+DATA = DataNamespace()
 
 
-class RegexNamespace():
+class RegexNamespace:
     __slots__ = ()
 
-    FORM_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?_+(?P<image_number>\d+)\.tif$""")
-    COVER_PATTERN = re.compile(r"""^MAF32-(?P<piece>\d+)[-_](?P<parish_number>\d+)(?:-\d)?\.tif$""")   
+    _piece = r"""\d{1,4}(?:part\d)?"""
+    _parish_number = r"""\d{1,3}[A-Z]*?"""
+    _image_number = r"""\d{1,4}[A-z]{0,2}"""
+    form_pattern = fr"""^MAF32-(?P<piece>{_piece})-(?P<parish_number>{_parish_number})(-\d|-10)?_(?P<image_number>{_image_number})?\.tiff?$"""
+    FORM = re.compile(fr"""{form_pattern}""", re.IGNORECASE)
+
+    cover_pattern = fr"""^MAF32-(?P<piece>{_piece})[-_](?P<parish_number>{_parish_number})(?:-\d|-10)?\.tiff?$"""
+    COVER = re.compile(fr"""{cover_pattern}""", re.IGNORECASE)   
+
+    _reference_part = r"""(?P<part>(U\d+|\d+\/\d+|\d+[A-Za-z]*?|[A-Z]|\d+(and|-)\d+))"""
+    _reference_string = fr"""^(?P<stem>MAF (32|73)\/{_piece}\/{_parish_number})\/(?P<part>.*?)$"""
+    REFERENCE = re.compile(fr"""{_reference_string}""", re.IGNORECASE)
     
     _date_delimiters: str = r"""[\/\.\-\s]+"""
     _month_names: str = "|".join(DataNamespace.MONTH_NAMES[1:])
@@ -141,57 +189,22 @@ class RegexNamespace():
     REMOVE_DELIMITERS = re.compile(fr"{_date_delimiters}+")
     SURVEY_YEARS = re.compile(r'^((19)?(41|42|43))$')
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
+    TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
+    TRANSCRIPTIONS_VERSION = re.compile(r"""^.*?_MAF(32|73).*?(?P<version>V\d)-.*?$""")
+REGEX = RegexNamespace()
 
 
-class PathNamespace():
+class DiscoveryNamespace:
     __slots__ = ()
-    
-    _PIPELINE_ROOT = Path(r"Pipeline")
-  
+    API_URI = os.getenv('DISCOVERY_API')
 
-    _FARMS_CACHE = Path("MAF 32 Farms.db")
-    _TEST_CACHE = Path("Test Farms.db")
-    
-    DB = _PIPELINE_ROOT / "#ADMIN" / "DB"
-    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
-    PIECE_LOOKUP_TABLE = DB / "MAF 32 Piece Lookup Table.db"
-    
-    FARMS_DB = DB / _FARMS_CACHE
-    TEST_DB = DB / "TEST" / _TEST_CACHE
-
-    INPUT = _PIPELINE_ROOT / "1-INPUT"
-    TEST_INPUT = INPUT / "TEST"
-    
-    HARVEST = _PIPELINE_ROOT / "2-HARVEST"
-    TEST_OUTPUT = HARVEST / "TEST"
-    
-    PUBLISH = _PIPELINE_ROOT / "3-PUBLISH"
-    TEST_PUBLISH = PUBLISH / "TEST"
-    
-    ARCHIVE = _PIPELINE_ROOT / "0-ARCHIVE"
-
-    FARM_IDS = DB / "Farm_IDs.db"
-    FILE_IDS = DB / "File_IDs.db"
-
-
-class DiscoveryNamespace():
-    API_URI = r"https://discovery.nationalarchives.gov.uk/API"
-
-    _closure_status = {
+    _closure_status: typing.ClassVar = {
         'Closed Or Retained Document, Closed Description': "C",
         'Closed Or Retained Document, Open Description': "D",
         'Open Document, Open Description': "O",
         'Partially Closed… not currently used': "P",
     }
-    UPDATE_SCOPE = {
-        'new_record_with_digital_files': 'RecordAndReplica',
-        'updated_digital_files': 'RecordAndReplica',
-        'update_metadata_and_digital_files': 'RecordAndReplica',
-        'new_metadata_only_record': 'RecordOnly',
-        'update_metadata_not_digital_files': 'RecordOnly',
-        'update_metadata_only_record': 'RecordOnly',
-    }
-    MAF32_RECORD_CONSTANTS = {
+    MAF32_RECORD_CONSTANTS: typing.ClassVar = {
         'catalogueLevel': 8,
         'coveringFromDate': 19410101,
         'coveringToDate': 19431231,
@@ -210,7 +223,7 @@ class DiscoveryNamespace():
         'source': "FS",
         'title': None,
     }
-    MAF73_RECORD_CONSTANTS = {
+    MAF73_RECORD_CONSTANTS: typing.ClassVar = {
         'coveringFromDate': 19410101,
         'coveringToDate': 19431231,
         'chargeType': 1,
@@ -228,11 +241,11 @@ class DiscoveryNamespace():
         'source': "FS",
         'title': None,
     }
-
-
-PATH = PathNamespace()
-REGEX = RegexNamespace()
-DATA = DataNamespace()
-CSVEXCEL = CSVandExcelNamespace()
 DISCOVERY = DiscoveryNamespace()
+
+
+class AWSNamespece:
+    __slots__ = ()
+    BUCKET = os.getenv('S3_BUCKET')
+AWS = AWSNamespece()
 

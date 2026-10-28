@@ -2,15 +2,9 @@
 	"folders": [
 		{
 			"path": "."
-		},
+		}
 	],
 	"settings": {
-		"python-envs.pythonProjects": [
-			{
-				"path": "src",
-				"envManager": "ms-python.python:venv",
-				"packageManager": "ms-python.python:pip"
-			}
-		]
-	},
+		"python.languageServer": "Pylance"
+	}
 }

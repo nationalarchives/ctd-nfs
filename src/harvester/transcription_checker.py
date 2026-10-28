@@ -9,13 +9,12 @@ Checks preformed:
 * confirm form type is valid for filename(s) provided
 """
     
-import re
-from datetime import datetime
 import logging
+import re
+from datetime import UTC, datetime
 
-from src._tools.constants import REGEX, DATA
 from src._dataclasses.transcription_model import Transcription
-
+from src._tools.constants import DATA, REGEX
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +63,7 @@ class TranscriptionChecker:
             )
             self.warnings['Type Warnings'].append(f"{self.row_prefix}[see Filename Warnings]")
 
-        elif not self.transcription.document_type.name == "Cover" and self.transcription.file1.is_cover:
+        elif self.transcription.document_type.name != "Cover" and self.transcription.file1.is_cover:
             self.warnings['Filename Warnings'].append(
                 f"{self.row_prefix}{self.transcription.file1.name} matches expected cover pattern or has image number 0001 but form type is '{self.transcription.document_type.name}'."
             )
@@ -83,7 +82,6 @@ class TranscriptionChecker:
 
         msg = f"{self.row_prefix}is a cover so will not be processed."
         logger.info(f" {msg:->80}")
-        return None
 
     def _check_values_between_filenames(self) -> None:
         """
@@ -111,11 +109,22 @@ class TranscriptionChecker:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have different parish numbers.")
         elif self.transcription.file1.parish_number != parish_number:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} have a different parish number from parish name '{self.transcription.parish}'.")
-        
+
+        """
+        NOTE: this check is disabled until can determine if it's necessary because filenames now contain letters, so harder to calculate consecutive values
+
         image1 = self.transcription.file1.image_number
         image2 = self.transcription.file2.image_number
         if image2 != image1 + 1:
             self.warnings['Filename Warnings'].append(f"{self.row_prefix}{filenames} are either not consecutive images or in the wrong order.")
+        """
+
+    def _check_filename_values_against_catalogue_reference(self) -> None:
+        if self.transcription.file1.piece != self.transcription.piece:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{self.transcription.file1.name} piece value does not match the catalogue reference.")
+
+        if self.transcription.file1.parish_number != self.transcription.parish_number:
+            self.warnings['Filename Warnings'].append(f"{self.row_prefix}{self.transcription.file1.name} parish number does not match the catalogue reference.")
 
     @staticmethod
     def _vali_dates(candi_date: str) -> str | None:    
@@ -128,6 +137,9 @@ class TranscriptionChecker:
                 warning/error message string if issues found, else None
         '''
         if candi_date in ["_null_", "_not transcribed_"]:
+            return
+
+        if candi_date.endswith("[sic]"):
             return
         
         date_match: dict[re.Match] = {
@@ -142,7 +154,7 @@ class TranscriptionChecker:
             'mon': REGEX.MON.match(candi_date),
         }
 
-        date_type = (match_key for match_key in date_match.keys() if date_match[match_key])
+        date_type = (match_key for match_key in date_match if date_match[match_key])
         if not (date_type := next(date_type, None)):
             return f"[ERROR] '{candi_date}' is not a valid format. Further date checks cannot be performed."
 
@@ -177,7 +189,7 @@ class TranscriptionChecker:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                datetime.strptime(candi_date, fmt)
+                datetime.strptime(candi_date, fmt).replace(tzinfo=UTC)
             except ValueError as ve:
                 if "day is out of range for month" in str(ve):
                     return f"[ERROR] '{candi_date}' is not a valid calendar date."

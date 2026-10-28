@@ -1,16 +1,21 @@
-from dataclasses import dataclass
 import re
+import typing
+from dataclasses import dataclass
 
-from src._tools.helpers import TranscriptionDataError, ValueObject
-from src._tools.constants import REGEX, DATA
+from src._tools.constants import DATA, REGEX
+from src._tools.helpers import TranscriptionDataError, ValueObject, get_piece_value
 
 
 def _page_pattern_match(filename: str) -> re.Match[str] | None:
-    return REGEX.FORM_PATTERN.match(filename)
+    return REGEX.FORM.match(filename)
 
 
 def _cover_pattern_match(filename: str) -> re.Match[str] | None:
-    return REGEX.COVER_PATTERN.match(filename)
+    return REGEX.COVER.match(filename)
+
+
+def _transcription_id_pattern_match(ID: str) -> re.Match[str] | None:
+    return REGEX.TRANSCRIPTION_ID.match(ID)
 
 
 @dataclass(frozen=True)
@@ -23,16 +28,12 @@ class Filename(ValueObject):
 
     @property   
     def is_cover(self) -> bool:
-        if _cover_pattern_match(self.name):
-            return True
-        if (match := _page_pattern_match(self.name)) and match['image_number'] == "0001":
-            return True
-        return False
+        return bool(_cover_pattern_match(self.name))
     
     @property
     def image_number(self) -> int | None:
         if match := _page_pattern_match(self.name):
-            return int(match['image_number'])
+            return match['image_number']
     
     @property
     def piece(self) -> str | None:
@@ -54,6 +55,15 @@ class FormType(ValueObject):
             raise TranscriptionDataError(f"Form type '{self.name}' is not a recognised form.")
 
 
+@dataclass(frozen=True)
+class TranscriptionID(ValueObject):
+    value: str
+
+    def __post_init__(self):
+        if self.value != "_null_" and not _transcription_id_pattern_match(self.value):
+            raise TranscriptionDataError(f"{self.value} does not match expected ID pattern <county_code><zero-padded 6-digit number> e.g., 'RD012345'")
+
+
 @dataclass
 class Transcription:
     """
@@ -62,36 +72,8 @@ class Transcription:
     e.g., "Mr D. Smith", "D. Smith", "Dennis Smith Esq" entered as names for same person
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
-    __slots__ = (
-        'filename_1',
-        'filename_2',
-        'document_type',
-        'county',
-        'parish',
-        'primary_farm_number',
-        'additional_farms',
-        'farm_name',
-        'addressee_title',
-        'addressee_individual_name',
-        'addressee_group_names',
-        'address',
-        'owner_title',
-        'owner_individual_name',
-        'owner_group_names',
-        'owner_address',
-        'farmer_title',
-        'farmer_individual_name',
-        'farmer_group_names',
-        'farmer_address',
-        'acreage',
-        'OS_map_sheet',
-        'field_info_date',
-        'primary_record_date',
-        'file1',
-        'file2',
-        'warnings',
-    )
-    
+
+    ID: str
     filename_1: str
     filename_2: str
     document_type: str
@@ -116,28 +98,25 @@ class Transcription:
     OS_map_sheet: str
     field_info_date: str
     primary_record_date: str
+    notes: str
+
+    all_ids: typing.ClassVar = set() 
 
     @property
     def has_data(self) -> bool:
-        return any([
-            getattr(self, field_name) != "_null_"
+        return any(getattr(self, field_name) != "_null_"
             for field_name in self.__dataclass_fields__
-            if field_name in DATA.FARM_DATA_FIELDS
-        ])
+            if field_name in DATA.FARM_DATA_FIELDS)
     
     @property
     def is_cover_page(self) -> bool:
-        if self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data:
-            return True
-        return False
+        return self.file1.is_cover and self.document_type.name == "Cover" and not self.has_data
  
     @property
     def is_form(self) -> bool:
-        completed_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
-        other_form: bool = self.document_type.name == "Other" and not self.has_data
-        if (not self.file1.is_cover) and (completed_form or other_form):
-            return True
-        return False
+        standard_form: bool = self.document_type.name not in ["Other", "Cover"] and self.has_data
+        other_form: bool = self.document_type.name == "Other"
+        return (not self.is_cover_page) and (standard_form or other_form)
     
     def __post_init__(self):
         """
@@ -145,21 +124,26 @@ class Transcription:
         """
         self.file1 = Filename(self.filename_1)
         self.file2 = Filename(self.filename_2) if self.filename_2 else None
+        self.trid = TranscriptionID(self.ID)
         self.document_type = FormType(self.document_type)
         self.warnings: dict | None = None
-
+        self.county_code, *_ = self.county.split()
+        self.parish_number, *_ = self.parish.split()
+        self.piece = get_piece_value(self.county_code, self.parish_number)
 
         if not (self.is_form or self.is_cover_page):
             raise TranscriptionDataError(f"{self.file1.name} and {self.file2.name if self.file2 else 'No file 2'} have valid file patterns but no farm data provided.")
-        
+
     def to_dict(self) -> dict:
         return {
+            'ID': self.trid.value,
             'filename_1': self.file1.name,
             'filename_2': self.file2.name,
             'document_type': self.document_type.name,
             'county': self.county,
             'parish': self.parish,
             'primary_farm_number': self.primary_farm_number,
+            'additional_farms': self.additional_farms,
             'farm_name': self.farm_name,
             'addressee_title': self.addressee_title,
             'addressee_individual_name': self.addressee_individual_name,
@@ -177,6 +161,7 @@ class Transcription:
             'OS_map_sheet': self.OS_map_sheet,
             'field_info_date': self.field_info_date,
             'primary_record_date': self.primary_record_date,
+            'notes': self.notes,
             'warnings': self.warnings,
         }
 

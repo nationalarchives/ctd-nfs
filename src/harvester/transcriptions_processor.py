@@ -1,24 +1,27 @@
 import re
-from datetime import datetime
-import dbm
+from collections import Counter
+from datetime import UTC, datetime
 
-from src._dataclasses.farm_model import ImageFile
-from src._tools.constants import DATA, REGEX, PATH
-from src._dataclasses.transcription_model import Transcription
+from src._dataclasses.farm_combine import ImageFile, ImageSet
+from src._dataclasses.transcription_model import Filename, Transcription
+from src._tools.constants import DATA, REGEX
 
 
 class TranscriptionsProcessor:
     def __init__(self, transcriptions: list[Transcription]):
         self.transcriptions = transcriptions
 
-    def _check_for_multiple_B496(self) -> str | None:
-        b496_forms = [
-            "B496/EI"
+    def _check_for_multiple_forms(self) -> str | None:
+        form_totals = Counter([
+            transcription.document_type.name
             for transcription in self.transcriptions
-            if transcription.document_type.name == "B496/EI"
-        ]
-        if len(b496_forms) > 1:
-            return "Multiple B496/EI forms"
+        ])
+        warning = ""
+        for form, total in form_totals.items():
+            if total > 1:
+                warning += f"Multiple {form} forms; "
+
+        return warning or None
 
     def _collate_warnings(self) -> dict:
         farm_warnings = {}
@@ -31,11 +34,11 @@ class TranscriptionsProcessor:
                 else:
                     farm_warnings[warning_type] = warnings
         
-        if b496_warning := self._check_for_multiple_B496():
+        if multiple_forms_warning := self._check_for_multiple_forms():
             if 'Type Warnings' in farm_warnings:
-                farm_warnings['Type Warnings'].append(b496_warning)
+                farm_warnings['Type Warnings'].append(multiple_forms_warning)
             else:
-                farm_warnings['Type Warnings'] = [b496_warning]
+                farm_warnings['Type Warnings'] = [multiple_forms_warning]
 
         return farm_warnings
 
@@ -73,7 +76,7 @@ class TranscriptionsProcessor:
 
         for fmt in DATA.DATE_FORMATS:
             try:
-                parsed_date = datetime.strptime(candi_date, fmt)
+                parsed_date = datetime.strptime(candi_date, fmt).replace(tzinfo=UTC)
                 day, month, year = parsed_date.strftime("%d %B %Y").split()
                 break
             except ValueError:
@@ -116,7 +119,14 @@ class TranscriptionsProcessor:
             ]
             for field_name in DATA.FARM_DATA_FIELDS
         }
-    
+
+    @staticmethod
+    def _does_B496_have_3rd_image(file1: Filename, file2: Filename, last_image_set: ImageSet) -> bool:
+        last_image = last_image_set[-1]
+        is_consecutive: bool = (file1.image_number == last_image.image_number + 1)
+
+        return (not file2 and is_consecutive)
+
     def _collate_forms(self) -> dict:
         collated_forms = {}
 
@@ -125,27 +135,21 @@ class TranscriptionsProcessor:
             if current_form_name not in collated_forms:
                 collated_forms[current_form_name] = []
 
-            if last_image := (collated_forms[current_form_name][-1][-1] if collated_forms[current_form_name] else None):
-                is_consecutive: bool = (transcription.file1.image_number == last_image.image_number + 1)
-
-                if not transcription.file2 and is_consecutive:
+            """
+            NOTE: this check is disabled until can determine if it's necessary because filenames now contain letters, so harder to calculate consecutive values
+            if current_form_name == 'B496/EI' and \
+                collated_forms['B496/EI'] and \
+                self._does_B496_have_3rd_image(transcription.file1, transcription.file2, collated_forms['B496/EI'][-1]):
                     collated_forms[current_form_name][-1].append(ImageFile(transcription.file1))
                     continue
-            
-            image_files = [
+            """
+           
+            image_set = [
                 ImageFile(file)
                 for file in [transcription.file1, transcription.file2]
                 if file
             ]
-            for index, image in enumerate(image_files):
-                with dbm.open(PATH.FILE_IDS, 'c') as file_ids_db:
-                    db_id = file_ids_db.get(image.name, "")
-                    if db_id:
-                        image_files[index].id = db_id.decode()
-                    else:
-                        file_ids_db[image.name] = image.id
-
-            collated_forms[current_form_name].append(image_files)
+            collated_forms[current_form_name].append(image_set)
 
         return collated_forms
 

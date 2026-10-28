@@ -1,0 +1,100 @@
+"""
+Dataclasses and factories used to create Discovery JSON records
+
+Update scope options and required value:
+    RecordAndReplica:
+        new record with metadata & digital files
+        existing record with updated digital files
+        updated metadata and digital files
+
+    RecordOnly
+        new metadata-only record
+        update metadata but not digital files
+        update a metadata-only record
+
+"""
+import re
+from dataclasses import dataclass
+from functools import cached_property
+from typing import Literal
+from urllib import parse
+
+from src._dataclasses.farm_combine import FarmForDiscovery
+from src._tools.constants import DISCOVERY, REGEX
+from src._tools.helpers import get_parent_discovery_record
+
+type Scope = Literal['RecordAndReplica', 'RecordOnly']
+
+@dataclass
+class DiscoveryMAF32:
+    farm: FarmForDiscovery
+    update_scope: Scope = "RecordAndReplica"
+
+    def __post_init__(self):
+        _reference = REGEX.REFERENCE.match(self.farm.catalogue_reference)
+        self.reference_stem = _reference['stem']
+        self.reference_part = _reference['part']
+
+    @cached_property
+    def parent_id (self) -> str:
+        ref_url_safe = parse.quote(self.reference_stem, safe="")
+
+        parent_record = get_parent_discovery_record(ref_url_safe)
+
+        return parent_record['assets'][0]['id']
+
+    @property
+    def scope_and_content(self) -> dict:
+        description_fields = {
+            'Farm Reference': f"{self.farm.farm_reference}.",
+            'Farm Name(s)': f"{self.farm.all_farm_names}.",
+            'Addressee(s)': f"{self.farm.all_addressees}.",
+            'Farmer(s) or Occupier(s)': f"{self.farm.all_farmers}.",
+            'Landowner(s)': f"{self.farm.all_landowners}.",
+            'Acreage(s)': f"{self.farm.all_acreages}.",
+            'OS Sheet Number(s)': f"{self.farm.all_os_sheet_numbers}.",
+            'Field Information Date(s)': f"{self.farm.all_field_info_dates}.",
+            'Primary Record Date(s)': f"{self.farm.all_primary_record_dates}.",
+            'Record consists of': f"{self.farm.all_forms}.",
+        }
+
+        description = [
+            f"<p>{key}: {value}"
+            for key, value in description_fields.items()
+        ]
+
+        return {
+            'description': "".join(description),
+        }
+    
+    @property
+    def files(self) -> list:
+        return [
+            {
+                'originalName': name,
+                'format': "jpg",
+                'name': f"66/MAF/32/{id}.jpg",
+            }
+            for (id, name) in zip(re.split(r"[;,] *", self.farm.replica_file_ids), re.split(r"[;,] *", self.farm.replica_file_names))
+        ]
+
+    def to_dict(self) -> dict:
+        return { 
+            'record': {
+                'iaid': self.farm.id,
+                'citableReference': self.farm.catalogue_reference,
+                'replicaId': self.farm.replica_id,
+                'parentId': self.parent_id,
+                'scopeContent': self.scope_and_content,
+                'referencePart': self.reference_part,
+            } | DISCOVERY.MAF32_RECORD_CONSTANTS,
+            'updateScope': self.update_scope,
+            'replica': {
+                'files': self.files,
+                'replicaId': self.farm.replica_id,
+                'origination': "DigitalSurrogate",
+                'totalSize': None,
+            }
+        }
+
+
