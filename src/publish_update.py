@@ -9,6 +9,22 @@ from src.farm_harvester import read_farms_db
 logger = create_logger("src._config", "logging.yaml")
 
 
+def get_existing_map_ids(map_data: list[dict], existing_maps: dict) -> list[dict]:
+    amended_map_data: list[dict] = []
+
+    for map in map_data:
+        if map['Reference'] in existing_maps:
+            map['id'] = existing_maps[map['Reference']]['id']
+            map['replica_id'] = existing_maps[map['Reference']]['replica_id']
+        else:
+            map['id'] = create_uuid_str()
+            map['replica_id'] = create_uuid_str()
+
+        amended_map_data.append(map)
+
+    return amended_map_data
+
+
 def process_proof_files(config: dict) -> None:
     xlsx_files = PATH.INPUT.glob("TEST/*MAF73*.xlsx") if config['test_mode'] else PATH.INPUT.glob("*MAF73*.xlsx")
 
@@ -26,9 +42,8 @@ def process_proof_files(config: dict) -> None:
         for version_number in county_from_db['MAF73']:
             existing_maps.update(county_from_db['MAF73'][version_number])
 
-
-        map_data_with_ids = add_ids_to_maps(map_data, existing_maps)          
-        final_documents = build_catalogue_documents(map_data_with_ids, config['update_scope'])
+        map_data_with_exising_ids = get_existing_map_ids(map_data, existing_maps)          
+        final_documents = build_catalogue_documents(map_data_with_exising_ids, config['update_scope'])
         if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
