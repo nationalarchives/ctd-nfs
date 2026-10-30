@@ -5,6 +5,11 @@ from src._tools.constants import DB, PATH, REGEX
 from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_data
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import read_farms_db
+from src.map_publisher import (
+    build_catalogue_documents,
+    write_catalogue_documents,
+    write_jsons_to_zip_archive,
+)
 
 logger = create_logger("src._config", "logging.yaml")
 
