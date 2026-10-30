@@ -52,6 +52,26 @@ def get_existing_map_ids(map_data: list[dict], existing_maps: dict) -> list[dict
     return amended_map_data
 
 
+def copy_old_reference_keys_for_HD(existing_maps: dict) -> dict:
+    old_references = [
+        "MAF 73/18/5/[NWandNEandSWandSE]",
+        "MAF 73/18/9/[NWandNEandSWandSE]",
+        "MAF 73/18/15/[NWandNEandSWandSE]",
+    ]
+
+    new_references = [
+		"MAF 73/18/5/NW-SE",
+		"MAF 73/18/9/NW-SE",
+		"MAF 73/18/15/NW-SE",
+
+    ]
+
+    for item in zip(old_references, new_references):
+        old_ref, new_ref = item
+        existing_maps[new_ref] = existing_maps[old_ref]
+
+    return existing_maps
+
 def process_proof_files(config: dict) -> None:
     xlsx_files = PATH.INPUT.glob("TEST/*MAF73*.xlsx") if config['test_mode'] else PATH.INPUT.glob("*MAF73*.xlsx")
 
@@ -68,6 +88,9 @@ def process_proof_files(config: dict) -> None:
         existing_maps = {}
         for version_number in county_from_db['MAF73']:
             existing_maps.update(county_from_db['MAF73'][version_number])
+
+        if county_code == 'HD':
+            existing_maps = copy_old_reference_keys_for_HD(existing_maps)
 
         map_data_with_exising_ids = get_existing_map_ids(map_data, existing_maps)          
         final_documents = build_catalogue_documents(map_data_with_exising_ids, config['update_scope'])
