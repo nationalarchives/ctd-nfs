@@ -1,3 +1,4 @@
+import shelve
 import tomllib
 from pathlib import Path
 
@@ -12,6 +13,27 @@ from src.map_publisher import (
 )
 
 logger = create_logger("src._config", "logging.yaml")
+
+
+def write_maps_to_db(map_data: list[dict], county_code: str, version: str, test_mode: bool = False) -> None:
+    """_summary_
+
+    Arguments:
+        maps_store -- _description_
+        county -- _description_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+    """    
+    maps_cache = {
+        map_proof['Reference']: map_proof
+        for map_proof in map_data
+    }
+
+    with shelve.open(DB.PRODUCTION, 'c') as farm_db:
+        county_store = farm_db[county_code].copy()
+        county_store['MAF73'].update({version: maps_cache})
+        farm_db[county_code] = county_store.copy()
 
 
 def get_existing_map_ids(map_data: list[dict], existing_maps: dict) -> list[dict]:
