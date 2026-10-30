@@ -6,15 +6,17 @@ from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_dat
 from src._tools.logging_setup import create_logger
 from src.farm_harvester import read_farms_db
 
+logger = create_logger("src._config", "logging.yaml")
+
 
 def process_proof_files(config: dict) -> None:
     xlsx_files = PATH.INPUT.glob("TEST/*MAF73*.xlsx") if config['test_mode'] else PATH.INPUT.glob("*MAF73*.xlsx")
 
     for proof_file in xlsx_files:
-        if proof_file.name.startswith("Index"):
-            continue
         county_code, _ = proof_file.name.split(" ", maxsplit=1)
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(proof_file.stem)['version']
+        if (version := REGEX.TRANSCRIPTIONS_VERSION.match(proof_file.stem)['version']) in ["V0", "V1"]:
+            logger.error("Input file version must be V2 or above")
+            continue
 
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
