@@ -21,10 +21,11 @@ def process_proof_files(config: dict) -> None:
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
-        if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
-            existing_maps = county_from_db['MAF73'][version]
-        else:
-            existing_maps = {}
+        county_from_db = read_farms_db(county_code, config['test_mode'])
+        existing_maps = {}
+        for version_number in county_from_db['MAF73']:
+            existing_maps.update(county_from_db['MAF73'][version_number])
+
 
         map_data_with_ids = add_ids_to_maps(map_data, existing_maps)          
         final_documents = build_catalogue_documents(map_data_with_ids, config['update_scope'])
