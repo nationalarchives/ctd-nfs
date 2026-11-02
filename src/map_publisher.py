@@ -87,11 +87,11 @@ def write_catalogue_documents(documents: list[dict], county: str, version: str) 
             json.dump(document, final_file)   
 
 
-def write_jsons_to_zip_archive(county: str, version: str):
+def write_jsons_to_zip_archive(county: str, version: str, file_version: str):
     logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
     
     directory = PATH.PUBLISH / f"{county}/"
-    archive_name = f"{directory}_MAF73"
+    archive_name = f"{directory}_MAF73_{file_version}"
     make_archive(
         archive_name,
         'zip',
