@@ -191,6 +191,7 @@ class RegexNamespace:
     IMAGE_ID = re.compile(r"""^66\/MAF\/32\/(?P<id>.*?)\.jpg$""")
     TRANSCRIPTION_ID = re.compile(r"""^[A-Z]{2}\d{6}$""")
     TRANSCRIPTIONS_VERSION = re.compile(r"""^.*?_MAF(32|73).*?(?P<version>V\d)-.*?$""")
+    FILE_VERSION = re.compile(r"""^.*?_MAF(32|73).*?_(?P<version>V\d-\d{8}).*?$""")
 REGEX = RegexNamespace()
 
 
