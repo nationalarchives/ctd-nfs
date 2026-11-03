@@ -95,8 +95,8 @@ def process_proof_files(config: dict) -> None:
         harvested_farms = iter(county_data[build_version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
-        write_catalogue_documents(final_documents, county, version)
-        write_jsons_to_zip_archive(county, version)
+        write_catalogue_documents(final_documents, county, build_version)
+        write_jsons_to_zip_archive(county, file_version, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 

@@ -122,8 +122,8 @@ def process_proof_files(config: dict) -> None:
         if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents, county_code, version)
-        write_jsons_to_zip_archive(county_code, version)
+        write_catalogue_documents(final_documents, county_code, build_version)
+        write_jsons_to_zip_archive(county_code, file_version, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 
