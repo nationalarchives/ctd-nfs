@@ -88,7 +88,8 @@ def process_proof_files(config: dict) -> None:
 
     for csv_file in input_files:
         county, _ = csv_file.name.split(" ", maxsplit=1)
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
+        file_version = REGEX.FILE_VERSION.match(csv_file.stem)['version']
+        build_version, _ = file_version.split("-")
 
         county_data = read_farms_db(county, config['test_mode'])
         harvested_farms = iter(county_data[version].values())
