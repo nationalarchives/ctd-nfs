@@ -113,7 +113,7 @@ def process_proof_files(config: dict) -> None:
         map_data = clean_excel_data(proof_data)
 
         if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
-            existing_maps = county_from_db['MAF73'][version]
+            existing_maps = county_from_db['MAF73'][build_version]
         else:
             existing_maps = {}
 

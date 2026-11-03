@@ -92,7 +92,7 @@ def process_proof_files(config: dict) -> None:
         build_version, _ = file_version.split("-")
 
         county_data = read_farms_db(county, config['test_mode'])
-        harvested_farms = iter(county_data[version].values())
+        harvested_farms = iter(county_data[build_version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
         write_catalogue_documents(final_documents, county, version)
