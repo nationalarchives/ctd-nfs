@@ -34,7 +34,7 @@ def write_maps_to_db(map_data: list[dict], county_code: str, version: str, test_
 
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
         county_store = farm_db[county_code].copy()
-        if version not in county_store:
+        if 'MAF73' not in county_store:
             county_store.update({'MAF73': {version: maps_cache}})
         else:
             county_store['MAF73'].update({version: maps_cache})
