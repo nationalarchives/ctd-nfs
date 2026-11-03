@@ -124,6 +124,7 @@ def process_proof_files(config: dict) -> None:
                 pretty.pprint(document)
         write_catalogue_documents(final_documents, county_code, build_version)
         write_jsons_to_zip_archive(county_code, file_version, build_version)
+        write_maps_to_db(map_data_with_ids,county_code, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 
