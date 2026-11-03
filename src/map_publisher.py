@@ -87,7 +87,7 @@ def write_catalogue_documents(documents: list[dict], county: str, build_version:
             json.dump(document, final_file)   
 
 
-def write_jsons_to_zip_archive(county: str, version: str, file_version: str):
+def write_jsons_to_zip_archive(county: str, file_version: str, build_version: str):
     logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
     
     directory = PATH.PUBLISH / f"{county}/"
@@ -96,7 +96,7 @@ def write_jsons_to_zip_archive(county: str, version: str, file_version: str):
         archive_name,
         'zip',
         root_dir=PATH.PUBLISH,
-        base_dir=f"{county}/MAF73/{version}",
+        base_dir=f"{county}/MAF73/{build_version}",
     )
             
 def process_proof_files(config: dict) -> None:

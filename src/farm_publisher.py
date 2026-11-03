@@ -57,16 +57,16 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     return documents
 
 
-def write_jsons_to_zip_archive(county: str, version: str):
+def write_jsons_to_zip_archive(county: str, file_version: str, build_version: str):
     logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
     
     directory = PATH.PUBLISH / f"{county}/"
-    archive_name = f"{directory}_MAF32"
+    archive_name = f"{directory}_MAF32_{file_version}"
     make_archive(
         archive_name,
         'zip',
         root_dir=PATH.PUBLISH,
-        base_dir=f"{county}/MAF32/{version}",
+        base_dir=f"{county}/MAF32/{build_version}",
     )
 
 
