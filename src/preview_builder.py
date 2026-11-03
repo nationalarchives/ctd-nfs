@@ -37,10 +37,10 @@ def create_html_preview_context(harvested_farms: Generator[HarvestedFarm], count
         county -- name of the county in format <CODE> <Name> e.g., "RD Rutland"
     """
 
-    farms_for_preview = (
+    farms_for_preview = [
         FarmForReview(harvested_farm)
         for harvested_farm in harvested_farms
-    )
+    ]
 
     descriptions = [
         {
