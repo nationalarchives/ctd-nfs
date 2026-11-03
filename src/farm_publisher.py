@@ -57,22 +57,22 @@ def build_catalogue_documents(harvested_farms: Generator[HarvestedFarm], update_
     return documents
 
 
-def write_jsons_to_zip_archive(county: str, version: str):
+def write_jsons_to_zip_archive(county: str, file_version: str, build_version: str):
     logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
     
     directory = PATH.PUBLISH / f"{county}/"
-    archive_name = f"{directory}_MAF32"
+    archive_name = f"{directory}_MAF32_{file_version}"
     make_archive(
         archive_name,
         'zip',
         root_dir=PATH.PUBLISH,
-        base_dir=f"{county}/MAF32/{version}",
+        base_dir=f"{county}/MAF32/{build_version}",
     )
 
 
-def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, build_version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF32/{version}/"
+    publish_dir = PATH.PUBLISH / f"{county}/MAF32/{build_version}/"
 
     if publish_dir.exists():
         rmtree(publish_dir)
@@ -88,14 +88,15 @@ def process_proof_files(config: dict) -> None:
 
     for csv_file in input_files:
         county, _ = csv_file.name.split(" ", maxsplit=1)
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
+        file_version = REGEX.FILE_VERSION.match(csv_file.stem)['version']
+        build_version, _ = file_version.split("-")
 
         county_data = read_farms_db(county, config['test_mode'])
-        harvested_farms = iter(county_data[version].values())
+        harvested_farms = iter(county_data[build_version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])
-        write_catalogue_documents(final_documents, county, version)
-        write_jsons_to_zip_archive(county, version)
+        write_catalogue_documents(final_documents, county, build_version)
+        write_jsons_to_zip_archive(county, file_version, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 

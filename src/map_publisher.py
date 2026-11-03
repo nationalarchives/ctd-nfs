@@ -34,7 +34,7 @@ def write_maps_to_db(map_data: list[dict], county_code: str, version: str, test_
 
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
         county_store = farm_db[county_code].copy()
-        if version not in county_store:
+        if 'MAF73' not in county_store:
             county_store.update({'MAF73': {version: maps_cache}})
         else:
             county_store['MAF73'].update({version: maps_cache})
@@ -74,9 +74,9 @@ def add_ids_to_maps(map_data: list[dict], existing_maps: dict) -> list[dict]:
     return amended_map_data
 
 
-def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, build_version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF73/{version}/"
+    publish_dir = PATH.PUBLISH / f"{county}/MAF73/{build_version}/"
 
     if publish_dir.exists():
         rmtree(publish_dir)
@@ -87,7 +87,7 @@ def write_catalogue_documents(documents: list[dict], county: str, version: str) 
             json.dump(document, final_file)   
 
 
-def write_jsons_to_zip_archive(county: str, version: str, file_version: str):
+def write_jsons_to_zip_archive(county: str, file_version: str, build_version: str):
     logger.info(" ===== CREATING ZIP ARCHIVE ===== ")
     
     directory = PATH.PUBLISH / f"{county}/"
@@ -96,7 +96,7 @@ def write_jsons_to_zip_archive(county: str, version: str, file_version: str):
         archive_name,
         'zip',
         root_dir=PATH.PUBLISH,
-        base_dir=f"{county}/MAF73/{version}",
+        base_dir=f"{county}/MAF73/{build_version}",
     )
             
 def process_proof_files(config: dict) -> None:
@@ -106,13 +106,14 @@ def process_proof_files(config: dict) -> None:
         if proof_file.name.startswith("Index"):
             continue
         county_code, _ = proof_file.name.split(" ", maxsplit=1)
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(proof_file.stem)['version']
+        file_version = REGEX.FILE_VERSION.match(proof_file.stem)['version']
+        build_version, _ = file_version.split("-")
 
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
         if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
-            existing_maps = county_from_db['MAF73'][version]
+            existing_maps = county_from_db['MAF73'][build_version]
         else:
             existing_maps = {}
 
@@ -121,8 +122,9 @@ def process_proof_files(config: dict) -> None:
         if config['test_mode']:
             for document in final_documents:
                 pretty.pprint(document)
-        write_catalogue_documents(final_documents, county_code, version)
-        write_jsons_to_zip_archive(county_code, version)
+        write_catalogue_documents(final_documents, county_code, build_version)
+        write_jsons_to_zip_archive(county_code, file_version, build_version)
+        write_maps_to_db(map_data_with_ids,county_code, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 
