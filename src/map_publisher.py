@@ -74,9 +74,9 @@ def add_ids_to_maps(map_data: list[dict], existing_maps: dict) -> list[dict]:
     return amended_map_data
 
 
-def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, build_version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF73/{version}/"
+    publish_dir = PATH.PUBLISH / f"{county}/MAF73/{build_version}/"
 
     if publish_dir.exists():
         rmtree(publish_dir)

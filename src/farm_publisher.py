@@ -70,9 +70,9 @@ def write_jsons_to_zip_archive(county: str, version: str):
     )
 
 
-def write_catalogue_documents(documents: list[dict], county: str, version: str) -> None:
+def write_catalogue_documents(documents: list[dict], county: str, build_version: str) -> None:
     logger.info(" ===== WRITING DISCOVERY RECORDS ===== ")
-    publish_dir = PATH.PUBLISH / f"{county}/MAF32/{version}/"
+    publish_dir = PATH.PUBLISH / f"{county}/MAF32/{build_version}/"
 
     if publish_dir.exists():
         rmtree(publish_dir)
