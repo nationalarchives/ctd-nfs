@@ -10,7 +10,21 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+from src._tools.xlreader import read_file
+
+load_dotenv(r"src/.nfs-env")
+
+
+def load_piece_table_file(excel_file: Path):
+    excel_data = read_file(str(excel_file))
+
+    column_names = excel_data['Sheet1'][0]
+
+    return [
+        dict(zip(column_names, row_data))
+        for row_data in excel_data['Sheet1'][1:]
+        if row_data[0]
+    ]
 
 
 class PathNamespace:
@@ -29,8 +43,9 @@ class DBNamespace:
     __slots__ = ()
 
     DB = PATH.PIPELINE_ROOT / "0-DB"
-    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
-    PIECES = DB / "MAF 32 Piece Lookup Table.db"
+
+    PIECE_LOOKUP_FILE = DB / Path(fr"{os.getenv('PIECE_TABLE_NAME')}")
+    PIECES: list[dict] = load_piece_table_file(PIECE_LOOKUP_FILE)
     
     PRODUCTION = DB / Path("NFS_Production.db")
     TEST = DB / "TEST" / Path("NFS_Test.db")
