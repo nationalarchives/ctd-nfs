@@ -45,7 +45,7 @@ class DBNamespace:
     DB = PATH.PIPELINE_ROOT / "0-DB"
 
     PIECE_LOOKUP_FILE = DB / Path(fr"{os.getenv('PIECE_TABLE_NAME')}")
-    PIECES = DB / "MAF 32 Piece Lookup Table.db"
+    PIECES: list[dict] = load_piece_table_file(PIECE_LOOKUP_FILE)
     
     PRODUCTION = DB / Path("NFS_Production.db")
     TEST = DB / "TEST" / Path("NFS_Test.db")
