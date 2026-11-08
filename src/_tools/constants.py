@@ -43,7 +43,8 @@ class DBNamespace:
     __slots__ = ()
 
     DB = PATH.PIPELINE_ROOT / "0-DB"
-    EXCEL_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
+
+    PIECE_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
     PIECES = DB / "MAF 32 Piece Lookup Table.db"
     
     PRODUCTION = DB / Path("NFS_Production.db")
