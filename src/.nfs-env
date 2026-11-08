@@ -1,4 +1,4 @@
 PIPELINE=C:\Users\rbruno\.ctd-nfs\Pipeline
-PIECE_TABLE_PATH="MAF 32 Piece Lookup Table 22-10-2026.xlsx"
+PIECE_TABLE_NAME="MAF 32 Piece Lookup Table 22-10-2026.xlsx"
 DISCOVERY_API=https://discovery.nationalarchives.gov.uk/API
 S3_BUCKET=dr2-farm-survey
