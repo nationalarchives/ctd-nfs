@@ -65,15 +65,15 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 @lru_cache
 def get_piece_value(county_code: str, parish_number: str) -> str:
-    with shelve.open(DB.PIECES, "r") as piece_lookup_db:   
-        all_references = (
-            reference
-            for reference in piece_lookup_db['pieces lookup table']
-            if reference['County & Parish'] == f"{county_code}/{parish_number}"
-        )
+    all_references = (
+        reference
+        for reference in DB.PIECES
+        if reference['County & Parish'] == f"{county_code}/{parish_number}"
+    )
     reference = next(all_references, None)
 
     return reference['Piece Number']
+
 
 @lru_cache
 def get_parent_discovery_record(ref_url_safe: str) -> dict:
