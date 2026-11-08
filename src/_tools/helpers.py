@@ -72,6 +72,8 @@ def get_piece_value(county_code: str, parish_number: str) -> str:
     )
     reference: dict[str, str] | None = next(all_references, None)
 
+    if reference is None:
+        return None
     return reference['Piece Number']
 
 
