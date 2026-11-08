@@ -70,7 +70,7 @@ def get_piece_value(county_code: str, parish_number: str) -> str:
         for reference in DB.PIECES
         if reference['County & Parish'] == f"{county_code}/{parish_number}"
     )
-    reference = next(all_references, None)
+    reference: dict[str, str] | None = next(all_references, None)
 
     return reference['Piece Number']
 
