@@ -118,6 +118,8 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county_code: str, v
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """
+    # TODO #1: implement defaultdict i.e., county_store = defaultdict(func)
+    # TODO #1:  where func is a function that returns the {'MAF32|73': <version>: {}}
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
         county_store = farm_db[county_code].copy() if county_code in farm_db else {}
         if version not in county_store:
@@ -170,7 +172,7 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
 
 
 def initialise_farm(transcription: Transcription, cached_farms: dict) -> HarvestedFarm:
-    """_summary_
+    """_summary_    
 
     Arguments:
         transcription -- _description_
