@@ -10,7 +10,21 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from src._tools.xlreader import read_file
+
 load_dotenv(r"src/.nfs-env")
+
+
+def load_piece_table_file(excel_file: Path):
+    excel_data = read_file(str(excel_file))
+
+    column_names = excel_data['Sheet1'][0]
+
+    return [
+        dict(zip(column_names, row_data))
+        for row_data in excel_data['Sheet1'][1:]
+        if row_data[0]
+    ]
 
 
 class PathNamespace:
