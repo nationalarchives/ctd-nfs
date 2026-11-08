@@ -44,7 +44,7 @@ class DBNamespace:
 
     DB = PATH.PIPELINE_ROOT / "0-DB"
 
-    PIECE_LOOKUP_FILE = DB / "MAF 32 Piece Lookup Table 04-12-2025.xlsx"
+    PIECE_LOOKUP_FILE = DB / Path(fr"{os.getenv('PIECE_TABLE_NAME')}")
     PIECES = DB / "MAF 32 Piece Lookup Table.db"
     
     PRODUCTION = DB / Path("NFS_Production.db")
