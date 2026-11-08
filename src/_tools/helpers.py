@@ -64,7 +64,7 @@ def clean_excel_data(raw_csv_data: list[dict]) -> list[dict]:
 
 
 @lru_cache
-def get_piece_value(county_code: str, parish_number: str) -> str:
+def get_piece_value(county_code: str, parish_number: str) -> str | None:
     all_references = (
         reference
         for reference in DB.PIECES
