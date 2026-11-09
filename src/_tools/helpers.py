@@ -4,6 +4,7 @@ import shelve
 import uuid
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 import requests
 
@@ -86,7 +87,9 @@ def get_parent_discovery_record(ref_url_safe: str) -> dict:
     return result.json()
 
 
-def read_county_data_from_cache(county: str, test_mode: bool = False) -> dict:
+type CollectionName = Literal["MAF32", "MAF73"]
+
+def read_county_data_from_cache(county: str, collection: CollectionName, test_mode: bool = False) -> dict:
     """_summary_
 
     Arguments:
