@@ -38,7 +38,7 @@ from pathlib import Path
 from src._dataclasses.farm_combine import FarmForReview, HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
-from src._tools.helpers import TranscriptionDataError
+from src._tools.helpers import TranscriptionDataError, read_farms_db
 from src._tools.logging_setup import create_logger
 from src._tools.xlwriter import ExcelWriter
 from src.harvester.farm_attributiser import set_farm_attributes
@@ -127,24 +127,6 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county_code: str, v
         else:
             county_store[version].update(farms_store)
         farm_db[county_code] = county_store.copy()
-
-
-def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
-    """_summary_
-
-    Arguments:
-        county -- _description_
-
-    Keyword Arguments:
-        test_mode -- _description_ (default: {False})
-
-    Returns:
-        _description_
-    """    
-    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
-        farms_store = farm_db[county].copy() if county in farm_db else {}
-
-    return farms_store
 
 
 def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: Transcription, farms_store: dict, row_number: int) -> HarvestedFarm:

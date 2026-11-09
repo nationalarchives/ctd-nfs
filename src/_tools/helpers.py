@@ -7,6 +7,8 @@ from pathlib import Path
 
 import requests
 
+from _dataclasses.farm_combine import HarvestedFarm
+from _tools.constants import DB
 from src._tools.constants import DB, DISCOVERY
 from src._tools.xlreader import read_file
 
@@ -84,4 +86,22 @@ def get_parent_discovery_record(ref_url_safe: str) -> dict:
     result = requests.get(api_query)
 
     return result.json()
+
+
+def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
+    """_summary_
+
+    Arguments:
+        county -- _description_
+
+    Keyword Arguments:
+        test_mode -- _description_ (default: {False})
+
+    Returns:
+        _description_
+    """
+    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
+        farms_store = farm_db[county].copy() if county in farm_db else {}
+
+    return farms_store
 
