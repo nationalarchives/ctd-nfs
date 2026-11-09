@@ -39,9 +39,13 @@ this will be changed to:
 
 """
 
+import pprint
 import shelve
+from random import choice
 
 from src._tools.constants import DB
+
+pretty = pprint.PrettyPrinter(indent=4)
 
 
 def add_MAF32_key() -> None:
@@ -70,6 +74,25 @@ def add_MAF32_key() -> None:
 
             cache[county_code] = county_data.copy()
 
+
+def confirm_restructure() -> None:
+    """
+    print out random farms and/or maps from each county in the cache to confirm restructure has worked
+    """    
+    with shelve.open(DB.PRODUCTION, 'r') as cache:
+        for county_code in cache:
+            print(f"Reading random entries from {county_code}")
+
+            county_data = cache[county_code].copy()
+            if county_code != 'AY': 
+                # MAF32 data not yet created for AY
+                pretty.pprint(choice(list(county_data['MAF32']['V1'].values())).primary_farm_number)
+            if county_code not in ['BN', 'IW', 'RD']: 
+                # MAF73 entries not yet created/added for BN, IW, RD
+                pretty.pprint(object=choice(list(county_data['MAF73']['V1'].values()))['id'])
+
+
 if __name__ == "__main__":
-    add_MAF32_key()
+    # add_MAF32_key()
+    confirm_restructure()
 
