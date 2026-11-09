@@ -92,7 +92,13 @@ def confirm_restructure() -> None:
                 pretty.pprint(object=choice(list(county_data['MAF73']['V1'].values()))['id'])
 
 
+restructure = {
+    # dispatch table
+    'add': add_MAF32_key,
+    'check': confirm_restructure
+}
+
+
 if __name__ == "__main__":
-    # add_MAF32_key()
-    confirm_restructure()
+    restructure['check']
 
