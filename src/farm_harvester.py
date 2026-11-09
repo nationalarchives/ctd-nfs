@@ -38,7 +38,7 @@ from pathlib import Path
 from src._dataclasses.farm_combine import FarmForReview, HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
-from src._tools.helpers import TranscriptionDataError, read_farms_db
+from src._tools.helpers import TranscriptionDataError, read_county_data_from_cache
 from src._tools.logging_setup import create_logger
 from src._tools.xlwriter import ExcelWriter
 from src.harvester.farm_attributiser import set_farm_attributes
@@ -297,7 +297,7 @@ def run_pipeline(config: dict) -> None:
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
 
             existing_farms = {}           
-            if county_code not in ["LH", "LK"] and (county_from_db := read_farms_db(county_code, config['test_mode'])):
+            if county_code not in ["LH", "LK"] and (county_from_db := read_county_data_from_cache(county_code, config['test_mode'])):
                 existing_farms = county_from_db[version]
 
             initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)

@@ -86,7 +86,7 @@ def get_parent_discovery_record(ref_url_safe: str) -> dict:
     return result.json()
 
 
-def read_farms_db(county: str, test_mode: bool = False) -> dict:
+def read_county_data_from_cache(county: str, test_mode: bool = False) -> dict:
     """_summary_
 
     Arguments:

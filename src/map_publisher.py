@@ -13,7 +13,7 @@ from src._tools.helpers import (
     clean_excel_data,
     create_uuid_str,
     load_excel_data,
-    read_farms_db,
+    read_county_data_from_cache,
 )
 from src._tools.logging_setup import create_logger
 
@@ -116,7 +116,7 @@ def process_proof_files(config: dict) -> None:
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
-        if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
+        if (county_from_db := read_county_data_from_cache(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
             existing_maps = county_from_db['MAF73'][build_version]
         else:
             existing_maps = {}
