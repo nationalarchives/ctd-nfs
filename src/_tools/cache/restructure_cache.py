@@ -2,6 +2,8 @@
 @created: 2026-11-09
 @author: Ralph Bruno
 
+!!! THIS IS A NONCE SCRIPT - DO NOT RUN AFTER 2026-11-09
+
 This will change the structure of the cache 
 Currently:
 <county-code>: {
@@ -41,6 +43,7 @@ this will be changed to:
 
 import pprint
 import shelve
+from datetime import date
 from random import choice
 
 from src._tools.constants import DB
@@ -100,5 +103,6 @@ restructure = {
 
 
 if __name__ == "__main__":
-    restructure['check']
+    if date.today() == date(2026, 11, 9):
+        restructure['check']
 
