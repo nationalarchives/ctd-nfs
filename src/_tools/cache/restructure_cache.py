@@ -2,7 +2,7 @@
 @created: 2026-11-09
 @author: Ralph Bruno
 
-!!! THIS IS A NONCE SCRIPT - DO NOT RUN AFTER 2026-11-09
+!!! THIS IS A NONCE SCRIPT - DO NOT RUN AFTER 2026-11-11
 
 This will change the structure of the cache 
 Currently:
@@ -95,14 +95,36 @@ def confirm_restructure() -> None:
                 pretty.pprint(object=choice(list(county_data['MAF73']['V1'].values()))['id'])
 
 
+def initialise_counties_in_cache() -> None:
+    """Create entries for each county in the cache
+
+    For counties which have yet to be harvested, create an dictionary in the cache with 'MAF32' & 'MA73' keys
+    populated with empty dictionaries as values
+    """
+    county_codes: set[str] = {
+        piece_row['County Code']
+        for piece_row in DB.PIECES
+    }
+    pretty.pprint(county_codes)
+
+    with shelve.open(DB.TEST, 'c') as cache:
+        for _code in county_codes:
+            if _code in cache:
+                continue
+            print(f"Initialising {_code}")  
+            cache[_code] = {'MAF32': {}, 'MAF73': {}}
+            pretty.pprint(cache[_code])
+
+
 restructure = {
     # dispatch table
     'add': add_MAF32_key,
-    'check': confirm_restructure
+    'check': confirm_restructure,
+    'initialise': initialise_counties_in_cache,
 }
 
 
 if __name__ == "__main__":
-    if date.today() == date(2026, 11, 9):
-        restructure['check']
+    if date.today() == date(2026, 11, 11):
+        restructure['initialise']()
 
