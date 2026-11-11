@@ -102,7 +102,7 @@ def read_county_data_from_cache(county_code: str, collection: CollectionName, te
         _description_
     """
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
-        farms_store = farm_db[county_code].copy()
+        county_data = farm_db[county_code].copy()
 
-    return farms_store[collection]
+    return county_data[collection]
 
