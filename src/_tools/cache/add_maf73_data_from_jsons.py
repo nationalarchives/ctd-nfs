@@ -83,7 +83,7 @@ def main():
             map_objects = create_map_objects_with_ids_from_jsons(json_data)
 
             logger.info("--- Caching MAF3 data")
-            county_cache = disk_cache[county_code].copy() if county_code in disk_cache else {}
+            county_cache = disk_cache[county_code].copy()
             county_cache.update({'MAF73': {'V1': map_objects}})
             disk_cache[county_code] = county_cache.copy()
 
