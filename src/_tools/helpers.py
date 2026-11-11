@@ -90,16 +90,23 @@ def get_parent_discovery_record(ref_url_safe: str) -> dict:
 type CollectionName = Literal["MAF32", "MAF73"]
 
 def read_county_data_from_cache(county_code: str, collection: CollectionName, test_mode: bool = False) -> dict:
-    """_summary_
+    """Reads farms or maps from the cache
+
+    Depending on the CollectionName either farm instances ('MAF32') or map dicts ('MAF73') will be returned
+    as well as the build verson
 
     Arguments:
-        county -- _description_
+        county_coode -- 2-letter code (see Pieces lookup table for list of codes)
+        collection -- either 'MAF32' or 'MAF73'
 
     Keyword Arguments:
-        test_mode -- _description_ (default: {False})
+        test_mode -- boolean flag so that either TEST or PRODUCTION cache is read (default: {False})
 
     Returns:
-        _description_
+        dict with version number mapped to either a dictionary of farm instances or map dicts
+        e.g., 
+            {'V1': {'MAF 32/850/354/27': <HarvestedFarm instance}, ...}
+            {'V1': {'MAF 73/13/74/NW': <map dict}, ...}
     """
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
         county_data = farm_db[county_code].copy()
