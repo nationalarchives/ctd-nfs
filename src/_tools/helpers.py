@@ -1,3 +1,36 @@
+"""Utility helpers for data loading, validation, and cached lookups.
+
+This module provides shared helper functions and lightweight value objects used
+across the project for working with discovery and transcription data. It
+centralises common tasks such as generating UUIDs, parsing semicolon-delimited
+field values, reading spreadsheet content into dictionaries, normalising raw
+data, resolving piece references, and retrieving cached county data.
+
+Classes:
+    TranscriptionDataError: Base exception for transcription/business-rule
+        validation failures.
+    ValueObject: Base class for simple value-based objects.
+
+Functions:
+    create_uuid_str(): Return a new random UUID as a string.
+    split_list_values(field_value): Split a semicolon-delimited value into a
+        list of cleaned strings.
+    load_excel_data(data_file): Read spreadsheet data and convert a worksheet
+        into a list of dictionaries keyed by column names.
+    clean_excel_data(raw_csv_data): Strip extraneous whitespace and normalise
+        line breaks and separators in raw row values.
+    get_piece_value(county_code, parish_number): Look up a piece number using a
+        county/parish key, with results cached for reuse.
+    get_parent_discovery_record(ref_url_safe): Fetch a parent discovery record
+        from the configured discovery API.
+    read_county_data_from_cache(county_code, collection, test_mode=False):
+        Read county-level cached farm or map data for the requested collection.
+
+Example:
+    piece_number = get_piece_value("RD", "123")
+    county_data = read_county_data_from_cache("IW", "MAF32")
+"""
+
 import logging
 import re
 import shelve
