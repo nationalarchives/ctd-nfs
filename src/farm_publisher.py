@@ -91,7 +91,7 @@ def process_proof_files(config: dict) -> None:
         file_version = REGEX.FILE_VERSION.match(csv_file.stem)['version']
         build_version, _ = file_version.split("-")
 
-        county_data = read_county_data_from_cache(county, config['test_mode'])
+        county_data = read_county_data_from_cache(county, 'MAF32', config['test_mode'])
         harvested_farms = iter(county_data[build_version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])

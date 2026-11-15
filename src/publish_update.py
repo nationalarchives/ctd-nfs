@@ -88,7 +88,7 @@ def process_proof_files(config: dict) -> None:
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
-        county_from_db = read_county_data_from_cache(county_code, config['test_mode'])
+        county_from_db = read_county_data_from_cache(county_code, 'MAF73', config['test_mode'])
         existing_maps = {}
         for version_number in county_from_db['MAF73']:
             existing_maps.update(county_from_db['MAF73'][version_number])
