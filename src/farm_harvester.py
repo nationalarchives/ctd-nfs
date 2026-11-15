@@ -38,7 +38,7 @@ from pathlib import Path
 from src._dataclasses.farm_combine import FarmForReview, HarvestedFarm
 from src._dataclasses.transcription_model import Transcription
 from src._tools.constants import CSVEXCEL, DB, PATH, REGEX
-from src._tools.helpers import TranscriptionDataError
+from src._tools.helpers import TranscriptionDataError, read_county_data_from_cache
 from src._tools.logging_setup import create_logger
 from src._tools.xlwriter import ExcelWriter
 from src.harvester.farm_attributiser import set_farm_attributes
@@ -118,33 +118,11 @@ def write_farms_to_db(farms_store: dict[str, HarvestedFarm], county_code: str, v
     Keyword Arguments:
         test_mode -- _description_ (default: {False})
     """
-    # TODO #1: implement defaultdict i.e., county_store = defaultdict(func)
-    # TODO #1:  where func is a function that returns the {'MAF32|73': <version>: {}}
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
-        county_store = farm_db[county_code].copy() if county_code in farm_db else {}
-        if version not in county_store:
-            county_store.update({version: farms_store})
-        else:
-            county_store[version].update(farms_store)
-        farm_db[county_code] = county_store.copy()
-
-
-def read_farms_db(county: str, test_mode: bool = False) -> dict[str, HarvestedFarm]:
-    """_summary_
-
-    Arguments:
-        county -- _description_
-
-    Keyword Arguments:
-        test_mode -- _description_ (default: {False})
-
-    Returns:
-        _description_
-    """    
-    with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'r') as farm_db:
-        farms_store = farm_db[county].copy() if county in farm_db else {}
-
-    return farms_store
+        county_data = farm_db[county_code].copy()
+        county_data.update({'MAF32': {version: farms_store}})
+    
+        farm_db[county_code] = county_data.copy()
 
 
 def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: Transcription, farms_store: dict, row_number: int) -> HarvestedFarm:
@@ -306,17 +284,19 @@ def run_pipeline(config: dict) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if config['test_mode'] else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
+        county_code, _ = csv_file.stem.split(" ", maxsplit=1)
+        if county_code not in DB.COUNTY_CODES:
+            print(f"{csv_file.stem} not processed because of invalid county code. County code must be one of:\n\t{', '.join(DB.COUNTY_CODES)}")
+            continue
 
         if config['harvest']:
+           version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
-            county_code, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
 
-            existing_farms = {}           
-            if county_code not in ["LH", "LK"] and (county_from_db := read_farms_db(county_code, config['test_mode'])):
-                existing_farms = county_from_db[version]
+            county_cache = read_county_data_from_cache(county_code, 'MAF32', config['test_mode'])
+            existing_farms = county_cache.get('version', {})
 
             initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)
             

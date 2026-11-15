@@ -30,8 +30,8 @@ from time import sleep
 from src._dataclasses.farm_combine import FarmForDiscovery, HarvestedFarm
 from src._dataclasses.farm_record import DiscoveryMAF32
 from src._tools.constants import PATH, REGEX
+from src._tools.helpers import read_county_data_from_cache
 from src._tools.logging_setup import create_logger
-from src.farm_harvester import read_farms_db
 
 logger = create_logger("src._config", "logging.yaml")
 
@@ -91,7 +91,7 @@ def process_proof_files(config: dict) -> None:
         file_version = REGEX.FILE_VERSION.match(csv_file.stem)['version']
         build_version, _ = file_version.split("-")
 
-        county_data = read_farms_db(county, config['test_mode'])
+        county_data = read_county_data_from_cache(county, 'MAF32', config['test_mode'])
         harvested_farms = iter(county_data[build_version].values())
 
         final_documents = build_catalogue_documents(harvested_farms, config['update_scope'])

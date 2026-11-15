@@ -9,9 +9,13 @@ from time import sleep
 
 from src._dataclasses.map_record import DiscoveryMAF73
 from src._tools.constants import DB, PATH, REGEX
-from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_data
+from src._tools.helpers import (
+    clean_excel_data,
+    create_uuid_str,
+    load_excel_data,
+    read_county_data_from_cache,
+)
 from src._tools.logging_setup import create_logger
-from src.farm_harvester import read_farms_db
 
 logger = create_logger("src._config", "logging.yaml")
 pretty = pprint.PrettyPrinter(indent=4)
@@ -34,10 +38,7 @@ def write_maps_to_db(map_data: list[dict], county_code: str, version: str, test_
 
     with shelve.open(DB.TEST if test_mode else DB.PRODUCTION, 'c') as farm_db:
         county_store = farm_db[county_code].copy()
-        if 'MAF73' not in county_store:
-            county_store.update({'MAF73': {version: maps_cache}})
-        else:
-            county_store['MAF73'].update({version: maps_cache})
+        county_store['MAF73'].update({version: maps_cache})
         farm_db[county_code] = county_store.copy()
 
 
@@ -112,7 +113,7 @@ def process_proof_files(config: dict) -> None:
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
-        if (county_from_db := read_farms_db(county_code, config['test_mode'])) and 'MAF73' in county_from_db:
+        if (county_from_db := read_county_data_from_cache(county_code, 'MAF73', config['test_mode'])) and 'MAF73' in county_from_db:
             existing_maps = county_from_db['MAF73'][build_version]
         else:
             existing_maps = {}
@@ -124,7 +125,7 @@ def process_proof_files(config: dict) -> None:
                 pretty.pprint(document)
         write_catalogue_documents(final_documents, county_code, build_version)
         write_jsons_to_zip_archive(county_code, file_version, build_version)
-        write_maps_to_db(map_data_with_ids,county_code, build_version)
+        write_maps_to_db(map_data_with_ids, county_code, build_version)
         logger.info("--- pausing for two minutes before next file ---")
         sleep(120)
 

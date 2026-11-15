@@ -3,9 +3,13 @@ import tomllib
 from pathlib import Path
 
 from src._tools.constants import DB, PATH, REGEX
-from src._tools.helpers import clean_excel_data, create_uuid_str, load_excel_data
+from src._tools.helpers import (
+    clean_excel_data,
+    create_uuid_str,
+    load_excel_data,
+    read_county_data_from_cache,
+)
 from src._tools.logging_setup import create_logger
-from src.farm_harvester import read_farms_db
 from src.map_publisher import (
     build_catalogue_documents,
     write_catalogue_documents,
@@ -84,7 +88,7 @@ def process_proof_files(config: dict) -> None:
         proof_data = load_excel_data(proof_file)
         map_data = clean_excel_data(proof_data)
 
-        county_from_db = read_farms_db(county_code, config['test_mode'])
+        county_from_db = read_county_data_from_cache(county_code, 'MAF73', config['test_mode'])
         existing_maps = {}
         for version_number in county_from_db['MAF73']:
             existing_maps.update(county_from_db['MAF73'][version_number])
