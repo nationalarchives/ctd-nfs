@@ -290,7 +290,7 @@ def run_pipeline(config: dict) -> None:
             continue
 
         if config['harvest']:
-           version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
+            version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
