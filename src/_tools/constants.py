@@ -46,7 +46,10 @@ class DBNamespace:
 
     PIECE_LOOKUP_FILE = DB / Path(fr"{os.getenv('PIECE_TABLE_NAME')}")
     PIECES: list[dict] = load_piece_table_file(PIECE_LOOKUP_FILE)
-    
+    COUNTY_CODES: typing.ClassVar = {
+        piece_row['County Code']
+        for piece_row in PIECES
+    }
     PRODUCTION = DB / Path("NFS_Production.db")
     TEST = DB / "TEST" / Path("NFS_Test.db")
 
