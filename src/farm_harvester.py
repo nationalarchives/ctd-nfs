@@ -284,11 +284,15 @@ def run_pipeline(config: dict) -> None:
     input_files = PATH.INPUT.glob("TEST/*MAF32_HarvesterIN_*.csv") if config['test_mode'] else PATH.INPUT.glob("*MAF32_HarvesterIN_*.csv")
 
     for csv_file in input_files:
+        county_code, _ = csv_file.stem.split(" ", maxsplit=1)
+        if county_code not in DB.COUNTY_CODES:
+            print(f"{csv_file.stem} not processed because of invalid county code. County code must be one of:\n\t{', '.join(DB.COUNTY_CODES)}")
+            continue
+
         version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
 
         if config['harvest']:
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
-            county_code, _ = csv_file.stem.split(" ", maxsplit=1)
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
 
