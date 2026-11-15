@@ -289,9 +289,8 @@ def run_pipeline(config: dict) -> None:
             print(f"{csv_file.stem} not processed because of invalid county code. County code must be one of:\n\t{', '.join(DB.COUNTY_CODES)}")
             continue
 
-        version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
-
         if config['harvest']:
+           version = REGEX.TRANSCRIPTIONS_VERSION.match(csv_file.stem)['version']
             logger.info(f"*** HARVESTING FILE: {csv_file.stem} ***")
             raw_farm_data: Iterator[dict] = load_data_from_file(csv_file)
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
