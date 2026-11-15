@@ -73,7 +73,6 @@ class Transcription:
     These fields will be merged later to create a single name/address so are declared as either lists of strings or single strings
     """
 
-    ID: str
     filename_1: str
     filename_2: str
     document_type: str
@@ -99,6 +98,7 @@ class Transcription:
     field_info_date: str
     primary_record_date: str
     notes: str
+    ID: str
 
     all_ids: typing.ClassVar = set() 
 
