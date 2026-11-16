@@ -62,7 +62,6 @@ class CSVandExcelNamespace:
     __slots__ = ()
 
     CSV_HEADERS: typing.ClassVar = [
-        'ID',
         'filename_1',
         'filename_2',
         'document_type',
@@ -88,6 +87,7 @@ class CSVandExcelNamespace:
         'field_info_date',
         'primary_record_date',
         'notes',
+        'ID',
     ]
     PROOF_COLUMNS: typing.ClassVar = [   
         ('catalogue_reference', 20),
