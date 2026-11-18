@@ -202,7 +202,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         return
 
 
-def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict) -> dict[str, dict[str, HarvestedFarm]]:
+def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict, build_version: str) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:
@@ -298,7 +298,7 @@ def run_pipeline(config: dict) -> None:
             county_cache = read_county_data_from_cache(county_code, 'MAF32', config['test_mode'])
             existing_farms = county_cache.get('version', {})
 
-            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)
+            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms, version)
             
 
         if config['process']:
