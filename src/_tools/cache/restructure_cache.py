@@ -123,6 +123,6 @@ restructure = {
 
 
 if __name__ == "__main__":
-    if date.today() == date(2026, 11, 11):
+    if date.today() == date(2026, 11, 19):
         restructure['initialise']()
 
