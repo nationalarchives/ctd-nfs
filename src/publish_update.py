@@ -90,8 +90,8 @@ def process_proof_files(config: dict) -> None:
 
         county_from_db = read_county_data_from_cache(county_code, 'MAF73', config['test_mode'])
         existing_maps = {}
-        for version_number in county_from_db['MAF73']:
-            existing_maps.update(county_from_db['MAF73'][version_number])
+        for version_number in county_from_db:
+            existing_maps.update(county_from_db[version_number])
 
         if county_code == 'HD':
             existing_maps = copy_old_reference_keys_for_HD(existing_maps)
