@@ -296,7 +296,9 @@ def run_pipeline(config: dict) -> None:
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
 
             county_cache = read_county_data_from_cache(county_code, 'MAF32', config['test_mode'])
-            existing_farms = county_cache.get('version', {})
+            existing_farms = {}
+            for version_number in county_cache:
+                existing_farms.update(county_cache[version_number])
 
             initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms, version)
             
