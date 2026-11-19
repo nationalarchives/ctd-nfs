@@ -90,8 +90,8 @@ def process_proof_files(config: dict) -> None:
 
         county_from_db = read_county_data_from_cache(county_code, 'MAF73', config['test_mode'])
         existing_maps = {}
-        for version_number in county_from_db['MAF73']:
-            existing_maps.update(county_from_db['MAF73'][version_number])
+        for version_number in county_from_db:
+            existing_maps.update(county_from_db[version_number])
 
         if county_code == 'HD':
             existing_maps = copy_old_reference_keys_for_HD(existing_maps)
@@ -100,7 +100,7 @@ def process_proof_files(config: dict) -> None:
         final_documents = build_catalogue_documents(map_data_with_exising_ids, config['update_scope'])
         write_catalogue_documents(final_documents, county_code, version)
         file_version = REGEX.FILE_VERSION.match(proof_file.stem)['version']
-        write_jsons_to_zip_archive(county_code, version, file_version)
+        write_jsons_to_zip_archive(county_code, file_version, version)
 
 
 def main(test_mode: bool=False):

@@ -149,23 +149,17 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
         return existing_farm
 
 
-def initialise_farm(transcription: Transcription, cached_farms: dict) -> HarvestedFarm:
-    """_summary_    
+def update_farm_with_amended_transcription(existing_farm: HarvestedFarm, transcription: Transcription, farms_store: dict, row_number: int) -> HarvestedFarm:
+    form_type = transcription.document_type.name
+    for index, item in enumerate(existing_farm.source_data[form_type]):
+        if transcription.ID == item.ID:
+            existing_farm.source_data[form_type][index] = transcription
+            break
+    else:
+        existing_farm.source_data[form_type].append(transcription)
 
-    Arguments:
-        transcription -- _description_
-
-    Returns:
-        _description_
-    """    
-    candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
-
-    if candidate_farm.catalogue_reference in cached_farms:
-        template_farm = cached_farms[candidate_farm.catalogue_reference]
-        candidate_farm.id = template_farm.id
-        candidate_farm.replica_id = template_farm.replica_id
-
-    return candidate_farm
+    logger.info(f"{'='*8} {existing_farm.farm_reference} ({existing_farm.catalogue_reference}) updated {'.'*4} from transcription instance {row_number} (form {form_type})")
+    return existing_farm
 
 
 def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Transcription | None:
@@ -202,7 +196,7 @@ def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Tran
         return
 
 
-def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict) -> dict[str, dict[str, HarvestedFarm]]:
+def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict, build_version: str) -> dict[str, dict[str, HarvestedFarm]]:
     """_summary_
 
     Arguments:
@@ -217,8 +211,17 @@ def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict) ->
         if not (transcription := transform_row_to_transcription(farm_data_row, row_number)):
             continue
 
-        candidate_farm = initialise_farm(transcription, cached_farms)
-        candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
+        candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
+        if candidate_farm.catalogue_reference in cached_farms:
+            existing_farm = cached_farms[candidate_farm.catalogue_reference]
+
+            if build_version in ["V0", "V1"]:
+                candidate_farm.id = existing_farm.id
+                candidate_farm.replica_id = existing_farm.replica_id
+                candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
+            else:
+                candidate_farm = update_farm_with_amended_transcription(existing_farm, transcription, initialised_farms, row_number)
+
         initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
 
     return initialised_farms
@@ -296,9 +299,11 @@ def run_pipeline(config: dict) -> None:
             normalised_farm_data: Iterator[dict] = normalise_csv_data(raw_farm_data)
 
             county_cache = read_county_data_from_cache(county_code, 'MAF32', config['test_mode'])
-            existing_farms = county_cache.get('version', {})
+            existing_farms = {}
+            for version_number in county_cache:
+                existing_farms.update(county_cache[version_number])
 
-            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms)
+            initialised_farms: dict = transform_row_data_to_farms(normalised_farm_data, existing_farms, version)
             
 
         if config['process']:

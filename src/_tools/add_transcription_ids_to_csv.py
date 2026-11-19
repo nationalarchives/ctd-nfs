@@ -22,7 +22,7 @@ def load_data_from_file(csv_file: Path) -> Generator[dict]:
 
 
 def main():
-    csv_00_files = PATH.INPUT.glob("*MAF32_HarvesterIN_V1-*-00.csv")
+    csv_00_files = PATH.INPUT.glob("*MAF32_HarvesterIN_V*-*-00.csv")
     for csv_file in csv_00_files:
         county_code, _ = csv_file.stem.split(" ", maxsplit=1)
         transcription_rows: Iterator[dict] = load_data_from_file(csv_file)
