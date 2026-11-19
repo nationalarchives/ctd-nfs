@@ -100,7 +100,7 @@ def process_proof_files(config: dict) -> None:
         final_documents = build_catalogue_documents(map_data_with_exising_ids, config['update_scope'])
         write_catalogue_documents(final_documents, county_code, version)
         file_version = REGEX.FILE_VERSION.match(proof_file.stem)['version']
-        write_jsons_to_zip_archive(county_code, version, file_version)
+        write_jsons_to_zip_archive(county_code, file_version, version)
 
 
 def main(test_mode: bool=False):
