@@ -109,8 +109,6 @@ def initialise_counties_in_cache() -> None:
 
     with shelve.open(DB.TEST, 'c') as cache:
         for _code in county_codes:
-            if _code in cache:
-                continue
             print(f"Initialising {_code}")  
             cache[_code] = {'MAF32': {}, 'MAF73': {}}
             pretty.pprint(cache[_code])
