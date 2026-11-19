@@ -162,25 +162,6 @@ def update_farm_with_amended_transcription(existing_farm: HarvestedFarm, transcr
     return existing_farm
 
 
-def initialise_farm(transcription: Transcription, cached_farms: dict) -> HarvestedFarm:
-    """_summary_    
-
-    Arguments:
-        transcription -- _description_
-
-    Returns:
-        _description_
-    """    
-    candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
-
-    if candidate_farm.catalogue_reference in cached_farms:
-        template_farm = cached_farms[candidate_farm.catalogue_reference]
-        candidate_farm.id = template_farm.id
-        candidate_farm.replica_id = template_farm.replica_id
-
-    return candidate_farm
-
-
 def transform_row_to_transcription(farm_data_row: dict, row_number: int) -> Transcription | None:
     """_summary_
 
@@ -230,8 +211,17 @@ def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict, bu
         if not (transcription := transform_row_to_transcription(farm_data_row, row_number)):
             continue
 
-        candidate_farm = initialise_farm(transcription, cached_farms)
-        candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
+        candidate_farm = HarvestedFarm(transcription.county, transcription.parish, transcription.primary_farm_number)
+        if candidate_farm.catalogue_reference in cached_farms:
+            existing_farm = cached_farms[candidate_farm.catalogue_reference]
+
+            if build_version in ["V0", "V1"]:
+                candidate_farm.id = existing_farm.id
+                candidate_farm.replica_id = existing_farm.replica_id
+                candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
+            else:
+                candidate_farm = update_farm_with_amended_transcription(existing_farm, transcription, initialised_farms, row_number)
+
         initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
 
     return initialised_farms
