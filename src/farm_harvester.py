@@ -149,6 +149,19 @@ def collate_transcription_by_farm(candidate_farm: HarvestedFarm, transcription: 
         return existing_farm
 
 
+def update_farm_with_amended_transcription(existing_farm: HarvestedFarm, transcription: Transcription, farms_store: dict, row_number: int) -> HarvestedFarm:
+    form_type = transcription.document_type.name
+    for index, item in enumerate(existing_farm.source_data[form_type]):
+        if transcription.ID == item.ID:
+            existing_farm.source_data[form_type][index] = transcription
+            break
+    else:
+        existing_farm.source_data[form_type].append(transcription)
+
+    logger.info(f"{'='*8} {existing_farm.farm_reference} ({existing_farm.catalogue_reference}) updated {'.'*4} from transcription instance {row_number} (form {form_type})")
+    return existing_farm
+
+
 def initialise_farm(transcription: Transcription, cached_farms: dict) -> HarvestedFarm:
     """_summary_    
 
