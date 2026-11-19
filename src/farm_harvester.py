@@ -221,6 +221,8 @@ def transform_row_data_to_farms(csv_data: Iterator[dict], cached_farms: dict, bu
                 candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
             else:
                 candidate_farm = update_farm_with_amended_transcription(existing_farm, transcription, initialised_farms, row_number)
+        else:
+            candidate_farm = collate_transcription_by_farm(candidate_farm, transcription, initialised_farms, row_number)
 
         initialised_farms[candidate_farm.catalogue_reference] = candidate_farm
 

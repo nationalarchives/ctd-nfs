@@ -109,8 +109,6 @@ def initialise_counties_in_cache() -> None:
 
     with shelve.open(DB.TEST, 'c') as cache:
         for _code in county_codes:
-            if _code in cache:
-                continue
             print(f"Initialising {_code}")  
             cache[_code] = {'MAF32': {}, 'MAF73': {}}
             pretty.pprint(cache[_code])
@@ -125,6 +123,6 @@ restructure = {
 
 
 if __name__ == "__main__":
-    if date.today() == date(2026, 11, 11):
+    if date.today() == date(2026, 11, 19):
         restructure['initialise']()
 
