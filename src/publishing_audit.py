@@ -10,15 +10,20 @@ This query return the records of all the farms in the parish
 The list of all the parish references in a county will be retrieved from the piece lookup table
 """
 import json
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from pathlib import Path
 
-from src._tools.constants import PATH
+from src._tools.constants import DB, PATH
 
 
-def get_parish_references_in_county(county_code: str):
+def get_parish_references_in_county(county_code: str) -> list[str]:
     """Retrieve parish references from piece lookup table
     """
+    return [
+        row['Catalogue ref']
+        for row in DB.PIECES
+        if row['County Code'] == county_code
+    ]
 
 
 def get_indexed_record_ids():
@@ -40,7 +45,7 @@ def get_ids_of_farm_documents(county_code: str) -> Iterable[str]:
     for _file in PATH.PUBLISH.glob(f"{county_code}/MAF32/V1/*.json"):
         with open(_file) as file_obj:
             document = json.load(file_obj)
-            yield document["record"]["iaid"]
+            yield document['record']['iaid']
 
 
 def main():
@@ -49,10 +54,14 @@ def main():
     Retrieve ids of farm documents stored locally
     Compare sets of ids
     Report result
-    """    
-    for index, id in enumerate(get_ids_of_farm_documents("SK")):
-        print(f"{id=}")
-    print(f"Total documents {index}")
+    """
+    # for index, id in enumerate(get_ids_of_farm_documents("SK")):
+    #     print(f"{id=}")
+    # print(f"Total documents {index}")
+
+    parish_references = get_parish_references_in_county("SK")
+    print(f"{parish_references}")
+    
 
 
 if __name__ == "__main__":
