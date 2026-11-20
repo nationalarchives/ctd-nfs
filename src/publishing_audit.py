@@ -9,6 +9,11 @@ This query return the records of all the farms in the parish
 
 The list of all the parish references in a county will be retrieved from the piece lookup table
 """
+import json
+from collections.abc import Generator, Iterable
+from pathlib import Path
+
+from src._tools.constants import PATH
 
 
 def get_parish_references_in_county(county_code: str):
@@ -29,18 +34,26 @@ def get_indexed_record_ids():
     """
 
 
-def get_ids_of_farm_documents():
+def get_ids_of_farm_documents(county_code: str) -> Iterable[str]:
     """Retrieve ids of farm documents for specific county which were sent to Discovery
     """    
+    for _file in PATH.PUBLISH.glob(f"{county_code}/MAF32/V1/*.json"):
+        with open(_file) as file_obj:
+            document = json.load(file_obj)
+            yield document["record"]["iaid"]
 
-    """
-    for each document in local county folder
-        retrieve id value
-    """
 
-"""
-Retrieve ids of farm records for specific county indexed in Discovery
-Retrieve ids of farm documents stored locally
-Compare sets of ids
-Report result
-"""
+def main():
+    """
+    Retrieve ids of farm records for specific county indexed in Discovery
+    Retrieve ids of farm documents stored locally
+    Compare sets of ids
+    Report result
+    """    
+    for index, id in enumerate(get_ids_of_farm_documents("SK")):
+        print(f"{id=}")
+    print(f"Total documents {index}")
+
+
+if __name__ == "__main__":
+    main()
