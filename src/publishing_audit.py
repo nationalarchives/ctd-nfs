@@ -41,11 +41,14 @@ def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
         _description_
     """    
     iaids: list[str] = []
-    parish_ids: set[str] = set()
+    parish_ids: dict[str, str] = {}
 
     for _document in farm_documents:
         iaids.append(_document['record']['iaid'])
-        parish_ids.add(_document['record']['parentId'])
+        suffix = f"/{_document['record']['referencePart']}"
+        parish_reference = _document['record']['citableReference'].removesuffix(suffix)
+        if parish_reference not in parish_ids:
+            parish_ids[parish_reference] = _document['record']['parentId']
 
     return {
         'iaids': iter(iaids),
