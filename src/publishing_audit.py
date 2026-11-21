@@ -4,26 +4,15 @@ Two sets will be created and compared:
 - the ids of the locally stored JSON documents built for each county
 - the ids of each farm record found on Discovery by querying the database via the Discovery API
 
-The parish reference as a search term to the API e.g., 'MAF 32/1/40"
+The Discovery ids of the county's parishes will be used as a search term to the API
 This query return the records of all the farms in the parish
 
-The list of all the parish references in a county will be retrieved from the piece lookup table
+The set of parish ids will retrieved from the farm documents
 """
 import json
 from collections.abc import Iterable
-from pathlib import Path
 
-from src._tools.constants import DB, PATH
-
-
-def get_parish_references_in_county(county_code: str) -> list[str]:
-    """Retrieve parish references from piece lookup table
-    """
-    return [
-        row['Catalogue ref']
-        for row in DB.PIECES
-        if row['County Code'] == county_code
-    ]
+from src._tools.constants import PATH
 
 
 def get_indexed_record_ids():
@@ -39,13 +28,37 @@ def get_indexed_record_ids():
     """
 
 
-def get_ids_of_farm_documents(county_code: str) -> Iterable[str]:
-    """Retrieve ids of farm documents for specific county which were sent to Discovery
+def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
+    """Generate a list of farm iaids and a set of parish ids from the farm documents
+
+    The parish ids will be used as the query to the Discovery API - 
+    creating this set means that it is not necessary to make a separate call to the API to find out the 
+
+    Arguments:
+        farm_documents -- _description_
+
+    Returns:
+        _description_
+    """    
+    iaids: list[str] = []
+    parish_ids: set[str] = set()
+
+    for _document in farm_documents:
+        iaids.append(_document['record']['iaid'])
+        parish_ids.add(_document['record']['parentId'])
+
+    return {
+        'iaids': iter(iaids),
+        'parish_ids': parish_ids,
+    }
+
+
+def get_farm_documents(county_code: str) -> Iterable[dict]:
+    """Return farm documents as a generator
     """    
     for _file in PATH.PUBLISH.glob(f"{county_code}/MAF32/V1/*.json"):
         with open(_file) as file_obj:
-            document = json.load(file_obj)
-            yield document['record']['iaid']
+            yield json.load(file_obj)
 
 
 def main():
@@ -59,8 +72,12 @@ def main():
     #     print(f"{id=}")
     # print(f"Total documents {index}")
 
-    parish_references = get_parish_references_in_county("SK")
-    print(f"{parish_references}")
+    farm_documents = get_farm_documents("SK")
+    ids = get_farm_and_parish_ids(farm_documents)
+    print(f"{ids['parish_ids']=}, {next(ids['iaids'])=}")
+
+    # ids_of_indexed_farms = get_series_from_api(parish_references[0])
+    # print(f"{ids_of_indexed_farms}")
     
 
 
