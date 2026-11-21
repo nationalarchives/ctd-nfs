@@ -21,11 +21,11 @@ from src._tools.constants import DISCOVERY, PATH
 pretty = pprint.PrettyPrinter(indent=4)
 
 
-def get_ids_of_indexed_records(parish_ids: dict) -> list[str]:
+def get_ids_of_indexed_records(parish_ids: dict) -> set[str]:
     """Retrieve ids of farm records for specific county indexed in Discovery
     """   
 
-    record_ids = []
+    record_ids: set[str] = set()
     for par_ref, par_id in parish_ids.items():
         print(f"{par_ref} ({par_id})", end=": ")
         api_query = f"{DISCOVERY.API_URI}/records/v1/children/{par_id}?limit=500"   
@@ -35,11 +35,10 @@ def get_ids_of_indexed_records(parish_ids: dict) -> list[str]:
             continue
 
         data = result.json()
-        print(f"\t{len(data['assets'])=}")          
-        record_ids.extend(
-            item['id']
-            for item in data['assets']
-        )
+        print(f"{len(data['assets'])} records")          
+        for item in data['assets']:
+            record_ids.add(item['id'])
+
         sleep(DISCOVERY.SPEED_BUMP_IN_SECONDS)
         
     print(f"-- TOTAL {len(record_ids)} records retrieved.")
@@ -58,18 +57,18 @@ def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
     Returns:
         _description_
     """    
-    iaids: list[str] = []
+    iaids: set[str] = set()
     parish_ids: dict[str, str] = {}
 
     for _document in farm_documents:
-        iaids.append(_document['record']['iaid'])
+        iaids.add(_document['record']['iaid'])
         suffix = f"/{_document['record']['referencePart']}"
         parish_reference = _document['record']['citableReference'].removesuffix(suffix)
         if parish_reference not in parish_ids:
             parish_ids[parish_reference] = _document['record']['parentId']
 
     return {
-        'iaids': iter(iaids),
+        'iaids': iaids,
         'parish_ids': parish_ids,
     }
 
