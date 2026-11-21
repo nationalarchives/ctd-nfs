@@ -10,22 +10,39 @@ This query return the records of all the farms in the parish
 The set of parish ids will retrieved from the farm documents
 """
 import json
+import pprint
 from collections.abc import Iterable
+from time import sleep
 
-from src._tools.constants import PATH
+import requests
+
+from src._tools.constants import DISCOVERY, PATH
+
+pretty = pprint.PrettyPrinter(indent=4)
 
 
-def get_indexed_record_ids():
+def get_ids_of_indexed_records(parish_ids: dict) -> list[str]:
     """Retrieve ids of farm records for specific county indexed in Discovery
-    """
-    
-    """
-    get all parish references for county from piece lookup table
-    
-    for each parish reference
-        retrieve records of all farms in parish via Discovery API
-    
-    """
+    """   
+
+    record_ids = []
+    for par_ref, par_id in parish_ids.items():
+        print(f"{par_ref}: {par_id}")
+        api_query = f"{DISCOVERY.API_URI}/records/v1/children/{par_id}?limit=500"   
+        result = requests.get(api_query)
+        if result.status_code != 200:
+            return []
+
+        data = result.json()
+        print(f"\t{len(data['assets'])=}")          
+        record_ids.extend(
+            item['id']
+            for item in data['assets']
+        )
+        sleep(DISCOVERY.SPEED_BUMP_IN_SECONDS)
+        
+    print(f"-- TOTAL {len(record_ids)} records retrieved.")
+    return record_ids
 
 
 def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
@@ -77,9 +94,8 @@ def main():
 
     farm_documents = get_farm_documents("SK")
     ids = get_farm_and_parish_ids(farm_documents)
-    print(f"{ids['parish_ids']=}, {next(ids['iaids'])=}")
 
-    # ids_of_indexed_farms = get_series_from_api(parish_references[0])
+    ids_of_indexed_farms = get_ids_of_indexed_records(ids['parish_ids'])
     # print(f"{ids_of_indexed_farms}")
     
 
