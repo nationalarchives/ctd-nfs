@@ -27,7 +27,7 @@ def get_ids_of_indexed_records(parish_ids: dict) -> list[str]:
 
     record_ids = []
     for par_ref, par_id in parish_ids.items():
-        print(f"{par_ref}: {par_id}")
+        print(f"{par_ref} ({par_id})", end=": ")
         api_query = f"{DISCOVERY.API_URI}/records/v1/children/{par_id}?limit=500"   
         result = requests.get(api_query)
         if result.status_code != 200:
