@@ -31,7 +31,8 @@ def get_ids_of_indexed_records(parish_ids: dict) -> list[str]:
         api_query = f"{DISCOVERY.API_URI}/records/v1/children/{par_id}?limit=500"   
         result = requests.get(api_query)
         if result.status_code != 200:
-            return []
+            print(f"!!! API response {result.status_code}")
+            continue
 
         data = result.json()
         print(f"\t{len(data['assets'])=}")          
