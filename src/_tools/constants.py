@@ -259,7 +259,9 @@ class DiscoveryNamespace:
         'legalStatus': "Public Record(s)",
         'source': "FS",
         'title': None,
-    }
+    }    
+    SPEED_BUMP_IN_SECONDS = 2
+
 DISCOVERY = DiscoveryNamespace()
 
 
