@@ -90,12 +90,9 @@ def main():
     Compare sets of ids
     Report result
     """
-    # for index, id in enumerate(get_ids_of_farm_documents("SK")):
-    #     print(f"{id=}")
-    # print(f"Total documents {index}")
-
-    farm_documents = get_farm_documents("SK")
-    ids = get_farm_and_parish_ids(farm_documents)
+    county_code = "SK"
+    farm_documents = get_farm_documents(county_code)
+    ids_from_documents = get_farm_and_parish_ids(farm_documents)
 
     ids_of_indexed_farms = get_ids_of_indexed_records(ids['parish_ids'])
     # print(f"{ids_of_indexed_farms}")
