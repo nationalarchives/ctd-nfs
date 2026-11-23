@@ -94,9 +94,10 @@ def main():
     farm_documents = get_farm_documents(county_code)
     ids_from_documents = get_farm_and_parish_ids(farm_documents)
 
-    ids_of_indexed_farms = get_ids_of_indexed_records(ids['parish_ids'])
-    # print(f"{ids_of_indexed_farms}")
-    
+    ids_of_indexed_farms = get_ids_of_indexed_records(ids_from_documents['parish_ids'])
+
+    difference = ids_from_documents['iaids'] - ids_of_indexed_farms
+    print(difference)  if difference else print("ALL INDEXED")
 
 
 if __name__ == "__main__":
