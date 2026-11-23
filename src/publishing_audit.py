@@ -75,8 +75,10 @@ def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
 
 def get_farm_documents(county_code: str) -> Iterable[dict]:
     """Return farm documents as a generator
-    """    
-    for _file in PATH.PUBLISH.glob(f"{county_code}/MAF32/V1/*.json"):
+    """
+    print(f"COUNTY: {county_code}\nProcessing documents:")
+    for _file in PATH.PUBLISH.glob(f"{county_code}/MAF*/V1/*.json"):
+        print(f"\t... {_file.stem}")
         with open(_file) as file_obj:
             yield json.load(file_obj)
 
