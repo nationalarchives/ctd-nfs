@@ -67,6 +67,7 @@ def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
         if parish_reference not in parish_ids:
             parish_ids[parish_reference] = _document['record']['parentId']
 
+    print(f"TOTAL {len(iaids)} farm & map documents built")
     return {
         'iaids': iaids,
         'parish_ids': parish_ids,
