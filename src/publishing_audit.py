@@ -114,7 +114,9 @@ def main():
     ids_of_indexed_farms = get_ids_of_indexed_records(ids_from_documents['parish_ids'])
 
     difference = ids_from_documents['iaids'] - ids_of_indexed_farms
-    print(difference) if difference else print("ALL INDEXED")
+    report_path = Path(f"AUDIT results - {county_code}.txt")
+    report_path.write_text("\n".join(item for item in difference))
+    pretty.pprint(difference) if difference else print("ALL INDEXED")
 
 
 if __name__ == "__main__":
