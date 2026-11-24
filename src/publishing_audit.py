@@ -11,6 +11,7 @@ The set of parish ids will retrieved from the farm documents
 """
 import json
 import pprint
+import time
 from collections.abc import Iterable
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -100,7 +101,11 @@ def main():
     """
     county_code = "YW"
 
+    start_time = time.perf_counter()    
     farm_documents = get_farm_documents(county_code)
+    load = time.perf_counter() - start_time
+    print(f"get_farm_documents took {load} seconds")
+
     ids_from_documents = get_farm_and_parish_ids(farm_documents)
 
     ids_of_indexed_farms = get_ids_of_indexed_records(ids_from_documents['parish_ids'])
