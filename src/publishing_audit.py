@@ -14,6 +14,7 @@ import pprint
 import time
 from collections.abc import Iterable
 from concurrent.futures import ProcessPoolExecutor
+from itertools import batched
 from pathlib import Path
 from time import sleep
 
@@ -29,19 +30,21 @@ def get_ids_of_indexed_records(parish_ids: dict) -> set[str]:
     """   
 
     record_ids: set[str] = set()
-    for par_ref, par_id in parish_ids.items():
-        print(f"{par_ref} ({par_id})", end=": ")
-        api_query = f"{DISCOVERY.API_URI}/records/v1/children/{par_id}?limit=500"   
-        result = requests.get(api_query)
-        if result.status_code != 200:
-            print(f"!!! API response {result.status_code}")
-            continue
+    for batch_no, batch in enumerate(batched(parish_ids.items(), 100), start=1):
+        for index, (parish_ref, parisb_id) in enumerate(batch, start=1):
+            print(f"{batch_no:02d}{index:03d}: {parish_ref} ({parisb_id})", end=": ")
+            api_query = f"{DISCOVERY.API_URI}/records/v1/children/{parisb_id}?limit=500"   
+            result = requests.get(api_query)
+            if result.status_code != 200:
+                print(f"!!! API response {result.status_code}")
+                continue
 
-        data = result.json()
-        print(f"{len(data['assets'])} records")          
-        for item in data['assets']:
-            record_ids.add(item['id'])
+            data = result.json()
+            print(f"{len(data['assets'])} records")          
+            for item in data['assets']:
+                record_ids.add(item['id'])
 
+        print(f"==== {DISCOVERY.SPEED_BUMP_IN_SECONDS} SECOND SPEED BUMP ====")
         sleep(DISCOVERY.SPEED_BUMP_IN_SECONDS)
         
     print(f"-- TOTAL {len(record_ids)} records retrieved.")
