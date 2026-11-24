@@ -12,6 +12,8 @@ The set of parish ids will retrieved from the farm documents
 import json
 import pprint
 from collections.abc import Iterable
+from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 from time import sleep
 
 import requests
@@ -74,14 +76,19 @@ def get_farm_and_parish_ids(farm_documents: Iterable[dict]) -> dict:
     }
 
 
+def get_document(_file: Path) -> dict:
+    with open(_file) as file_obj:
+        print(f"\t... {_file.stem}")
+        return json.load(file_obj)
+
+
 def get_farm_documents(county_code: str) -> Iterable[dict]:
     """Return farm documents as a generator
     """
     print(f"COUNTY: {county_code}\nProcessing documents:")
-    for _file in PATH.PUBLISH.glob(f"{county_code}/MAF*/V1/*.json"):
-        print(f"\t... {_file.stem}")
-        with open(_file) as file_obj:
-            yield json.load(file_obj)
+    document_paths = PATH.PUBLISH.glob(f"{county_code}/MAF*/V1/*.json")
+    with ProcessPoolExecutor() as executor:
+        return executor.map(get_document, document_paths)
 
 
 def main():
@@ -91,7 +98,8 @@ def main():
     Compare sets of ids
     Report result
     """
-    county_code = "SK"
+    county_code = "YW"
+
     farm_documents = get_farm_documents(county_code)
     ids_from_documents = get_farm_and_parish_ids(farm_documents)
 
