@@ -260,7 +260,7 @@ class DiscoveryNamespace:
         'source': "FS",
         'title': None,
     }    
-    SPEED_BUMP_IN_SECONDS = 0.0
+    SPEED_BUMP_IN_SECONDS = 15
 
 DISCOVERY = DiscoveryNamespace()
 
