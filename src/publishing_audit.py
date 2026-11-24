@@ -92,7 +92,7 @@ def get_farm_documents(county_code: str) -> Iterable[dict]:
     print(f"COUNTY: {county_code}\nProcessing documents:")
     document_paths = PATH.PUBLISH.glob(f"{county_code}/MAF*/V1/*.json")
     with ProcessPoolExecutor() as executor:
-        return executor.map(get_document, document_paths)
+        return executor.map(get_document, document_paths, chunksize=50)
 
 
 def main():
