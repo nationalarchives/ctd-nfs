@@ -40,26 +40,23 @@ class SurveyProcessor(ABC):
 # Concrete subclass for procesing farm survey forms
 class FarmProcessor(SurveyProcessor):
     def extract_data(self):
-        print("Run src.farm_harvester module")
+        print("Run src.farm_harvester")
 
     def build_documents(self):
-        # build documents = farm_publisher.build_catalogue_documents
-        print("Build MAF32 documents")
+        print("Run src.farm_publisher.build_catalogue_documents")
 
 # Concrete subclass for map sheet data
 class MapProcessor(SurveyProcessor):
     def extract_data(self):
-        print("Run src.map_maker module")
+        print("Run src.map_maker")
 
     def build_documents(self):
-        # build documents = map_publisher.build_catalogue_documents     
-        print("Build MAF73 documents")
+        print("Run src.map_publisher.build_catalogue_documents")
 
 if __name__ == '__main__':
     print('\nProcessing forms:')
     farm_processor = FarmProcessor()
-    farm_processor.process_survey()
-
-    print('\nProcessing maps:')
     map_processor = MapProcessor()
+
+    farm_processor.process_survey()
     map_processor.process_survey()
