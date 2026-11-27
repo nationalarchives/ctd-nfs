@@ -29,11 +29,13 @@ class SurveyProcessor(ABC):
 
     @abstractmethod
     def extract_data(self):
-        pass
+        """extract & transform data from single input file
+        """
 
     @abstractmethod
     def build_documents(self):
-        pass
+        """retrieve data from cache corresponding to input file and transform into JSONs
+        """
 
 # Concrete subclass for procesing farm survey forms
 class FarmProcessor(SurveyProcessor):
